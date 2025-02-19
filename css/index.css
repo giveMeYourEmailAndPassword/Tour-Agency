@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+a,
+p {
+  color: white;
+}
+
+.scrollbar-custom::-webkit-scrollbar {
+  width: 7px; /* Ширина скроллбара */
+}
+
+.scrollbar-custom::-webkit-scrollbar-track {
+  background: #f1f1f1; /* Цвет трека (фона) скроллбара */
+  border-radius: 4px; /* Закругление углов трека */
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb {
+  background: #888; /* Цвет ползунка скроллбара */
+  border-radius: 4px; /* Закругление углов ползунка */
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb:hover {
+  background: #555; /* Цвет ползунка при наведении */
+}

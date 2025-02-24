@@ -77,7 +77,7 @@ export default function NewFlyingCountry() {
             ))
           ) : (
             <button className="text-black text-lg text-start hover:bg-gray-200 rounded-xl py-1 pl-4">
-              Загрузка..
+              Загрузка...
             </button>
           )}
         </div>

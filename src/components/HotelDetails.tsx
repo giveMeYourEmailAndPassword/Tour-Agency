@@ -1,5 +1,10 @@
 import { useParams } from "react-router";
 import useHotelDetails from "../Hooks/UseHotelDetails";
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css"; // Основные стили Swiper
+import "swiper/css/navigation"; // Стили для кнопок навигации
+import "swiper/css/pagination"; // Стили для пагинации
+import { Navigation, Pagination } from "swiper/modules";
 
 export default function HotelDetails() {
   const { hotelcode } = useParams(); // Получаем код отеля из URL
@@ -22,65 +27,116 @@ export default function HotelDetails() {
   if (!hotel) {
     return <div>Данные об отеле отсутствуют</div>;
   }
-  console.log(hotel);
 
   return (
-    <div className="container mx-auto my-10">
-      <h1 className="text-4xl font-bold mb-4">{hotel.name}</h1>
-      <p className="text-gray-500 mb-6">{`${hotel.stars}⭐ | ${hotel.country}, ${hotel.region}`}</p>
-      <p className="text-black mb-4">Рейтинг: {hotel.rating || "Нет данных"}</p>
-      <p className="text-black mb-4">
-        {hotel.description || "Описание недоступно."}
-      </p>
+    <div className="container mx-auto my-10 p-6">
+      {/* Заголовок и рейтинг */}
+      <div className="mb-8">
+        <h1 className="text-4xl font-bold mb-2">{hotel.name}</h1>
+        <div className="flex items-center gap-2">
+          <span className="text-yellow-500">★ {hotel.rating}</span>
+          <span className="text-gray-600">({hotel.stars} звезды)</span>
+        </div>
+        <p className="text-gray-600 mt-2">
+          {hotel.region}, {hotel.country}
+        </p>
+      </div>
 
+      {/* Галерея изображений */}
       {hotel.images?.image.length > 0 && (
-        <div className="flex gap-4 flex-wrap mb-6">
-          {hotel.images.image.map((img: string, index: number) => (
-            <img
-              key={index} // Используем индекс для уникального ключа
-              src={`https:${img}`} // Указываем корректный путь
-              alt={`Фото отеля ${hotel.name}`}
-              className="rounded-lg shadow-lg w-60 h-40 object-cover"
-            />
-          ))}
+        <div className="mb-8">
+          <Swiper
+            modules={[Navigation, Pagination]}
+            spaceBetween={10}
+            slidesPerView={1}
+            navigation
+            pagination={{ clickable: true }}
+            loop={true}
+            className="mySwiper"
+          >
+            {hotel.images.image.map((img: string, index: number) => (
+              <SwiperSlide key={index} className="flex items-center">
+                <img
+                  src={`https:${img}`}
+                  alt={`Фото отеля ${hotel.name}`}
+                  className="rounded-lg shadow-lg w-[90%] h-[30rem] object-cover"
+                />
+              </SwiperSlide>
+            ))}
+          </Swiper>
         </div>
       )}
 
-      <div className="grid grid-cols-2 gap-6">
-        <div>
-          <h2 className="text-2xl font-semibold mb-4">Информация</h2>
-          <p className="text-black">
-            <strong>Год постройки:</strong> {hotel.build || "Не указано"}
+      {/* Основная информация */}
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold mb-4">Основная информация</h2>
+        <div className="space-y-2">
+          <p>
+            <strong>Год постройки:</strong> {hotel.build}
           </p>
-          <p className="text-black">
-            <strong>Пляж:</strong> {hotel.beach || "Нет данных"}
+          <p>
+            <strong>Последний ремонт:</strong> {hotel.repair}
           </p>
-          <p className="text-black">
-            <strong>Типы номеров:</strong> {hotel.roomtypes || "Не указано"}
+          <p>
+            <strong>Расположение:</strong> {hotel.placement}
           </p>
-        </div>
-
-        <div>
-          <h2 className="text-2xl font-semibold mb-4">Услуги</h2>
-          <p className="text-black">
-            <strong>Бесплатные:</strong> {hotel.servicefree || "Нет данных"}
+          <p>
+            <strong>Площадь:</strong> {hotel.square}
           </p>
-          <p className="text-black">
-            <strong>Платные:</strong> {hotel.servicepay || "Нет данных"}
+          <p>
+            <strong>Телефон:</strong> {hotel.phone}
+          </p>
+          <p>
+            <strong>Сайт:</strong>{" "}
+            <a href={hotel.site} className="text-blue-500 hover:underline">
+              {hotel.site}
+            </a>
           </p>
         </div>
       </div>
 
-      <div className="mt-6">
-        <h2 className="text-2xl font-semibold mb-4">Тип питания</h2>
-        <p className="text-black">
-          {hotel.meallist || "Информация о питании недоступна."}
-        </p>
+      {/* Описание */}
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold mb-4">Описание</h2>
+        <p className="text-gray-700">{hotel.description}</p>
+      </div>
+
+      {/* Территория и услуги */}
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold mb-4">Территория и услуги</h2>
+        <p className="text-gray-700">{hotel.territory}</p>
+      </div>
+
+      {/* Номера */}
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold mb-4">Типы номеров</h2>
+        <p className="text-gray-700">{hotel.roomtypes}</p>
+      </div>
+
+      {/* Питание */}
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold mb-4">Питание</h2>
+        <p className="text-gray-700">{hotel.meallist}</p>
+        <p className="text-gray-700">{hotel.mealtypes}</p>
+      </div>
+
+      {/* Пляж */}
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold mb-4">Пляж</h2>
+        <p className="text-gray-700">{hotel.beach}</p>
+      </div>
+
+      {/* Для детей */}
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold mb-4">Для детей</h2>
+        <p className="text-gray-700">{hotel.child}</p>
+      </div>
+
+      {/* Анимация и развлечения */}
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold mb-4">Анимация и развлечения</h2>
+        <p className="text-gray-700">{hotel.animation}</p>
       </div>
     </div>
   );
-}
-
-{
-  /* <img src={hotel.images?.image[0]} alt={hotel.name} /> */
 }

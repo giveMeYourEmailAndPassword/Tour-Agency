@@ -52,7 +52,7 @@ export default function HotTours() {
     <div className="flex flex-col my-14 mx-36 gap-8">
       <div className="flex items-end gap-1">
         <h2 className="text-3xl font-semibold">Горящие туры</h2>
-        <BsFire className="text-3xl" />
+        <BsFire className="text-3xl text-orange-500" />
       </div>
 
       <div className="grid grid-cols-4 gap-9">
@@ -79,8 +79,8 @@ export default function HotTours() {
                     <GoStarFill key={i} className="text-white" />
                   ))}
                 </div>
-                <span className="text-white text-sm font-medium">
-                  {tour.hotelrating} / 5
+                <span className="text-white text-sm font-medium h-5">
+                  {tour.hotelrating === "0" ? "" : tour.hotelrating + " / 5"}
                 </span>
               </div>
 

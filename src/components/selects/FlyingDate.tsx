@@ -20,7 +20,6 @@ export default function FlyingDate() {
         "dd.MM.yyyy"
       );
 
-      // Передаем объект с датами в контекст
       setData("param4", { startDate, endDate });
     }
   };

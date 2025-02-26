@@ -30,48 +30,66 @@ export default function OurTours() {
   }
 
   return (
-    <div className="flex flex-wrap gap-4 p-8 justify-center ">
+    <div className="flex flex-wrap gap-8 p-12 justify-center items-center bg-gray-50">
       {tours.length > 0 ? (
         tours.map((hotel, index) => (
           <div
             key={index}
-            className="p-4 bg-white shadow-md rounded-md flex flex-col w-[30rem]"
+            className="p-6 bg-white shadow-lg hover:shadow-xl transition-shadow duration-300 rounded-2xl flex flex-col
+             w-[30rem] h-[34rem]"
           >
-            <img
-              src={hotel.picturelink || "/placeholder.jpg"}
-              alt={hotel.hotelname}
-              width={320}
-              height={200}
-              className="rounded-lg"
-            />
-            <div className="flex flex-col gap-1 mt-2">
-              <div>
-                <p className="text-black font-semibold">{hotel.hotelname}</p>
-                <p className="text-black">{hotel.regionname}</p>
+            <div className="relative h-64 mb-4">
+              <img
+                src={hotel.picturelink || "/placeholder.jpg"}
+                alt={hotel.hotelname}
+                className="rounded-xl w-full h-full object-cover"
+              />
+              <div className="absolute top-4 right-4 bg-white/90 px-3 py-1 rounded-full">
+                <div className="flex gap-1">
+                  {Array.from({ length: 5 }, (_, index) => (
+                    <GoStarFill
+                      key={index}
+                      className="w-4 h-4"
+                      color={index < hotel.hotelstars ? "#FFD700" : "#E5E7EB"}
+                    />
+                  ))}
+                </div>
               </div>
-              <p className="text-black">
-                {hotel.hoteldescription || "Нет описания"}
-              </p>
-              <p className="text-black">
-                От{" "}
-                <span className="font-bold">
-                  {hotel.price ? `$${hotel.price}` : "Цена не указана"}
-                </span>{" "}
-                за человека
-              </p>
-              <div className="flex">
-                {Array.from({ length: 5 }, (_, index) => (
-                  <GoStarFill
-                    key={index}
-                    color={index < hotel.hotelstars ? "gold" : "gray"}
-                  />
-                ))}
+            </div>
+
+            <div className="flex flex-col flex-1 justify-between">
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-xl font-semibold text-gray-900 line-clamp-2 h-[3.2rem]">
+                    {hotel.hotelname}
+                  </h3>
+                  <p className="text-blue-600 font-medium">
+                    {hotel.regionname}
+                  </p>
+                </div>
+
+                <p className="text-gray-600 line-clamp-3 h-[4.5rem]">
+                  {hotel.hoteldescription || "Нет описания"}
+                </p>
+              </div>
+
+              <div className="flex items-center justify-between pt-4 border-t border-gray-100 mt-4">
+                <div className="text-gray-900">
+                  От{" "}
+                  <span className="text-2xl font-bold text-blue-600">
+                    {hotel.price ? `$${hotel.price}` : "Цена не указана"}
+                  </span>
+                  <span className="text-sm text-gray-500"> за человека</span>
+                </div>
+                <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                  Подробнее
+                </button>
               </div>
             </div>
           </div>
         ))
       ) : (
-        <p>Нет доступных туров</p>
+        <p className="text-lg text-gray-500">Нет доступных туров</p>
       )}
     </div>
   );

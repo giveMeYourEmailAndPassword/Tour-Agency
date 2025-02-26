@@ -157,7 +157,6 @@ export default function NewFlyingCountry() {
                 key={country.id}
                 onClick={() => handleCountrySelect(country)}
               >
-                {country.label}
                 <div className="flex items-center gap-2">
                   <img
                     src={`https://flagcdn.com/${

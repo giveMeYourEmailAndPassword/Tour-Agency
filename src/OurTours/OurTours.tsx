@@ -1,12 +1,14 @@
 import { useContext, useState } from "react";
 import { DataContext } from "../components/DataProvider";
 import { GoStarFill } from "react-icons/go";
+import { useFormatDate } from "../Hooks/useFormatDate";
 
 export default function OurTours() {
   const { tours, loading, error } = useContext(DataContext);
   const [expandedCards, setExpandedCards] = useState<{
     [key: number]: boolean;
   }>({});
+  const { formatDate } = useFormatDate();
 
   if (loading) {
     return (
@@ -113,7 +115,11 @@ export default function OurTours() {
                                 {tour.tourname}
                               </p>
                               <p className="text-gray-600">
-                                Дата: {tour.tourdate}
+                                Дата:{" "}
+                                {formatDate(tour.flydate, {
+                                  inputFormat: "dd.MM.yyyy",
+                                  outputFormat: "d MMMM",
+                                })}
                               </p>
                               <p className="text-gray-600">
                                 Ночей: {tour.nights}

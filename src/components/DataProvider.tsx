@@ -163,11 +163,12 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
 
         if (tourData.data?.result?.hotel) {
           setTours(tourData.data.result.hotel);
+          setLoading(false); // Убираем загрузку, как только получили первые отели
         }
 
+        // Останавливаем опрос только когда поиск завершен
         if (tourData.data?.status?.state === "finished") {
           clearInterval(intervalId as NodeJS.Timeout);
-          setLoading(false);
         }
       } catch (error) {
         console.error("Ошибка при запросе:", error);
@@ -176,7 +177,6 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         setLoading(false);
       }
     };
-
     intervalId = setInterval(fetchTours, 1500);
     fetchTours();
 

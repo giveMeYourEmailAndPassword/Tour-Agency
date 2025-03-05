@@ -5,7 +5,7 @@ import { BrowserRouter, Routes, Route } from "react-router";
 import App from "./App.tsx";
 import OurTours from "./OurTours/OurTours.tsx";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
-import HotelDetails from "./components/HotelDetails.tsx";
+import HotelDetails from "./Hotel/HotelDetails.tsx";
 import { HeroUIProvider } from "@heroui/react";
 import { DataProvider } from "./components/DataProvider.tsx";
 

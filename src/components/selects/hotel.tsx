@@ -36,19 +36,21 @@ export default function Hotel() {
     <div className="relative">
       <div className="w-52 flex flex-col gap-1">
         <div
-          className="p-2 bg-white flex justify-between items-center cursor-pointer border border-gray-300 rounded-md"
+          className="p-3 bg-white flex justify-between items-center cursor-pointer border border-gray-200 rounded-xl hover:border-blue-400 transition-all duration-300"
           {...getToggleButtonProps()}
         >
-          <span>{selectedItem ? selectedItem.rate : "Выберите значение"}</span>
+          <span className="text-gray-700">
+            {selectedItem ? selectedItem.rate : "Рейтинг отеля"}
+          </span>
           <IoIosArrowDown
-            className={`text-xl transition-transform ${
+            className={`text-xl text-gray-500 transition-transform duration-300 ${
               isOpen ? "rotate-180" : ""
             }`}
           />
         </div>
       </div>
       <ul
-        className={`absolute w-52 bg-white mt-1 shadow-md max-h-80 overflow-scroll p-0 z-10 border border-gray-300 rounded-md ${
+        className={`absolute w-52 bg-white mt-2 shadow-lg max-h-80 overflow-auto p-0 z-10 border border-gray-100 rounded-xl ${
           !isOpen ? "hidden" : ""
         }`}
         {...getMenuProps()}
@@ -56,9 +58,20 @@ export default function Hotel() {
         {isOpen &&
           info.map((item, index) => (
             <li
-              className={`py-2 px-3 shadow-sm cursor-pointer ${
-                highlightedIndex === index ? "bg-blue-300" : ""
-              } ${selectedItem === item ? "font-bold" : ""}`}
+              className={`py-3 px-4 cursor-pointer transition-all duration-200
+                ${
+                  highlightedIndex === index
+                    ? "bg-blue-50 text-blue-600"
+                    : "hover:bg-gray-50"
+                }
+                ${
+                  selectedItem === item
+                    ? "font-semibold text-blue-600 bg-blue-50"
+                    : "text-gray-700"
+                }
+                ${index === 0 ? "rounded-t-xl" : ""}
+                ${index === info.length - 1 ? "rounded-b-xl" : ""}
+              `}
               key={item.id}
               {...getItemProps({ item, index })}
             >

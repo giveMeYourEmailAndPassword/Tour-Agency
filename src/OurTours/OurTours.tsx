@@ -4,7 +4,7 @@ import { GoStarFill } from "react-icons/go";
 import { useFormatDate } from "../Hooks/useFormatDate";
 
 export default function OurTours() {
-  const { tours, loading, error } = useContext(DataContext);
+  const { tours, loading, error, tourDataStatus } = useContext(DataContext);
   const [expandedCards, setExpandedCards] = useState<{
     [key: number]: boolean;
   }>({});
@@ -26,14 +26,6 @@ export default function OurTours() {
     );
   }
 
-  if (!tours || tours.length === 0) {
-    return (
-      <p className="text-black flex items-center justify-center text-3xl">
-        Туры не найдены
-      </p>
-    );
-  }
-
   const toggleTours = (hotelIndex: number) => {
     setExpandedCards((prev: { [key: number]: boolean }) => ({
       ...prev,
@@ -43,7 +35,7 @@ export default function OurTours() {
 
   return (
     <div className="flex flex-wrap gap-8 p-12 justify-center items-stretch bg-gray-50">
-      {tours.length > 0 ? (
+      {tours.length && tours[0]?.tours?.tour ? (
         tours.map((hotel, index) => (
           <div
             key={index}

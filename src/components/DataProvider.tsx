@@ -26,6 +26,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   const [params, setParams] = useState<Params>({});
   const [requestId, setRequestId] = useState<string | null>(null);
   const [tours, setTours] = useState<any[]>([]);
+  const [tourDataStatus, setTourDataStatus] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [cities, setCities] = useState<Array<{ key: string; label: string }>>(
@@ -160,6 +161,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
           }&requestid=${requestId}&onpage=12&format=json`
         );
         const tourData = await tourResponse.json();
+        const status = tourData.data?.status;
 
         if (tourData.data?.result?.hotel) {
           setTours(tourData.data.result.hotel);
@@ -167,7 +169,8 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         }
 
         // Останавливаем опрос только когда поиск завершен
-        if (tourData.data?.status?.state === "finished") {
+        if (status?.state === "finished") {
+          setTourDataStatus(status);
           clearInterval(intervalId as NodeJS.Timeout);
         }
       } catch (error) {

@@ -51,7 +51,7 @@ export default function HotTours() {
   return (
     <div className="flex flex-col my-14 mx-36 gap-8">
       <div className="flex items-end gap-1">
-        <h2 className="text-3xl font-semibold">Горящие туры</h2>
+        <h2 className="text-3xl font-semibold">Горящие туры из Бишкека</h2>
         <BsFire className="text-3xl text-orange-500" />
       </div>
 

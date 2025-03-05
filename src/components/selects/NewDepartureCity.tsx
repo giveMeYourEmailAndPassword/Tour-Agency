@@ -27,6 +27,9 @@ export default function NewDepartureCity() {
   const selectedCityData = cities.find((city) => city.id === selectedCity);
   console.log(selectedCityData);
 
+  // Фильтруем список городов, исключая Москву
+  const filteredCities = cities.filter((city, index) => index !== 2);
+
   return (
     <>
       <Popover
@@ -65,8 +68,8 @@ export default function NewDepartureCity() {
 
         <PopoverContent className="w-44 py-2">
           <div className="flex flex-col gap-1 items-starts w-full">
-            {cities && cities.length > 0 ? (
-              cities.map((city) => (
+            {filteredCities && filteredCities.length > 0 ? (
+              filteredCities.map((city) => (
                 <button
                   className={`text-black text-lg text-start hover:bg-gray-200 rounded-xl py-1 pl-4 ${
                     selectedCity === city.id ? "font-semibold" : ""

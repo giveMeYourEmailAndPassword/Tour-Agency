@@ -116,8 +116,8 @@ export default function HotelDetails() {
             <button className="px-8 py-3 border-3 text-gray-500 rounded-2xl text-lg font-medium transition-colors">
               На карте
             </button>
-            <button className="px-14 py-3 border-3 text-gray-500 rounded-2xl text-lg font-medium transition-colors">
-              Отзывы
+            <button className="px-14 py-3 border-3 text-gray-500 rounded-2xl text-lg font-medium transition-colors text-center">
+              Отзывы ({hotel.reviewscount})
             </button>
             <button className="px-8 py-3 border-3 text-gray-500 rounded-2xl text-lg font-medium transition-colors">
               You<span className="text-red-600">Tube</span>

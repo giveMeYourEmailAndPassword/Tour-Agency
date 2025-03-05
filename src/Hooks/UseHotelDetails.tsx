@@ -9,6 +9,7 @@ const fetchHotelDetails = async (hotelcode: string) => {
       authpass: "YkCfsYMj4322",
       imgbig: 1, // Большие изображения
       removetags: 1, // Убираем HTML-теги
+      reviews: 1,
       format: "json",
     },
   });

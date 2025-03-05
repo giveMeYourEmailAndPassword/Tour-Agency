@@ -26,6 +26,8 @@ export default function OurTours() {
     );
   }
 
+  console.log(tourDataStatus);
+
   const toggleTours = (hotelIndex: number) => {
     setExpandedCards((prev: { [key: number]: boolean }) => ({
       ...prev,

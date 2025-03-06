@@ -129,6 +129,9 @@ export default function HotelDetails() {
               onClose={() => setIsReviewsOpen(false)}
               hotelName={hotel.name}
               reviewsCount={hotel.reviewscount}
+              hotelRating={hotel.rating}
+              hotelStars={hotel.stars}
+              reviews={hotel.reviews?.review || []}
             />
 
             <button className="px-8 py-3 border-3 text-gray-500 rounded-2xl text-lg font-medium transition-colors">

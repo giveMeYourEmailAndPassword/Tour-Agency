@@ -8,12 +8,13 @@ import { Navigation, Pagination, Autoplay } from "swiper/modules";
 import Header from "../components/Header";
 import { useState } from "react";
 import AccordionSection from "./HotelAccordion";
-import { CiSquareMinus } from "react-icons/ci";
+import ReviewsModal from "../components/ReviewsModal";
 
 export default function HotelDetails() {
   const { hotelcode } = useParams();
   const { data, isLoading, isError } = useHotelDetails(hotelcode!);
   const [openSections, setOpenSections] = useState<string[]>([]);
+  const [isReviewsOpen, setIsReviewsOpen] = useState(false);
 
   const toggleSection = (section: string) => {
     setOpenSections((prev) =>
@@ -116,9 +117,20 @@ export default function HotelDetails() {
             <button className="px-8 py-3 border-3 text-gray-500 rounded-2xl text-lg font-medium transition-colors">
               На карте
             </button>
-            <button className="px-14 py-3 border-3 text-gray-500 rounded-2xl text-lg font-medium transition-colors text-center">
+
+            <button
+              onClick={() => setIsReviewsOpen(true)}
+              className="px-14 py-3 border-3 text-gray-500 rounded-2xl text-lg font-medium transition-colors text-center"
+            >
               Отзывы ({hotel.reviewscount})
             </button>
+            <ReviewsModal
+              isOpen={isReviewsOpen}
+              onClose={() => setIsReviewsOpen(false)}
+              hotelName={hotel.name}
+              reviewsCount={hotel.reviewscount}
+            />
+
             <button className="px-8 py-3 border-3 text-gray-500 rounded-2xl text-lg font-medium transition-colors">
               You<span className="text-red-600">Tube</span>
             </button>

@@ -120,8 +120,8 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
 
       try {
         const paramsToGet = new URLSearchParams({
-          authlogin: import.meta.env.VITE_AUTH_LOGIN || "",
-          authpass: import.meta.env.VITE_AUTH_PASS || "",
+          authlogin: import.meta.env.VITE_AUTH_LOGIN || "Ikram.kv@gmail.com",
+          authpass: import.meta.env.VITE_AUTH_PASS || "YkCfsYMj4322",
           departure: params.param1,
           country: params.param2,
           datefrom: params.param4.startDate,

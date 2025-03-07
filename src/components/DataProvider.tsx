@@ -92,14 +92,25 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     fetchCountries();
   }, [params.param1]);
 
-  // Генерация requestId, если заданы необходимые параметры
+  // Добавим дебаунс для запросов
+  const DEBOUNCE_DELAY = 1000;
+  const POLL_INTERVAL = 3000; // Увеличим интервал опроса
+
+  // Создадим отдельную функцию для проверки готовности параметров
+  const areParamsReady = (params: Params) => {
+    return (
+      params.param1 &&
+      params.param2 &&
+      params.param4?.startDate &&
+      params.param4?.endDate
+    );
+  };
+
+  // Модифицируем useEffect для генерации requestId
   useEffect(() => {
-    if (
-      !params.param1 ||
-      !params.param2 ||
-      !params.param4?.startDate ||
-      !params.param4?.endDate
-    ) {
+    let timeoutId: NodeJS.Timeout;
+
+    if (!areParamsReady(params)) {
       return;
     }
 
@@ -143,17 +154,25 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
       }
     };
 
-    generateRequestId();
-  }, [params]);
+    // Добавляем дебаунс
+    timeoutId = setTimeout(generateRequestId, DEBOUNCE_DELAY);
 
-  // Опрос результатов по requestId
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, [params.param1, params.param2, params.param4]); // Зависимости только от необходимых параметров
+
+  // Модифицируем useEffect для опроса результатов
   useEffect(() => {
     if (!requestId) return;
 
     let intervalId: NodeJS.Timeout | null = null;
+    let attempts = 0;
+    const MAX_ATTEMPTS = 20; // Максимальное количество попыток
 
     const fetchTours = async () => {
       try {
+        attempts++;
         const tourResponse = await fetch(
           `https://tourvisor.ru/xml/result.php?authlogin=${
             import.meta.env.VITE_AUTH_LOGIN
@@ -166,23 +185,25 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
 
         if (tourData.data?.result?.hotel) {
           setTours(tourData.data.result.hotel);
-          setLoading(false); // Убираем загрузку, как только получили первые отели
+          setLoading(false);
         }
 
-        // Останавливаем опрос только когда поиск завершен
-        if (status?.state === "finished") {
+        // Останавливаем опрос если поиск завершен или превышено количество попыток
+        if (status?.state === "finished" || attempts >= MAX_ATTEMPTS) {
           setTourDataStatus(status);
-          clearInterval(intervalId as NodeJS.Timeout);
+          if (intervalId) clearInterval(intervalId);
+          setLoading(false);
         }
       } catch (error) {
         console.error("Ошибка при запросе:", error);
         setError("Ошибка при получении туров");
-        clearInterval(intervalId as NodeJS.Timeout);
+        if (intervalId) clearInterval(intervalId);
         setLoading(false);
       }
     };
-    intervalId = setInterval(fetchTours, 1500);
-    fetchTours();
+
+    intervalId = setInterval(fetchTours, POLL_INTERVAL);
+    fetchTours(); // Первый запрос
 
     return () => {
       if (intervalId) clearInterval(intervalId);

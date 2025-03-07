@@ -2,6 +2,7 @@ import { useContext, useState } from "react";
 import { DataContext } from "../components/DataProvider";
 import { GoStarFill } from "react-icons/go";
 import { useFormatDate } from "../Hooks/useFormatDate";
+import { Skeleton } from "@heroui/react";
 
 export default function OurTours() {
   const { tours, loading, error, tourDataStatus } = useContext(DataContext);
@@ -12,9 +13,36 @@ export default function OurTours() {
 
   if (loading) {
     return (
-      <p className="text-black flex items-center justify-center text-3xl">
-        Загрузка туров...
-      </p>
+      <div className="flex flex-wrap gap-8 p-12 justify-center items-stretch bg-gray-50">
+        {[...Array(6)].map((_, index) => (
+          <div key={index} className="w-[32rem] min-h-[45rem]">
+            <Skeleton className="rounded-2xl w-full h-64 mb-4" />
+            <div className="space-y-4">
+              <div>
+                <Skeleton className="h-8 w-3/4 rounded-lg" />
+                <Skeleton className="h-6 w-1/2 rounded-lg mt-2" />
+              </div>
+              <div className="flex gap-4">
+                <Skeleton className="h-10 w-1/2 rounded-lg" />
+                <Skeleton className="h-10 w-1/2 rounded-lg" />
+              </div>
+              <div className="space-y-3">
+                <Skeleton className="h-6 w-1/3 rounded-lg" />
+                {[...Array(3)].map((_, idx) => (
+                  <Skeleton key={idx} className="h-24 w-full rounded-lg" />
+                ))}
+              </div>
+              <div className="flex justify-between mt-4">
+                <div className="space-y-2">
+                  <Skeleton className="h-5 w-32 rounded-lg" />
+                  <Skeleton className="h-5 w-24 rounded-lg" />
+                </div>
+                <Skeleton className="h-10 w-24 rounded-lg" />
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
     );
   }
 

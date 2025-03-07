@@ -8,7 +8,7 @@ import { ru } from "date-fns/locale"; // Русская локализация
 import { Skeleton } from "@heroui/react";
 
 const fetchHotTours = async () => {
-  const response = await axios.get("http://tourvisor.ru/xml/hottours.php", {
+  const response = await axios.get("https://tourvisor.ru/xml/hottours.php", {
     params: {
       authlogin: "Ikram.kv@gmail.com",
       authpass: "YkCfsYMj4322",

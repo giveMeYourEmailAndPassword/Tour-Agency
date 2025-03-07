@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
 const fetchHotelDetails = async (hotelcode: string) => {
-  const { data } = await axios.get("http://tourvisor.ru/xml/hotel.php", {
+  const { data } = await axios.get("https://tourvisor.ru/xml/hotel.php", {
     params: {
       hotelcode,
       authlogin: "Ikram.kv@gmail.com",

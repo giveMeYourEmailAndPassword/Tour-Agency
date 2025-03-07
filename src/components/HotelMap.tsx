@@ -1,39 +1,29 @@
+import { YMaps, Map, Placemark } from "@pbe/react-yandex-maps";
 import {
   Modal,
   ModalContent,
   ModalHeader,
   ModalBody,
   ModalFooter,
-  Button,
 } from "@heroui/react";
 
-interface Review {
-  name: string;
-  content: string;
-  traveltime: string;
-  rate: string;
-  reviewdate: string;
-}
-
-interface ReviewsModalProps {
+interface HotelMapProps {
   isOpen: boolean;
   onClose: () => void;
   hotelName: string;
-  reviewsCount: number;
+  coordinates: [number, number]; // [широта, долгота]
   hotelRating: number;
   hotelStars: number;
-  reviews: Review[];
 }
 
-export default function ReviewsModal({
+export default function HotelMap({
   isOpen,
   onClose,
   hotelName,
+  coordinates: [latitude, longitude],
   hotelRating,
   hotelStars,
-  reviewsCount,
-  reviews,
-}: ReviewsModalProps) {
+}: HotelMapProps) {
   return (
     <Modal
       isOpen={isOpen}
@@ -46,7 +36,7 @@ export default function ReviewsModal({
         <>
           <ModalHeader className="flex gap-1">
             <div className="flex items-center gap-2">
-              <span>Отзывы об отеле:</span>
+              <span>Расположение отеля:</span>
               <span className="text-xl font-bold">
                 {hotelName.length > 37
                   ? `${hotelName.slice(0, 37)}...`
@@ -65,29 +55,27 @@ export default function ReviewsModal({
               </div>
             </div>
           </ModalHeader>
-          <ModalBody className="max-h-[60vh] overflow-y-auto w-full scrollbar-custom">
-            {reviews.length > 0 ? (
-              <div className="space-y-4">
-                {reviews.map((review, index) => (
-                  <div key={index} className="border-b pb-4">
-                    <div className="flex justify-between">
-                      <span className="font-medium">{review.name}</span>
-                      <span className="text-gray-500">{review.reviewdate}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-yellow-500 text-2xl">★</span>
-                      <span>{review.rate}/5</span>
-                      <span>• {review.traveltime}</span>
-                    </div>
-                    <p className="mt-2 text-gray-700">{review.content}</p>
-                  </div>
-                ))}
+          <ModalBody className="h-[60vh]">
+            <YMaps>
+              <div className="w-full h-[130vh]">
+                <Map
+                  className="w-full h-full"
+                  defaultState={{
+                    center: [latitude, longitude],
+                    zoom: 14,
+                    controls: ["zoomControl", "fullscreenControl"],
+                  }}
+                  modules={["control.ZoomControl", "control.FullscreenControl"]}
+                >
+                  <Placemark
+                    geometry={[latitude, longitude]}
+                    properties={{
+                      iconCaption: hotelName,
+                    }}
+                  />
+                </Map>
               </div>
-            ) : (
-              <div className="text-center text-xl text-gray-700">
-                Нет отзывов
-              </div>
-            )}
+            </YMaps>
           </ModalBody>
           <ModalFooter />
         </>

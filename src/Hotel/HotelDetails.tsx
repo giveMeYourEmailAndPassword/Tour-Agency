@@ -9,12 +9,14 @@ import Header from "../components/Header";
 import { useState } from "react";
 import AccordionSection from "./HotelAccordion";
 import ReviewsModal from "../components/ReviewsModal";
+import HotelMap from "../components/HotelMap";
 
 export default function HotelDetails() {
   const { hotelcode } = useParams();
   const { data, isLoading, isError } = useHotelDetails(hotelcode!);
   const [openSections, setOpenSections] = useState<string[]>([]);
   const [isReviewsOpen, setIsReviewsOpen] = useState(false);
+  const [isMapOpen, setIsMapOpen] = useState(false);
 
   const toggleSection = (section: string) => {
     setOpenSections((prev) =>
@@ -66,7 +68,7 @@ export default function HotelDetails() {
   return (
     <>
       {/* <Header /> */}
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 px-36 mt-12">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 px-36 pt-12">
         {/* Галерея изображений */}
 
         {hotel.images?.image.length > 0 && (
@@ -114,7 +116,10 @@ export default function HotelDetails() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
           {/* Кнопки навигации */}
           <div className="flex justify-center gap-8 mb-12">
-            <button className="px-8 py-3 border-3 text-gray-500 rounded-2xl text-lg font-medium transition-colors">
+            <button
+              onClick={() => setIsMapOpen(true)}
+              className="px-8 py-3 border-3 text-gray-500 rounded-2xl text-lg font-medium transition-colors"
+            >
               На карте
             </button>
 
@@ -134,7 +139,17 @@ export default function HotelDetails() {
               reviews={hotel.reviews?.review || []}
             />
 
-            <button className="px-8 py-3 border-3 text-gray-500 rounded-2xl text-lg font-medium transition-colors">
+            <button
+              onClick={() =>
+                window.open(
+                  `https://www.youtube.com/results?search_query=${encodeURIComponent(
+                    hotel.name
+                  )}`,
+                  "_blank"
+                )
+              }
+              className="px-8 py-3 border-3 text-gray-500 rounded-2xl text-lg font-medium transition-colors"
+            >
               You<span className="text-red-600">Tube</span>
             </button>
           </div>
@@ -254,6 +269,14 @@ export default function HotelDetails() {
           </div>
         </div>
       </div>
+      <HotelMap
+        isOpen={isMapOpen}
+        onClose={() => setIsMapOpen(false)}
+        hotelName={hotel.name}
+        coordinates={[Number(hotel.coord1), Number(hotel.coord2)]}
+        hotelRating={hotel.rating}
+        hotelStars={hotel.stars}
+      />
     </>
   );
 }

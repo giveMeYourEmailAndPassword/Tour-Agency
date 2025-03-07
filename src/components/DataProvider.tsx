@@ -125,10 +125,11 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
           starsbetter: params.param9?.toString() ?? "1",
           services: params.param10?.join(",") ?? "",
           format: "json",
+          currency: "1",
         });
 
         const requestResponse = await fetch(
-          `http://tourvisor.ru/xml/search.php?${paramsToGet.toString()}`
+          `https://tourvisor.ru/xml/search.php?${paramsToGet.toString()}`
         );
         const requestData = await requestResponse.json();
 
@@ -154,7 +155,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     const fetchTours = async () => {
       try {
         const tourResponse = await fetch(
-          `http://tourvisor.ru/xml/result.php?authlogin=${
+          `https://tourvisor.ru/xml/result.php?authlogin=${
             import.meta.env.VITE_AUTH_LOGIN
           }&authpass=${
             import.meta.env.VITE_AUTH_PASS

@@ -5,6 +5,7 @@ import { BsFire } from "react-icons/bs";
 import { GoStarFill } from "react-icons/go";
 import { parse, format } from "date-fns";
 import { ru } from "date-fns/locale"; // Русская локализация
+import { Skeleton } from "@heroui/react";
 
 const fetchHotTours = async () => {
   const response = await axios.get("http://tourvisor.ru/xml/hottours.php", {
@@ -29,7 +30,42 @@ export default function HotTours() {
   });
 
   if (isLoading) {
-    return <div className="text-center">Загрузка...</div>;
+    return (
+      <div className="flex flex-col my-14 mx-36 gap-8">
+        <div className="flex items-end gap-1">
+          <h2 className="text-3xl font-semibold">Горящие туры из Бишкека</h2>
+          <BsFire className="text-3xl text-orange-500" />
+        </div>
+
+        <div className="grid grid-cols-4 gap-9">
+          {[...Array(8)].map((_, index) => (
+            <div
+              key={index}
+              className="bg-white shadow-md rounded-md flex flex-col w-72"
+            >
+              <Skeleton className="h-48 rounded-lg" />
+
+              <div className="flex flex-col">
+                <Skeleton className="h-7 w-72 mt-[-27px]" />
+
+                <div className="flex flex-col gap-2 px-2 pb-2 pt-1">
+                  <div className="flex flex-col gap-1">
+                    <Skeleton className="h-6 w-full" />
+                    <Skeleton className="h-5 w-3/4" />
+                  </div>
+
+                  <div>
+                    <Skeleton className="h-4 w-full" />
+                  </div>
+
+                  <Skeleton className="h-12 w-full rounded-md" />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
   }
 
   if (isError) {

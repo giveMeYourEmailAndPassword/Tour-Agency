@@ -148,7 +148,8 @@ export default function OurTours() {
                               </p>
                             </div>
                             <p className="text-lg font-bold text-blue-600 whitespace-nowrap">
-                              {tour.price}$
+                              {tour.price}
+                              {tour.currency === "USD" ? "$" : "€"}
                             </p>
                           </div>
                         </div>

@@ -13,6 +13,7 @@ const fetchHotTours = async () => {
       authlogin: "Ikram.kv@gmail.com",
       authpass: "YkCfsYMj4322",
       city: "80", // Бишкек
+      city2: "60", // Алматы
       items: "40", // Получить 40 туров
       format: "json",
       picturetype: "1",
@@ -137,7 +138,7 @@ export default function HotTours() {
 
                 <div>
                   {/* Информация о вылете */}
-                  <p className="text-blue-500 text-sm">
+                  <p className="text-blue-500">
                     из {tour.departurenamefrom}, {formatDate(tour.flydate)}. На{" "}
                     {tour.nights} ночей
                   </p>
@@ -145,9 +146,22 @@ export default function HotTours() {
 
                 {/* Цены */}
                 <div className="flex items-center gap-2 bg-blue-100 p-2 rounded-md justify-between">
-                  <span className="text-sm text-black line-through">
-                    {tour.priceold} {tour.currency}
-                  </span>
+                  <div className="flex flex-col">
+                    <span className="text-sm text-black line-through">
+                      {tour.priceold}
+                      {tour.currency === "EUR"
+                        ? "€"
+                        : tour.currency === "USD"
+                        ? "$"
+                        : tour.currency}
+                    </span>
+                    <span className="text-orange-500">
+                      {Math.round(
+                        ((tour.priceold - tour.price) / tour.priceold) * 100
+                      )}
+                      % скидка
+                    </span>
+                  </div>
                   <p className="text-black flex gap-2 items-baseline">
                     за двоих
                     <span className=" text-lg text-orange-500 font-semibold">

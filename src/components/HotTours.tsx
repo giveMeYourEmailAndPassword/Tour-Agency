@@ -152,13 +152,24 @@ export default function HotTours() {
             onClick={() => navigate(`/hotel/${tour.hotelcode}`)}
           >
             {/* Фотография отеля */}
-            <img
-              src={`https:${tour.hotelpicture}` || "/default-image.jpg"}
-              alt={tour.hotelname}
-              width={320}
-              height={200}
-              className="rounded-lg object-cover h-48"
-            />
+            <div className="relative">
+              <img
+                src={`https:${tour.hotelpicture}` || "/default-image.jpg"}
+                alt={tour.hotelname}
+                width={320}
+                height={200}
+                className="rounded-lg object-cover h-48"
+              />
+              <div className="absolute top-4 right-4 z-10 bg-white/85 px-2 py-1 rounded-full">
+                <span className="text-orange-500 text-sm font-medium">
+                  -{" "}
+                  {Math.round(
+                    ((tour.priceold - tour.price) / tour.priceold) * 100
+                  )}
+                  %
+                </span>
+              </div>
+            </div>
 
             <div className="flex flex-col">
               {/* Звездность и рейтинг отеля */}
@@ -199,19 +210,13 @@ export default function HotTours() {
                 {/* Цены */}
                 <div className="flex items-center gap-2 bg-blue-100 p-2 rounded-md justify-between">
                   <div className="flex flex-col">
-                    <span className="text-sm text-black line-through">
+                    <span className="text-black line-through">
                       {tour.priceold}
                       {tour.currency === "EUR"
                         ? "€"
                         : tour.currency === "USD"
                         ? "$"
                         : tour.currency}
-                    </span>
-                    <span className="text-orange-500">
-                      {Math.round(
-                        ((tour.priceold - tour.price) / tour.priceold) * 100
-                      )}
-                      % скидка
                     </span>
                   </div>
                   <p className="text-black flex gap-2 items-baseline">

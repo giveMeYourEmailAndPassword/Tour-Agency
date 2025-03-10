@@ -86,7 +86,7 @@ export default function NewFlyingCountry() {
         (country) => country.id === selectedCountry
       );
       if (!countryExists) {
-        setSelectedCountry(countries[24].id);
+        setSelectedCountry(countries[25].id);
       }
     }
   }, [countries]);

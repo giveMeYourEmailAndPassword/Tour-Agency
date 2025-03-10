@@ -6,6 +6,7 @@ import { GoStarFill } from "react-icons/go";
 import { parse, format } from "date-fns";
 import { ru } from "date-fns/locale"; // Русская локализация
 import { Skeleton } from "@heroui/react";
+import { useState } from "react";
 
 const fetchHotTours = async () => {
   const response = await axios.get("https://tourvisor.ru/xml/hottours.php", {
@@ -14,7 +15,7 @@ const fetchHotTours = async () => {
       authpass: "YkCfsYMj4322",
       city: "80", // Бишкек
       city2: "60", // Алматы
-      items: "40", // Получить 40 туров
+      items: "60", // Получить 40 туров
       format: "json",
       picturetype: "1",
     },
@@ -24,17 +25,26 @@ const fetchHotTours = async () => {
 
 export default function HotTours() {
   const navigate = useNavigate();
+  const [selectedCity, setSelectedCity] = useState<string>("");
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["hotTours"],
     queryFn: fetchHotTours,
   });
 
+  const filteredTours = selectedCity
+    ? data?.hottours?.tour.filter(
+        (tour: any) => tour.departurecode === selectedCity
+      )
+    : data?.hottours?.tour || [];
+
+  console.log(filteredTours);
+
   if (isLoading) {
     return (
       <div className="flex flex-col my-14 mx-36 gap-8">
         <div className="flex items-end gap-1">
-          <h2 className="text-3xl font-semibold">Горящие туры из Бишкека</h2>
+          <h2 className="text-3xl font-semibold">Горящие туры</h2>
           <BsFire className="text-3xl text-orange-500" />
         </div>
 
@@ -83,17 +93,37 @@ export default function HotTours() {
     return format(date, "d MMMM", { locale: ru }); // "24 октября"
   };
 
-  const tours = data?.hottours?.tour || [];
-
   return (
     <div className="flex flex-col my-14 mx-36 gap-8">
-      <div className="flex items-end gap-1">
-        <h2 className="text-3xl font-semibold">Горящие туры из Бишкека</h2>
-        <BsFire className="text-3xl text-orange-500" />
+      <div className="flex flex-col gap-3">
+        <div className="flex items-end gap-1">
+          <h2 className="text-3xl font-semibold">Горящие туры</h2>
+          <BsFire className="text-3xl text-orange-500" />
+        </div>
+        <div className="flex gap-2">
+          <button
+            className="px-5 py-2 rounded-full bg-slate-200 text-black"
+            onClick={() => setSelectedCity("")}
+          >
+            Все
+          </button>
+          <button
+            className="px-5 py-2 rounded-full bg-slate-100 text-black text-opacity-70"
+            onClick={() => setSelectedCity("80")}
+          >
+            из Бишкека
+          </button>
+          <button
+            className="px-5 py-2 rounded-full bg-slate-100 text-black text-opacity-70"
+            onClick={() => setSelectedCity("60")}
+          >
+            из Алматы
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-4 gap-9">
-        {tours.map((tour: any, index: number) => (
+        {filteredTours.map((tour: any, index: number) => (
           <div
             key={index}
             className=" bg-white shadow-md rounded-md flex flex-col w-72 cursor-pointer"

@@ -53,7 +53,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     async function fetchCities() {
       try {
         const response = await fetch(
-          "https://tourvisor.ru/xml/list.php?type=departure&authlogin=Ikram.kv@gmail.com&authpass=YkCfsYMj4322"
+          "https://niyazbekov-tour-agency-64.deno.dev/api/cities"
         );
         const data = await response.json();
         const departures = data?.lists?.departures?.departure || [];
@@ -72,10 +72,10 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   // Запрос стран по выбранному городу
   useEffect(() => {
     async function fetchCountries() {
-      if (!params.param1) return; // Если не выбран город, ничего не делать
+      if (!params.param1) return;
       try {
         const response = await fetch(
-          `https://tourvisor.ru/xml/list.php?type=country&cndep=${params.param1}&authlogin=Ikram.kv@gmail.com&authpass=YkCfsYMj4322`
+          `https://niyazbekov-tour-agency-64.deno.dev/api/countries/${params.param1}`
         );
         const data = await response.json();
         const countriesData = data?.lists?.countries?.country || [];
@@ -119,9 +119,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
       setError(null);
 
       try {
-        const paramsToGet = new URLSearchParams({
-          authlogin: import.meta.env.VITE_AUTH_LOGIN || "Ikram.kv@gmail.com",
-          authpass: import.meta.env.VITE_AUTH_PASS || "YkCfsYMj4322",
+        const requestData = {
           departure: params.param1,
           country: params.param2,
           datefrom: params.param4.startDate,
@@ -135,17 +133,22 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
           rating: params.param8?.[0] ?? "0",
           starsbetter: params.param9?.toString() ?? "1",
           services: params.param10?.join(",") ?? "",
-          format: "json",
-          currency: "1",
-        });
+        };
 
         const requestResponse = await fetch(
-          `https://tourvisor.ru/xml/search.php?${paramsToGet.toString()}`
+          "https://niyazbekov-tour-agency-64.deno.dev/api/search",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(requestData),
+          }
         );
-        const requestData = await requestResponse.json();
+        const responseData = await requestResponse.json();
 
-        if (requestData.result?.requestid) {
-          setRequestId(requestData.result.requestid);
+        if (responseData.result?.requestid) {
+          setRequestId(responseData.result.requestid);
         }
       } catch (error) {
         console.error("Ошибка:", error);
@@ -160,7 +163,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     return () => {
       clearTimeout(timeoutId);
     };
-  }, [params.param1, params.param2, params.param4]); // Зависимости только от необходимых параметров
+  }, [params.param1, params.param2, params.param4]);
 
   // Модифицируем useEffect для опроса результатов
   useEffect(() => {
@@ -174,11 +177,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
       try {
         attempts++;
         const tourResponse = await fetch(
-          `https://tourvisor.ru/xml/result.php?authlogin=${
-            import.meta.env.VITE_AUTH_LOGIN
-          }&authpass=${
-            import.meta.env.VITE_AUTH_PASS
-          }&requestid=${requestId}&onpage=12&format=json`
+          `https://niyazbekov-tour-agency-64.deno.dev/api/results/${requestId}?onpage=12`
         );
         const tourData = await tourResponse.json();
         const status = tourData.data?.status;

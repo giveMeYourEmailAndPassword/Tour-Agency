@@ -9,17 +9,9 @@ import { Skeleton } from "@heroui/react";
 import { useState } from "react";
 
 const fetchHotTours = async () => {
-  const response = await axios.get("https://tourvisor.ru/xml/hottours.php", {
-    params: {
-      authlogin: "Ikram.kv@gmail.com",
-      authpass: "YkCfsYMj4322",
-      city: "80", // Бишкек
-      city2: "60", // Алматы
-      items: "60", // Получить 40 туров
-      format: "json",
-      picturetype: "1",
-    },
-  });
+  const response = await axios.get(
+    "https://niyazbekov-tour-agency-64.deno.dev/api/hot-tours"
+  );
   return response.data;
 };
 

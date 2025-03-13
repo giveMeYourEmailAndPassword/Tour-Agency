@@ -34,7 +34,7 @@ export default function StarsFilter({
 
   return (
     <div className="flex items-center px-4 bg-blue-600 rounded-lg border border-slate-300 w-[18rem]">
-      <div className="flex items-center gap-14">
+      <div className="flex items-center w-full justify-between px-1">
         <h1 className="text-base text-white">Класс отеля</h1>
 
         <div className="flex gap-0.5">

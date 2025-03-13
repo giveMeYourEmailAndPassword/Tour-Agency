@@ -8,10 +8,11 @@ import { ru } from "date-fns/locale"; // Русская локализация
 import { Skeleton } from "@heroui/react";
 import { useState } from "react";
 
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL || "http://localhost:8000/api";
+
 const fetchHotTours = async () => {
-  const response = await axios.get(
-    "https://niyazbekov-tour-agency-64.deno.dev/api/hot-tours"
-  );
+  const response = await axios.get(`${API_BASE_URL}/hot-tours`);
   return response.data;
 };
 
@@ -136,21 +137,25 @@ export default function HotTours() {
         </div>
       </div>
 
-      <div className="grid grid-cols-4 gap-9">
+      <div className="grid grid-cols-4 gap-4">
         {filteredTours.map((tour: any, index: number) => (
           <div
             key={index}
-            className=" bg-white shadow-md rounded-md flex flex-col w-72 cursor-pointer"
+            className="bg-white shadow-md rounded-md flex flex-col w-full cursor-pointer"
             onClick={() => navigate(`/hotel/${tour.hotelcode}`)}
           >
             {/* Фотография отеля */}
             <div className="relative">
               <img
-                src={`https:${tour.hotelpicture}` || "/default-image.jpg"}
+                src={
+                  tour.hotelpicture
+                    ? `https:${tour.hotelpicture}`
+                    : "/default-image.jpg"
+                }
                 alt={tour.hotelname}
                 width={320}
                 height={200}
-                className="rounded-lg object-cover h-48"
+                className="rounded-lg object-cover h-48 w-full"
               />
               <div className="absolute top-4 right-4 z-10 bg-white/85 px-2 py-1 rounded-full">
                 <span className="text-orange-500 text-sm font-medium">
@@ -163,9 +168,9 @@ export default function HotTours() {
               </div>
             </div>
 
-            <div className="flex flex-col">
+            <div className="flex flex-col relative">
               {/* Звездность и рейтинг отеля */}
-              <div className="flex items-center gap-2 justify-between px-2 bg-blue-400 py-1 absolute w-72 mt-[-27px]">
+              <div className="flex items-center gap-2 justify-between px-2 bg-blue-400 py-1 absolute w-full -top-[27px]">
                 <div className="flex gap-0.5">
                   {Array.from({ length: parseInt(tour.hotelstars) }, (_, i) => (
                     <GoStarFill key={i} className="text-white" />
@@ -186,14 +191,14 @@ export default function HotTours() {
                   </h3>
 
                   {/* Город и регион */}
-                  <p className="text-gray-500 font-medium">
+                  <p className="text-gray-500 font-medium text-sm">
                     {tour.hotelregionname}, {tour.countryname}
                   </p>
                 </div>
 
                 <div>
                   {/* Информация о вылете */}
-                  <p className="text-blue-500">
+                  <p className="text-blue-500 text-sm">
                     из {tour.departurenamefrom}, {formatDate(tour.flydate)}. На{" "}
                     {tour.nights} ночей
                   </p>
@@ -213,7 +218,7 @@ export default function HotTours() {
                   </div>
                   <p className="text-black flex gap-2 items-baseline">
                     за двоих
-                    <span className=" text-lg text-orange-500 font-semibold">
+                    <span className="text-lg text-orange-500 font-semibold">
                       {tour.price}
                       {tour.currency === "EUR"
                         ? "€"

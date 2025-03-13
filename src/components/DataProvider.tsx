@@ -20,6 +20,9 @@ type DataContextType = {
   countries: Countries[];
 };
 
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL || "http://localhost:8000/api";
+
 export const DataContext = createContext<DataContextType>(/* ... */);
 
 export const DataProvider = ({ children }: { children: ReactNode }) => {
@@ -52,9 +55,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     async function fetchCities() {
       try {
-        const response = await fetch(
-          "https://niyazbekov-tour-agency-64.deno.dev/api/cities"
-        );
+        const response = await fetch(`${API_BASE_URL}/cities`);
         const data = await response.json();
         const departures = data?.lists?.departures?.departure || [];
         const citiesData = departures.map((city: any) => ({
@@ -75,7 +76,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
       if (!params.param1) return;
       try {
         const response = await fetch(
-          `https://niyazbekov-tour-agency-64.deno.dev/api/countries/${params.param1}`
+          `${API_BASE_URL}/countries/${params.param1}`
         );
         const data = await response.json();
         const countriesData = data?.lists?.countries?.country || [];
@@ -135,16 +136,13 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
           services: params.param10?.join(",") ?? "",
         };
 
-        const requestResponse = await fetch(
-          "https://niyazbekov-tour-agency-64.deno.dev/api/search",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(requestData),
-          }
-        );
+        const requestResponse = await fetch(`${API_BASE_URL}/search`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(requestData),
+        });
         const responseData = await requestResponse.json();
 
         if (responseData.result?.requestid) {
@@ -177,7 +175,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
       try {
         attempts++;
         const tourResponse = await fetch(
-          `https://niyazbekov-tour-agency-64.deno.dev/api/results/${requestId}?onpage=12`
+          `${API_BASE_URL}/results/${requestId}?onpage=12`
         );
         const tourData = await tourResponse.json();
         const status = tourData.data?.status;

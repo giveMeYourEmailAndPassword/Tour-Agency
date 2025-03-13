@@ -78,7 +78,7 @@ export default function NewFlyingDate() {
   return (
     <Popover placement="bottom">
       <PopoverTrigger className="!z-0 !scale-100 !opacity-100">
-        <Button className="p-8 bg-white hover:bg-slate-100" size="lg">
+        <Button className="px-8  bg-white hover:bg-slate-100" size="lg">
           <div className="flex flex-col justify-between">
             <h1 className="text-sm mb-[1px] text-slate-600">Даты вылета</h1>
             <p className="text-black text-lg font-medium">

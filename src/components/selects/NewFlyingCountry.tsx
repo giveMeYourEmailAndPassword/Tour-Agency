@@ -75,6 +75,9 @@ const countryCodeMap: { [key: number]: string } = {
   19: "CZ", // Чехия
   45: "NL", // Нидерланды
   74: "BE", // Бельгия
+  71: "AL", // Албания
+  44: "GB", // Великобритания
+  52: "CH", // Швейцария
 };
 
 export default function NewFlyingCountry() {
@@ -84,11 +87,13 @@ export default function NewFlyingCountry() {
 
   useEffect(() => {
     if (countries.length > 0) {
-      const countryExists = countries.some(
-        (country) => country.id === selectedCountry
-      );
-      if (!countryExists) {
-        setSelectedCountry(countries[25].id);
+      // Ищем Турцию в списке стран
+      const turkey = countries.find((country) => country.label === "Турция");
+      if (turkey) {
+        setSelectedCountry(turkey.id);
+      } else {
+        // Если Турция не найдена, используем первую страну из списка
+        setSelectedCountry(countries[0].id);
       }
     }
   }, [countries]);
@@ -115,7 +120,7 @@ export default function NewFlyingCountry() {
       onOpenChange={(open) => setIsOpen(open)}
       key={countries.length}
     >
-      <PopoverTrigger className="w-64 h-full bg-white hover:bg-slate-100 rounded-xl !z-0 !scale-100 !opacity-100">
+      <PopoverTrigger className="w-64 h-full bg-white hover:bg-slate-100 rounded-xl !z-0 !scale-100 !opacity-100 py-1">
         <Button className="px-4">
           <div className="flex flex-col items-start justify-between w-full">
             {selectedCountryData && (
@@ -139,9 +144,7 @@ export default function NewFlyingCountry() {
                     : "text-slate-600"
                 }`}
               >
-                {selectedCountryData
-                  ? selectedCountryData.label
-                  : "Выберите страну"}
+                {selectedCountryData ? selectedCountryData.label : ""}
               </h1>
             </div>
           </div>

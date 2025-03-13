@@ -73,6 +73,8 @@ const countryCodeMap: { [key: number]: string } = {
   70: "KR", // Южная Корея
   49: "JP", // Япония
   19: "CZ", // Чехия
+  45: "NL", // Нидерланды
+  74: "BE", // Бельгия
 };
 
 export default function NewFlyingCountry() {

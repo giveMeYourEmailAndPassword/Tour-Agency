@@ -111,7 +111,7 @@ export default function HotelType() {
 
   return (
     <Popover placement="bottom" onOpenChange={(open) => setIsOpen(open)}>
-      <PopoverTrigger className="!z-0 !scale-100 !opacity-100 w-52">
+      <PopoverTrigger className="!z-0 !scale-100 !opacity-100 w-[20%]">
         <Button
           className="px-4 bg-blue-600 rounded-lg border border-slate-300"
           size="lg"

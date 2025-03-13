@@ -79,7 +79,7 @@ export default function Tourists() {
     >
       <PopoverTrigger className="!z-0 !scale-100 !opacity-100">
         <Button
-          className="p-8 bg-white hover:bg-slate-100"
+          className="p-7 bg-white hover:bg-slate-100"
           size="lg"
           onPress={() => setIsPopoverOpen(true)} // Открываем Popover при нажатии
         >

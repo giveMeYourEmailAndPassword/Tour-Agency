@@ -6,15 +6,16 @@ const API_BASE_URL =
 
 const fetchHotelDetails = async (hotelcode: string) => {
   const { data } = await axios.get(`${API_BASE_URL}/hotel/${hotelcode}`);
-  console.log("Полученные данные:", data);
   return data;
 };
 
-const useHotelDetails = (hotelcode: string) => {
+const useHotelDetails = (hotelcode: string, enabled: boolean = true) => {
   return useQuery({
     queryKey: ["hotelDetails", hotelcode],
     queryFn: () => fetchHotelDetails(hotelcode),
-    enabled: !!hotelcode,
+    enabled: enabled && !!hotelcode,
+    staleTime: Infinity,
+    cacheTime: 1000 * 60 * 60,
   });
 };
 

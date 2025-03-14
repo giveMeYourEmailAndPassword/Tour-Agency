@@ -3,6 +3,7 @@ import { DataContext } from "../components/DataProvider";
 import { GoStarFill } from "react-icons/go";
 import { useFormatDate } from "../Hooks/useFormatDate";
 import { Skeleton } from "@heroui/react";
+import { HotelImage } from "../components/HotelImage";
 
 export default function OurTours() {
   const { tours, loading, error, tourDataStatus } = useContext(DataContext);
@@ -69,13 +70,12 @@ export default function OurTours() {
         tours.map((hotel, index) => (
           <div
             key={index}
-            className="p-6 bg-white shadow-sm transition-shadow duration-300 rounded-2xl flex 
-             w-[55rem] h-full gap-5"
+            className="p-6 bg-white shadow-sm transition-shadow duration-300 rounded-2xl flex w-[55rem] h-full gap-5"
           >
-            <img
-              src={hotel.picturelink || "/placeholder.jpg"}
-              alt={hotel.hotelname}
-              className="rounded-md w-52 h-52 object-cover"
+            <HotelImage
+              imageUrl={hotel.picturelink}
+              hotelName={hotel.hotelname}
+              hotelcode={hotel.hotelcode}
             />
 
             <div className="flex flex-col w-full justify-center">
@@ -107,7 +107,9 @@ export default function OurTours() {
                     <p className="text-gray-700 text-sm">
                       {hotel.hotelrating !== "0" && (
                         <span className="text-sm text-white font-medium bg-blue-400 py-0.5 px-1 rounded-lg mr-1">
-                          {hotel.hotelrating}
+                          {hotel.hotelrating.length === 1
+                            ? `${hotel.hotelrating}.0`
+                            : hotel.hotelrating}
                         </span>
                       )}
                       {hotel.hoteldescription}

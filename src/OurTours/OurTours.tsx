@@ -4,6 +4,7 @@ import { GoStarFill } from "react-icons/go";
 import { useFormatDate } from "../Hooks/useFormatDate";
 import { Skeleton } from "@heroui/react";
 import { HotelImage } from "../components/HotelImage";
+import { HotelInfoButton } from "../components/HotelInfoButton";
 
 export default function OurTours() {
   const { tours, loading, error, tourDataStatus } = useContext(DataContext);
@@ -70,64 +71,65 @@ export default function OurTours() {
         tours.map((hotel, index) => (
           <div
             key={index}
-            className="p-6 bg-white shadow-sm transition-shadow duration-300 rounded-2xl flex w-[55rem] h-full gap-5"
+            className="p-6 bg-white shadow-sm transition-shadow duration-300 rounded-2xl flex flex-col w-[55rem]"
           >
-            <HotelImage
-              imageUrl={hotel.picturelink}
-              hotelName={hotel.hotelname}
-              hotelcode={hotel.hotelcode}
-            />
+            <div className="flex gap-5">
+              <HotelImage
+                imageUrl={hotel.picturelink}
+                hotelName={hotel.hotelname}
+                hotelcode={hotel.hotelcode}
+              />
 
-            <div className="flex flex-col w-full justify-center">
-              <div className="flex">
-                <div>
-                  <div className="flex flex-col mt-1">
-                    <div className="flex">
-                      {Array.from(
-                        {
-                          length: hotel.hotelstars === 0 ? 3 : hotel.hotelstars,
-                        },
-                        (_, index) => (
-                          <GoStarFill
-                            key={index}
-                            className="w-4 h-4 text-yellow-500"
-                          />
-                        )
-                      )}
+              <div className="flex flex-col w-full justify-center">
+                <div className="flex">
+                  <div>
+                    <div className="flex flex-col mt-1">
+                      <div className="flex">
+                        {Array.from(
+                          {
+                            length:
+                              hotel.hotelstars === 0 ? 3 : hotel.hotelstars,
+                          },
+                          (_, index) => (
+                            <GoStarFill
+                              key={index}
+                              className="w-4 h-4 text-yellow-500"
+                            />
+                          )
+                        )}
+                      </div>
+                      <h2 className="text-xl font-bold">{hotel.hotelname}</h2>
+                      <p className="text-gray-600">
+                        {hotel.regionname}
+                        {hotel.subregionname == 0
+                          ? ""
+                          : `, ${hotel.subregionname}`}
+                      </p>
                     </div>
-                    <h2 className="text-xl font-bold">{hotel.hotelname}</h2>
-                    <p className="text-gray-600">
-                      {hotel.regionname}
-                      {hotel.subregionname == 0
-                        ? ""
-                        : `, ${hotel.subregionname}`}
-                    </p>
-                  </div>
-                  <div className="mt-4">
-                    <p className="text-gray-700 text-sm">
-                      {hotel.hotelrating !== "0" && (
-                        <span className="text-sm text-white font-medium bg-blue-400 py-0.5 px-1 rounded-lg mr-1">
-                          {hotel.hotelrating.length === 1
-                            ? `${hotel.hotelrating}.0`
-                            : hotel.hotelrating}
-                        </span>
-                      )}
-                      {hotel.hoteldescription}
-                    </p>
+                    <div className="mt-4">
+                      <p className="text-gray-700 text-sm">
+                        {hotel.hotelrating !== "0" && (
+                          <span className="text-sm text-white font-medium bg-blue-400 py-0.5 px-1 rounded-lg mr-1">
+                            {hotel.hotelrating.length === 1
+                              ? `${hotel.hotelrating}.0`
+                              : hotel.hotelrating}
+                          </span>
+                        )}
+                        {hotel.hoteldescription}
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="flex gap-2 mt-4">
-                <button className="px-4 py-2 bg-slate-200 text-black/50 font-semibold text-xs rounded-full transition">
-                  ОБ ОТЕЛЕ
-                </button>
-                <button className="px-4 py-0.5 bg-slate-200 text-black/50 font-semibold text-xs rounded-full transition">
-                  ОТЗЫВЫ
-                </button>
-                <button className="px-4 py-0.5 bg-slate-200 text-black/50 font-semibold text-xs rounded-full transition">
-                  НА КАРТЕ
-                </button>
+                <div className="flex gap-2 mt-4">
+                  <HotelInfoButton hotelcode={hotel.hotelcode} />
+                  <button className="px-4 py-0.5 bg-slate-200 text-black/50 font-semibold text-xs rounded-full transition">
+                    ОТЗЫВЫ
+                  </button>
+                  <button className="px-4 py-0.5 bg-slate-200 text-black/50 font-semibold text-xs rounded-full transition">
+                    НА КАРТЕ
+                  </button>
+                </div>
               </div>
             </div>
           </div>

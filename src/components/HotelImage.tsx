@@ -5,6 +5,7 @@ import Thumbnails from "yet-another-react-lightbox/plugins/thumbnails";
 import "yet-another-react-lightbox/styles.css";
 import "yet-another-react-lightbox/plugins/thumbnails.css";
 import useHotelDetails from "../Hooks/UseHotelDetails";
+import HotelImage from "../components/HotelImage";
 
 interface HotelImageProps {
   imageUrl: string;
@@ -67,17 +68,10 @@ export const HotelImage = ({
           position: "bottom",
           width: 120,
           height: 80,
-          border: 1,
-          borderRadius: 4,
           padding: 4,
           gap: 8,
-        }}
-        styles={{
-          thumbnailsTrack: {},
-
-          thumbnailsContainer: {
-            width: "100%",
-          },
+          border: 1,
+          borderRadius: 4,
         }}
       />
     </div>

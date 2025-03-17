@@ -8,6 +8,8 @@ import { HotelInfoButton } from "../components/HotelInfoButton";
 import { HotelInfoContent } from "../components/HotelInfoContent";
 import { HotelReviewsButton } from "../components/HotelReviewsButton";
 import { HotelReviewsContent } from "../components/HotelReviewsContent";
+import { HotelMapContent } from "../components/HotelMapContent";
+import { HotelMapButton } from "../components/HotelMapButton";
 
 export default function OurTours() {
   const { tours, loading, error, tourDataStatus } = useContext(DataContext);
@@ -119,7 +121,7 @@ export default function OurTours() {
                           : `, ${hotel.subregionname}`}
                       </p>
                     </div>
-                    <div className="mt-4">
+                    <div className="mt-4 h-[4.7rem]">
                       <p className="text-gray-700 text-sm">
                         {hotel.hotelrating !== "0" && (
                           <span className="text-sm text-white font-medium bg-blue-400 py-0.5 px-1 rounded-lg mr-1">
@@ -143,16 +145,10 @@ export default function OurTours() {
                       onClick={() => toggleTab(hotel.hotelcode, "reviews")}
                       isActive={activeTabs[hotel.hotelcode] === "reviews"}
                     />
-                    <button
+                    <HotelMapButton
                       onClick={() => toggleTab(hotel.hotelcode, "map")}
-                      className={`px-4 py-0.5 ${
-                        activeTabs[hotel.hotelcode] === "map"
-                          ? "bg-blue-500 text-white"
-                          : "bg-slate-200 text-black/50"
-                      } font-semibold text-xs rounded-full transition`}
-                    >
-                      НА КАРТЕ
-                    </button>
+                      isActive={activeTabs[hotel.hotelcode] === "map"}
+                    />
                   </div>
                 </div>
               </div>

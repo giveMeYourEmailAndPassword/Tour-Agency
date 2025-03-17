@@ -10,6 +10,8 @@ import { HotelReviewsButton } from "../components/HotelReviewsButton";
 import { HotelReviewsContent } from "../components/HotelReviewsContent";
 import { HotelMapContent } from "../components/HotelMapContent";
 import { HotelMapButton } from "../components/HotelMapButton";
+import { HotelToursButton } from "../components/HotelToursButton";
+import { HotelToursContent } from "../components/HotelToursContent";
 
 export default function OurTours() {
   const { tours, loading, error, tourDataStatus } = useContext(DataContext);
@@ -18,7 +20,7 @@ export default function OurTours() {
   }>({});
   const { formatDate } = useFormatDate();
   const [activeTabs, setActiveTabs] = useState<{
-    [hotelcode: string]: "info" | "reviews" | "map" | null;
+    [hotelcode: string]: "info" | "reviews" | "map" | "tour" | null;
   }>({});
 
   if (loading) {
@@ -73,7 +75,10 @@ export default function OurTours() {
     }));
   };
 
-  const toggleTab = (hotelcode: string, tab: "info" | "reviews" | "map") => {
+  const toggleTab = (
+    hotelcode: string,
+    tab: "info" | "reviews" | "map" | "tour"
+  ) => {
     setActiveTabs((prev) => ({
       ...prev,
       [hotelcode]: prev[hotelcode] === tab ? null : tab,
@@ -136,19 +141,36 @@ export default function OurTours() {
                   </div>
                 </div>
                 <div className="mt-4">
-                  <div className="flex gap-2">
-                    <HotelInfoButton
-                      onClick={() => toggleTab(hotel.hotelcode, "info")}
-                      isActive={activeTabs[hotel.hotelcode] === "info"}
-                    />
-                    <HotelReviewsButton
-                      onClick={() => toggleTab(hotel.hotelcode, "reviews")}
-                      isActive={activeTabs[hotel.hotelcode] === "reviews"}
-                    />
-                    <HotelMapButton
-                      onClick={() => toggleTab(hotel.hotelcode, "map")}
-                      isActive={activeTabs[hotel.hotelcode] === "map"}
-                    />
+                  <div className="flex items-center justify-between">
+                    <div className="flex gap-2">
+                      <HotelInfoButton
+                        onClick={() => toggleTab(hotel.hotelcode, "info")}
+                        isActive={activeTabs[hotel.hotelcode] === "info"}
+                      />
+                      <HotelReviewsButton
+                        onClick={() => toggleTab(hotel.hotelcode, "reviews")}
+                        isActive={activeTabs[hotel.hotelcode] === "reviews"}
+                      />
+                      <HotelMapButton
+                        onClick={() => toggleTab(hotel.hotelcode, "map")}
+                        isActive={activeTabs[hotel.hotelcode] === "map"}
+                      />
+                    </div>
+
+                    <div className="flex gap-4 items-center">
+                      <p className="text-black text-lg font-semibold">
+                        {hotel.price}
+                        {hotel.currency === "EUR"
+                          ? "€"
+                          : hotel.currency === "USD"
+                          ? "$"
+                          : hotel.currency}
+                      </p>
+                      <HotelToursButton
+                        onClick={() => toggleTab(hotel.hotelcode, "tour")}
+                        isActive={activeTabs[hotel.hotelcode] === "tour"}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -162,6 +184,9 @@ export default function OurTours() {
               )}
               {activeTabs[hotel.hotelcode] === "map" && (
                 <HotelMapContent hotelcode={hotel.hotelcode} />
+              )}
+              {activeTabs[hotel.hotelcode] === "tour" && (
+                <HotelToursContent tours={hotel.tours.tour} />
               )}
             </div>
           </div>

@@ -5,6 +5,7 @@ import { useFormatDate } from "../Hooks/useFormatDate";
 import { Skeleton } from "@heroui/react";
 import { HotelImage } from "../components/HotelImage";
 import { HotelInfoButton } from "../components/HotelInfoButton";
+import { HotelInfoContent } from "../components/HotelInfoContent";
 
 export default function OurTours() {
   const { tours, loading, error, tourDataStatus } = useContext(DataContext);
@@ -12,6 +13,9 @@ export default function OurTours() {
     [key: number]: boolean;
   }>({});
   const { formatDate } = useFormatDate();
+  const [activeTab, setActiveTab] = useState<"info" | "reviews" | "map" | null>(
+    null
+  );
 
   if (loading) {
     return (
@@ -120,17 +124,52 @@ export default function OurTours() {
                     </div>
                   </div>
                 </div>
-
-                <div className="flex gap-2 mt-4">
-                  <HotelInfoButton hotelcode={hotel.hotelcode} />
-                  <button className="px-4 py-0.5 bg-slate-200 text-black/50 font-semibold text-xs rounded-full transition">
-                    ОТЗЫВЫ
-                  </button>
-                  <button className="px-4 py-0.5 bg-slate-200 text-black/50 font-semibold text-xs rounded-full transition">
-                    НА КАРТЕ
-                  </button>
+                <div className="mt-4">
+                  <div className="flex gap-2">
+                    <HotelInfoButton
+                      hotelcode={hotel.hotelcode}
+                      onClick={() =>
+                        setActiveTab(activeTab === "info" ? null : "info")
+                      }
+                    />
+                    <button
+                      onClick={() =>
+                        setActiveTab(activeTab === "reviews" ? null : "reviews")
+                      }
+                      className={`px-4 py-0.5 ${
+                        activeTab === "reviews"
+                          ? "bg-blue-500 text-white"
+                          : "bg-slate-200 text-black/50"
+                      } font-semibold text-xs rounded-full transition`}
+                    >
+                      ОТЗЫВЫ
+                    </button>
+                    <button
+                      onClick={() =>
+                        setActiveTab(activeTab === "map" ? null : "map")
+                      }
+                      className={`px-4 py-0.5 ${
+                        activeTab === "map"
+                          ? "bg-blue-500 text-white"
+                          : "bg-slate-200 text-black/50"
+                      } font-semibold text-xs rounded-full transition`}
+                    >
+                      НА КАРТЕ
+                    </button>
+                  </div>
                 </div>
               </div>
+            </div>
+            <div className="mt-4">
+              {activeTab === "info" && (
+                <HotelInfoContent hotelcode={hotel.hotelcode} />
+              )}
+              {activeTab === "reviews" && (
+                <ReviewsContent hotelcode={hotel.hotelcode} />
+              )}
+              {activeTab === "map" && (
+                <MapContent hotelcode={hotel.hotelcode} />
+              )}
             </div>
           </div>
         ))

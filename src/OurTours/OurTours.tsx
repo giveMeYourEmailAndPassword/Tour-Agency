@@ -6,6 +6,8 @@ import { Skeleton } from "@heroui/react";
 import { HotelImage } from "../components/HotelImage";
 import { HotelInfoButton } from "../components/HotelInfoButton";
 import { HotelInfoContent } from "../components/HotelInfoContent";
+import { HotelReviewsButton } from "../components/HotelReviewsButton";
+import { HotelReviewsContent } from "../components/HotelReviewsContent";
 
 export default function OurTours() {
   const { tours, loading, error, tourDataStatus } = useContext(DataContext);
@@ -13,9 +15,9 @@ export default function OurTours() {
     [key: number]: boolean;
   }>({});
   const { formatDate } = useFormatDate();
-  const [activeTab, setActiveTab] = useState<"info" | "reviews" | "map" | null>(
-    null
-  );
+  const [activeTabs, setActiveTabs] = useState<{
+    [hotelcode: string]: "info" | "reviews" | "map" | null;
+  }>({});
 
   if (loading) {
     return (
@@ -66,6 +68,13 @@ export default function OurTours() {
     setExpandedCards((prev: { [key: number]: boolean }) => ({
       ...prev,
       [hotelIndex]: !prev[hotelIndex],
+    }));
+  };
+
+  const toggleTab = (hotelcode: string, tab: "info" | "reviews" | "map") => {
+    setActiveTabs((prev) => ({
+      ...prev,
+      [hotelcode]: prev[hotelcode] === tab ? null : tab,
     }));
   };
 
@@ -127,29 +136,17 @@ export default function OurTours() {
                 <div className="mt-4">
                   <div className="flex gap-2">
                     <HotelInfoButton
-                      hotelcode={hotel.hotelcode}
-                      onClick={() =>
-                        setActiveTab(activeTab === "info" ? null : "info")
-                      }
+                      onClick={() => toggleTab(hotel.hotelcode, "info")}
+                      isActive={activeTabs[hotel.hotelcode] === "info"}
+                    />
+                    <HotelReviewsButton
+                      onClick={() => toggleTab(hotel.hotelcode, "reviews")}
+                      isActive={activeTabs[hotel.hotelcode] === "reviews"}
                     />
                     <button
-                      onClick={() =>
-                        setActiveTab(activeTab === "reviews" ? null : "reviews")
-                      }
+                      onClick={() => toggleTab(hotel.hotelcode, "map")}
                       className={`px-4 py-0.5 ${
-                        activeTab === "reviews"
-                          ? "bg-blue-500 text-white"
-                          : "bg-slate-200 text-black/50"
-                      } font-semibold text-xs rounded-full transition`}
-                    >
-                      ОТЗЫВЫ
-                    </button>
-                    <button
-                      onClick={() =>
-                        setActiveTab(activeTab === "map" ? null : "map")
-                      }
-                      className={`px-4 py-0.5 ${
-                        activeTab === "map"
+                        activeTabs[hotel.hotelcode] === "map"
                           ? "bg-blue-500 text-white"
                           : "bg-slate-200 text-black/50"
                       } font-semibold text-xs rounded-full transition`}
@@ -161,14 +158,14 @@ export default function OurTours() {
               </div>
             </div>
             <div className="mt-4">
-              {activeTab === "info" && (
+              {activeTabs[hotel.hotelcode] === "info" && (
                 <HotelInfoContent hotelcode={hotel.hotelcode} />
               )}
-              {activeTab === "reviews" && (
-                <ReviewsContent hotelcode={hotel.hotelcode} />
+              {activeTabs[hotel.hotelcode] === "reviews" && (
+                <HotelReviewsContent hotelcode={hotel.hotelcode} />
               )}
-              {activeTab === "map" && (
-                <MapContent hotelcode={hotel.hotelcode} />
+              {activeTabs[hotel.hotelcode] === "map" && (
+                <HotelMapContent hotelcode={hotel.hotelcode} />
               )}
             </div>
           </div>

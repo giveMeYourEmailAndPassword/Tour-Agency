@@ -1,4 +1,5 @@
 import useHotelDetails from "../Hooks/UseHotelDetails";
+import { CircularProgress } from "@heroui/progress";
 
 interface HotelInfoContentProps {
   hotelcode: string;
@@ -15,7 +16,11 @@ export const HotelInfoContent = ({ hotelcode }: HotelInfoContentProps) => {
   };
 
   if (isLoading) {
-    return <div className="text-center text-gray-500">Загрузка...</div>;
+    return (
+      <div className="flex justify-center items-center h-full">
+        <CircularProgress />
+      </div>
+    );
   }
 
   return (

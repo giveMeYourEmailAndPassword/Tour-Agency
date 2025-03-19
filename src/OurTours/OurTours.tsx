@@ -84,12 +84,12 @@ export default function OurTours() {
   };
 
   return (
-    <div className="flex flex-wrap gap-8 p-12 justify-center items-stretch bg-gray-50">
+    <div className="flex flex-wrap gap-4 p-12 justify-center items-stretch bg-gray-50">
       {tours.length && tours[0]?.tours?.tour ? (
         tours.map((hotel, index) => (
           <div
             key={index}
-            className="p-6 bg-white shadow-sm transition-shadow duration-300 rounded-2xl flex flex-col w-[55rem]"
+            className="p-6 bg-white shadow-sm transition-shadow duration-300 rounded-xl flex flex-col w-[55rem]"
           >
             <div className="flex gap-5">
               <HotelImage

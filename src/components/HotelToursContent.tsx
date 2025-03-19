@@ -1,5 +1,6 @@
 import { format, parse } from "date-fns";
 import { ru } from "date-fns/locale";
+import { useState } from "react";
 
 interface Tour {
   price: number;
@@ -29,18 +30,19 @@ interface HotelToursContentProps {
 }
 
 export const HotelToursContent = ({ tours }: HotelToursContentProps) => {
-  const formatDate = (dateString: string) => {
-    // Парсим строку в объект Date
-    const date = parse(dateString, "dd.MM.yyyy", new Date());
+  const [showAll, setShowAll] = useState(false);
 
-    // Форматируем дату в нужный формат
-    return format(date, "d MMMM", { locale: ru }); // "24 октября"
+  const formatDate = (dateString: string) => {
+    const date = parse(dateString, "dd.MM.yyyy", new Date());
+    return format(date, "d MMMM", { locale: ru });
   };
+
+  const displayedTours = showAll ? tours : tours.slice(0, 5);
 
   return (
     <div className="space-y-4">
       {/* Заголовки */}
-      <div className="flex justify-between items-start">
+      <div className="flex justify-between items-start mb-[-10px]">
         <div className="flex-1">
           <div className="grid grid-cols-3">
             <p className="text-xs font-medium text-gray-500">
@@ -52,13 +54,13 @@ export const HotelToursContent = ({ tours }: HotelToursContentProps) => {
         </div>
         <div className="text-right ml-4">
           {/* Пустой div для выравнивания с ценой */}
-          <div style={{ width: "100px" }}></div>
+          <div style={{ width: "120px" }}></div>
         </div>
       </div>
 
-      {tours.map((tour, index) => (
+      {displayedTours.map((tour, index) => (
         <div key={index} className="border-t pt-4">
-          <div className="flex justify-between items-start">
+          <div className="flex justify-between items-end">
             <div className="flex-1">
               <div className="grid grid-cols-3 gap-4">
                 <div>
@@ -98,6 +100,17 @@ export const HotelToursContent = ({ tours }: HotelToursContentProps) => {
           </div>
         </div>
       ))}
+
+      {tours.length > 5 && !showAll && (
+        <div className="flex justify-center">
+          <button
+            onClick={() => setShowAll(true)}
+            className="bg-slate-200 rounded-full px-4 py-2 text-black/50 hover:bg-slate-300"
+          >
+            Показать больше туров
+          </button>
+        </div>
+      )}
     </div>
   );
 };

@@ -24,9 +24,9 @@ export const HotelInfoContent = ({ hotelcode }: HotelInfoContentProps) => {
   }
 
   return (
-    <div className="grid grid-cols-2 gap-6 bg-slate-50 p-4 rounded-xl border-t pt-4">
+    <div className="grid grid-cols-2 gap-6 p-4  border-t pt-4">
       {/* Левая колонка */}
-      <div className="space-y-4">
+      <div className="space-y-4 ">
         {hotelDetails?.data?.hotel?.placement && (
           <div>
             <h3 className="font-semibold text-gray-700 mb-2">Расположение</h3>

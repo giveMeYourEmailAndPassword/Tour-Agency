@@ -27,29 +27,34 @@ export default function OurTours() {
     return (
       <div className="flex flex-wrap gap-8 p-12 justify-center items-stretch bg-gray-50">
         {[...Array(6)].map((_, index) => (
-          <div key={index} className="w-[32rem] min-h-[45rem]">
-            <Skeleton className="rounded-2xl w-full h-64 mb-4" />
-            <div className="space-y-4">
-              <div>
-                <Skeleton className="h-8 w-3/4 rounded-lg" />
-                <Skeleton className="h-6 w-1/2 rounded-lg mt-2" />
+          <div
+            key={index}
+            className="p-6 bg-white shadow-sm transition-shadow duration-300 rounded-2xl flex flex-col w-[55rem]"
+          >
+            <div className="flex gap-5">
+              <div className="w-[19rem] h-[14rem]">
+                <Skeleton className="rounded-lg w-full h-full" />
               </div>
-              <div className="flex gap-4">
-                <Skeleton className="h-10 w-1/2 rounded-lg" />
-                <Skeleton className="h-10 w-1/2 rounded-lg" />
-              </div>
-              <div className="space-y-3">
-                <Skeleton className="h-6 w-1/3 rounded-lg" />
-                {[...Array(3)].map((_, idx) => (
-                  <Skeleton key={idx} className="h-24 w-full rounded-lg" />
-                ))}
-              </div>
-              <div className="flex justify-between mt-4">
-                <div className="space-y-2">
-                  <Skeleton className="h-5 w-32 rounded-lg" />
-                  <Skeleton className="h-5 w-24 rounded-lg" />
+
+              <div className="flex flex-col w-full justify-center">
+                <div className="flex">
+                  <div>
+                    <div className="flex flex-col mt-1">
+                      <Skeleton className="h-7 w-64 rounded-lg mb-2" />
+                      <Skeleton className="h-5 w-48 rounded-lg" />
+                    </div>
+                    <div className="flex flex-col mt-1">
+                      <Skeleton className="h-7 w-64 rounded-lg mb-2" />
+                      <Skeleton className="h-5 w-48 rounded-lg" />
+                    </div>
+                    <div className="mt-4">
+                      <div className="flex gap-2 items-center mb-2">
+                        <Skeleton className="h-6 w-10 rounded-lg" />
+                        <Skeleton className="h-6 w-[90%] rounded-lg" />
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <Skeleton className="h-10 w-24 rounded-lg" />
               </div>
             </div>
           </div>
@@ -67,13 +72,6 @@ export default function OurTours() {
   }
 
   console.log(tourDataStatus);
-
-  const toggleTours = (hotelIndex: number) => {
-    setExpandedCards((prev: { [key: number]: boolean }) => ({
-      ...prev,
-      [hotelIndex]: !prev[hotelIndex],
-    }));
-  };
 
   const toggleTab = (
     hotelcode: string,

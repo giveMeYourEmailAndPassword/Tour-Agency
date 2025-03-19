@@ -18,7 +18,7 @@ export const HotelInfoContent = ({ hotelcode }: HotelInfoContentProps) => {
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-full">
-        <CircularProgress />
+        <CircularProgress color="default" />
       </div>
     );
   }

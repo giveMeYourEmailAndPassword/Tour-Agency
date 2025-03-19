@@ -12,7 +12,7 @@ export const HotelMapContent = ({ hotelcode }: HotelMapContentProps) => {
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-full">
-        <CircularProgress />
+        <CircularProgress color="default" />
       </div>
     );
   }

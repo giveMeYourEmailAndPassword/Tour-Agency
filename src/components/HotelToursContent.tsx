@@ -40,11 +40,11 @@ export const HotelToursContent = ({ tours }: HotelToursContentProps) => {
   const displayedTours = showAll ? tours : tours.slice(0, 5);
 
   return (
-    <div className="space-y-4">
+    <div className="bg-white rounded-lg">
       {/* Заголовки */}
-      <div className="flex justify-between items-start mb-[-10px]">
+      <div className="flex justify-between items-center pb-3 px-4">
         <div className="flex-1">
-          <div className="grid grid-cols-3">
+          <div className="grid grid-cols-[2.5fr_1fr_2fr] gap-4">
             <p className="text-xs font-medium text-gray-500">
               РЕЙС / ПРОГРАММА
             </p>
@@ -52,49 +52,56 @@ export const HotelToursContent = ({ tours }: HotelToursContentProps) => {
             <p className="text-xs font-medium text-gray-500">НОМЕР / ПИТАНИЕ</p>
           </div>
         </div>
-        <div className="text-right ml-4">
-          {/* Пустой div для выравнивания с ценой */}
-          <div style={{ width: "120px" }}></div>
-        </div>
+        <div className="w-[100px] text-xs font-medium text-gray-500 text-center"></div>
       </div>
 
+      <div className="border-t border-gray-100"></div>
+
       {displayedTours.map((tour, index) => (
-        <div key={index} className="border-t pt-4">
-          <div className="flex justify-between items-end">
+        <div
+          key={index}
+          className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
+        >
+          <div className="flex justify-between items-center px-4 py-4">
             <div className="flex-1">
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-[2.5fr_1fr_2fr] gap-4">
                 <div>
-                  <p className="font-medium text-black">{tour.tourname}</p>
-                  <p className="text-sm text-black">{tour.operatorname}</p>
+                  <p className="font-medium text- text-black line-clamp-1">
+                    {tour.tourname}
+                  </p>
+                  <p className="text-xs text-gray-600 mt-1">
+                    {tour.operatorname}
+                  </p>
                 </div>
 
                 <div>
-                  <p className="font-medium text-black">
+                  <p className="font-medium text-sm text-black">
                     {formatDate(tour.flydate)}
                   </p>
-                  <p className="text-sm text-black">{tour.nights} ночей</p>
+                  <p className="text-sm text-gray-600 mt-1">
+                    {tour.nights} ночей
+                  </p>
                 </div>
 
                 <div>
-                  <p className="font-medium text-black">
+                  <p className="font-medium text-sm text-black">
                     {tour.room} / {tour.adults} взр
                   </p>
-                  <p className="text-sm text-black">{tour.mealrussian}</p>
+                  <p className="text-gray-600 text-sm mt-1">
+                    {tour.mealrussian}
+                  </p>
                 </div>
               </div>
             </div>
 
-            <div className="text-right ml-4">
-              <p className="text-2xl font-bold text-black">
+            <div className="w-[100px] text-right">
+              <button className="inline-flex px-4 py-2 bg-slate-100 rounded-full font-medium text-black hover:bg-slate-200 transition-colors">
                 {tour.price}
                 {tour.currency === "EUR"
                   ? "€"
                   : tour.currency === "USD"
                   ? "$"
                   : tour.currency}
-              </p>
-              <button className="mt-2 px-4 py-2 bg-green-500 text-white rounded-full text-sm hover:bg-green-700 transition">
-                Забронировать
               </button>
             </div>
           </div>
@@ -102,10 +109,10 @@ export const HotelToursContent = ({ tours }: HotelToursContentProps) => {
       ))}
 
       {tours.length > 5 && !showAll && (
-        <div className="flex justify-center">
+        <div className="flex justify-center mt-6">
           <button
             onClick={() => setShowAll(true)}
-            className="bg-slate-200 rounded-full px-4 py-2 text-black/50 hover:bg-slate-300"
+            className="bg-slate-100 rounded-full px-6 py-2.5 text-gray-600 hover:bg-slate-200 transition-colors"
           >
             Показать больше туров
           </button>

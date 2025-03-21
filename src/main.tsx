@@ -24,7 +24,10 @@ createRoot(document.getElementById("root")!).render(
               {/* Наши туры (место где показываются наши туры) */}
               <Route path="/OurTours" element={<OurTours />} />
 
-              <Route path="/hotel/:hotelcode" element={<HotelDetails />} />
+              <Route
+                path="/hotel/:hotelcode/:tourId"
+                element={<HotelDetails />}
+              />
             </Routes>
           </QueryClientProvider>
         </BrowserRouter>

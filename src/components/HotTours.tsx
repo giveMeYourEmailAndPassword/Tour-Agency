@@ -11,6 +11,79 @@ import { useState } from "react";
 const API_BASE_URL =
   import.meta.env.VITE_API_URL || "http://localhost:8000/api";
 
+const countryCodeMap: { [key: string]: string } = {
+  Абхазия: "GE",
+  Австрия: "AT",
+  Азербайджан: "AZ",
+  Андорра: "AD",
+  Аргентина: "AR",
+  Армения: "AM",
+  Бахрейн: "BH",
+  Беларусь: "BY",
+  Болгария: "BG",
+  Бразилия: "BR",
+  Венгрия: "HU",
+  Венесуэла: "VE",
+  Вьетнам: "VN",
+  Германия: "DE",
+  Греция: "GR",
+  Грузия: "GE",
+  Доминикана: "DO",
+  Египет: "EG",
+  Израиль: "IL",
+  Индия: "IN",
+  Индонезия: "ID",
+  Иордания: "JO",
+  Иран: "IR",
+  Испания: "ES",
+  Италия: "IT",
+  Казахстан: "KZ",
+  Камбоджа: "KH",
+  Катар: "QA",
+  Кения: "KE",
+  Кипр: "CY",
+  Киргизия: "KG",
+  Китай: "CN",
+  Куба: "CU",
+  Ливан: "LB",
+  Маврикий: "MU",
+  Малайзия: "MY",
+  Мальдивы: "MV",
+  Мальта: "MT",
+  Марокко: "MA",
+  Мексика: "MX",
+  Мьянма: "MM",
+  Непал: "NP",
+  ОАЭ: "AE",
+  Оман: "OM",
+  Панама: "PA",
+  Португалия: "PT",
+  Россия: "RU",
+  "Саудовская Аравия": "SA",
+  Сейшелы: "SC",
+  Сербия: "RS",
+  Сингапур: "SG",
+  Словения: "SI",
+  Таиланд: "TH",
+  Танзания: "TZ",
+  Тунис: "TN",
+  Турция: "TR",
+  Узбекистан: "UZ",
+  Филиппины: "PH",
+  Франция: "FR",
+  Хорватия: "HR",
+  Черногория: "ME",
+  "Шри-Ланка": "LK",
+  "Южная Корея": "KR",
+  Япония: "JP",
+  Чехия: "CZ",
+  Нидерланды: "NL",
+  Бельгия: "BE",
+  Албания: "AL",
+  Великобритания: "GB",
+  Швейцария: "CH",
+};
+
 const fetchHotTours = async () => {
   const response = await axios.get(`${API_BASE_URL}/hot-tours`);
   return response.data;
@@ -142,7 +215,7 @@ export default function HotTours() {
           <div
             key={index}
             className="bg-white shadow-md rounded-md flex flex-col w-full cursor-pointer"
-            onClick={() => navigate(`/hotel/${tour.hotelcode}`)}
+            onClick={() => navigate(`/hotel/${tour.hotelcode}/${tour.tourid}`)}
           >
             {/* Фотография отеля */}
             <div className="relative">
@@ -191,7 +264,16 @@ export default function HotTours() {
                   </h3>
 
                   {/* Город и регион */}
-                  <p className="text-gray-500 font-medium text-sm">
+                  <p className="text-gray-500 font-medium text-sm flex items-center gap-1">
+                    {countryCodeMap[tour.countryname] && (
+                      <img
+                        src={`https://flagcdn.com/${countryCodeMap[
+                          tour.countryname
+                        ].toLowerCase()}.svg`}
+                        alt={tour.countryname}
+                        className="w-4 h-3 object-cover rounded-sm"
+                      />
+                    )}
                     {tour.hotelregionname}, {tour.countryname}
                   </p>
                 </div>

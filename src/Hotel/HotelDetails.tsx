@@ -5,14 +5,15 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AccordionSection from "./HotelAccordion";
 import ReviewsModal from "../components/ReviewsModal";
 import HotelMap from "../components/HotelMap";
+import { PiMapPinFill } from "react-icons/pi";
 
 export default function HotelDetails() {
-  const { hotelcode } = useParams();
-  const { data, isLoading, isError } = useHotelDetails(hotelcode!);
+  const { hotelcode, tourId } = useParams();
+  const { data, isLoading, isError } = useHotelDetails(hotelcode!, tourId!);
   const [openSections, setOpenSections] = useState<string[]>([]);
   const [isReviewsOpen, setIsReviewsOpen] = useState(false);
   const [isMapOpen, setIsMapOpen] = useState(false);
@@ -25,6 +26,15 @@ export default function HotelDetails() {
     );
   };
 
+  useEffect(() => {
+    if (data?.hotel?.data?.hotel) {
+      console.log("Данные об отеле успешно загружены");
+    }
+    if (isError) {
+      console.error("Ошибка при загрузке данных об отеле:", isError);
+    }
+  }, [data?.hotel?.data?.hotel, isError]);
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
@@ -35,7 +45,7 @@ export default function HotelDetails() {
     );
   }
 
-  if (isError || !data?.data?.hotel) {
+  if (isError || !data?.hotel?.data?.hotel) {
     return (
       <div className="flex items-center justify-center h-screen bg-gradient-to-br from-red-50 to-pink-50">
         <div className="text-3xl font-medium text-red-600">
@@ -45,9 +55,10 @@ export default function HotelDetails() {
     );
   }
 
-  const hotel = data?.data?.hotel;
+  const hotel = data?.hotel?.data?.hotel;
+  const tour = data?.tour?.data?.tour;
 
-  if (!hotel) {
+  if (!hotel || !tour) {
     return (
       <div className="flex items-center justify-center h-screen bg-gradient-to-br from-gray-50 to-slate-50">
         <div className="text-3xl font-medium text-gray-600">
@@ -112,19 +123,43 @@ export default function HotelDetails() {
           </div>
         )}
 
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div className="flex flex-col py-4">
+          <div className="flex items-baseline gap-3">
+            <h1 className="text-3xl font-bold mb-2 bg-clip-text text-gray-800 truncate max-w-[70%]">
+              {hotel.name}
+            </h1>
+            <div className="flex-shrink-0 flex gap-2">
+              <div className="flex items-center gap-1 bg-yellow-100 px-3 py-1 rounded-full shadow-sm whitespace-nowrap">
+                <span className="text-yellow-500 text-2xl">★</span>
+                <span className="font-semibold text-lg">{hotel.rating}</span>
+              </div>
+              <div className="bg-blue-100 px-3 py-1 rounded-full shadow-sm flex items-center whitespace-nowrap">
+                <span className="text-blue-600 font-semibold text-lg">
+                  {hotel.stars} / 5
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <p className="text-gray-600 text-xl flex items-center gap-1">
+            <PiMapPinFill className="text-blue-600" />
+            {hotel.region}, {hotel.country}
+          </p>
+        </div>
+
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 pb-4">
           {/* Кнопки навигации */}
           <div className="flex justify-center gap-8 mb-12">
             <button
               onClick={() => setIsMapOpen(true)}
-              className="px-8 py-3 border-3 text-gray-500 rounded-2xl text-lg font-medium transition-colors"
+              className="px-8 py-2 border-3 text-gray-500 rounded-2xl font-medium transition-colors"
             >
               На карте
             </button>
 
             <button
               onClick={() => setIsReviewsOpen(true)}
-              className="px-14 py-3 border-3 text-gray-500 rounded-2xl text-lg font-medium transition-colors text-center"
+              className="px-14 py-2 border-3 text-gray-500 rounded-2xl font-medium transition-colors text-center"
             >
               Отзывы ({hotel.reviewscount})
             </button>
@@ -147,33 +182,12 @@ export default function HotelDetails() {
                   "_blank"
                 )
               }
-              className="px-8 py-3 border-3 text-gray-500 rounded-2xl text-lg font-medium transition-colors"
+              className="px-8 py-2 border-3 text-gray-500 rounded-2xl font-medium transition-colors"
             >
               You<span className="text-red-600">Tube</span>
             </button>
           </div>
           {/* Заголовок и рейтинг */}
-          <div className="mb-6 flex flex-col">
-            <div className="flex items-baseline gap-3">
-              <h1 className="text-4xl font-bold mb-2 bg-clip-text text-gray-800 truncate max-w-[70%]">
-                {hotel.name}
-              </h1>
-              <div className="flex-shrink-0 flex gap-3">
-                <div className="flex items-center gap-2 bg-yellow-100 px-4 py-1 rounded-full shadow-sm whitespace-nowrap">
-                  <span className="text-yellow-500 text-2xl">★</span>
-                  <span className="font-semibold text-lg">{hotel.rating}</span>
-                </div>
-                <div className="bg-blue-100 px-4 py-1 rounded-full shadow-sm flex items-center whitespace-nowrap">
-                  <span className="text-blue-600 font-semibold text-lg">
-                    {hotel.stars} / 5
-                  </span>
-                </div>
-              </div>
-            </div>
-            <p className="text-gray-600 text-2xl">
-              {hotel.region}, {hotel.country}
-            </p>
-          </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2 auto-rows-auto">
             {(() => {
@@ -209,10 +223,16 @@ export default function HotelDetails() {
                   content: hotel.roomtypes,
                   useFormatText: true,
                 },
-                hotel.services && {
-                  id: "services",
-                  title: "Сервисы",
-                  content: hotel.services,
+                hotel.servicefree && {
+                  id: "servicefree",
+                  title: "Бесплатные услуги",
+                  content: hotel.servicefree,
+                  useFormatText: true,
+                },
+                hotel.servicepay && {
+                  id: "servicepay",
+                  title: "Платные услуги",
+                  content: hotel.servicepay,
                   useFormatText: true,
                 },
                 hotel.child && {
@@ -221,10 +241,10 @@ export default function HotelDetails() {
                   content: hotel.child,
                   useFormatText: true,
                 },
-                hotel.meallist && {
+                hotel.mealtypes && {
                   id: "mealtypes",
                   title: "Питание",
-                  content: hotel.meallist,
+                  content: hotel.mealtypes,
                   useFormatText: true,
                 },
               ].filter(Boolean);

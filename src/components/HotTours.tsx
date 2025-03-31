@@ -274,7 +274,7 @@ export default function HotTours() {
                         className="w-4 h-3 object-cover rounded-sm"
                       />
                     )}
-                    {tour.hotelregionname}, {tour.countryname}
+                    {tour.countryname}, {tour.hotelregionname}
                   </p>
                 </div>
 

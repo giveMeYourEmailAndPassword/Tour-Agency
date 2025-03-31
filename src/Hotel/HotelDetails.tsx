@@ -18,6 +18,26 @@ export default function HotelDetails() {
   const [isReviewsOpen, setIsReviewsOpen] = useState(false);
   const [isMapOpen, setIsMapOpen] = useState(false);
 
+  // Добавляем эффект для управления скроллом body
+  useEffect(() => {
+    if (isReviewsOpen || isMapOpen) {
+      document.body.style.overflow = "hidden";
+      document.body.style.paddingRight = "0px";
+      document.documentElement.style.paddingRight = "0px";
+    } else {
+      document.body.style.overflow = "auto";
+      document.body.style.paddingRight = "0px";
+      document.documentElement.style.paddingRight = "0px";
+    }
+
+    // Очистка при размонтировании
+    return () => {
+      document.body.style.overflow = "auto";
+      document.body.style.paddingRight = "0px";
+      document.documentElement.style.paddingRight = "0px";
+    };
+  }, [isReviewsOpen, isMapOpen]);
+
   const toggleSection = (section: string) => {
     setOpenSections((prev) =>
       prev.includes(section)
@@ -125,7 +145,7 @@ export default function HotelDetails() {
 
         <div className="flex flex-col py-4">
           <div className="flex items-baseline gap-3">
-            <h1 className="text-3xl font-bold mb-2 bg-clip-text text-gray-800 truncate max-w-[70%]">
+            <h1 className="text-3xl font-bold bg-clip-text text-gray-800 truncate max-w-[70%]">
               {hotel.name}
             </h1>
             <div className="flex-shrink-0 flex gap-2">
@@ -143,11 +163,16 @@ export default function HotelDetails() {
 
           <p className="text-gray-600 text-xl flex items-center gap-1">
             <PiMapPinFill className="text-blue-600" />
-            {hotel.region}, {hotel.country}
+            {hotel.country}, {hotel.region}
           </p>
+
+          <div className="flex flex-col py-2">
+            <h2 className="text-2xl font-semibold">Об отеле</h2>
+            <p className="text-black text-lg">{hotel.description}</p>
+          </div>
         </div>
 
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 pb-4">
+        <div className="container mx-auto pb-4">
           {/* Кнопки навигации */}
           <div className="flex justify-center gap-8 mb-12">
             <button
@@ -187,7 +212,6 @@ export default function HotelDetails() {
               You<span className="text-red-600">Tube</span>
             </button>
           </div>
-          {/* Заголовок и рейтинг */}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2 auto-rows-auto">
             {(() => {

@@ -215,7 +215,11 @@ export default function HotTours() {
           <div
             key={index}
             className="bg-white shadow-md rounded-md flex flex-col w-full cursor-pointer"
-            onClick={() => navigate(`/hotel/${tour.hotelcode}/${tour.tourid}`)}
+            onClick={() =>
+              navigate(`/hotel/${tour.hotelcode}/${tour.tourid}`, {
+                state: { hotTourPrice: tour.price, currency: tour.currency },
+              })
+            }
           >
             {/* Фотография отеля */}
             <div className="relative">

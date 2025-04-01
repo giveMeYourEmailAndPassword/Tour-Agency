@@ -1,4 +1,4 @@
-import { useParams } from "react-router";
+import { useParams, useLocation } from "react-router";
 import useHotelDetails from "../Hooks/UseHotelDetails";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
@@ -10,9 +10,13 @@ import AccordionSection from "./HotelAccordion";
 import ReviewsModal from "../components/ReviewsModal";
 import HotelMap from "../components/HotelMap";
 import { PiMapPinFill } from "react-icons/pi";
+import { ImCalendar } from "react-icons/im";
 
 export default function HotelDetails() {
   const { hotelcode, tourId } = useParams();
+  const location = useLocation();
+  const hotTourPrice = location.state?.hotTourPrice;
+  const currency = location.state?.currency;
   const { data, isLoading, isError } = useHotelDetails(hotelcode!, tourId!);
   const [openSections, setOpenSections] = useState<string[]>([]);
   const [isReviewsOpen, setIsReviewsOpen] = useState(false);
@@ -206,8 +210,21 @@ export default function HotelDetails() {
           </div>
         </div>
 
-        <div>
-          <p className="text-black">{tour.price}</p>
+        <div className="container mx-auto pb-4">
+          <h2 className="text-2xl font-semibold">Информация о туре</h2>
+          <div>
+            <div className="flex items-center gap-2">
+              <ImCalendar />
+              <p className="text-black">{tour.flydate}</p>
+            </div>
+          </div>
+          <p className="text-black flex gap-2 items-baseline">
+            за двоих
+            <span className="text-lg text-orange-500 font-semibold">
+              {hotTourPrice || tour.price}
+              {currency === "EUR" ? "€" : currency === "USD" ? "$" : currency}
+            </span>
+          </p>
         </div>
 
         <div className="container mx-auto pb-4">

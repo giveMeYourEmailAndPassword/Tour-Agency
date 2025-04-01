@@ -166,15 +166,7 @@ export default function HotelDetails() {
             {hotel.country}, {hotel.region}
           </p>
 
-          <div className="flex flex-col py-2">
-            <h2 className="text-2xl font-semibold">Об отеле</h2>
-            <p className="text-black text-lg">{hotel.description}</p>
-          </div>
-        </div>
-
-        <div className="container mx-auto pb-4">
-          {/* Кнопки навигации */}
-          <div className="flex justify-center gap-8 mb-12">
+          <div className="flex justify-center gap-6 my-2">
             <button
               onClick={() => setIsMapOpen(true)}
               className="px-8 py-2 border-3 text-gray-500 rounded-2xl font-medium transition-colors"
@@ -212,7 +204,19 @@ export default function HotelDetails() {
               You<span className="text-red-600">Tube</span>
             </button>
           </div>
+        </div>
 
+        <div>
+          <p className="text-black">{tour.price}</p>
+        </div>
+
+        <div className="container mx-auto pb-4">
+          {hotel.description && (
+            <div className="flex flex-col py-2">
+              <h2 className="text-2xl font-semibold">Инфомрация об отеле</h2>
+              <p className="text-black text-lg">{hotel.description}</p>
+            </div>
+          )}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2 auto-rows-auto">
             {(() => {
               // Собираем все существующие секции в один массив

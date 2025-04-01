@@ -11,6 +11,11 @@ import ReviewsModal from "../components/ReviewsModal";
 import HotelMap from "../components/HotelMap";
 import { PiMapPinFill } from "react-icons/pi";
 import { ImCalendar } from "react-icons/im";
+import { IoMoonOutline } from "react-icons/io5";
+import { FaHome } from "react-icons/fa";
+import { FaBed } from "react-icons/fa6";
+import { IoAirplane } from "react-icons/io5";
+import { FaUtensils } from "react-icons/fa";
 
 export default function HotelDetails() {
   const { hotelcode, tourId } = useParams();
@@ -216,6 +221,33 @@ export default function HotelDetails() {
             <div className="flex items-center gap-2">
               <ImCalendar />
               <p className="text-black">{tour.flydate}</p>
+            </div>
+            <div className="flex items-center gap-2">
+              <IoMoonOutline />
+              <p className="text-black">{tour.nights} ночей</p>
+            </div>
+            <div className="flex items-center gap-2">
+              <FaUtensils />
+              <p className="text-black">{tour.meal}</p>
+            </div>
+            <div className="flex items-center gap-2">
+              <FaHome />
+              <p className="text-black">{tour.room}</p>
+            </div>
+            <div className="flex items-center gap-2">
+              <FaBed />
+              <p className="text-black">{tour.placement}</p>
+            </div>
+            <div className="flex flex-col">
+              <div className="flex items-center gap-2">
+                <IoAirplane className="-rotate-45" />
+                {`${tour.departurename} - ${tour.hotelregionname}`}
+              </div>
+
+              <div className="flex items-center gap-2">
+                <IoAirplane className="rotate-[135deg]" />
+                {`${tour.hotelregionname} - ${tour.departurename}`}
+              </div>
             </div>
           </div>
           <p className="text-black flex gap-2 items-baseline">

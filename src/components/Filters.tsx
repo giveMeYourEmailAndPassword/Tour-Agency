@@ -43,14 +43,19 @@ export default function Filters() {
         </div>
 
         <div className="flex justify-between w-full">
+          {/* Звездность */}
           <StarsFilter />
 
+          {/* Тип отеля */}
           <HotelType />
 
+          {/* Питание */}
           <Nourushment />
 
+          {/* Рейтинг */}
           <Raiting />
 
+          {/* Услуги отеля */}
           <HotelService />
         </div>
       </div>

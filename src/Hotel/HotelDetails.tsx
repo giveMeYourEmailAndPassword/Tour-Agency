@@ -16,11 +16,12 @@ import { FaHome } from "react-icons/fa";
 import { FaBed } from "react-icons/fa6";
 import { IoAirplane } from "react-icons/io5";
 import { FaUtensils } from "react-icons/fa";
+import { parse, format } from "date-fns";
+import { ru } from "date-fns/locale";
 
 export default function HotelDetails() {
   const { hotelcode, tourId } = useParams();
   const location = useLocation();
-  const hotTourPrice = location.state?.hotTourPrice;
   const currency = location.state?.currency;
   const { data, isLoading, isError } = useHotelDetails(hotelcode!, tourId!);
   const [openSections, setOpenSections] = useState<string[]>([]);
@@ -102,6 +103,26 @@ export default function HotelDetails() {
       .split(";")
       .map((item) => `· ${item.trim()}`)
       .join("\n");
+  };
+
+  const formatDate = (dateString: string) => {
+    // Парсим строку в объект Date
+    const date = parse(dateString, "dd.MM.yyyy", new Date());
+
+    // Форматируем дату в нужный формат
+    return format(date, "d MMMM", { locale: ru }); // "24 октября"
+  };
+
+  const getMealType = (meal: string) => {
+    const mealTypes = {
+      RO: "Без питания",
+      BB: "Только завтрак",
+      HB: "Завтрак, ужин",
+      FB: "Полный пансион",
+      AI: "Все включено",
+      UAI: "Ультра все включено",
+    };
+    return mealTypes[tour.meal as keyof typeof mealTypes] || tour.meal;
   };
 
   return (
@@ -220,7 +241,7 @@ export default function HotelDetails() {
           <div>
             <div className="flex items-center gap-2">
               <ImCalendar />
-              <p className="text-black">{tour.flydate}</p>
+              <p className="text-black">{formatDate(tour.flydate)}</p>
             </div>
             <div className="flex items-center gap-2">
               <IoMoonOutline />
@@ -228,7 +249,7 @@ export default function HotelDetails() {
             </div>
             <div className="flex items-center gap-2">
               <FaUtensils />
-              <p className="text-black">{tour.meal}</p>
+              <p className="text-black">{getMealType(tour.meal)}</p>
             </div>
             <div className="flex items-center gap-2">
               <FaHome />
@@ -253,8 +274,12 @@ export default function HotelDetails() {
           <p className="text-black flex gap-2 items-baseline">
             за двоих
             <span className="text-lg text-orange-500 font-semibold">
-              {hotTourPrice || tour.price}
-              {currency === "EUR" ? "€" : currency === "USD" ? "$" : currency}
+              {tour.price}
+              {tour.currency === "EUR"
+                ? "€"
+                : tour.currency === "USD"
+                ? "$"
+                : tour.currency}
             </span>
           </p>
         </div>
@@ -262,7 +287,7 @@ export default function HotelDetails() {
         <div className="container mx-auto pb-4">
           {hotel.description && (
             <div className="flex flex-col py-2">
-              <h2 className="text-2xl font-semibold">Инфомрация об отеле</h2>
+              <h2 className="text-2xl font-semibold">Информация об отеле</h2>
               <p className="text-black text-lg">{hotel.description}</p>
             </div>
           )}

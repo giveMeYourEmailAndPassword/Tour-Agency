@@ -238,20 +238,22 @@ export default function HotelDetails() {
         </div>
 
         <div className="container mx-auto pb-4">
-          <h2 className="text-2xl font-semibold">Информация о туре</h2>
           <div className="flex flex-col gap-2">
-            <div className="flex gap-3">
-              <div className="flex items-center gap-1">
-                <ImCalendar />
-                <p className="text-black">{formatDate(tour.flydate)}</p>
-              </div>
-              <div className="flex items-center gap-1">
-                <IoMoonOutline />
-                <p className="text-black">{tour.nights} ночей</p>
-              </div>
-              <div className="flex items-center gap-1">
-                <FaUtensils />
-                <p className="text-black">{getMealType(tour.meal)}</p>
+            <div className="flex flex-col">
+              <h2 className="text-2xl font-semibold">Информация о туре</h2>
+              <div className="flex gap-3">
+                <div className="flex items-center gap-1">
+                  <ImCalendar />
+                  <p className="text-black">{formatDate(tour.flydate)}</p>
+                </div>
+                <div className="flex items-center gap-1">
+                  <IoMoonOutline />
+                  <p className="text-black">{tour.nights} ночей</p>
+                </div>
+                <div className="flex items-center gap-1">
+                  <FaUtensils />
+                  <p className="text-black">{getMealType(tour.meal)}</p>
+                </div>
               </div>
             </div>
 
@@ -273,7 +275,7 @@ export default function HotelDetails() {
               </div>
             </div>
 
-            <div className="flex flex-col">
+            <div className="flex flex-col w-96">
               <h3 className="text-lg font-semibold">Перелет</h3>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-1">
@@ -295,18 +297,20 @@ export default function HotelDetails() {
                 </p>
               </div>
             </div>
+            <div className="flex w-[64rem] justify-end">
+              <p className="text-black flex gap-2 items-baseline text-xl font-semibold">
+                за двоих
+                <span className="text-2xl text-orange-500 font-bold">
+                  {tour.price}
+                  {tour.currency === "EUR"
+                    ? "€"
+                    : tour.currency === "USD"
+                    ? "$"
+                    : tour.currency}
+                </span>
+              </p>
+            </div>
           </div>
-          <p className="text-black flex gap-2 items-baseline">
-            за двоих
-            <span className="text-lg text-orange-500 font-semibold">
-              {tour.price}
-              {tour.currency === "EUR"
-                ? "€"
-                : tour.currency === "USD"
-                ? "$"
-                : tour.currency}
-            </span>
-          </p>
         </div>
 
         <div className="container mx-auto pb-4">

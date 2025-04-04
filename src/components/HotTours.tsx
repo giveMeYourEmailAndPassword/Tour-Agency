@@ -294,7 +294,7 @@ export default function HotTours() {
                 <div className="flex items-center gap-2 bg-blue-100 p-2 rounded-md justify-between">
                   <div className="flex flex-col">
                     <span className="text-black line-through">
-                      {tour.priceold}
+                      {tour.priceold * 2}
                       {tour.currency === "EUR"
                         ? "€"
                         : tour.currency === "USD"
@@ -305,7 +305,7 @@ export default function HotTours() {
                   <p className="text-black flex gap-2 items-baseline">
                     за двоих
                     <span className="text-lg text-orange-500 font-semibold">
-                      {tour.price}
+                      {tour.price * 2}
                       {tour.currency === "EUR"
                         ? "€"
                         : tour.currency === "USD"

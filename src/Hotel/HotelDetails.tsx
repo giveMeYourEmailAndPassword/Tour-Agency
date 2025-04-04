@@ -87,6 +87,7 @@ export default function HotelDetails() {
 
   const hotel = data?.hotel?.data?.hotel;
   const tour = data?.tour?.data?.tour;
+  const tourDetails = data?.tourDetail?.flights[0];
 
   if (!hotel || !tour) {
     return (
@@ -238,36 +239,60 @@ export default function HotelDetails() {
 
         <div className="container mx-auto pb-4">
           <h2 className="text-2xl font-semibold">Информация о туре</h2>
-          <div>
-            <div className="flex items-center gap-2">
-              <ImCalendar />
-              <p className="text-black">{formatDate(tour.flydate)}</p>
+          <div className="flex flex-col gap-2">
+            <div className="flex gap-3">
+              <div className="flex items-center gap-1">
+                <ImCalendar />
+                <p className="text-black">{formatDate(tour.flydate)}</p>
+              </div>
+              <div className="flex items-center gap-1">
+                <IoMoonOutline />
+                <p className="text-black">{tour.nights} ночей</p>
+              </div>
+              <div className="flex items-center gap-1">
+                <FaUtensils />
+                <p className="text-black">{getMealType(tour.meal)}</p>
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <IoMoonOutline />
-              <p className="text-black">{tour.nights} ночей</p>
-            </div>
-            <div className="flex items-center gap-2">
-              <FaUtensils />
-              <p className="text-black">{getMealType(tour.meal)}</p>
-            </div>
-            <div className="flex items-center gap-2">
-              <FaHome />
-              <p className="text-black">{tour.room}</p>
-            </div>
-            <div className="flex items-center gap-2">
-              <FaBed />
-              <p className="text-black">{tour.placement}</p>
-            </div>
+
             <div className="flex flex-col">
-              <div className="flex items-center gap-2">
-                <IoAirplane className="-rotate-45" />
-                {`${tour.departurename} - ${tour.hotelregionname}`}
+              <h3 className="text-lg font-semibold">Размещение</h3>
+              <div className="flex gap-3">
+                <div className="flex items-center gap-1">
+                  <FaHome />
+                  <p className="text-black">{tour.room}</p>
+                </div>
+                <div className="flex items-center gap-1">
+                  <FaBed />
+                  <p className="text-black">
+                    {tour.placement === "2 взрослых"
+                      ? "Два взрослых"
+                      : tour.placement}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-col">
+              <h3 className="text-lg font-semibold">Перелет</h3>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1">
+                  <IoAirplane className="-rotate-45" />
+                  {`${tour.departurename} - ${tour.hotelregionname}`}
+                </div>
+                <p className="text-black">
+                  {formatDate(tourDetails.dateforward)}
+                </p>
               </div>
 
-              <div className="flex items-center gap-2">
-                <IoAirplane className="rotate-[135deg]" />
-                {`${tour.hotelregionname} - ${tour.departurename}`}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1">
+                  <IoAirplane className="rotate-[135deg]" />
+                  {`${tour.hotelregionname} - ${tour.departurename}`}
+                </div>
+                <p className="text-black">
+                  {formatDate(tourDetails.datebackward)}
+                </p>
               </div>
             </div>
           </div>

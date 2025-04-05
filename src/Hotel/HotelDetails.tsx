@@ -75,6 +75,16 @@ export default function HotelDetails() {
     );
   }
 
+  if (data?.tourDetail?.iserror) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
+        <div className="text-3xl font-medium text-blue-600">
+          В данный момент тур недоступен для бронирования
+        </div>
+      </div>
+    );
+  }
+
   if (isError || !data?.hotel?.data?.hotel) {
     return (
       <div className="flex items-center justify-center h-screen bg-gradient-to-br from-red-50 to-pink-50">
@@ -87,7 +97,7 @@ export default function HotelDetails() {
 
   const hotel = data?.hotel?.data?.hotel;
   const tour = data?.tour?.data?.tour;
-  const tourDetails = data?.tourDetail?.flights[0];
+  const tourDetails = data?.tourDetail?.flights?.[0];
 
   if (!hotel || !tour) {
     return (

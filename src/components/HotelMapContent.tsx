@@ -1,5 +1,5 @@
 import { YMaps, Map, Placemark } from "@pbe/react-yandex-maps";
-import useHotelDetails from "../Hooks/UseHotelDetails";
+import useHotelData from "../Hooks/useHotelData";
 import { CircularProgress } from "@heroui/progress";
 
 interface HotelMapContentProps {
@@ -7,7 +7,7 @@ interface HotelMapContentProps {
 }
 
 export const HotelMapContent = ({ hotelcode }: HotelMapContentProps) => {
-  const { data: hotelDetails, isLoading } = useHotelDetails(hotelcode, true);
+  const { data: hotelDetails, isLoading } = useHotelData(hotelcode);
 
   if (isLoading) {
     return (

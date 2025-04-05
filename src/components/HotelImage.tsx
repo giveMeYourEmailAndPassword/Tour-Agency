@@ -4,8 +4,7 @@ import Lightbox from "yet-another-react-lightbox";
 import Thumbnails from "yet-another-react-lightbox/plugins/thumbnails";
 import "yet-another-react-lightbox/styles.css";
 import "yet-another-react-lightbox/plugins/thumbnails.css";
-import useHotelDetails from "../Hooks/UseHotelDetails";
-import HotelImage from "../components/HotelImage";
+import useHotelData from "../Hooks/useHotelData";
 
 interface HotelImageProps {
   imageUrl: string;
@@ -21,15 +20,13 @@ export const HotelImage = ({
   const [isOpen, setIsOpen] = useState(false);
   const [shouldFetch, setShouldFetch] = useState(false);
 
-  // Включаем запрос только когда shouldFetch становится true
-  const { data: hotelDetails } = useHotelDetails(hotelcode, shouldFetch);
+  const { data: hotelDetails } = useHotelData(hotelcode, shouldFetch);
 
   const handleSearchClick = () => {
-    setShouldFetch(true); // Активируем запрос при первом клике
+    setShouldFetch(true);
     setIsOpen(true);
   };
 
-  // Формируем массив слайдов для галереи
   const slides = [
     { src: imageUrl || "/placeholder.jpg" },
     ...(hotelDetails?.data?.hotel?.images?.image?.map((img: string) => ({

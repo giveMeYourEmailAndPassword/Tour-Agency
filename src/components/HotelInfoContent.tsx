@@ -1,4 +1,4 @@
-import useHotelDetails from "../Hooks/UseHotelDetails";
+import useHotelData from "../Hooks/useHotelData";
 import { CircularProgress } from "@heroui/progress";
 
 interface HotelInfoContentProps {
@@ -6,7 +6,7 @@ interface HotelInfoContentProps {
 }
 
 export const HotelInfoContent = ({ hotelcode }: HotelInfoContentProps) => {
-  const { data: hotelDetails, isLoading } = useHotelDetails(hotelcode, true);
+  const { data: hotelDetails, isLoading } = useHotelData(hotelcode);
 
   const formatText = (text: string) => {
     return text
@@ -24,9 +24,9 @@ export const HotelInfoContent = ({ hotelcode }: HotelInfoContentProps) => {
   }
 
   return (
-    <div className="grid grid-cols-2 gap-6 p-4  border-t pt-4">
+    <div className="grid grid-cols-2 gap-6 p-4 border-t pt-4">
       {/* Левая колонка */}
-      <div className="space-y-4 ">
+      <div className="space-y-4">
         {hotelDetails?.data?.hotel?.placement && (
           <div>
             <h3 className="font-semibold text-gray-700 mb-2">Расположение</h3>
@@ -55,7 +55,7 @@ export const HotelInfoContent = ({ hotelcode }: HotelInfoContentProps) => {
       </div>
 
       {/* Правая колонка */}
-      <div className="space-y-4">
+      <div>
         {hotelDetails?.data?.hotel?.beach && (
           <div>
             <h3 className="font-semibold text-gray-700 mb-2">Пляж</h3>

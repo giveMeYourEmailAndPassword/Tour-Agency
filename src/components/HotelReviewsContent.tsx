@@ -1,6 +1,6 @@
-import useHotelDetails from "../Hooks/UseHotelDetails";
-import { CircularProgress } from "@heroui/progress";
 import { useState } from "react";
+import useHotelData from "../Hooks/useHotelData";
+import { CircularProgress } from "@heroui/progress";
 
 interface Review {
   name: string;
@@ -17,7 +17,7 @@ interface HotelReviewsContentProps {
 export const HotelReviewsContent = ({
   hotelcode,
 }: HotelReviewsContentProps) => {
-  const { data: hotelDetails, isLoading } = useHotelDetails(hotelcode, true);
+  const { data: hotelDetails, isLoading } = useHotelData(hotelcode);
   const [showAllReviews, setShowAllReviews] = useState(false);
 
   if (isLoading) {

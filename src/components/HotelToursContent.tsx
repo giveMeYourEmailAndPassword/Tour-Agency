@@ -1,6 +1,7 @@
 import { format, parse } from "date-fns";
 import { ru } from "date-fns/locale";
 import { useState } from "react";
+import { DetailsOfTour } from "./DetailsOfTour";
 
 interface Tour {
   price: number;
@@ -95,14 +96,7 @@ export const HotelToursContent = ({ tours }: HotelToursContentProps) => {
             </div>
 
             <div className="w-[100px] text-right">
-              <button className="inline-flex px-8 py-1 bg-slate-200 rounded-full font-medium text-black hover:bg-green-600/80 transition-colors">
-                {tour.price}
-                {tour.currency === "EUR"
-                  ? "€"
-                  : tour.currency === "USD"
-                  ? "$"
-                  : tour.currency}
-              </button>
+              <DetailsOfTour tour={tour} />
             </div>
           </div>
         </div>

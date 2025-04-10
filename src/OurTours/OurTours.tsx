@@ -184,7 +184,10 @@ export default function OurTours() {
                 <HotelMapContent hotelcode={hotel.hotelcode} />
               )}
               {activeTabs[hotel.hotelcode] === "tour" && (
-                <HotelToursContent tours={hotel.tours.tour} />
+                <HotelToursContent
+                  tours={hotel.tours.tour}
+                  hotelcode={hotel.hotelcode}
+                />
               )}
             </div>
           </div>

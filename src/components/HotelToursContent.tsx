@@ -24,13 +24,18 @@ interface Tour {
   priceue: number;
   visa: number;
   fuelcharge: number;
+  hotelcode?: number;
 }
 
 interface HotelToursContentProps {
   tours: Tour[];
+  hotelcode: number;
 }
 
-export const HotelToursContent = ({ tours }: HotelToursContentProps) => {
+export const HotelToursContent = ({
+  tours,
+  hotelcode,
+}: HotelToursContentProps) => {
   const [showAll, setShowAll] = useState(false);
 
   const formatDate = (dateString: string) => {

@@ -22,7 +22,7 @@ export const HotelReviewsContent = ({
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-full">
+      <div className="flex justify-center items-center h-full border-t py-4 mt-4">
         <CircularProgress color="default" />
       </div>
     );
@@ -32,7 +32,7 @@ export const HotelReviewsContent = ({
   const displayedReviews = showAllReviews ? reviews : reviews?.slice(0, 3);
 
   return (
-    <div className="border-t pt-4">
+    <div className="border-t pt-4 mt-4">
       {reviews && reviews.length > 0 ? (
         <div className="space-y-4">
           {displayedReviews.map((review: Review, index: number) => (

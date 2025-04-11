@@ -89,7 +89,7 @@ export default function OurTours() {
         tours.map((hotel, index) => (
           <div
             key={index}
-            className="p-6 bg-white shadow-sm transition-shadow duration-300 rounded-xl flex flex-col w-[55rem]"
+            className="p-4 bg-white shadow-sm transition-shadow duration-300 rounded-xl flex flex-col w-[55rem]"
           >
             <div className="flex gap-5">
               <HotelImage
@@ -173,7 +173,7 @@ export default function OurTours() {
                 </div>
               </div>
             </div>
-            <div className="mt-4">
+            <div>
               {activeTabs[hotel.hotelcode] === "info" && (
                 <HotelInfoContent hotelcode={hotel.hotelcode} />
               )}

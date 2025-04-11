@@ -11,7 +11,7 @@ export const HotelMapContent = ({ hotelcode }: HotelMapContentProps) => {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-full">
+      <div className="flex justify-center items-center h-full border-t py-4 mt-4">
         <CircularProgress color="default" />
       </div>
     );
@@ -23,7 +23,7 @@ export const HotelMapContent = ({ hotelcode }: HotelMapContentProps) => {
 
   return (
     <YMaps>
-      <div className="w-full h-[50vh]">
+      <div className="w-full h-[50vh] mt-4">
         <Map
           className="w-full h-full"
           defaultState={{

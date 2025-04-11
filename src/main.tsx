@@ -25,6 +25,11 @@ createRoot(document.getElementById("root")!).render(
               <Route path="/OurTours" element={<OurTours />} />
 
               <Route
+                path="/OurTours/hotel/:hotelcode/:tourId"
+                element={<HotelDetails />}
+              />
+
+              <Route
                 path="/hotel/:hotelcode/:tourId"
                 element={<HotelDetails />}
               />

@@ -17,14 +17,14 @@ export const HotelInfoContent = ({ hotelcode }: HotelInfoContentProps) => {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-full">
+      <div className="flex justify-center items-center h-full border-t py-4 mt-4">
         <CircularProgress color="default" />
       </div>
     );
   }
 
   return (
-    <div className="grid grid-cols-2 gap-6 p-4 border-t pt-4">
+    <div className="grid grid-cols-2 gap-6 p-4 border-t pt-4 mt-4">
       {/* Левая колонка */}
       <div className="space-y-4">
         {hotelDetails?.data?.hotel?.placement && (

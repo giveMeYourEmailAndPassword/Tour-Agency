@@ -46,7 +46,7 @@ export const HotelToursContent = ({
   const displayedTours = showAll ? tours : tours.slice(0, 5);
 
   return (
-    <div className="bg-white rounded-lg">
+    <div className="bg-white rounded-lg mt-4">
       {/* Заголовки */}
       <div className="flex justify-between items-center pb-3 px-4">
         <div className="flex-1">

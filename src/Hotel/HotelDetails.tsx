@@ -174,11 +174,11 @@ export default function HotelDetails() {
 
               <div
                 className="swiper-button-prev !text-white !opacity-0 group-hover:!opacity-100 transition-all duration-300 
-              !w-12 !h-12 !bg-black/30 !backdrop-blur-md !rounded-full after:!text-xl hover:!bg-black/35"
+              !w-10 !h-10 !bg-black/30 !backdrop-blur-md !rounded-full after:!text-lg hover:!bg-black/35"
               />
               <div
                 className="swiper-button-next !text-white !opacity-0 group-hover:!opacity-100 transition-all duration-300 
-              !w-12 !h-12 !bg-black/30 !backdrop-blur-md !rounded-full after:!text-xl hover:!bg-black/35"
+              !w-10 !h-10 !bg-black/30 !backdrop-blur-md !rounded-full after:!text-lg hover:!bg-black/35"
               />
             </Swiper>
           </div>

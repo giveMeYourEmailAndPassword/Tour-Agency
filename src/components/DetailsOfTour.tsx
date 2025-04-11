@@ -2,12 +2,16 @@ import { useState } from "react";
 import useHotelDetails from "../Hooks/UseHotelDetails";
 import { format, parse } from "date-fns";
 import { ru } from "date-fns/locale";
-import { PiMapPinFill } from "react-icons/pi";
 import { ImCalendar } from "react-icons/im";
 import { IoMoonOutline } from "react-icons/io5";
 import { FaUtensils, FaHome, FaBed } from "react-icons/fa";
 import { IoClose, IoAirplane } from "react-icons/io5";
 import { CircularProgress } from "@heroui/react";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Pagination, Autoplay } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
 
 interface Tour {
   price: number;
@@ -65,7 +69,7 @@ export const DetailsOfTour = ({ tour, hotelcode }: DetailsOfTourProps) => {
     return mealTypes[meal as keyof typeof mealTypes] || meal;
   };
 
-  const hotel = data?.hotel?.data?.hotel;
+  const hotelInfo = data?.hotel?.data?.hotel;
   const tourInfo = data?.tour?.data?.tour;
 
   return (
@@ -84,10 +88,10 @@ export const DetailsOfTour = ({ tour, hotelcode }: DetailsOfTourProps) => {
 
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white rounded-lg w-full max-w-3xl max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-lg w-full max-w-4xl max-h-[90vh] overflow-y-auto">
             <div className="p-6">
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold">{hotel?.hotelname}</h2>
+                <h2 className="text-2xl font-bold">{hotelInfo?.hotelname}</h2>
                 <button
                   onClick={() => setIsModalOpen(false)}
                   className="text-gray-500 hover:text-gray-700"
@@ -102,7 +106,50 @@ export const DetailsOfTour = ({ tour, hotelcode }: DetailsOfTourProps) => {
                 </div>
               ) : (
                 <div className="space-y-6">
-                  <div className="flex flex-col gap-2">
+                  {hotelInfo?.images?.image.length > 0 && (
+                    <div className="relative group w-[90%] mx-auto">
+                      <Swiper
+                        modules={[Navigation, Pagination, Autoplay]}
+                        spaceBetween={10}
+                        slidesPerView={1}
+                        navigation={{
+                          nextEl: ".swiper-button-next",
+                          prevEl: ".swiper-button-prev",
+                        }}
+                        pagination={{
+                          clickable: true,
+                          bulletActiveClass: "!bg-white !scale-110",
+                          bulletClass: "swiper-pagination-bullet !mx-1",
+                        }}
+                        autoplay={{ delay: 2500, disableOnInteraction: false }}
+                        loop={true}
+                        className="w-full h-[50vh] rounded-2xl"
+                      >
+                        {hotelInfo?.images?.image.map(
+                          (img: string, index: number) => (
+                            <SwiperSlide key={index} className="relative">
+                              <img
+                                src={`https:${img}`}
+                                alt={`Фото отеля ${hotelInfo?.hotelname}`}
+                                className="w-full h-full object-cover rounded-2xl"
+                              />
+                              <div className="absolute inset-0 bg-gradient-to-b from-black/5 via-transparent to-black/60 rounded-2xl" />
+                            </SwiperSlide>
+                          )
+                        )}
+
+                        <div
+                          className="swiper-button-prev !text-white !opacity-0 group-hover:!opacity-100 transition-all duration-300 
+              !w-10 !h-10 !bg-black/30 !backdrop-blur-md !rounded-full after:!text-lg hover:!bg-black/35"
+                        />
+                        <div
+                          className="swiper-button-next !text-white !opacity-0 group-hover:!opacity-100 transition-all duration-300 
+              !w-10 !h-10 !bg-black/30 !backdrop-blur-md !rounded-full after:!text-lg hover:!bg-black/35"
+                        />
+                      </Swiper>
+                    </div>
+                  )}
+                  <div className="flex flex-col gap-2 mx-12">
                     <div className="flex flex-col">
                       <h2 className="text-2xl font-semibold">
                         Информация о туре
@@ -111,17 +158,17 @@ export const DetailsOfTour = ({ tour, hotelcode }: DetailsOfTourProps) => {
                         <div className="flex items-center gap-1">
                           <ImCalendar />
                           <p className="text-black">
-                            {formatDate(tourInfo.flydate)}
+                            {formatDate(tourInfo?.flydate)}
                           </p>
                         </div>
                         <div className="flex items-center gap-1">
                           <IoMoonOutline />
-                          <p className="text-black">{tourInfo.nights} ночей</p>
+                          <p className="text-black">{tourInfo?.nights} ночей</p>
                         </div>
                         <div className="flex items-center gap-1">
                           <FaUtensils />
                           <p className="text-black">
-                            {getMealType(tourInfo.meal)}
+                            {getMealType(tourInfo?.meal)}
                           </p>
                         </div>
                       </div>
@@ -132,26 +179,26 @@ export const DetailsOfTour = ({ tour, hotelcode }: DetailsOfTourProps) => {
                       <div className="flex gap-3">
                         <div className="flex items-center gap-1">
                           <FaHome />
-                          <p className="text-black">{tourInfo.room}</p>
+                          <p className="text-black">{tourInfo?.room}</p>
                         </div>
                         <div className="flex items-center gap-1">
                           <FaBed />
                           <p className="text-black">
-                            {tourInfo.placement === "2 взрослых"
+                            {tourInfo?.placement === "2 взрослых"
                               ? "Два взрослых"
-                              : tourInfo.placement}
+                              : tourInfo?.placement}
                           </p>
                         </div>
                       </div>
                     </div>
 
-                    {tourInfo.departurename && tourInfo.hotelregionname && (
+                    {tourInfo?.departurename && tourInfo?.hotelregionname && (
                       <div className="flex flex-col w-96">
                         <h3 className="text-lg font-semibold">Перелет</h3>
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-1">
                             <IoAirplane className="-rotate-45" />
-                            {`${tour.departurename} - ${tour.hotelregionname}`}
+                            {`${tourInfo.departurename} - ${tourInfo.hotelregionname}`}
                           </div>
                           <p className="text-black">
                             {formatDate(tourInfo.flydate)}
@@ -164,18 +211,18 @@ export const DetailsOfTour = ({ tour, hotelcode }: DetailsOfTourProps) => {
                       <p className="text-black flex gap-2 items-baseline text-xl font-semibold">
                         за двоих
                         <span className="text-2xl text-orange-500 font-bold">
-                          {tourInfo.price}
-                          {tourInfo.currency === "EUR"
+                          {tourInfo?.price}
+                          {tourInfo?.currency === "EUR"
                             ? "€"
-                            : tourInfo.currency === "USD"
+                            : tourInfo?.currency === "USD"
                             ? "$"
-                            : tourInfo.currency}
+                            : tourInfo?.currency}
                         </span>
                       </p>
                     </div>
                   </div>
 
-                  {data?.result?.hotel?.[0] && (
+                  {hotelInfo && (
                     <div className="mt-6 border-t pt-6">
                       <h3 className="text-xl font-bold mb-4">
                         Информация об отеле
@@ -183,30 +230,30 @@ export const DetailsOfTour = ({ tour, hotelcode }: DetailsOfTourProps) => {
                       <div className="prose max-w-none space-y-4">
                         <div>
                           <p className="font-medium">Название:</p>
-                          <p>{hotel?.hotelname}</p>
+                          <p>{hotelInfo.hotelname}</p>
                         </div>
                         <div>
                           <p className="font-medium">Рейтинг:</p>
                           <p>
-                            {hotel?.hotelstars}★ ({hotel?.hotelrating})
+                            {hotelInfo.hotelstars}★ ({hotelInfo.hotelrating})
                           </p>
                         </div>
                         <div>
                           <p className="font-medium">Расположение:</p>
                           <p>
-                            {hotel?.countryname}, {hotel?.regionname},{" "}
-                            {hotel?.subregionname}
+                            {hotelInfo.countryname}, {hotelInfo.regionname},{" "}
+                            {hotelInfo.subregionname}
                           </p>
                         </div>
                         <div>
                           <p className="font-medium">Описание:</p>
-                          <p>{hotel?.hoteldescription}</p>
+                          <p>{hotelInfo.hoteldescription}</p>
                         </div>
-                        {hotel?.picturelink && (
+                        {hotelInfo.picturelink && (
                           <div>
                             <img
-                              src={hotel?.picturelink}
-                              alt={hotel?.hotelname}
+                              src={hotelInfo.picturelink}
+                              alt={hotelInfo.hotelname}
                               className="rounded-lg w-full"
                             />
                           </div>

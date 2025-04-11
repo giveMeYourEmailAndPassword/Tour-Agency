@@ -101,7 +101,7 @@ export const HotelToursContent = ({
             </div>
 
             <div className="w-[100px] text-right">
-              <DetailsOfTour tour={tour} />
+              <DetailsOfTour tour={tour} hotelcode={hotelcode} />
             </div>
           </div>
         </div>

@@ -58,7 +58,7 @@ export const HotelInfoContent = ({ hotelcode }: HotelInfoContentProps) => {
       <div>
         {hotelDetails?.data?.hotel?.beach && (
           <div>
-            <h3 className="font-semibold text-gray-700 mb-2">Пляж</h3>
+            <h3 className="font-semibold text-gray-700 mb-1">Пляж</h3>
             <ul className="text-sm text-gray-600 space-y-1">
               {formatText(hotelDetails.data.hotel.beach).map((item, index) => (
                 <li key={index} className="flex items-start">
@@ -71,7 +71,7 @@ export const HotelInfoContent = ({ hotelcode }: HotelInfoContentProps) => {
         )}
         {hotelDetails?.data?.hotel?.inroom && (
           <div>
-            <h3 className="font-semibold text-gray-700 mb-2">В номере</h3>
+            <h3 className="font-semibold text-gray-700 mb-1">В номере</h3>
             <ul className="text-sm text-gray-600 space-y-1">
               {formatText(hotelDetails.data.hotel.inroom).map((item, index) => (
                 <li key={index} className="flex items-start">

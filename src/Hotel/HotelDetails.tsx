@@ -183,7 +183,7 @@ export default function HotelDetails() {
                 onClick={() => setIsMapOpen(true)}
                 className="px-4 py-2 text-gray-600 font-medium transition-all duration-300 hover:text-blue-600 hover:bg-blue-50 rounded-lg flex items-center gap-2"
               >
-                <TbMap2 className="text-blue-600" />
+                <TbMap2 className="text-blue-600 text-xl" />
                 На карте
               </button>
 
@@ -204,49 +204,27 @@ export default function HotelDetails() {
               />
 
               <button
-                onClick={() => setIsMapOpen(true)}
-                className="px-4 py-2 text-gray-600 font-medium transition-all duration-300 hover:text-blue-600 hover:bg-blue-50 rounded-lg flex items-center gap-2"
+                onClick={() =>
+                  window.open(
+                    `https://www.youtube.com/results?search_query=${encodeURIComponent(
+                      hotel.name
+                    )}`,
+                    "_blank"
+                  )
+                }
+                className="px-4 py-2 text-white font-medium transition-all duration-300 bg-red-600 hover:bg-red-500 rounded-lg flex items-center gap-2"
               >
-                <FaYoutube className="text-red-600" />
+                <FaYoutube className="text-white" />
                 Обзоры
               </button>
             </div>
-            <div className="space-y-4">
-              <div className="flex items-center gap-2">
-                <ImCalendar className="text-blue-600" />
-                <span>Вылет: {formatDate(tour.flydate)}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <IoMoonOutline className="text-blue-600" />
-                <span>{tour.nights} ночей</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <FaUtensils className="text-blue-600" />
-                <span>{getMealType(tour.meal)}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <FaHome className="text-blue-600" />
-                <span>{tour.room}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <FaBed className="text-blue-600" />
-                <span>
-                  {tour.placement === "2 взрослых"
-                    ? "Два взрослых"
-                    : tour.placement}
-                </span>
-              </div>
-              <div className="mt-6 pt-4 border-t">
-                <p className="text-2xl font-bold text-orange-500">
-                  {tour.price}
-                  {tour.currency === "EUR"
-                    ? "€"
-                    : tour.currency === "USD"
-                    ? "$"
-                    : tour.currency}
-                </p>
-                <p className="text-gray-600">за двоих</p>
-              </div>
+            <div className="h-[52vh] px-2 pb-2">
+              <HotelMap
+                hotelName={hotel.name}
+                coordinates={[Number(hotel.coord1), Number(hotel.coord2)]}
+                hotelRating={hotel.rating}
+                hotelStars={hotel.stars}
+              />
             </div>
           </div>
         </div>
@@ -273,20 +251,6 @@ export default function HotelDetails() {
             <PiMapPinFill className="text-blue-600" />
             {hotel.country}, {hotel.region}
           </p>
-
-          <button
-            onClick={() =>
-              window.open(
-                `https://www.youtube.com/results?search_query=${encodeURIComponent(
-                  hotel.name
-                )}`,
-                "_blank"
-              )
-            }
-            className="px-8 py-2 border-3 text-gray-500 rounded-2xl font-medium transition-colors"
-          >
-            You<span className="text-red-600">Tube</span>
-          </button>
         </div>
 
         <div className="container mx-auto pb-4">
@@ -471,14 +435,6 @@ export default function HotelDetails() {
           </div>
         </div>
       </div>
-      <HotelMap
-        isOpen={isMapOpen}
-        onClose={() => setIsMapOpen(false)}
-        hotelName={hotel.name}
-        coordinates={[Number(hotel.coord1), Number(hotel.coord2)]}
-        hotelRating={hotel.rating}
-        hotelStars={hotel.stars}
-      />
     </>
   );
 }

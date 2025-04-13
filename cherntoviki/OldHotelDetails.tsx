@@ -75,6 +75,16 @@ export default function HotelDetails() {
     );
   }
 
+  // if (data?.tourDetail?.iserror) {
+  //   return (
+  //     <div className="flex items-center justify-center h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
+  //       <div className="text-3xl font-medium text-blue-600">
+  //         В данный момент тур недоступен для бронирования
+  //       </div>
+  //     </div>
+  //   );
+  // }
+
   if (isError || !data?.hotel?.data?.hotel) {
     return (
       <div className="flex items-center justify-center h-screen bg-gradient-to-br from-red-50 to-pink-50">
@@ -87,6 +97,7 @@ export default function HotelDetails() {
 
   const hotel = data?.hotel?.data?.hotel;
   const tour = data?.tour?.data?.tour;
+  // const tourDetails = data?.tourDetail?.flights?.[0];
 
   if (!hotel || !tour) {
     return (
@@ -129,93 +140,49 @@ export default function HotelDetails() {
     <>
       {/* <Header /> */}
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 px-36 pt-12">
-        {/* Обертка для слайдера и информации */}
-        <div className="flex gap-2">
-          {/* Галерея изображений */}
-          {hotel.images?.image.length > 0 && (
-            <div className="relative group w-[60%]">
-              <Swiper
-                modules={[Navigation, Pagination, Autoplay]}
-                spaceBetween={10}
-                slidesPerView={1}
-                navigation={{
-                  nextEl: ".swiper-button-next",
-                  prevEl: ".swiper-button-prev",
-                }}
-                pagination={{
-                  clickable: true,
-                  bulletActiveClass: "!bg-white !scale-110",
-                  bulletClass: "swiper-pagination-bullet !mx-1",
-                }}
-                autoplay={{ delay: 2500, disableOnInteraction: false }}
-                loop={true}
-                className="h-[60vh] rounded-2xl"
-              >
-                {hotel.images.image.map((img: string, index: number) => (
-                  <SwiperSlide key={index} className="relative">
-                    <img
-                      src={`https:${img}`}
-                      alt={`Фото отеля ${hotel.name}`}
-                      className="w-full h-full object-cover rounded-2xl"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-b from-black/5 via-transparent to-black/60 rounded-2xl" />
-                  </SwiperSlide>
-                ))}
+        {/* Галерея изображений */}
 
-                <div
-                  className="swiper-button-prev !text-white !opacity-0 group-hover:!opacity-100 transition-all duration-300 
-                !w-10 !h-10 !bg-black/30 !backdrop-blur-md !rounded-full after:!text-lg hover:!bg-black/35"
-                />
-                <div
-                  className="swiper-button-next !text-white !opacity-0 group-hover:!opacity-100 transition-all duration-300 
-                !w-10 !h-10 !bg-black/30 !backdrop-blur-md !rounded-full after:!text-lg hover:!bg-black/35"
-                />
-              </Swiper>
-            </div>
-          )}
+        {hotel.images?.image.length > 0 && (
+          <div className="relative group">
+            <Swiper
+              modules={[Navigation, Pagination, Autoplay]}
+              spaceBetween={10}
+              slidesPerView={1}
+              navigation={{
+                nextEl: ".swiper-button-next",
+                prevEl: ".swiper-button-prev",
+              }}
+              pagination={{
+                clickable: true,
+                bulletActiveClass: "!bg-white !scale-110",
+                bulletClass: "swiper-pagination-bullet !mx-1",
+              }}
+              autoplay={{ delay: 2500, disableOnInteraction: false }}
+              loop={true}
+              className="w-full h-[70vh] rounded-2xl"
+            >
+              {hotel.images.image.map((img: string, index: number) => (
+                <SwiperSlide key={index} className="relative">
+                  <img
+                    src={`https:${img}`}
+                    alt={`Фото отеля ${hotel.name}`}
+                    className="w-full h-full object-cover rounded-2xl"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-b from-black/5 via-transparent to-black/60 rounded-2xl" />
+                </SwiperSlide>
+              ))}
 
-          {/* Блок с информацией справа */}
-          <div className="w-[40%] bg-white p-6 rounded-2xl shadow-sm">
-            <h2 className="text-2xl font-bold mb-4">Краткая информация</h2>
-            <div className="space-y-4">
-              <div className="flex items-center gap-2">
-                <ImCalendar className="text-blue-600" />
-                <span>Вылет: {formatDate(tour.flydate)}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <IoMoonOutline className="text-blue-600" />
-                <span>{tour.nights} ночей</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <FaUtensils className="text-blue-600" />
-                <span>{getMealType(tour.meal)}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <FaHome className="text-blue-600" />
-                <span>{tour.room}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <FaBed className="text-blue-600" />
-                <span>
-                  {tour.placement === "2 взрослых"
-                    ? "Два взрослых"
-                    : tour.placement}
-                </span>
-              </div>
-              <div className="mt-6 pt-4 border-t">
-                <p className="text-2xl font-bold text-orange-500">
-                  {tour.price}
-                  {tour.currency === "EUR"
-                    ? "€"
-                    : tour.currency === "USD"
-                    ? "$"
-                    : tour.currency}
-                </p>
-                <p className="text-gray-600">за двоих</p>
-              </div>
-            </div>
+              <div
+                className="swiper-button-prev !text-white !opacity-0 group-hover:!opacity-100 transition-all duration-300 
+              !w-10 !h-10 !bg-black/30 !backdrop-blur-md !rounded-full after:!text-lg hover:!bg-black/35"
+              />
+              <div
+                className="swiper-button-next !text-white !opacity-0 group-hover:!opacity-100 transition-all duration-300 
+              !w-10 !h-10 !bg-black/30 !backdrop-blur-md !rounded-full after:!text-lg hover:!bg-black/35"
+              />
+            </Swiper>
           </div>
-        </div>
+        )}
 
         <div className="flex flex-col py-4">
           <div className="flex items-baseline gap-3">

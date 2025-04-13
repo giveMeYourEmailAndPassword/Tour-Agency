@@ -12,9 +12,11 @@ import HotelMap from "../components/HotelMap";
 import { PiMapPinFill } from "react-icons/pi";
 import { ImCalendar } from "react-icons/im";
 import { IoMoonOutline } from "react-icons/io5";
+import { TbMap2 } from "react-icons/tb";
 import { FaHome } from "react-icons/fa";
 import { FaBed } from "react-icons/fa6";
 import { IoAirplane } from "react-icons/io5";
+import { FaYoutube } from "react-icons/fa";
 import { FaUtensils } from "react-icons/fa";
 import { parse, format } from "date-fns";
 import { ru } from "date-fns/locale";
@@ -175,8 +177,40 @@ export default function HotelDetails() {
           )}
 
           {/* Блок с информацией справа */}
-          <div className="w-[40%] bg-white p-6 rounded-2xl shadow-sm">
-            <h2 className="text-2xl font-bold mb-4">Краткая информация</h2>
+          <div className="w-[40%] bg-white rounded-2xl shadow-sm">
+            <div className="flex justify-center gap-3 my-2">
+              <button
+                onClick={() => setIsMapOpen(true)}
+                className="px-4 py-2 text-gray-600 font-medium transition-all duration-300 hover:text-blue-600 hover:bg-blue-50 rounded-lg flex items-center gap-2"
+              >
+                <TbMap2 className="text-blue-600" />
+                На карте
+              </button>
+
+              <button
+                onClick={() => setIsReviewsOpen(true)}
+                className="px-4 py-2 text-gray-600 font-medium transition-all duration-300 hover:text-blue-600 hover:bg-blue-50 rounded-lg flex items-center gap-2"
+              >
+                Отзывы ({hotel.reviewscount})
+              </button>
+              <ReviewsModal
+                isOpen={isReviewsOpen}
+                onClose={() => setIsReviewsOpen(false)}
+                hotelName={hotel.name}
+                reviewsCount={hotel.reviewscount}
+                hotelRating={hotel.rating}
+                hotelStars={hotel.stars}
+                reviews={hotel.reviews?.review || []}
+              />
+
+              <button
+                onClick={() => setIsMapOpen(true)}
+                className="px-4 py-2 text-gray-600 font-medium transition-all duration-300 hover:text-blue-600 hover:bg-blue-50 rounded-lg flex items-center gap-2"
+              >
+                <FaYoutube className="text-red-600" />
+                Обзоры
+              </button>
+            </div>
             <div className="space-y-4">
               <div className="flex items-center gap-2">
                 <ImCalendar className="text-blue-600" />
@@ -240,44 +274,19 @@ export default function HotelDetails() {
             {hotel.country}, {hotel.region}
           </p>
 
-          <div className="flex justify-center gap-6 my-2">
-            <button
-              onClick={() => setIsMapOpen(true)}
-              className="px-8 py-2 border-3 text-gray-500 rounded-2xl font-medium transition-colors"
-            >
-              На карте
-            </button>
-
-            <button
-              onClick={() => setIsReviewsOpen(true)}
-              className="px-14 py-2 border-3 text-gray-500 rounded-2xl font-medium transition-colors text-center"
-            >
-              Отзывы ({hotel.reviewscount})
-            </button>
-            <ReviewsModal
-              isOpen={isReviewsOpen}
-              onClose={() => setIsReviewsOpen(false)}
-              hotelName={hotel.name}
-              reviewsCount={hotel.reviewscount}
-              hotelRating={hotel.rating}
-              hotelStars={hotel.stars}
-              reviews={hotel.reviews?.review || []}
-            />
-
-            <button
-              onClick={() =>
-                window.open(
-                  `https://www.youtube.com/results?search_query=${encodeURIComponent(
-                    hotel.name
-                  )}`,
-                  "_blank"
-                )
-              }
-              className="px-8 py-2 border-3 text-gray-500 rounded-2xl font-medium transition-colors"
-            >
-              You<span className="text-red-600">Tube</span>
-            </button>
-          </div>
+          <button
+            onClick={() =>
+              window.open(
+                `https://www.youtube.com/results?search_query=${encodeURIComponent(
+                  hotel.name
+                )}`,
+                "_blank"
+              )
+            }
+            className="px-8 py-2 border-3 text-gray-500 rounded-2xl font-medium transition-colors"
+          >
+            You<span className="text-red-600">Tube</span>
+          </button>
         </div>
 
         <div className="container mx-auto pb-4">

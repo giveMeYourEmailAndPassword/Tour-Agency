@@ -25,7 +25,7 @@ export default function NewDepartureCity() {
 
   // Находим выбранный город по id
   const selectedCityData = cities.find((city) => city.id === selectedCity);
-  console.log(selectedCityData);
+  selectedCityData;
 
   // Фильтруем список городов, исключая Москву
   const filteredCities = cities.filter((city, index) => index !== 2);

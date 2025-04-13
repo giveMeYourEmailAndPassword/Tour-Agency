@@ -3,7 +3,7 @@ import { DataContext } from "./DataProvider";
 
 export default function ElementDisplay() {
   const { params } = useContext(DataContext);
-  console.log(params);
+  params;
 
   return (
     <div>

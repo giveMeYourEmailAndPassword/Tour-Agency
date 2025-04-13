@@ -59,7 +59,7 @@ export default function HotelType() {
       }
     }
 
-    console.log("Выбраны:", newSelectedValues);
+    "Выбраны:", newSelectedValues;
     setSelectedValues(newSelectedValues);
 
     setData("param6", newSelectedValues);
@@ -107,7 +107,7 @@ export default function HotelType() {
     setSelectedValues(["any"]);
   };
 
-  console.log(selectedValues);
+  selectedValues;
 
   return (
     <Popover placement="bottom" onOpenChange={(open) => setIsOpen(open)}>

@@ -51,7 +51,7 @@ export default function Filters() {
       .then((res) => res.json())
       .then((data) => {
         if (data.result?.requestid) {
-          console.log("Данные:", data);
+          "Данные:", data;
           // Перенаправляем на страницу с результатами и передаем requestid через state
           navigate("/OurTours", {
             state: { requestid: data.result.requestid },

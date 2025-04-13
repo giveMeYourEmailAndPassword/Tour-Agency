@@ -60,7 +60,7 @@ export default function HotelDetails() {
 
   useEffect(() => {
     if (data?.hotel?.data?.hotel) {
-      console.log("Данные об отеле успешно загружены");
+      ("Данные об отеле успешно загружены");
     }
     if (isError) {
       console.error("Ошибка при загрузке данных об отеле:", isError);

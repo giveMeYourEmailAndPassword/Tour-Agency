@@ -104,7 +104,7 @@ export default function HotTours() {
       )
     : data?.hottours?.tour || [];
 
-  console.log(filteredTours);
+  filteredTours;
 
   if (isLoading) {
     return (

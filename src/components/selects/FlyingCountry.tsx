@@ -12,7 +12,7 @@ export default function FlyingCountry() {
 
   const handleSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const value = event.target.value || "4"; // Извлекаем значение вручную
-    console.log("Выбрано значение:", value); // Лог для отладки
+    "Выбрано значение:", value; // Лог для отладки
 
     setSelectedCountry(value);
     setData("param2", value); // Обновляем контекст

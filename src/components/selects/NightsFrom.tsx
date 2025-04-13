@@ -15,7 +15,7 @@ export default function NightsFrom() {
 
   // Обработчик изменения диапазона
   const handleRangeChange = (value: { start: any; end: any }) => {
-    console.log("Полученные данные из RangeCalendar:", value);
+    "Полученные данные из RangeCalendar:", value;
     setRange(value);
 
     if (value.start && value.end) {
@@ -33,8 +33,8 @@ export default function NightsFrom() {
 
   // Используем useEffect для логирования текущего состояния
   useEffect(() => {
-    console.log("Начало:", range.start);
-    console.log("Конец:", range.end);
+    "Начало:", range.start;
+    "Конец:", range.end;
   }, [range]);
 
   return (

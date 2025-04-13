@@ -15,7 +15,7 @@ export default function DepartureCity() {
   const handleSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
     // Если значение пустое (попытка отмены выбора), подставляем "80"
     const value = event.target.value || "80";
-    console.log("Выбрано значение (id):", value);
+    "Выбрано значение (id):", value;
     setSelectedCity(value);
     setData("param1", value);
   };

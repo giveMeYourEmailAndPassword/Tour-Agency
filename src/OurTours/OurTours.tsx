@@ -71,7 +71,7 @@ export default function OurTours() {
     );
   }
 
-  console.log(tourDataStatus);
+  tourDataStatus;
 
   const toggleTab = (
     hotelcode: string,

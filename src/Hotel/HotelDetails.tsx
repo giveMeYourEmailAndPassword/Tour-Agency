@@ -242,36 +242,44 @@ export default function HotelDetails() {
           </p>
         </div>
 
-        <div className="container mx-auto pb-4">
-          <div className="flex flex-col gap-2">
-            <div className="flex flex-col">
-              <h2 className="text-2xl font-semibold">Информация о туре</h2>
-              <div className="flex gap-3">
-                <div className="flex items-center gap-1">
-                  <ImCalendar />
-                  <p className="text-black">{formatDate(tour.flydate)}</p>
+        <div className="container mx-auto pb-8">
+          <div className="bg-white rounded-2xl shadow-sm p-6 space-y-6">
+            <div className="space-y-4">
+              <h2 className="text-2xl font-bold text-gray-800">
+                Информация о туре
+              </h2>
+              <div className="flex gap-6">
+                <div className="flex items-center gap-2 bg-blue-50 px-4 py-2 rounded-xl">
+                  <ImCalendar className="text-blue-600 text-lg" />
+                  <p className="text-gray-700 font-medium">
+                    {formatDate(tour.flydate)}
+                  </p>
                 </div>
-                <div className="flex items-center gap-1">
-                  <IoMoonOutline />
-                  <p className="text-black">{tour.nights} ночей</p>
+                <div className="flex items-center gap-2 bg-indigo-50 px-4 py-2 rounded-xl">
+                  <IoMoonOutline className="text-indigo-600 text-lg" />
+                  <p className="text-gray-700 font-medium">
+                    {tour.nights} ночей
+                  </p>
                 </div>
-                <div className="flex items-center gap-1">
-                  <FaUtensils />
-                  <p className="text-black">{getMealType(tour.meal)}</p>
+                <div className="flex items-center gap-2 bg-purple-50 px-4 py-2 rounded-xl">
+                  <FaUtensils className="text-purple-600 text-lg" />
+                  <p className="text-gray-700 font-medium">{getMealType()}</p>
                 </div>
               </div>
             </div>
 
-            <div className="flex flex-col">
-              <h3 className="text-lg font-semibold">Размещение</h3>
-              <div className="flex gap-3">
-                <div className="flex items-center gap-1">
-                  <FaHome />
-                  <p className="text-black">{tour.room}</p>
+            <div className="space-y-4">
+              <h3 className="text-xl font-semibold text-gray-800">
+                Размещение
+              </h3>
+              <div className="flex gap-6">
+                <div className="flex items-center gap-2 bg-green-50 px-4 py-2 rounded-xl">
+                  <FaHome className="text-green-600 text-lg" />
+                  <p className="text-gray-700 font-medium">{tour.room}</p>
                 </div>
-                <div className="flex items-center gap-1">
-                  <FaBed />
-                  <p className="text-black">
+                <div className="flex items-center gap-2 bg-teal-50 px-4 py-2 rounded-xl">
+                  <FaBed className="text-teal-600 text-lg" />
+                  <p className="text-gray-700 font-medium">
                     {tour.placement === "2 взрослых"
                       ? "Два взрослых"
                       : tour.placement}
@@ -280,40 +288,45 @@ export default function HotelDetails() {
               </div>
             </div>
 
-            <div className="flex flex-col w-96">
-              <h3 className="text-lg font-semibold">Перелет</h3>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-1">
-                  <IoAirplane className="-rotate-45" />
-                  {`${tour.departurename} - ${tour.hotelregionname}`}
+            <div className="space-y-4">
+              <h3 className="text-xl font-semibold text-gray-800">Перелет</h3>
+              <div className="bg-amber-50 p-4 rounded-xl space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <IoAirplane className="-rotate-45 text-amber-600 text-lg" />
+                    <p className="text-gray-700 font-medium">{`${tour.departurename} - ${tour.hotelregionname}`}</p>
+                  </div>
+                  <p className="text-gray-600">
+                    {/* {formatDate(tourDetails.dateforward)} */}
+                  </p>
                 </div>
-                <p className="text-black">
-                  {/* {formatDate(tourDetails.dateforward)} */}
-                </p>
-              </div>
 
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-1">
-                  <IoAirplane className="rotate-[135deg]" />
-                  {`${tour.hotelregionname} - ${tour.departurename}`}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <IoAirplane className="rotate-[135deg] text-amber-600 text-lg" />
+                    <p className="text-gray-700 font-medium">{`${tour.hotelregionname} - ${tour.departurename}`}</p>
+                  </div>
+                  <p className="text-gray-600">
+                    {/* {formatDate(tourDetails.datebackward)} */}
+                  </p>
                 </div>
-                <p className="text-black">
-                  {/* {formatDate(tourDetails.datebackward)} */}
-                </p>
               </div>
             </div>
-            <div className="flex w-[64rem] justify-end">
-              <p className="text-black flex gap-2 items-baseline text-xl font-semibold">
-                за двоих
-                <span className="text-2xl text-orange-500 font-bold">
-                  {tour.price}
-                  {tour.currency === "EUR"
-                    ? "€"
-                    : tour.currency === "USD"
-                    ? "$"
-                    : tour.currency}
-                </span>
-              </p>
+
+            <div className="flex justify-end pt-4">
+              <div className="bg-gradient-to-r from-orange-500 to-orange-400 px-6 py-3 rounded-xl shadow-lg">
+                <p className="text-white flex items-baseline gap-2">
+                  <span className="text-lg">за двоих</span>
+                  <span className="text-3xl font-bold">
+                    {tour.price}
+                    {tour.currency === "EUR"
+                      ? "€"
+                      : tour.currency === "USD"
+                      ? "$"
+                      : tour.currency}
+                  </span>
+                </p>
+              </div>
             </div>
           </div>
         </div>

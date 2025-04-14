@@ -1,4 +1,4 @@
-import { useParams, useLocation } from "react-router";
+import { useParams } from "react-router";
 import useHotelDetails from "../Hooks/UseHotelDetails";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
@@ -23,33 +23,9 @@ import { ru } from "date-fns/locale";
 
 export default function HotelDetails() {
   const { hotelcode, tourId } = useParams();
-  const location = useLocation();
-  const currency = location.state?.currency;
   const { data, isLoading, isError } = useHotelDetails(hotelcode!, tourId!);
   const [openSections, setOpenSections] = useState<string[]>([]);
-  const [isReviewsOpen, setIsReviewsOpen] = useState(false);
-  const [isMapOpen, setIsMapOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"map" | "reviews">("map");
-
-  // Добавляем эффект для управления скроллом body
-  useEffect(() => {
-    if (isReviewsOpen || isMapOpen) {
-      document.body.style.overflow = "hidden";
-      document.body.style.paddingRight = "0px";
-      document.documentElement.style.paddingRight = "0px";
-    } else {
-      document.body.style.overflow = "auto";
-      document.body.style.paddingRight = "0px";
-      document.documentElement.style.paddingRight = "0px";
-    }
-
-    // Очистка при размонтировании
-    return () => {
-      document.body.style.overflow = "auto";
-      document.body.style.paddingRight = "0px";
-      document.documentElement.style.paddingRight = "0px";
-    };
-  }, [isReviewsOpen, isMapOpen]);
 
   const toggleSection = (section: string) => {
     setOpenSections((prev) =>
@@ -116,7 +92,7 @@ export default function HotelDetails() {
     return format(date, "d MMMM", { locale: ru }); // "24 октября"
   };
 
-  const getMealType = (meal: string) => {
+  const getMealType = () => {
     const mealTypes = {
       RO: "Без питания",
       BB: "Только завтрак",
@@ -127,10 +103,6 @@ export default function HotelDetails() {
     };
     return mealTypes[tour.meal as keyof typeof mealTypes] || tour.meal;
   };
-
-  const [activeTabs, setActiveTabs] = useState<{
-    [hotelcode: string]: "reviews" | "map";
-  }>({});
 
   return (
     <>

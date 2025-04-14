@@ -29,6 +29,7 @@ export default function HotelDetails() {
   const [openSections, setOpenSections] = useState<string[]>([]);
   const [isReviewsOpen, setIsReviewsOpen] = useState(false);
   const [isMapOpen, setIsMapOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<"map" | "reviews">("map");
 
   // Добавляем эффект для управления скроллом body
   useEffect(() => {
@@ -127,6 +128,10 @@ export default function HotelDetails() {
     return mealTypes[tour.meal as keyof typeof mealTypes] || tour.meal;
   };
 
+  const [activeTabs, setActiveTabs] = useState<{
+    [hotelcode: string]: "reviews" | "map";
+  }>({});
+
   return (
     <>
       {/* <Header /> */}
@@ -180,30 +185,31 @@ export default function HotelDetails() {
           <div className="w-[40%] bg-white rounded-2xl shadow-sm">
             <div className="flex justify-center gap-3 my-2">
               <button
-                onClick={() => setIsMapOpen(true)}
-                className="px-4 py-2 text-gray-600 font-medium transition-all
-                border-b-3 duration-300 hover:border-gray-400 flex items-center gap-2"
+                onClick={() => setActiveTab("map")}
+                className={`px-4 py-2 font-medium transition-all
+                border-b-2 duration-300 flex items-center gap-2
+                ${
+                  activeTab === "map"
+                    ? "text-blue-600 border-blue-600"
+                    : "text-gray-600 border-transparent hover:border-gray-400"
+                }`}
               >
                 <TbMap2 className="text-blue-600 text-xl" />
                 На карте
               </button>
 
               <button
-                onClick={() => setIsReviewsOpen(true)}
-                className="px-4 py-2 text-gray-600 font-medium transition-all
-                border-b-3 duration-300 hover:border-gray-400 flex items-center gap-2"
+                onClick={() => setActiveTab("reviews")}
+                className={`px-4 py-2 font-medium transition-all
+                border-b-2 duration-300 flex items-center gap-2
+                ${
+                  activeTab === "reviews"
+                    ? "text-blue-600 border-blue-600"
+                    : "text-gray-600 border-transparent hover:border-gray-400"
+                }`}
               >
                 Отзывы ({hotel.reviewscount})
               </button>
-              <ReviewsModal
-                isOpen={isReviewsOpen}
-                onClose={() => setIsReviewsOpen(false)}
-                hotelName={hotel.name}
-                reviewsCount={hotel.reviewscount}
-                hotelRating={hotel.rating}
-                hotelStars={hotel.stars}
-                reviews={hotel.reviews?.review || []}
-              />
 
               <button
                 onClick={() =>
@@ -221,12 +227,21 @@ export default function HotelDetails() {
               </button>
             </div>
             <div className="h-[52vh] px-2 pb-2">
-              {/* <HotelMap
-                hotelName={hotel.name}
-                coordinates={[Number(hotel.coord1), Number(hotel.coord2)]}
-                hotelRating={hotel.rating}
-                hotelStars={hotel.stars}
-              /> */}
+              {activeTab === "map" ? (
+                <HotelMap
+                  hotelName={hotel.name}
+                  coordinates={[Number(hotel.coord1), Number(hotel.coord2)]}
+                  hotelRating={hotel.rating}
+                  hotelStars={hotel.stars}
+                />
+              ) : (
+                <ReviewsModal
+                  hotelName={hotel.name}
+                  hotelRating={hotel.rating}
+                  hotelStars={hotel.stars}
+                  reviews={hotel.reviews?.review || []}
+                />
+              )}
             </div>
           </div>
         </div>

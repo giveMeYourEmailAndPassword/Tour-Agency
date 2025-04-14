@@ -181,7 +181,8 @@ export default function HotelDetails() {
             <div className="flex justify-center gap-3 my-2">
               <button
                 onClick={() => setIsMapOpen(true)}
-                className="px-4 py-2 text-gray-600 font-medium transition-all duration-300 hover:text-blue-600 hover:bg-blue-50 rounded-lg flex items-center gap-2"
+                className="px-4 py-2 text-gray-600 font-medium transition-all
+                border-b-3 duration-300 hover:border-gray-400 flex items-center gap-2"
               >
                 <TbMap2 className="text-blue-600 text-xl" />
                 На карте
@@ -189,7 +190,8 @@ export default function HotelDetails() {
 
               <button
                 onClick={() => setIsReviewsOpen(true)}
-                className="px-4 py-2 text-gray-600 font-medium transition-all duration-300 hover:text-blue-600 hover:bg-blue-50 rounded-lg flex items-center gap-2"
+                className="px-4 py-2 text-gray-600 font-medium transition-all
+                border-b-3 duration-300 hover:border-gray-400 flex items-center gap-2"
               >
                 Отзывы ({hotel.reviewscount})
               </button>
@@ -219,12 +221,12 @@ export default function HotelDetails() {
               </button>
             </div>
             <div className="h-[52vh] px-2 pb-2">
-              <HotelMap
+              {/* <HotelMap
                 hotelName={hotel.name}
                 coordinates={[Number(hotel.coord1), Number(hotel.coord2)]}
                 hotelRating={hotel.rating}
                 hotelStars={hotel.stars}
-              />
+              /> */}
             </div>
           </div>
         </div>

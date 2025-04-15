@@ -40,7 +40,7 @@ export const HotelImage = ({
         <img
           src={imageUrl || "/placeholder.jpg"}
           alt={hotelName}
-          className="rounded-md w-full h-52 object-cover"
+          className="rounded-r-md w-full h-52 object-cover"
         />
         <button
           onClick={handleSearchClick}

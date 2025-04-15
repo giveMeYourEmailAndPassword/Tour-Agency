@@ -20,6 +20,7 @@ import { FaYoutube } from "react-icons/fa";
 import { FaUtensils } from "react-icons/fa";
 import { parse, format } from "date-fns";
 import { ru } from "date-fns/locale";
+import ScrollToTopButton from "../components/ScrollToTopButton";
 
 export default function HotelDetails() {
   const { hotelcode, tourId } = useParams();
@@ -437,6 +438,7 @@ export default function HotelDetails() {
           </div>
         </div>
       </div>
+      <ScrollToTopButton />
     </>
   );
 }

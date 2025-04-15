@@ -21,6 +21,7 @@ import { FaUtensils } from "react-icons/fa";
 import { parse, format } from "date-fns";
 import { ru } from "date-fns/locale";
 import ScrollToTopButton from "../components/ScrollToTopButton";
+import BookingPanel from "../components/BookingPanel";
 
 export default function HotelDetails() {
   const { hotelcode, tourId } = useParams();
@@ -108,7 +109,7 @@ export default function HotelDetails() {
   return (
     <>
       {/* <Header /> */}
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 px-36 pt-12">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 px-36 pt-12 pb-24">
         {/* Обертка для слайдера и информации */}
         <div className="flex gap-2">
           {/* Галерея изображений */}
@@ -438,6 +439,14 @@ export default function HotelDetails() {
           </div>
         </div>
       </div>
+
+      {/* Добавляем фиксированную панель бронирования */}
+      <BookingPanel
+        price={tour.price}
+        currency={tour.currency}
+        nights={tour.nights}
+        meal={getMealType()}
+      />
       <ScrollToTopButton />
     </>
   );

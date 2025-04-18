@@ -8,6 +8,7 @@ import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import HotelDetails from "./Hotel/HotelDetails.tsx";
 import { HeroUIProvider } from "@heroui/react";
 import { DataProvider } from "./components/DataProvider.tsx";
+import Booking from "./components/Booking.tsx";
 
 const queryClient = new QueryClient();
 
@@ -32,6 +33,16 @@ createRoot(document.getElementById("root")!).render(
               <Route
                 path="/hotel/:hotelcode/:tourId"
                 element={<HotelDetails />}
+              />
+
+              <Route
+                path="/OurTours/hotel/:hotelcode/:tourId/booking?success=false"
+                element={<Booking />}
+              />
+
+              <Route
+                path="/hotel/:hotelcode/:tourId/booking?success=false"
+                element={<Booking />}
               />
             </Routes>
           </QueryClientProvider>

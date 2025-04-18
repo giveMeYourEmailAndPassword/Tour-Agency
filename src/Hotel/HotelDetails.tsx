@@ -446,6 +446,8 @@ export default function HotelDetails() {
         currency={tour.currency}
         nights={tour.nights}
         meal={getMealType()}
+        hotelcode={hotelcode}
+        tourId={tourId}
       />
       <ScrollToTopButton />
     </>

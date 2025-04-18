@@ -15,8 +15,8 @@ interface ReviewsModalProps {
 
 export default function ReviewsModal({ reviews }: ReviewsModalProps) {
   return (
-    <div className="max-w-4xl max-h-[80vh] px-1 py-2 bg-white rounded-lg">
-      <div className="max-h-[48vh] overflow-y-auto w-full scrollbar-custom px-2">
+    <div className="w-full max-h-[80vh] pl-1 py-1 bg-white rounded-lg">
+      <div className="max-h-[49vh] overflow-y-auto w-full whitespace-pre-wrap break-words scrollbar-custom pr-2">
         {reviews.length > 0 ? (
           <div className="space-y-4">
             {reviews.map((review, index) => (

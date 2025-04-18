@@ -4,13 +4,15 @@ import { useRef } from "react";
 interface HotelMapProps {
   hotelName: string;
   coordinates: [number, number]; // [широта, долгота]
-  hotelRating: number;
-  hotelStars: number;
+  hotelRating?: number; // Делаем опциональным
+  hotelStars?: number; // Делаем опциональным
 }
 
 export default function HotelMap({
   hotelName,
   coordinates: [latitude, longitude],
+  hotelRating = 0, // Значение по умолчанию
+  hotelStars = 0, // Значение по умолчанию
 }: HotelMapProps) {
   const mapRef = useRef<any>(null);
 

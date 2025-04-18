@@ -15,7 +15,7 @@ export default function BookingPanel({
   meal,
 }: BookingPanelProps) {
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white shadow-[0_-4px_10px_rgba(0,0,0,0.1)] z-50">
+    <div className="fixed bottom-0 left-0 right-0 bg-white shadow-[0_3px_12px_rgba(0,0,0,0.1)] z-50">
       <div className="max-w-[1420px] mx-auto px-28 py-2 flex items-center justify-between">
         {/* Информация о туре */}
         <div className="flex items-center gap-8">

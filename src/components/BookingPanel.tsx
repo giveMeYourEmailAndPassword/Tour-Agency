@@ -8,6 +8,10 @@ interface BookingPanelProps {
   meal: string;
   hotelcode?: string;
   tourId?: string;
+  hotelName: string;
+  departure: string;
+  flyDate: string;
+  adults: string;
 }
 
 export default function BookingPanel({
@@ -17,9 +21,28 @@ export default function BookingPanel({
   meal,
   hotelcode = "",
   tourId = "",
+  hotelName,
+  departure,
+  flyDate,
+  adults,
 }: BookingPanelProps) {
   const handleBooking = () => {
     if (hotelcode && tourId) {
+      // Сохраняем данные в localStorage перед переходом
+      const bookingDetails = {
+        hotelName,
+        departure,
+        flyDate,
+        nights,
+        adults,
+        price,
+        currency,
+      };
+      localStorage.setItem(
+        `booking_${hotelcode}_${tourId}`,
+        JSON.stringify(bookingDetails)
+      );
+
       window.location.href = `/hotel/${hotelcode}/${tourId}/booking?success=false`;
     }
   };

@@ -2,15 +2,23 @@ import { useState, useEffect } from "react";
 
 interface BookingForm {
   fullName: string;
-  email: string;
   phone: string;
+}
+
+interface BookingDetails {
+  hotelName: string;
+  departure: string;
+  flyDate: string;
+  nights: number;
+  adults: string;
+  price: string;
+  currency: string;
 }
 
 export default function Booking() {
   const [isSuccess, setIsSuccess] = useState(false);
   const [formData, setFormData] = useState<BookingForm>({
     fullName: "",
-    email: "",
     phone: "",
   });
   const [errors, setErrors] = useState<Partial<BookingForm>>({});
@@ -25,11 +33,30 @@ export default function Booking() {
   const hotelcode = matches?.[1];
   const tourId = matches?.[2];
 
+  // Здесь мы будем получать данные о туре из API или из localStorage
+  const [bookingDetails, setBookingDetails] = useState<BookingDetails>({
+    hotelName: "",
+    departure: "",
+    flyDate: "",
+    nights: 0,
+    adults: "",
+    price: "",
+    currency: "",
+  });
+
   useEffect(() => {
     if (successParam === "true") {
       setIsSuccess(true);
     }
   }, [successParam]);
+
+  useEffect(() => {
+    // Получаем сохраненные данные из localStorage
+    const savedDetails = localStorage.getItem(`booking_${hotelcode}_${tourId}`);
+    if (savedDetails) {
+      setBookingDetails(JSON.parse(savedDetails));
+    }
+  }, [hotelcode, tourId]);
 
   const validateForm = (): boolean => {
     const newErrors: Partial<BookingForm> = {};
@@ -83,9 +110,9 @@ export default function Booking() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
       {isSuccess ? (
-        <div className="flex flex-col items-center justify-center pt-20">
+        <div className="flex flex-col items-center justify-center mt-20">
           <div className="bg-white p-8 rounded-xl shadow-lg max-w-md w-full">
             <h2 className="text-2xl font-bold text-green-600 text-center mb-4">
               Бронирование успешно выполнено!
@@ -104,48 +131,113 @@ export default function Booking() {
           </div>
         </div>
       ) : (
-        <div className="container mx-auto px-4">
-          <div className="bg-white rounded-xl shadow-lg p-6 mt-8 max-w-2xl mx-auto">
-            <h1 className="text-2xl font-bold text-gray-900 mb-6">
-              Оформление бронирования
-            </h1>
+        <div className="flex flex-col items-center justify-center w-[96vh] mx-auto px-4">
+          <div className="bg-white rounded-xl shadow-lg p-6 pt-8 w-full">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900 mb-6">
+                Бронирование тура
+              </h1>
+            </div>
 
+            {/* Информация о туре */}
+            <div className="bg-gray-50 p-4 rounded-lg mb-6">
+              <h2 className="text-xl font-semibold text-gray-800 mb-4">
+                {bookingDetails.hotelName}
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <p className="text-gray-600">
+                    <span className="font-medium">Вылет из:</span>{" "}
+                    {bookingDetails.departure}
+                  </p>
+                  <p className="text-gray-600">
+                    <span className="font-medium">Дата вылета:</span>{" "}
+                    {bookingDetails.flyDate}
+                  </p>
+                  <p className="text-gray-600">
+                    <span className="font-medium">Количество ночей:</span>{" "}
+                    {bookingDetails.nights}
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <p className="text-gray-600">
+                    <span className="font-medium">Туристы:</span>{" "}
+                    {bookingDetails.adults}
+                  </p>
+                  <p className="text-gray-600">
+                    <span className="font-medium">Стоимость:</span>{" "}
+                    {bookingDetails.price}
+                    {bookingDetails.currency === "EUR"
+                      ? "€"
+                      : bookingDetails.currency === "USD"
+                      ? "$"
+                      : bookingDetails.currency}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Форма */}
             <form onSubmit={handleBooking}>
               <div className="space-y-4">
-                <div>
-                  <label className="block text-gray-700 mb-2">ФИО</label>
-                  <input
-                    type="text"
-                    name="fullName"
-                    value={formData.fullName}
-                    onChange={handleInputChange}
-                    className={`w-full px-4 py-2 border rounded-lg ${
-                      errors.fullName ? "border-red-500" : "border-gray-300"
-                    }`}
-                    placeholder="Введите ваше полное имя"
-                  />
-                  {errors.fullName && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {errors.fullName}
-                    </p>
-                  )}
+                <div className="relative">
+                  <label className="block text-gray-700 mb-2">Ваше имя</label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      name="fullName"
+                      value={formData.fullName}
+                      onChange={handleInputChange}
+                      className={`w-full px-4 py-2 border rounded-lg ${
+                        errors.fullName ? "border-red-500" : "border-gray-300"
+                      }`}
+                      placeholder="Введите ваше полное имя"
+                    />
+                    {errors.fullName && (
+                      <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+                        <div className="relative group">
+                          <span className="text-red-500 text-xl">!</span>
+                          <div className="absolute bottom-full right-0 mb-2 hidden group-hover:block">
+                            <div className="bg-red-50 text-red-500 text-sm py-1 px-3 rounded-lg border border-red-200 whitespace-nowrap">
+                              {errors.fullName}
+                            </div>
+                            <div className="absolute top-full right-3 -mt-1 border-t-8 border-x-8 border-t-red-50 border-x-transparent"></div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
-                <div>
-                  <label className="block text-gray-700 mb-2">Телефон</label>
-                  <input
-                    type="tel"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleInputChange}
-                    className={`w-full px-4 py-2 border rounded-lg ${
-                      errors.phone ? "border-red-500" : "border-gray-300"
-                    }`}
-                    placeholder="+7 (___) ___-__-__"
-                  />
-                  {errors.phone && (
-                    <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
-                  )}
+                <div className="relative">
+                  <label className="block text-gray-700 mb-2">
+                    Номер телефона
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="tel"
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleInputChange}
+                      className={`w-full px-4 py-2 border rounded-lg ${
+                        errors.phone ? "border-red-500" : "border-gray-300"
+                      }`}
+                      placeholder="+996 XXX XXX XXX"
+                    />
+                    {errors.phone && (
+                      <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+                        <div className="relative group">
+                          <span className="text-red-500 text-xl">!</span>
+                          <div className="absolute bottom-full right-0 mb-2 hidden group-hover:block">
+                            <div className="bg-red-50 text-red-500 text-sm py-1 px-3 rounded-lg border border-red-200 whitespace-nowrap">
+                              {errors.phone}
+                            </div>
+                            <div className="absolute top-full right-3 -mt-1 border-t-8 border-x-8 border-t-red-50 border-x-transparent"></div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
 
@@ -158,8 +250,13 @@ export default function Booking() {
                 className="mt-6 w-full px-6 py-3 bg-blue-600 text-white 
                 rounded-xl font-medium hover:bg-blue-500 transition-colors"
               >
-                Подтвердить бронирование
+                Отправить заявку
               </button>
+
+              <p className="text-gray-600 text-center mt-4">
+                Нажимая кнопку "Отправить заявку", вы соглашаетесь с тем, что мы
+                свяжемся с вами для подтверждения бронирования.
+              </p>
             </form>
           </div>
         </div>

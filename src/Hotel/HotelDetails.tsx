@@ -448,6 +448,10 @@ export default function HotelDetails() {
         meal={getMealType()}
         hotelcode={hotelcode}
         tourId={tourId}
+        hotelName={hotel.name}
+        departure={tour.departurename}
+        flyDate={tour.flydate}
+        adults={tour.placement}
       />
       <ScrollToTopButton />
     </>

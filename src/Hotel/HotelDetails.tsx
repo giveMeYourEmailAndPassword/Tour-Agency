@@ -449,6 +449,8 @@ export default function HotelDetails() {
         hotelcode={hotelcode}
         tourId={tourId}
         hotelName={hotel.name}
+        country={hotel.country}
+        region={hotel.region}
         departure={tour.departurename}
         flyDate={tour.flydate}
         adults={tour.placement}

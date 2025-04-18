@@ -13,6 +13,8 @@ interface BookingDetails {
   adults: string;
   price: string;
   currency: string;
+  country: string;
+  region: string;
 }
 
 export default function Booking() {
@@ -42,6 +44,8 @@ export default function Booking() {
     adults: "",
     price: "",
     currency: "",
+    country: "",
+    region: "",
   });
 
   useEffect(() => {
@@ -67,8 +71,6 @@ export default function Booking() {
 
     if (!formData.phone.trim()) {
       newErrors.phone = "Введите телефон";
-    } else if (!/^\+7\s?\(\d{3}\)\s?\d{3}-\d{2}-\d{2}$/.test(formData.phone)) {
-      newErrors.phone = "Введите корректный номер телефона";
     }
 
     setErrors(newErrors);
@@ -133,17 +135,20 @@ export default function Booking() {
       ) : (
         <div className="flex flex-col items-center justify-center w-[96vh] mx-auto px-4">
           <div className="bg-white rounded-xl shadow-lg p-6 pt-8 w-full">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900 mb-6">
+            <div className="flex flex-col mb-6">
+              <h1 className="text-2xl font-bold text-gray-900 ">
                 Бронирование тура
               </h1>
+              <h2 className="text-lg font-semibold text-gray-800">
+                {bookingDetails.hotelName}
+              </h2>
+              <p className="text-gray-600 text-lg">
+                {bookingDetails.country}, {bookingDetails.region}
+              </p>
             </div>
 
             {/* Информация о туре */}
             <div className="bg-gray-50 p-4 rounded-lg mb-6">
-              <h2 className="text-xl font-semibold text-gray-800 mb-4">
-                {bookingDetails.hotelName}
-              </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <p className="text-gray-600">
@@ -154,10 +159,6 @@ export default function Booking() {
                     <span className="font-medium">Дата вылета:</span>{" "}
                     {bookingDetails.flyDate}
                   </p>
-                  <p className="text-gray-600">
-                    <span className="font-medium">Количество ночей:</span>{" "}
-                    {bookingDetails.nights}
-                  </p>
                 </div>
                 <div className="space-y-2">
                   <p className="text-gray-600">
@@ -165,13 +166,8 @@ export default function Booking() {
                     {bookingDetails.adults}
                   </p>
                   <p className="text-gray-600">
-                    <span className="font-medium">Стоимость:</span>{" "}
-                    {bookingDetails.price}
-                    {bookingDetails.currency === "EUR"
-                      ? "€"
-                      : bookingDetails.currency === "USD"
-                      ? "$"
-                      : bookingDetails.currency}
+                    <span className="font-medium">Количество ночей:</span>{" "}
+                    {bookingDetails.nights}
                   </p>
                 </div>
               </div>
@@ -191,25 +187,29 @@ export default function Booking() {
                       className={`w-full px-4 py-2 border rounded-lg ${
                         errors.fullName ? "border-red-500" : "border-gray-300"
                       }`}
-                      placeholder="Введите ваше полное имя"
+                      placeholder="Введите ваше имя"
                     />
                     {errors.fullName && (
-                      <div className="absolute inset-y-0 right-0 flex items-center pr-3">
-                        <div className="relative group">
+                      <>
+                        <div className="absolute inset-y-0 right-0 flex items-center pr-3">
                           <span className="text-red-500 text-xl">!</span>
-                          <div className="absolute bottom-full right-0 mb-2 hidden group-hover:block">
-                            <div className="bg-red-50 text-red-500 text-sm py-1 px-3 rounded-lg border border-red-200 whitespace-nowrap">
-                              {errors.fullName}
-                            </div>
-                            <div className="absolute top-full right-3 -mt-1 border-t-8 border-x-8 border-t-red-50 border-x-transparent"></div>
+                        </div>
+                        <div className="absolute top-full left-0 mt-1 bg-white border rounded-md shadow-lg py-1 px-3 z-10">
+                          <div className="flex items-center">
+                            <span className="text-amber-500 text-xl mr-2">
+                              !
+                            </span>
+                            <span className="text-gray-700">
+                              Заполните это поле.
+                            </span>
                           </div>
                         </div>
-                      </div>
+                      </>
                     )}
                   </div>
                 </div>
 
-                <div className="relative">
+                <div className="relative mt-8">
                   <label className="block text-gray-700 mb-2">
                     Номер телефона
                   </label>
@@ -225,17 +225,23 @@ export default function Booking() {
                       placeholder="+996 XXX XXX XXX"
                     />
                     {errors.phone && (
-                      <div className="absolute inset-y-0 right-0 flex items-center pr-3">
-                        <div className="relative group">
+                      <>
+                        <div className="absolute inset-y-0 right-0 flex items-center pr-3">
                           <span className="text-red-500 text-xl">!</span>
-                          <div className="absolute bottom-full right-0 mb-2 hidden group-hover:block">
-                            <div className="bg-red-50 text-red-500 text-sm py-1 px-3 rounded-lg border border-red-200 whitespace-nowrap">
-                              {errors.phone}
-                            </div>
-                            <div className="absolute top-full right-3 -mt-1 border-t-8 border-x-8 border-t-red-50 border-x-transparent"></div>
+                        </div>
+                        <div className="absolute top-full mt-1 bg-white border rounded-md shadow-lg py-1 px-3 z-10">
+                          <div className="flex items-center">
+                            <span className="text-amber-500 text-xl mr-2">
+                              !
+                            </span>
+                            <span className="text-gray-700">
+                              {errors.phone === "Введите телефон"
+                                ? "Заполните это поле."
+                                : "Введите корректный номер телефона."}
+                            </span>
                           </div>
                         </div>
-                      </div>
+                      </>
                     )}
                   </div>
                 </div>
@@ -245,13 +251,26 @@ export default function Booking() {
                 <p className="text-red-500 text-sm mt-4">{errors.submit}</p>
               )}
 
-              <button
-                type="submit"
-                className="mt-6 w-full px-6 py-3 bg-blue-600 text-white 
+              <div className="flex justify-between items-center">
+                <div className="flex flex-col items-center mt-2">
+                  <p className="text-gray-600 font-medium">Стоимость тура:</p>
+                  <p className="text-orange-500 font-medium text-4xl">
+                    {bookingDetails.price}
+                    {bookingDetails.currency === "EUR"
+                      ? "€"
+                      : bookingDetails.currency === "USD"
+                      ? "$"
+                      : bookingDetails.currency}
+                  </p>
+                </div>
+                <button
+                  type="submit"
+                  className="mt-6 w-54 px-6 py-3 bg-blue-600 text-white 
                 rounded-xl font-medium hover:bg-blue-500 transition-colors"
-              >
-                Отправить заявку
-              </button>
+                >
+                  Отправить заявку
+                </button>
+              </div>
 
               <p className="text-gray-600 text-center mt-4">
                 Нажимая кнопку "Отправить заявку", вы соглашаетесь с тем, что мы

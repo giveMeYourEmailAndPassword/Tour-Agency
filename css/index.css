@@ -49,3 +49,16 @@ p {
   border: 1px solid #fff !important;
   filter: brightness(100%) !important;
 }
+
+input:invalid {
+  border-color: #ff0000;
+}
+
+/* Стилизация валидационных сообщений */
+input::-webkit-validation-bubble-message {
+  color: #333;
+  background: #fff;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 8px;
+}

@@ -1,22 +1,84 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import BookingPanel from "./BookingPanel";
+import { useState, useEffect } from "react";
+
+interface BookingForm {
+  fullName: string;
+  email: string;
+  phone: string;
+}
 
 export default function Booking() {
   const [isSuccess, setIsSuccess] = useState(false);
-  const navigate = useNavigate();
+  const [formData, setFormData] = useState<BookingForm>({
+    fullName: "",
+    email: "",
+    phone: "",
+  });
+  const [errors, setErrors] = useState<Partial<BookingForm>>({});
 
-  // Здесь будет логика обработки бронирования
-  const handleBooking = async () => {
+  // Получаем параметры из URL
+  const path = window.location.pathname;
+  const searchParams = new URLSearchParams(window.location.search);
+  const successParam = searchParams.get("success");
+
+  // Получаем hotelcode и tourId из пути
+  const matches = path.match(/\/hotel\/(\d+)\/(\d+)\/booking/);
+  const hotelcode = matches?.[1];
+  const tourId = matches?.[2];
+
+  useEffect(() => {
+    if (successParam === "true") {
+      setIsSuccess(true);
+    }
+  }, [successParam]);
+
+  const validateForm = (): boolean => {
+    const newErrors: Partial<BookingForm> = {};
+
+    if (!formData.fullName.trim()) {
+      newErrors.fullName = "Введите ФИО";
+    }
+
+    if (!formData.phone.trim()) {
+      newErrors.phone = "Введите телефон";
+    } else if (!/^\+7\s?\(\d{3}\)\s?\d{3}-\d{2}-\d{2}$/.test(formData.phone)) {
+      newErrors.phone = "Введите корректный номер телефона";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleBooking = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!validateForm()) {
+      return;
+    }
+
     try {
       // Здесь будет ваш API запрос для бронирования
-      // const response = await api.createBooking(...)
+      // const response = await api.createBooking({ ...formData, hotelcode, tourId })
 
-      // Временно имитируем успешное бронирование
-      setIsSuccess(true);
+      // После успешного бронирования
+      window.location.href = `/hotel/${hotelcode}/${tourId}/booking?success=true`;
     } catch (error) {
       console.error("Ошибка при бронировании:", error);
-      setIsSuccess(false);
+      setErrors({ ...errors, submit: "Произошла ошибка при бронировании" });
+    }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+    // Очищаем ошибку поля при изменении
+    if (errors[name as keyof BookingForm]) {
+      setErrors((prev) => ({
+        ...prev,
+        [name]: undefined,
+      }));
     }
   };
 
@@ -33,7 +95,7 @@ export default function Booking() {
               почту.
             </p>
             <button
-              onClick={() => navigate("/")}
+              onClick={() => (window.location.href = "/")}
               className="w-full px-6 py-3 bg-green-600 text-white rounded-xl 
               font-medium hover:bg-green-500 transition-colors"
             >
@@ -43,47 +105,53 @@ export default function Booking() {
         </div>
       ) : (
         <div className="container mx-auto px-4">
-          <div className="bg-white rounded-xl shadow-lg p-6 mt-8">
+          <div className="bg-white rounded-xl shadow-lg p-6 mt-8 max-w-2xl mx-auto">
             <h1 className="text-2xl font-bold text-gray-900 mb-6">
               Оформление бронирования
             </h1>
 
-            {/* Здесь форма бронирования */}
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleBooking();
-              }}
-            >
-              {/* Поля формы */}
+            <form onSubmit={handleBooking}>
               <div className="space-y-4">
                 <div>
                   <label className="block text-gray-700 mb-2">ФИО</label>
                   <input
                     type="text"
-                    className="w-full px-4 py-2 border rounded-lg"
+                    name="fullName"
+                    value={formData.fullName}
+                    onChange={handleInputChange}
+                    className={`w-full px-4 py-2 border rounded-lg ${
+                      errors.fullName ? "border-red-500" : "border-gray-300"
+                    }`}
                     placeholder="Введите ваше полное имя"
                   />
-                </div>
-
-                <div>
-                  <label className="block text-gray-700 mb-2">Email</label>
-                  <input
-                    type="email"
-                    className="w-full px-4 py-2 border rounded-lg"
-                    placeholder="Введите ваш email"
-                  />
+                  {errors.fullName && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.fullName}
+                    </p>
+                  )}
                 </div>
 
                 <div>
                   <label className="block text-gray-700 mb-2">Телефон</label>
                   <input
                     type="tel"
-                    className="w-full px-4 py-2 border rounded-lg"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleInputChange}
+                    className={`w-full px-4 py-2 border rounded-lg ${
+                      errors.phone ? "border-red-500" : "border-gray-300"
+                    }`}
                     placeholder="+7 (___) ___-__-__"
                   />
+                  {errors.phone && (
+                    <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
+                  )}
                 </div>
               </div>
+
+              {errors.submit && (
+                <p className="text-red-500 text-sm mt-4">{errors.submit}</p>
+              )}
 
               <button
                 type="submit"

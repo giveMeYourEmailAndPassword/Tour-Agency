@@ -36,12 +36,12 @@ createRoot(document.getElementById("root")!).render(
               />
 
               <Route
-                path="/OurTours/hotel/:hotelcode/:tourId/booking?success=false"
+                path="/OurTours/hotel/:hotelcode/:tourId/booking"
                 element={<Booking />}
               />
 
               <Route
-                path="/hotel/:hotelcode/:tourId/booking?success=false"
+                path="/hotel/:hotelcode/:tourId/booking"
                 element={<Booking />}
               />
             </Routes>

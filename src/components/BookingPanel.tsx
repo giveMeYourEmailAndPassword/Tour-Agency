@@ -6,6 +6,8 @@ interface BookingPanelProps {
   currency: string;
   nights: number;
   meal: string;
+  hotelcode?: string;
+  tourId?: string;
 }
 
 export default function BookingPanel({
@@ -13,7 +15,15 @@ export default function BookingPanel({
   currency,
   nights,
   meal,
+  hotelcode = "",
+  tourId = "",
 }: BookingPanelProps) {
+  const handleBooking = () => {
+    if (hotelcode && tourId) {
+      window.location.href = `/hotel/${hotelcode}/${tourId}/booking?success=false`;
+    }
+  };
+
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-white shadow-[0_3px_12px_rgba(0,0,0,0.1)] z-50">
       <div className="max-w-[1420px] mx-auto px-28 py-2 flex items-center justify-between">
@@ -52,9 +62,7 @@ export default function BookingPanel({
               В избранное
             </button>
             <button
-              onClick={() => {
-                /* Забронировать */
-              }}
+              onClick={handleBooking}
               className="px-6 py-2 bg-blue-600 text-white rounded-xl font-medium 
               hover:bg-blue-500 transition-colors shadow-md"
             >

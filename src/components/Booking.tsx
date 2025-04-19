@@ -15,6 +15,8 @@ interface BookingDetails {
   currency: string;
   country: string;
   region: string;
+  mealType: string; // Тип питания
+  roomType?: string; // Тип номера (опционально)
 }
 
 export default function Booking() {
@@ -85,14 +87,72 @@ export default function Booking() {
     }
 
     try {
-      // Здесь будет ваш API запрос для бронирования
-      // const response = await api.createBooking({ ...formData, hotelcode, tourId })
+      // Форматируем телефон в правильный формат (убираем пробелы, скобки и дефисы)
+      const formattedPhone = formData.phone.replace(/[\s\(\)-]/g, "");
+
+      // Форматируем дату в формат YYYY-MM-DD
+      const [day, month, year] = bookingDetails.flyDate.split(".");
+      const formattedDate = `${year}-${month}-${day}`;
+
+      // Преобразуем количество взрослых в строку
+      const adults = bookingDetails.adults.replace(/[^0-9]/g, "");
+
+      const bookingRequestData = {
+        // Информация о клиенте
+        clientName: formData.fullName,
+        clientPhone: formattedPhone,
+
+        // Информация о туре
+        tourId: tourId || "",
+        hotelName: bookingDetails.hotelName,
+        country: bookingDetails.country,
+        region: bookingDetails.region,
+
+        // Детали поездки
+        departure: bookingDetails.departure,
+        flyDate: formattedDate, // Отформатированная дата
+        nights: bookingDetails.nights,
+        adults: adults, // Только цифры
+        mealType: bookingDetails.mealType || undefined,
+        roomType: bookingDetails.roomType || undefined,
+
+        // Стоимость
+        price: bookingDetails.price,
+        currency: bookingDetails.currency,
+      };
+
+      // Отправляем запрос на бэкенд
+      const response = await fetch(
+        "http://localhost:8000/api/booking/request",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(bookingRequestData),
+        }
+      );
+
+      if (!response.ok) {
+        // Получаем детали ошибки
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Ошибка при отправке заявки");
+      }
+
+      // Очищаем данные из localStorage после успешной отправки
+      localStorage.removeItem(`booking_${hotelcode}_${tourId}`);
 
       // После успешного бронирования
       window.location.href = `/hotel/${hotelcode}/${tourId}/booking?success=true`;
     } catch (error) {
       console.error("Ошибка при бронировании:", error);
-      setErrors({ ...errors, submit: "Произошла ошибка при бронировании" });
+      setErrors({
+        ...errors,
+        submit:
+          error instanceof Error
+            ? error.message
+            : "Произошла ошибка при бронировании",
+      });
     }
   };
 
@@ -114,7 +174,7 @@ export default function Booking() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
       {isSuccess ? (
-        <div className="flex flex-col items-center justify-center mt-20">
+        <div className="flex flex-col items-center justify-center">
           <div className="bg-white p-8 rounded-xl shadow-lg max-w-md w-full">
             <h2 className="text-2xl font-bold text-green-600 text-center mb-4">
               Бронирование успешно выполнено!

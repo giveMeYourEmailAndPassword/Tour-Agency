@@ -138,7 +138,7 @@ export default function HotelService() {
 
           <div className="flex border-b mb-2 gap-1">
             <button
-              className={`text-gray-800 text-xs font-medium px-1 mb-[2px] pb-1 ${
+              className={`text-gray-800 text-xs font-medium px-1 mb-[-1px] pb-1 ${
                 activeTab === "all" ? "border-b-2 border-black mb-0" : ""
               }`}
               onClick={() => setActiveTab("all")}
@@ -147,7 +147,7 @@ export default function HotelService() {
             </button>
             {selectedValues.length >= 1 && (
               <button
-                className={`text-gray-800 text-xs font-medium px-1 mb-[2px] pb-1 ${
+                className={`text-gray-800 text-xs font-medium px-1 mb-[-1px] pb-1 ${
                   activeTab === "selected" ? "border-b-2 border-black mb-0" : ""
                 }`}
                 onClick={() => setActiveTab("selected")}
@@ -160,7 +160,7 @@ export default function HotelService() {
             )}
             {selectedValues.length >= 1 && (
               <button
-                className="text-gray-800 text-xs font-medium px-1 mb-[2px] pb-1"
+                className="text-gray-800 text-xs font-medium px-1 mb-[-1px] pb-1"
                 onClick={handleReset}
               >
                 СБРОС
@@ -168,7 +168,7 @@ export default function HotelService() {
             )}
           </div>
 
-          <div className="h-80 overflow-auto scrollbar-custom">
+          <div className="h-64 overflow-auto scrollbar-custom">
             {filteredCheckboxes.map(({ group, options }) => (
               <div key={group} className="mb-3">
                 <h1 className="text-base font-semibold mb-1">{group}</h1>

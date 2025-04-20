@@ -22,7 +22,7 @@ export default function App() {
       <div className="w-full bg-blue-500">
         <div className="max-w-[1560px] mx-auto">
           {/* Навигация */}
-          <div className="flex gap-4 pl-36 items-center border-b border-blue-400">
+          <div className="flex justify-end gap-4 md:pr-8 lg:pr-12 xl:pr-36 items-center border-b border-blue-400">
             <TbPointFilled className="text-sm text-blue-400" />
 
             <div
@@ -59,8 +59,8 @@ export default function App() {
 
           {/* Контент */}
           <div className="pt-14 pb-28">
-            <div className="pl-36 mt-12 mb-7 flex flex-col gap-4">
-              <h1 className="text-5xl text-white font-bold max-w-[60rem]">
+            <div className="px-4 md:px-8 lg:px-12 xl:pl-36 mt-12 mb-7 flex flex-col gap-4">
+              <h1 className="text-4xl lg:text-5xl text-white font-bold max-w-[60rem]">
                 Воплощай свои МЕЧТЫ в реальность вместе с нами
               </h1>
               <h2 className="text-xl font-medium text-white">

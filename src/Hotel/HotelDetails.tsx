@@ -107,9 +107,12 @@ export default function HotelDetails() {
   };
 
   return (
-    <>
+    <div className="w-full bg-gradient-to-br from-blue-50 via-white to-indigo-50">
       {/* <Header /> */}
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 px-36 pt-12 pb-24">
+      <div
+        className=" flex flex-col my-14 gap-8 max-w-[1560px] mx-auto px-4 md:px-8 lg:px-12 xl:px-36 \
+    min-h-screen"
+      >
         {/* Обертка для слайдера и информации */}
         <div className="flex gap-2">
           {/* Галерея изображений */}
@@ -457,6 +460,6 @@ export default function HotelDetails() {
         operatorLink={tour.operatorlink}
       />
       <ScrollToTopButton />
-    </>
+    </div>
   );
 }

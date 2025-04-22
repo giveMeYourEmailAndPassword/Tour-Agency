@@ -109,21 +109,34 @@ export default function HotTours() {
   if (isLoading) {
     return (
       <div className="flex flex-col my-14 gap-8 max-w-[1560px] mx-auto px-4 md:px-8 lg:px-12 xl:px-36">
-        <div className="flex items-end gap-1">
-          <h2 className="text-3xl font-semibold">Горящие туры</h2>
-          <BsFire className="text-3xl text-orange-500" />
+        <div className="flex flex-col gap-3">
+          <div className="flex items-end gap-1">
+            <h2 className="text-2xl md:text-3xl font-semibold">Горящие туры</h2>
+            <BsFire className="text-3xl text-orange-500" />
+          </div>
+          <div className="flex gap-2">
+            <button className="px-5 py-2 rounded-full font-semibold text-blue-500 bg-slate-200">
+              Все
+            </button>
+            <button className="px-5 py-2 rounded-full font-semibold text-black bg-slate-100 text-opacity-50">
+              из Бишкека
+            </button>
+            <button className="px-5 py-2 rounded-full font-semibold text-black bg-slate-100 text-opacity-50">
+              из Алматы
+            </button>
+          </div>
         </div>
 
-        <div className="grid grid-cols-4 gap-9">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
           {[...Array(8)].map((_, index) => (
             <div
               key={index}
-              className="bg-white shadow-md rounded-md flex flex-col w-72"
+              className="bg-white shadow-md rounded-md flex flex-col  w-full max-w-sm mx-auto"
             >
               <Skeleton className="h-48 rounded-lg" />
 
               <div className="flex flex-col">
-                <Skeleton className="h-7 w-72 mt-[-27px]" />
+                <Skeleton className="h-7 w-[320px] mt-[-27px]" />
 
                 <div className="flex flex-col gap-2 px-2 pb-2 pt-1">
                   <div className="flex flex-col gap-1">

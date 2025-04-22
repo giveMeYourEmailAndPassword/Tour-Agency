@@ -17,7 +17,7 @@ export default function Filters() {
     <div className="flex flex-col items-center w-full px-4 md:px-8 lg:px-12 xl:px-36">
       <div className="bg-blue-600 rounded-xl w-full md:py-4 gap-3 flex flex-col items-center justify-center px-4">
         {/* Основные фильтры */}
-        <div className="flex flex-col lg:flex-row bg-white rounded-lg p-2 gap-3 justify-between items-center w-full">
+        <div className="flex lg:flex-row bg-white rounded-lg p-2 gap-3 justify-between items-center w-full">
           {/* Город вылета */}
           <NewDepartureCity />
           {/* <DepartureCity /> */}

@@ -14,6 +14,7 @@ interface BookingPanelProps {
   adults: string;
   country: string;
   region: string;
+  operatorLink: string;
 }
 
 export default function BookingPanel({
@@ -29,6 +30,7 @@ export default function BookingPanel({
   adults,
   country,
   region,
+  operatorLink,
 }: BookingPanelProps) {
   const handleBooking = () => {
     if (hotelcode && tourId) {
@@ -43,6 +45,9 @@ export default function BookingPanel({
         currency,
         country,
         region,
+        hotelcode,
+        operatorLink,
+        mealType: meal,
       };
       localStorage.setItem(
         `booking_${hotelcode}_${tourId}`,

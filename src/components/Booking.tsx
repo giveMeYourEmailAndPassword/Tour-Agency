@@ -17,6 +17,8 @@ interface BookingDetails {
   region: string;
   mealType: string; // Тип питания
   roomType?: string; // Тип номера (опционально)
+  hotelcode?: string; // добавляем поле
+  operatorLink?: string; // добавляем поле
 }
 
 export default function Booking() {
@@ -107,6 +109,8 @@ export default function Booking() {
         hotelName: bookingDetails.hotelName,
         country: bookingDetails.country,
         region: bookingDetails.region,
+        hotelcode: bookingDetails.hotelcode,
+        operatorLink: bookingDetails.operatorLink,
 
         // Детали поездки
         departure: bookingDetails.departure,

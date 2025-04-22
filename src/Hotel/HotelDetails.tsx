@@ -110,14 +110,14 @@ export default function HotelDetails() {
     <div className="w-full bg-gradient-to-br from-blue-50 via-white to-indigo-50">
       {/* <Header /> */}
       <div
-        className=" flex flex-col my-14 gap-8 max-w-[1560px] mx-auto px-4 md:px-8 lg:px-12 xl:px-36 \
+        className=" flex flex-col py-14 max-w-[1560px] mx-auto px-4 md:px-8 lg:px-12 xl:px-36 \
     min-h-screen"
       >
         {/* Обертка для слайдера и информации */}
-        <div className="flex gap-2">
+        <div className="flex gap-2 h-[420px]">
           {/* Галерея изображений */}
           {hotel.images?.image.length > 0 && (
-            <div className="relative group w-[60%]">
+            <div className="relative group w-[60%] h-full">
               <Swiper
                 modules={[Navigation, Pagination, Autoplay]}
                 spaceBetween={10}
@@ -133,7 +133,7 @@ export default function HotelDetails() {
                 }}
                 autoplay={{ delay: 2500, disableOnInteraction: false }}
                 loop={true}
-                className="h-[60vh] rounded-2xl"
+                className="h-full rounded-2xl"
               >
                 {hotel.images.image.map((img: string, index: number) => (
                   <SwiperSlide key={index} className="relative">
@@ -159,7 +159,7 @@ export default function HotelDetails() {
           )}
 
           {/* Блок с информацией справа */}
-          <div className="w-[40%] bg-white rounded-2xl shadow-sm">
+          <div className="w-[40%] bg-white rounded-2xl shadow-sm h-full">
             <div className="flex justify-center gap-3 my-2">
               <button
                 onClick={() => setActiveTab("map")}
@@ -203,7 +203,7 @@ export default function HotelDetails() {
                 Обзоры
               </button>
             </div>
-            <div className="h-[52vh] px-2 pb-2">
+            <div className="h-[calc(100%-60px)] px-2 pb-2">
               {activeTab === "map" ? (
                 <HotelMap
                   hotelName={hotel.name}
@@ -247,7 +247,7 @@ export default function HotelDetails() {
           </p>
         </div>
 
-        <div className="container mx-auto pb-8">
+        <div className="container mx-auto pb-8 mt-8">
           <div className="bg-white rounded-2xl shadow-sm p-6 space-y-6">
             <div className="space-y-4">
               <h2 className="text-2xl font-bold text-gray-800">
@@ -336,7 +336,7 @@ export default function HotelDetails() {
           </div>
         </div>
 
-        <div className="container mx-auto pb-4">
+        <div className="container mx-auto pb-14">
           {hotel.description && (
             <div className="flex flex-col py-2">
               <h2 className="text-2xl font-semibold">Информация об отеле</h2>

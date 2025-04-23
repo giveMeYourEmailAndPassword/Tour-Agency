@@ -96,9 +96,6 @@ export default function Booking() {
       const [day, month, year] = bookingDetails.flyDate.split(".");
       const formattedDate = `${year}-${month}-${day}`;
 
-      // Преобразуем количество взрослых в строку
-      const adults = bookingDetails.adults.replace(/[^0-9]/g, "");
-
       const bookingRequestData = {
         // Информация о клиенте
         clientName: formData.fullName,
@@ -116,7 +113,7 @@ export default function Booking() {
         departure: bookingDetails.departure,
         flyDate: formattedDate, // Отформатированная дата
         nights: bookingDetails.nights,
-        adults: adults, // Только цифры
+        adults: bookingDetails.adults, // Только цифры
         mealType: bookingDetails.mealType || undefined,
         roomType: bookingDetails.roomType || undefined,
 

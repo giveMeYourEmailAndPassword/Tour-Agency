@@ -458,6 +458,7 @@ export default function HotelDetails() {
         flyDate={tour.flydate}
         adults={tour.placement}
         operatorLink={tour.operatorlink}
+        roomType={tour.room}
       />
       <ScrollToTopButton />
     </div>

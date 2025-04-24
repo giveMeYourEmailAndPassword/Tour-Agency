@@ -1,4 +1,4 @@
-import { useParams } from "react-router";
+import { useParams, useLocation } from "react-router";
 import useHotelDetails from "../Hooks/UseHotelDetails";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
@@ -27,6 +27,8 @@ import SimilarHotTours from "../components/SimilarHotTours";
 
 export default function HotelDetails() {
   const { hotelcode, tourId } = useParams();
+  const location = useLocation();
+  const isHotTourPath = !location.pathname.includes("/OurTours");
   const { data, isLoading, isError } = useHotelDetails(hotelcode!, tourId!);
   const [openSections, setOpenSections] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState<"map" | "reviews">("map");
@@ -443,14 +445,17 @@ export default function HotelDetails() {
             })()}
           </div>
 
-          {/* Добавляем секцию похожих туров */}
-          <div className="mt-8">
-            <p>asdasdas</p>
-            <SimilarHotTours
-              countrycode={hotel.countrycode}
-              departurecode={tour.departurecode}
-            />
-          </div>
+          {/* Показываем SimilarHotTours только если это путь горящих туров */}
+          {isHotTourPath && (
+            <div className="mt-8">
+              <SimilarHotTours
+                countrycode={hotel.countrycode}
+                departurecode={tour.departurecode}
+                currentHotelCode={hotel.hotelcode}
+                currentHotelName={hotel.name}
+              />
+            </div>
+          )}
         </div>
       </div>
 

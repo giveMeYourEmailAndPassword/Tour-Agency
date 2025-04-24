@@ -9,11 +9,15 @@ import useSimilarHotTours from "../Hooks/useSimilarHotTours";
 interface SimilarHotToursProps {
   countrycode: string;
   departurecode: string;
+  currentHotelCode: string;
+  currentHotelName: string;
 }
 
 export default function SimilarHotTours({
   countrycode,
   departurecode,
+  currentHotelCode,
+  currentHotelName,
 }: SimilarHotToursProps) {
   const navigate = useNavigate();
   const { data, isLoading, isError } = useSimilarHotTours(
@@ -52,7 +56,14 @@ export default function SimilarHotTours({
     return null; // Лучше возвращать null вместо тестового текста
   }
 
-  const similarTours = data?.hottours?.tour?.slice(0, 4) || [];
+  const similarTours =
+    data?.hottours?.tour
+      ?.filter(
+        (tour) =>
+          tour.hotelcode !== currentHotelCode &&
+          tour.hotelname !== currentHotelName
+      )
+      ?.slice(0, 4) || [];
 
   if (similarTours.length === 0) {
     return null;

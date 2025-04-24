@@ -23,6 +23,7 @@ import { ru } from "date-fns/locale";
 import ScrollToTopButton from "../components/ScrollToTopButton";
 import BookingPanel from "../components/BookingPanel";
 import Header from "../components/Header";
+import SimilarHotTours from "../components/SimilarHotTours";
 
 export default function HotelDetails() {
   const { hotelcode, tourId } = useParams();
@@ -440,6 +441,15 @@ export default function HotelDetails() {
                 </div>,
               ];
             })()}
+          </div>
+
+          {/* Добавляем секцию похожих туров */}
+          <div className="mt-8">
+            <p>asdasdas</p>
+            <SimilarHotTours
+              countrycode={hotel.countrycode}
+              departurecode={tour.departurecode}
+            />
           </div>
         </div>
       </div>

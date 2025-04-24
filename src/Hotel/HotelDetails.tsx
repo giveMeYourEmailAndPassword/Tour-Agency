@@ -22,6 +22,7 @@ import { parse, format } from "date-fns";
 import { ru } from "date-fns/locale";
 import ScrollToTopButton from "../components/ScrollToTopButton";
 import BookingPanel from "../components/BookingPanel";
+import Header from "../components/Header";
 
 export default function HotelDetails() {
   const { hotelcode, tourId } = useParams();
@@ -108,9 +109,9 @@ export default function HotelDetails() {
 
   return (
     <div className="w-full bg-gradient-to-br from-blue-50 via-white to-indigo-50">
-      {/* <Header /> */}
+      <Header />
       <div
-        className=" flex flex-col py-14 max-w-[1560px] mx-auto px-4 md:px-8 lg:px-12 xl:px-36 \
+        className=" flex flex-col py-8 max-w-[1560px] mx-auto px-4 md:px-8 lg:px-12 xl:px-36 \
     min-h-screen"
       >
         {/* Обертка для слайдера и информации */}
@@ -159,7 +160,7 @@ export default function HotelDetails() {
           )}
 
           {/* Блок с информацией справа */}
-          <div className="w-[40%] bg-white rounded-2xl shadow-sm h-full">
+          <div className="w-[40%] bg-white rounded-2xl shadow-[0_0_15px_rgba(0,0,0,0.05)] h-full">
             <div className="flex justify-center gap-3 my-2">
               <button
                 onClick={() => setActiveTab("map")}

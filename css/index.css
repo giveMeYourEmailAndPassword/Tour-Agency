@@ -23,7 +23,7 @@ p {
 }
 
 .scrollbar-custom::-webkit-scrollbar {
-  width: 7px; /* Ширина скроллбара */
+  width: 5px; /* Ширина скроллбара */
 }
 
 .scrollbar-custom::-webkit-scrollbar-track {

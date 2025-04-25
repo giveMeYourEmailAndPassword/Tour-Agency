@@ -64,7 +64,7 @@ export default function HotTours() {
               <Skeleton className="h-48 rounded-lg" />
 
               <div className="flex flex-col">
-                <Skeleton className="h-7 w-[320px] mt-[-27px]" />
+                <Skeleton className="h-7 w-[280px] mt-[-27px]" />
 
                 <div className="flex flex-col gap-2 px-2 pb-2 pt-1">
                   <div className="flex flex-col gap-1">

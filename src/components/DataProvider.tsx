@@ -15,6 +15,7 @@ type DataContextType = {
   tours: any[];
   loading: boolean;
   error: string | null;
+  tourDataStatus: any;
   setData: (key: keyof Params, value: any) => void;
   cities: City[];
   countries: Countries[];
@@ -236,6 +237,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         tours,
         loading,
         error,
+        tourDataStatus,
         setData,
         cities,
         countries,

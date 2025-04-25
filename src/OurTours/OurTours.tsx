@@ -75,6 +75,22 @@ export default function OurTours() {
     );
   }
 
+  if (
+    tourDataStatus?.state === "finished" &&
+    tourDataStatus?.toursfound === 0
+  ) {
+    return (
+      <div className="w-full bg-gray-50">
+        <Header />
+        <div className="max-w-[1560px] min-h-[100vh] flex flex-wrap gap-4 p-12 justify-center items-center mx-auto">
+          <p className="text-lg text-gray-500 mt-[-80px]">
+            По вашему запросу ничего не найдено
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   const toggleTab = (
     hotelcode: string,
     tab: "info" | "reviews" | "map" | "tour"
@@ -89,116 +105,112 @@ export default function OurTours() {
     <div className="w-full bg-gray-50">
       <Header />
       <div className="max-w-[1560px] flex flex-wrap gap-4 p-12 justify-center items-center mx-auto">
-        {tours.length && tours[0]?.tours?.tour ? (
-          tours.map((hotel, index) => (
-            <div
-              key={index}
-              className="p-4 bg-white shadow-sm transition-shadow duration-300 rounded-xl flex flex-col w-[62rem]"
-            >
-              <div className="flex gap-5">
-                <HotelImage
-                  imageUrl={hotel.picturelink}
-                  hotelName={hotel.hotelname}
-                  hotelcode={hotel.hotelcode}
-                />
+        {tours.map((hotel, index) => (
+          <div
+            key={index}
+            className="p-4 bg-white shadow-sm transition-shadow duration-300 rounded-xl flex flex-col w-[62rem]"
+          >
+            <div className="flex gap-5">
+              <HotelImage
+                imageUrl={hotel.picturelink}
+                hotelName={hotel.hotelname}
+                hotelcode={hotel.hotelcode}
+              />
 
-                <div className="flex flex-col w-full justify-center">
-                  <div className="flex">
-                    <div>
-                      <div className="flex flex-col mt-1">
-                        <div className="flex">
-                          {Array.from(
-                            {
-                              length:
-                                hotel.hotelstars === 0 ? 3 : hotel.hotelstars,
-                            },
-                            (_, index) => (
-                              <GoStarFill
-                                key={index}
-                                className="w-4 h-4 text-yellow-500"
-                              />
-                            )
-                          )}
-                        </div>
-                        <h2 className="text-xl font-bold">{hotel.hotelname}</h2>
-                        <p className="text-gray-600">
-                          {hotel.regionname}
-                          {hotel.subregionname == 0
-                            ? ""
-                            : `, ${hotel.subregionname}`}
-                        </p>
+              <div className="flex flex-col w-full justify-center">
+                <div className="flex">
+                  <div>
+                    <div className="flex flex-col mt-1">
+                      <div className="flex">
+                        {Array.from(
+                          {
+                            length:
+                              hotel.hotelstars === 0 ? 3 : hotel.hotelstars,
+                          },
+                          (_, index) => (
+                            <GoStarFill
+                              key={index}
+                              className="w-4 h-4 text-yellow-500"
+                            />
+                          )
+                        )}
                       </div>
-                      <div className="mt-4 h-[4.7rem]">
-                        <p className="text-gray-700 text-sm">
-                          {hotel.hotelrating !== "0" && (
-                            <span className="text-sm text-white font-medium bg-blue-400 py-0.5 px-1 rounded-lg mr-1">
-                              {hotel.hotelrating.length === 1
-                                ? `${hotel.hotelrating}.0`
-                                : hotel.hotelrating}
-                            </span>
-                          )}
-                          {hotel.hoteldescription}
-                        </p>
-                      </div>
+                      <h2 className="text-xl font-bold">{hotel.hotelname}</h2>
+                      <p className="text-gray-600">
+                        {hotel.regionname}
+                        {hotel.subregionname == 0
+                          ? ""
+                          : `, ${hotel.subregionname}`}
+                      </p>
+                    </div>
+                    <div className="mt-4 h-[4.7rem]">
+                      <p className="text-gray-700 text-sm">
+                        {hotel.hotelrating !== "0" && (
+                          <span className="text-sm text-white font-medium bg-blue-400 py-0.5 px-1 rounded-lg mr-1">
+                            {hotel.hotelrating.length === 1
+                              ? `${hotel.hotelrating}.0`
+                              : hotel.hotelrating}
+                          </span>
+                        )}
+                        {hotel.hoteldescription}
+                      </p>
                     </div>
                   </div>
-                  <div className="mt-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex gap-2">
-                        <HotelInfoButton
-                          onClick={() => toggleTab(hotel.hotelcode, "info")}
-                          isActive={activeTabs[hotel.hotelcode] === "info"}
-                        />
-                        <HotelReviewsButton
-                          onClick={() => toggleTab(hotel.hotelcode, "reviews")}
-                          isActive={activeTabs[hotel.hotelcode] === "reviews"}
-                        />
-                        <HotelMapButton
-                          onClick={() => toggleTab(hotel.hotelcode, "map")}
-                          isActive={activeTabs[hotel.hotelcode] === "map"}
-                        />
-                      </div>
+                </div>
+                <div className="mt-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex gap-2">
+                      <HotelInfoButton
+                        onClick={() => toggleTab(hotel.hotelcode, "info")}
+                        isActive={activeTabs[hotel.hotelcode] === "info"}
+                      />
+                      <HotelReviewsButton
+                        onClick={() => toggleTab(hotel.hotelcode, "reviews")}
+                        isActive={activeTabs[hotel.hotelcode] === "reviews"}
+                      />
+                      <HotelMapButton
+                        onClick={() => toggleTab(hotel.hotelcode, "map")}
+                        isActive={activeTabs[hotel.hotelcode] === "map"}
+                      />
+                    </div>
 
-                      <div className="flex gap-4 items-center">
-                        <p className="text-black text-lg font-semibold">
-                          {hotel.price}
-                          {hotel.currency === "EUR"
-                            ? "€"
-                            : hotel.currency === "USD"
-                            ? "$"
-                            : hotel.currency}
-                        </p>
-                        <HotelToursButton
-                          onClick={() => toggleTab(hotel.hotelcode, "tour")}
-                          isActive={activeTabs[hotel.hotelcode] === "tour"}
-                        />
-                      </div>
+                    <div className="flex gap-4 items-center">
+                      <p className="text-black text-lg font-semibold">
+                        {hotel.price}
+                        {hotel.currency === "EUR"
+                          ? "€"
+                          : hotel.currency === "USD"
+                          ? "$"
+                          : hotel.currency}
+                      </p>
+                      <HotelToursButton
+                        onClick={() => toggleTab(hotel.hotelcode, "tour")}
+                        isActive={activeTabs[hotel.hotelcode] === "tour"}
+                      />
                     </div>
                   </div>
                 </div>
               </div>
-              <div>
-                {activeTabs[hotel.hotelcode] === "info" && (
-                  <HotelInfoContent hotelcode={hotel.hotelcode} />
-                )}
-                {activeTabs[hotel.hotelcode] === "reviews" && (
-                  <HotelReviewsContent hotelcode={hotel.hotelcode} />
-                )}
-                {activeTabs[hotel.hotelcode] === "map" && (
-                  <HotelMapContent hotelcode={hotel.hotelcode} />
-                )}
-                {activeTabs[hotel.hotelcode] === "tour" && (
-                  <HotelToursContent
-                    tours={hotel.tours.tour}
-                    hotelcode={hotel.hotelcode}
-                  />
-                )}
-              </div>
             </div>
-          ))
-        ) : (
-          <p className="text-lg text-gray-500">Нет доступных туров</p>
-        )}
+            <div>
+              {activeTabs[hotel.hotelcode] === "info" && (
+                <HotelInfoContent hotelcode={hotel.hotelcode} />
+              )}
+              {activeTabs[hotel.hotelcode] === "reviews" && (
+                <HotelReviewsContent hotelcode={hotel.hotelcode} />
+              )}
+              {activeTabs[hotel.hotelcode] === "map" && (
+                <HotelMapContent hotelcode={hotel.hotelcode} />
+              )}
+              {activeTabs[hotel.hotelcode] === "tour" && (
+                <HotelToursContent
+                  tours={hotel.tours.tour}
+                  hotelcode={hotel.hotelcode}
+                />
+              )}
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

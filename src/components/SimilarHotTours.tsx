@@ -5,6 +5,7 @@ import { ru } from "date-fns/locale";
 import { Skeleton } from "@heroui/react";
 import { useNavigate } from "react-router";
 import useSimilarHotTours from "../Hooks/useSimilarHotTours";
+import { countryCodeMap } from "../constants/countryCodeMap";
 
 interface SimilarHotToursProps {
   countrycode: string;
@@ -123,8 +124,17 @@ export default function SimilarHotTours({
                       ? `${tour.hotelname.substring(0, 26)}...`
                       : tour.hotelname}
                   </h3>
-                  <p className="text-gray-500 text-sm">
-                    {tour.hotelregionname}
+                  <p className="text-gray-500 font-medium text-sm flex items-center gap-1">
+                    {countryCodeMap[tour.countryname] && (
+                      <img
+                        src={`https://flagcdn.com/${countryCodeMap[
+                          tour.countryname
+                        ].toLowerCase()}.svg`}
+                        alt={tour.countryname}
+                        className="w-4 h-3 object-cover rounded-sm"
+                      />
+                    )}
+                    {tour.countryname}, {tour.hotelregionname}
                   </p>
                 </div>
 

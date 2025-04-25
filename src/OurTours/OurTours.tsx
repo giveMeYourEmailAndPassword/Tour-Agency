@@ -26,40 +26,43 @@ export default function OurTours() {
 
   if (loading) {
     return (
-      <div className="flex flex-wrap gap-8 p-12 justify-center items-stretch bg-gray-50">
-        {[...Array(6)].map((_, index) => (
-          <div
-            key={index}
-            className="p-6 bg-white shadow-sm transition-shadow duration-300 rounded-2xl flex flex-col w-[55rem]"
-          >
-            <div className="flex gap-5">
-              <div className="w-[19rem] h-[14rem]">
-                <Skeleton className="rounded-lg w-full h-full" />
-              </div>
+      <div className="w-full bg-gray-50">
+        <Header />
+        <div className="max-w-[1560px] flex flex-wrap gap-4 p-12 justify-center items-center mx-auto">
+          {[...Array(6)].map((_, index) => (
+            <div
+              key={index}
+              className="p-6 bg-white shadow-sm transition-shadow duration-300 rounded-2xl flex flex-col w-[55rem]"
+            >
+              <div className="flex gap-5">
+                <div className="w-[19rem] h-[14rem]">
+                  <Skeleton className="rounded-lg w-full h-full" />
+                </div>
 
-              <div className="flex flex-col w-full justify-center">
-                <div className="flex">
-                  <div>
-                    <div className="flex flex-col mt-1">
-                      <Skeleton className="h-7 w-64 rounded-lg mb-2" />
-                      <Skeleton className="h-5 w-48 rounded-lg" />
-                    </div>
-                    <div className="flex flex-col mt-1">
-                      <Skeleton className="h-7 w-64 rounded-lg mb-2" />
-                      <Skeleton className="h-5 w-48 rounded-lg" />
-                    </div>
-                    <div className="mt-4">
-                      <div className="flex gap-2 items-center mb-2">
-                        <Skeleton className="h-6 w-10 rounded-lg" />
-                        <Skeleton className="h-6 w-[90%] rounded-lg" />
+                <div className="flex flex-col w-full justify-center">
+                  <div className="flex">
+                    <div>
+                      <div className="flex flex-col mt-1">
+                        <Skeleton className="h-7 w-96 rounded-lg mb-2" />
+                        <Skeleton className="h-5 w-[30rem] rounded-lg" />
+                      </div>
+                      <div className="flex flex-col mt-1">
+                        <Skeleton className="h-7 w-64 rounded-lg mb-2" />
+                        <Skeleton className="h-5 w-[30rem] rounded-lg" />
+                      </div>
+                      <div className="mt-4">
+                        <div className="flex gap-2 items-center mb-2">
+                          <Skeleton className="h-6 w-16 rounded-lg" />
+                          <Skeleton className="h-6 w-[100%] rounded-lg" />
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     );
   }
@@ -71,8 +74,6 @@ export default function OurTours() {
       </p>
     );
   }
-
-  tourDataStatus;
 
   const toggleTab = (
     hotelcode: string,
@@ -87,12 +88,12 @@ export default function OurTours() {
   return (
     <div className="w-full bg-gray-50">
       <Header />
-      <div className="max-w-[1560px] flex flex-wrap gap-4 p-12 justify-center items-stretch ">
+      <div className="max-w-[1560px] flex flex-wrap gap-4 p-12 justify-center items-center mx-auto">
         {tours.length && tours[0]?.tours?.tour ? (
           tours.map((hotel, index) => (
             <div
               key={index}
-              className="p-4 bg-white shadow-sm transition-shadow duration-300 rounded-xl flex flex-col w-[55rem]"
+              className="p-4 bg-white shadow-sm transition-shadow duration-300 rounded-xl flex flex-col w-[62rem]"
             >
               <div className="flex gap-5">
                 <HotelImage

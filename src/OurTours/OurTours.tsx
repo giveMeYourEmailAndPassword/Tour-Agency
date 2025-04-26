@@ -29,8 +29,8 @@ export default function OurTours() {
     return (
       <div className="w-full bg-gray-50">
         <Header />
-        <OurToursFilters />
         <div className="max-w-[1560px] flex flex-wrap gap-4 p-12 justify-center items-center mx-auto">
+          <OurToursFilters />
           {[...Array(6)].map((_, index) => (
             <div
               key={index}
@@ -106,8 +106,8 @@ export default function OurTours() {
   return (
     <div className="w-full bg-gray-50">
       <Header />
-      <OurToursFilters />
       <div className="max-w-[1560px] flex flex-wrap gap-4 p-12 justify-center items-center mx-auto">
+        <OurToursFilters />
         {tours.map((hotel, index) => (
           <div
             key={index}

@@ -3,20 +3,36 @@ import { Button, Popover, PopoverTrigger, PopoverContent } from "@heroui/react";
 import { RangeCalendar } from "@heroui/react";
 import { DataContext } from "../../../components/DataProvider";
 import { I18nProvider } from "@react-aria/i18n";
-import { format, parseFromFormat } from "date-fns";
-import { today, getLocalTimeZone } from "@internationalized/date";
+import { format, parse } from "date-fns";
+import { today, getLocalTimeZone, parseDate } from "@internationalized/date";
 import { ru } from "date-fns/locale"; // Локализация для русского языка
 
 export default function NewFlyingDateOT() {
   const { setData, params } = useContext(DataContext);
 
+  // Функция для преобразования строки даты в формате dd.MM.yyyy в объект даты
+  const parseDateFromContext = (dateString: string) => {
+    if (!dateString) return null;
+    try {
+      const parsedDate = parse(dateString, "dd.MM.yyyy", new Date());
+      return parseDate(
+        `${parsedDate.getFullYear()}-${String(
+          parsedDate.getMonth() + 1
+        ).padStart(2, "0")}-${String(parsedDate.getDate()).padStart(2, "0")}`
+      );
+    } catch (e) {
+      console.error("Ошибка парсинга даты:", e);
+      return null;
+    }
+  };
+
   // Инициализируем состояние с дефолтными значениями
   const [range, setRange] = useState({
     start: params?.param4?.startDate
-      ? parseFromFormat(params.param4.startDate, "dd.MM.yyyy")
+      ? parseDateFromContext(params.param4.startDate)
       : today(getLocalTimeZone()).add({ days: 1 }),
     end: params?.param4?.endDate
-      ? parseFromFormat(params.param4.endDate, "dd.MM.yyyy")
+      ? parseDateFromContext(params.param4.endDate)
       : today(getLocalTimeZone()).add({ weeks: 1 }),
   });
 

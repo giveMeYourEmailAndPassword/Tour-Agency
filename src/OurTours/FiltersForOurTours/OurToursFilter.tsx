@@ -14,7 +14,7 @@ import HotelServiceOT from "./Filters/HotelServiceOT";
 
 export default function OurToursFilters() {
   return (
-    <div className="flex flex-col items-center w-full">
+    <div className="flex flex-col items-center w-full px-4 md:px-8 lg:px-12 xl:px-36">
       <div className="bg-white rounded-xl w-full p-4 gap-3 flex flex-col">
         {/* Основные фильтры */}
         <div className="flex lg:flex-row bg-gray-50 rounded-lg p-2 gap-3 justify-between items-center w-full">
@@ -25,7 +25,7 @@ export default function OurToursFilters() {
           <NewFlyingCountryOT />
           <div className="border border-l h-14"></div>
           {/* Дата вылета */}
-          {/* <NewFlyingDateOT /> */}
+          <NewFlyingDateOT />
           <div className="border border-l h-14"></div>
           {/* На сколько ночей */}
           <NightsFromOT />

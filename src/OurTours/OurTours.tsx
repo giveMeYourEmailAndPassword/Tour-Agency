@@ -13,6 +13,7 @@ import { HotelMapButton } from "../components/HotelMapButton";
 import { HotelToursButton } from "../components/HotelToursButton";
 import { HotelToursContent } from "../components/HotelToursContent";
 import Header from "../components/Header";
+import OurToursFilters from "./FiltersForOurTours/OurToursFilter";
 
 export default function OurTours() {
   const { tours, loading, error, tourDataStatus } = useContext(DataContext);
@@ -28,6 +29,7 @@ export default function OurTours() {
     return (
       <div className="w-full bg-gray-50">
         <Header />
+        <OurToursFilters />
         <div className="max-w-[1560px] flex flex-wrap gap-4 p-12 justify-center items-center mx-auto">
           {[...Array(6)].map((_, index) => (
             <div
@@ -104,6 +106,7 @@ export default function OurTours() {
   return (
     <div className="w-full bg-gray-50">
       <Header />
+      <OurToursFilters />
       <div className="max-w-[1560px] flex flex-wrap gap-4 p-12 justify-center items-center mx-auto">
         {tours.map((hotel, index) => (
           <div

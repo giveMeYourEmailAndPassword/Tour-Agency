@@ -1,5 +1,3 @@
-import DepartureCity from "./selects/DepartureCity";
-import FlyingCountry from "./selects/FlyingCountry";
 import NightsFrom from "./selects/NightsFrom";
 import Tourists from "./selects/Tourists";
 import FindTourBtn from "./selects/FindTour";
@@ -15,7 +13,6 @@ import { useEffect } from "react";
 
 export default function Filters() {
   useEffect(() => {
-    // Очищаем sessionStorage при монтировании компонента фильтров
     sessionStorage.removeItem("searchData");
   }, []);
 

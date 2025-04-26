@@ -32,10 +32,10 @@ export default function OurTours() {
           {[...Array(6)].map((_, index) => (
             <div
               key={index}
-              className="p-6 bg-white shadow-sm transition-shadow duration-300 rounded-2xl flex flex-col w-[55rem]"
+              className="p-6 bg-white shadow-sm transition-shadow duration-300 rounded-2xl flex flex-col w-[62rem]"
             >
               <div className="flex gap-5">
-                <div className="w-[19rem] h-[14rem]">
+                <div className="w-[19rem] h-52">
                   <Skeleton className="rounded-lg w-full h-full" />
                 </div>
 

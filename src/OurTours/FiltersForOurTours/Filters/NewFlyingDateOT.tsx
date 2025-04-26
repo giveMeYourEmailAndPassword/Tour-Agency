@@ -3,17 +3,21 @@ import { Button, Popover, PopoverTrigger, PopoverContent } from "@heroui/react";
 import { RangeCalendar } from "@heroui/react";
 import { DataContext } from "../../../components/DataProvider";
 import { I18nProvider } from "@react-aria/i18n";
-import { format } from "date-fns";
+import { format, parseFromFormat } from "date-fns";
 import { today, getLocalTimeZone } from "@internationalized/date";
 import { ru } from "date-fns/locale"; // Локализация для русского языка
 
 export default function NewFlyingDateOT() {
-  const { setData } = useContext(DataContext);
+  const { setData, params } = useContext(DataContext);
 
   // Инициализируем состояние с дефолтными значениями
   const [range, setRange] = useState({
-    start: today(getLocalTimeZone()).add({ days: 1 }),
-    end: today(getLocalTimeZone()).add({ weeks: 1 }),
+    start: params?.param4?.startDate
+      ? parseFromFormat(params.param4.startDate, "dd.MM.yyyy")
+      : today(getLocalTimeZone()).add({ days: 1 }),
+    end: params?.param4?.endDate
+      ? parseFromFormat(params.param4.endDate, "dd.MM.yyyy")
+      : today(getLocalTimeZone()).add({ weeks: 1 }),
   });
 
   // Обработчик изменения диапазона

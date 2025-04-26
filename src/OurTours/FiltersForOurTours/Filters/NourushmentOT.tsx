@@ -11,7 +11,10 @@ import { IoClose } from "react-icons/io5"; // Значок "крестик" дл
 import { DataContext } from "../../../components/DataProvider";
 
 export default function NourishmentOT() {
-  const { setData } = useContext(DataContext);
+  const { setData, params } = useContext(DataContext);
+  const [selectedValue, setSelectedValue] = useState<string>(
+    params?.param7?.[0] || "2"
+  );
   const [isOpen, setIsOpen] = useState(false);
 
   // Определяем список чекбоксов
@@ -23,9 +26,6 @@ export default function NourishmentOT() {
     { value: "7", label: "- Все включено", span: "AL" },
     { value: "9", label: "- Ультра все включено", span: "UAL" },
   ];
-
-  // Состояние для выбранного значения. По умолчанию выбран "Любой".
-  const [selectedValue, setSelectedValue] = useState<string>("2");
 
   const handleChange = (value: string) => {
     setSelectedValue(value);

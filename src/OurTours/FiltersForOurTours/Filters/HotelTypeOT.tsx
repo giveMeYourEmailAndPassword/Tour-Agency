@@ -11,7 +11,10 @@ import { IoClose } from "react-icons/io5"; // Значок "крестик" дл
 import { DataContext } from "../../../components/DataProvider";
 
 export default function HotelTypeOT() {
-  const { setData } = useContext(DataContext);
+  const { setData, params } = useContext(DataContext);
+  const [selectedValues, setSelectedValues] = useState<string[]>(
+    params?.param6 || ["any"]
+  );
   const [isOpen, setIsOpen] = useState(false);
 
   // Определяем список чекбоксов
@@ -22,9 +25,6 @@ export default function HotelTypeOT() {
     { value: "apartments", label: "Апартаменты" },
     { value: "villa", label: "Вилла" },
   ];
-
-  // Состояние для выбранных значений. По умолчанию выбран "Любой".
-  const [selectedValues, setSelectedValues] = useState<string[]>(["any"]);
 
   const handleChange = (isSelected: boolean, value: string) => {
     let newSelectedValues = [...selectedValues];

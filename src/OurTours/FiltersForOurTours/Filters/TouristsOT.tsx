@@ -59,6 +59,11 @@ export default function TouristsOT() {
     setChildrenList((prev) => prev.filter((child) => child.key !== key));
   };
 
+  // Добавляем useEffect для обновления контекста при изменении adults или childrenList
+  useEffect(() => {
+    setData("param5", { adults, childrenList });
+  }, [adults, childrenList, setData]);
+
   // Закрытие Popover
   const handleConfirm = () => {
     setIsPopoverOpen(false); // Закрываем Popover

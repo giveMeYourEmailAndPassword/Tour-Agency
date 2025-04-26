@@ -25,7 +25,7 @@ export default function OurToursFilters() {
           <NewFlyingCountryOT />
           <div className="border border-l h-14"></div>
           {/* Дата вылета */}
-          <NewFlyingDateOT />
+          {/* <NewFlyingDateOT /> */}
           <div className="border border-l h-14"></div>
           {/* На сколько ночей */}
           <NightsFromOT />

@@ -12,9 +12,11 @@ import { DataContext } from "../../../components/DataProvider";
 import service from "../../../components/data/HotelServiceData";
 
 export default function HotelServiceOT() {
-  const { setData } = useContext(DataContext);
+  const { setData, params } = useContext(DataContext);
+  const [selectedValues, setSelectedValues] = useState<string[]>(
+    params?.param10 || []
+  );
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedValues, setSelectedValues] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState<"all" | "selected">("all");
 
   const groupedServices = service.reduce((acc, item) => {

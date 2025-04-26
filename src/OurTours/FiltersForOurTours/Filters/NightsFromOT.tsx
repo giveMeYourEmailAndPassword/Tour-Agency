@@ -5,12 +5,18 @@ import { DataContext } from "../../../components/DataProvider";
 import { parseDate } from "@internationalized/date";
 
 export default function NightsFromOT() {
-  const { setData } = useContext(DataContext);
+  const { setData, params } = useContext(DataContext);
 
   // Используем объекты из @internationalized/date для начального состояния
   const [range, setRange] = useState({
-    start: parseDate("2023-10-06"), // Начальная дата: 1 октября 2023
-    end: parseDate("2023-10-14"), // Конечная дата: 6 октября 2023
+    start: params?.param3?.startDay
+      ? parseDate(
+          `2023-10-${params.param3.startDay.toString().padStart(2, "0")}`
+        )
+      : parseDate("2023-10-06"),
+    end: params?.param3?.endDay
+      ? parseDate(`2023-10-${params.param3.endDay.toString().padStart(2, "0")}`)
+      : parseDate("2023-10-14"),
   });
 
   // Обработчик изменения диапазона

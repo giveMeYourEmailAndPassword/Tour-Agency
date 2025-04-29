@@ -7,8 +7,8 @@ import React, {
 } from "react";
 
 type Params = { [key: string]: any };
-type City = { key: string; label: string };
-type Countries = { key: string; label: string };
+type City = { id: string; label: string };
+type Countries = { id: string; label: string };
 type DataContextType = {
   params: Params;
   requestId: string | null;
@@ -25,7 +25,9 @@ type DataContextType = {
 const API_BASE_URL =
   import.meta.env.VITE_API_URL || "http://localhost:8000/api";
 
-export const DataContext = createContext<DataContextType>(/* ... */);
+export const DataContext = createContext<DataContextType>(
+  {} as DataContextType
+);
 
 export const DataProvider = ({ children }: { children: ReactNode }) => {
   const [params, setParams] = useState<Params>({});
@@ -34,11 +36,11 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   const [tourDataStatus, setTourDataStatus] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [cities, setCities] = useState<Array<{ key: string; label: string }>>(
+  const [cities, setCities] = useState<Array<{ id: string; label: string }>>(
     []
   );
   const [countries, setCountries] = useState<
-    Array<{ key: string; label: string }>
+    Array<{ id: string; label: string }>
   >([]);
 
   const setData = useCallback((key: keyof Params, value: any) => {

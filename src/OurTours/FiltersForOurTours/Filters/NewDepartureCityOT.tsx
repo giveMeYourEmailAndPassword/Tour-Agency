@@ -3,13 +3,20 @@ import { Button, Popover, PopoverTrigger, PopoverContent } from "@heroui/react";
 import { DataContext } from "../../../components/DataProvider";
 
 export default function NewDepartureCityOT() {
-  const { setData, cities } = useContext(DataContext);
-  const [selectedCity, setSelectedCity] = useState(80); // Инициализируем null или id города по умолчанию
+  const { setData, cities, params } = useContext(DataContext);
+  const [selectedCity, setSelectedCity] = useState(params?.param1 || "0");
   const [isOpen, setIsOpen] = useState(false);
+
+  // Обновляем состояние при изменении параметров в контексте
+  useEffect(() => {
+    if (params?.param1 !== undefined) {
+      setSelectedCity(params.param1);
+    }
+  }, [params?.param1]);
 
   useEffect(() => {
     if (cities.length > 0 && !cities.find((city) => city.id === selectedCity)) {
-      setSelectedCity(cities[1].id); // Например, устанавливаем первый город, если текущий не найден
+      setSelectedCity(cities[1].id);
     }
   }, [cities]);
 
@@ -19,13 +26,12 @@ export default function NewDepartureCityOT() {
 
   // Обработчик выбора города
   const handleCitySelect = (city) => {
-    setSelectedCity(city.id); // Устанавливаем id выбранного города
-    setIsOpen(false); // Закрываем Popover
+    setSelectedCity(city.id);
+    setIsOpen(false);
   };
 
   // Находим выбранный город по id
   const selectedCityData = cities.find((city) => city.id === selectedCity);
-  selectedCityData;
 
   // Фильтруем список городов, исключая Москву
   const filteredCities = cities.filter((city, index) => index !== 2);
@@ -41,13 +47,7 @@ export default function NewDepartureCityOT() {
           <Button className="px-4">
             <div className="flex flex-col items-start justify-between w-full">
               {selectedCityData && (
-                <span
-                  className={` text-slate-600 mb-[1px] ${
-                    selectedCityData?.id === selectedCity
-                      ? "text-sm"
-                      : "text-sm"
-                  }`}
-                >
+                <span className="text-slate-600 mb-[1px] text-sm">
                   Город вылета
                 </span>
               )}
@@ -75,7 +75,7 @@ export default function NewDepartureCityOT() {
                     selectedCity === city.id ? "font-semibold" : ""
                   }`}
                   key={city.id}
-                  onClick={() => handleCitySelect(city)} // Обработчик выбора города
+                  onClick={() => handleCitySelect(city)}
                 >
                   {city.label}
                 </button>

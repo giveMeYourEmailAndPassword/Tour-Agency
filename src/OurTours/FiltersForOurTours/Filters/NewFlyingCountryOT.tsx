@@ -3,100 +3,95 @@ import { Button, Popover, PopoverTrigger, PopoverContent } from "@heroui/react";
 import { DataContext } from "../../../components/DataProvider";
 
 interface Country {
-  id: number;
+  id: string;
   label: string;
 }
 
-const countryCodeMap: { [key: number]: string } = {
-  46: "GE", // Абхазия
-  31: "AT", // Австрия
-  55: "AZ", // Азербайджан
-  17: "AD", // Андорра
-  88: "AR", // Аргентина
-  53: "AM", // Армения
-  59: "BH", // Бахрейн
-  57: "BY", // Беларусь
-  20: "BG", // Болгария
-  39: "BR", // Бразилия
-  37: "HU", // Венгрия
-  90: "VE", // Венесуэла
-  16: "VN", // Вьетнам
-  38: "DE", // Германия
-  6: "GR", // Греция
-  54: "GE", // Грузия
-  11: "DO", // Доминикана
-  1: "EG", // Египет
-  30: "IL", // Израиль
-  3: "IN", // Индия
-  7: "ID", // Индонезия
-  29: "JO", // Иордания
-  92: "IR", // Иран
-  14: "ES", // Испания
-  24: "IT", // Италия
-  78: "KZ", // Казахстан
-  40: "KH", // Камбоджа
-  79: "QA", // Катар
-  51: "KE", // Кения
-  15: "CY", // Кипр
-  60: "KG", // Киргизия
-  13: "CN", // Китай
-  10: "CU", // Куба
-  80: "LB", // Ливан
-  27: "MU", // Маврикий
-  36: "MY", // Малайзия
-  8: "MV", // Мальдивы
-  50: "MT", // Мальта
-  23: "MA", // Марокко
-  18: "MX", // Мексика
-  81: "MM", // Мьянма
-  82: "NP", // Непал
-  9: "AE", // ОАЭ
-  64: "OM", // Оман
-  87: "PA", // Панама
-  35: "PT", // Португалия
-  47: "RU", // Россия
-  93: "SA", // Саудовская Аравия
-  28: "SC", // Сейшелы
-  58: "RS", // Сербия
-  25: "SG", // Сингапур
-  43: "SI", // Словения
-  2: "TH", // Таиланд
-  41: "TZ", // Танзания
-  5: "TN", // Тунис
-  4: "TR", // Турция
-  56: "UZ", // Узбекистан
-  26: "PH", // Филиппины
-  32: "FR", // Франция
-  22: "HR", // Хорватия
-  21: "ME", // Черногория
-  12: "LK", // Шри-Ланка
-  70: "KR", // Южная Корея
-  49: "JP", // Япония
-  19: "CZ", // Чехия
-  45: "NL", // Нидерланды
-  74: "BE", // Бельгия
-  71: "AL", // Албания
-  44: "GB", // Великобритания
-  52: "CH", // Швейцария
+const countryCodeMap: { [key: string]: string } = {
+  "46": "GE", // Абхазия
+  "31": "AT", // Австрия
+  "55": "AZ", // Азербайджан
+  "17": "AD", // Андорра
+  "88": "AR", // Аргентина
+  "53": "AM", // Армения
+  "59": "BH", // Бахрейн
+  "57": "BY", // Беларусь
+  "20": "BG", // Болгария
+  "39": "BR", // Бразилия
+  "37": "HU", // Венгрия
+  "90": "VE", // Венесуэла
+  "16": "VN", // Вьетнам
+  "38": "DE", // Германия
+  "6": "GR", // Греция
+  "54": "GE", // Грузия
+  "11": "DO", // Доминикана
+  "1": "EG", // Египет
+  "30": "IL", // Израиль
+  "3": "IN", // Индия
+  "7": "ID", // Индонезия
+  "29": "JO", // Иордания
+  "92": "IR", // Иран
+  "14": "ES", // Испания
+  "24": "IT", // Италия
+  "78": "KZ", // Казахстан
+  "40": "KH", // Камбоджа
+  "79": "QA", // Катар
+  "51": "KE", // Кения
+  "15": "CY", // Кипр
+  "60": "KG", // Киргизия
+  "13": "CN", // Китай
+  "10": "CU", // Куба
+  "80": "LB", // Ливан
+  "27": "MU", // Маврикий
+  "36": "MY", // Малайзия
+  "8": "MV", // Мальдивы
+  "50": "MT", // Мальта
+  "23": "MA", // Марокко
+  "18": "MX", // Мексика
+  "81": "MM", // Мьянма
+  "82": "NP", // Непал
+  "9": "AE", // ОАЭ
+  "64": "OM", // Оман
+  "87": "PA", // Панама
+  "35": "PT", // Португалия
+  "47": "RU", // Россия
+  "93": "SA", // Саудовская Аравия
+  "28": "SC", // Сейшелы
+  "58": "RS", // Сербия
+  "25": "SG", // Сингапур
+  "43": "SI", // Словения
+  "2": "TH", // Таиланд
+  "41": "TZ", // Танзания
+  "5": "TN", // Тунис
+  "4": "TR", // Турция
+  "56": "UZ", // Узбекистан
+  "26": "PH", // Филиппины
+  "32": "FR", // Франция
+  "22": "HR", // Хорватия
+  "21": "ME", // Черногория
+  "12": "LK", // Шри-Ланка
+  "70": "KR", // Южная Корея
+  "49": "JP", // Япония
+  "19": "CZ", // Чехия
+  "45": "NL", // Нидерланды
+  "74": "BE", // Бельгия
+  "71": "AL", // Албания
+  "44": "GB", // Великобритания
+  "52": "CH", // Швейцария
 };
 
 export default function NewFlyingCountryOT() {
-  const { setData, countries } = useContext(DataContext);
-  const [selectedCountry, setSelectedCountry] = useState<number | null>(null);
+  const { setData, countries, params } = useContext(DataContext);
+  const [selectedCountry, setSelectedCountry] = useState<string | null>(
+    params?.param2 || null
+  );
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    if (countries.length > 0) {
-      // Ищем Турцию в списке стран
-      const turkey = countries.find((country) => country.label === "Турция");
-      if (turkey) {
-        setSelectedCountry(turkey.id);
-      } else {
-        // Если Турция не найдена, используем первую страну из списка
-        setSelectedCountry(countries[0].id);
-      }
+    if (params?.param2) {
+      setSelectedCountry(params.param2);
     }
-  }, [countries]);
+  }, [params?.param2]);
 
   useEffect(() => {
     if (selectedCountry !== null) {
@@ -104,7 +99,17 @@ export default function NewFlyingCountryOT() {
     }
   }, [selectedCountry, setData]);
 
-  const handleCountrySelect = (country: { id: number; label: string }) => {
+  useEffect(() => {
+    if (
+      countries.length > 0 &&
+      selectedCountry &&
+      !countries.find((country) => country.id === selectedCountry)
+    ) {
+      setSelectedCountry(null);
+    }
+  }, [countries]);
+
+  const handleCountrySelect = (country: { id: string; label: string }) => {
     setSelectedCountry(country.id);
     setIsOpen(false);
   };

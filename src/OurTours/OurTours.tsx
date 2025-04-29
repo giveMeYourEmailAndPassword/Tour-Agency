@@ -14,23 +14,51 @@ import { HotelToursButton } from "../components/HotelToursButton";
 import { HotelToursContent } from "../components/HotelToursContent";
 import Header from "../components/Header";
 import OurToursFilters from "./FiltersForOurTours/OurToursFilter";
+import {
+  getCityDeclension,
+  getCountryDeclension,
+} from "./PronounsOfTheCountry/PronounsOfTheCountry";
 
 export default function OurTours() {
-  const { tours, loading, error, tourDataStatus } = useContext(DataContext);
+  const { tours, loading, error, tourDataStatus, cities, countries, params } =
+    useContext(DataContext);
   const [expandedCards, setExpandedCards] = useState<{
     [key: number]: boolean;
   }>({});
-  const { formatDate } = useFormatDate();
   const [activeTabs, setActiveTabs] = useState<{
     [hotelcode: string]: "info" | "reviews" | "map" | "tour" | null;
   }>({});
+
+  // Получаем выбранный город и страну
+  const selectedCity =
+    cities.find((city) => city.id === params?.param1)?.label || "";
+  const selectedCountry =
+    countries.find((country) => country.id === params?.param2)?.label || "";
+
+  // Формируем заголовок
+  const title =
+    selectedCity && selectedCountry
+      ? `Туры в ${getCountryDeclension(
+          selectedCountry,
+          "to"
+        )} из ${getCityDeclension(selectedCity, "from")}`
+      : "\u00A0".repeat(14); // Используем неразрывный пробел для сохранения размера
 
   if (loading) {
     return (
       <div className="w-full bg-gray-50">
         <Header />
+        <div className="w-full bg-blue-500">
+          <div className="max-w-[1560px] mx-auto mb-8">
+            <div className="flex flex-col gap-12 h-96 pt-12">
+              <h1 className="text-4xl lg:text-5xl text-white font-bold max-w-[80rem] px-36">
+                {title}
+              </h1>
+              <OurToursFilters />
+            </div>
+          </div>
+        </div>
         <div className="max-w-[1560px] flex flex-wrap gap-4 p-12 justify-center items-center mx-auto">
-          <OurToursFilters />
           {[...Array(6)].map((_, index) => (
             <div
               key={index}
@@ -109,8 +137,8 @@ export default function OurTours() {
       <div className="w-full bg-blue-500">
         <div className="max-w-[1560px] mx-auto mb-8">
           <div className="flex flex-col gap-12 h-96 pt-12">
-            <h1 className="text-4xl lg:text-5xl text-white font-bold max-w-[60rem] px-36">
-              Туры в Турцию из Бишкека
+            <h1 className="text-4xl lg:text-5xl text-white font-bold max-w-[80rem] px-36">
+              {title}
             </h1>
             <OurToursFilters />
           </div>

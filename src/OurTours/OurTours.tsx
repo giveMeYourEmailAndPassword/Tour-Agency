@@ -36,13 +36,15 @@ export default function OurTours() {
     countries.find((country) => country.id === params?.param2)?.label || "";
 
   // Формируем заголовок
-  const title =
-    selectedCity && selectedCountry
-      ? `Туры в ${getCountryDeclension(
-          selectedCountry,
-          "to"
-        )} из ${getCityDeclension(selectedCity, "from")}`
-      : "\u00A0".repeat(14); // Используем неразрывный пробел для сохранения размера
+  const title = selectedCity
+    ? `Туры ${
+        selectedCountry && countries.length > 0
+          ? `в ${getCountryDeclension(selectedCountry, "to")}`
+          : "(Выберите страну)"
+      } из ${getCityDeclension(selectedCity, "from")}`
+    : "\u00A0".repeat(14);
+
+  // const title = "Поиск туров";
 
   if (loading) {
     return (

@@ -128,9 +128,9 @@ export default function NewFlyingCountryOT() {
       <PopoverTrigger className="w-64 h-full bg-white hover:bg-slate-100 rounded-xl !z-0 !scale-100 !opacity-100 py-1">
         <Button className="px-4">
           <div className="flex flex-col items-start justify-between w-full">
-            {selectedCountryData && (
-              <span className="text-slate-600 mb-[1px] text-sm">Страна</span>
-            )}
+            <span className="text-slate-600 mb-[1px] text-sm">
+              {selectedCountryData ? "Страна" : ""}
+            </span>
             <div className="flex items-center gap-2">
               {selectedCountryData && (
                 <img
@@ -149,7 +149,11 @@ export default function NewFlyingCountryOT() {
                     : "text-slate-600"
                 }`}
               >
-                {selectedCountryData ? selectedCountryData.label : ""}
+                {selectedCountryData
+                  ? selectedCountryData.label
+                  : countries.length === 0
+                  ? "Выберите город отправления"
+                  : "Выберите страну"}
               </h1>
             </div>
           </div>
@@ -180,9 +184,7 @@ export default function NewFlyingCountryOT() {
               </button>
             ))
           ) : (
-            <button className="text-black text-lg text-start hover:bg-gray-200 rounded-xl py-1 pl-4">
-              Загрузка...
-            </button>
+            <div className="col-span-3 text-center text-slate-600 py-4"></div>
           )}
         </div>
       </PopoverContent>

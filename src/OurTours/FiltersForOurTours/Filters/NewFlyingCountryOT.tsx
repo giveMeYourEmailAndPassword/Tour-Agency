@@ -152,7 +152,7 @@ export default function NewFlyingCountryOT() {
                 {selectedCountryData
                   ? selectedCountryData.label
                   : countries.length === 0
-                  ? "Выберите город отправления"
+                  ? "Выберите страну"
                   : "Выберите страну"}
               </h1>
             </div>

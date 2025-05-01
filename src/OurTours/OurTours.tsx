@@ -1,7 +1,6 @@
 import { useContext, useState } from "react";
 import { DataContext } from "../components/DataProvider";
 import { GoStarFill } from "react-icons/go";
-import { useFormatDate } from "../Hooks/useFormatDate";
 import { Skeleton } from "@heroui/react";
 import { HotelImage } from "../components/HotelImage";
 import { HotelInfoButton } from "../components/HotelInfoButton";
@@ -22,9 +21,6 @@ import {
 export default function OurTours() {
   const { tours, loading, error, tourDataStatus, cities, countries, params } =
     useContext(DataContext);
-  const [expandedCards, setExpandedCards] = useState<{
-    [key: number]: boolean;
-  }>({});
   const [activeTabs, setActiveTabs] = useState<{
     [hotelcode: string]: "info" | "reviews" | "map" | "tour" | null;
   }>({});
@@ -43,8 +39,6 @@ export default function OurTours() {
           : "(Выберите страну)"
       } из ${getCityDeclension(selectedCity, "from")}`
     : "\u00A0".repeat(14);
-
-  // const title = "Поиск туров";
 
   if (loading) {
     return (
@@ -114,8 +108,18 @@ export default function OurTours() {
     return (
       <div className="w-full bg-gray-50">
         <Header />
-        <div className="max-w-[1560px] min-h-[100vh] flex flex-wrap gap-4 p-12 justify-center items-center mx-auto">
-          <p className="text-lg text-gray-500 mt-[-80px]">
+        <div className="w-full bg-blue-500">
+          <div className="max-w-[1560px] mx-auto mb-8">
+            <div className="flex flex-col gap-12 h-96 pt-12">
+              <h1 className="text-4xl lg:text-5xl text-white font-bold max-w-[80rem] px-36">
+                {title}
+              </h1>
+              <OurToursFilters />
+            </div>
+          </div>
+        </div>
+        <div className="max-w-[1560px] min-h-[40vh] flex flex-wrap gap-4 p-12 justify-center items-center mx-auto">
+          <p className="text-xl text-gray-500 mt-[-80px]">
             По вашему запросу ничего не найдено
           </p>
         </div>

@@ -98,7 +98,6 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   }, [params.param1]);
 
   // Добавим дебаунс для запросов
-  const DEBOUNCE_DELAY = 1000;
   const POLL_INTERVAL = 2500; // Увеличим интервал опроса
 
   // Создадим отдельную функцию для проверки готовности параметров

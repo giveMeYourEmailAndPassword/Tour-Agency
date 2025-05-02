@@ -2,16 +2,22 @@ import Header from "./components/Header";
 import Filters from "./components/Filters";
 import { TbPointFilled } from "react-icons/tb";
 import HotTours from "./components/HotTours";
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 export default function App() {
   const [params, setParams] = useState({});
+  const hotToursRef = useRef(null);
 
   const setData = (key, value) => {
     setParams((prevParams) => ({
       ...prevParams,
       [key]: value,
     }));
+  };
+
+  const scrollToHotTours = (e) => {
+    e.preventDefault();
+    hotToursRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
@@ -25,23 +31,15 @@ export default function App() {
           <div className="max-w-[1560px] mx-auto">
             <div className="flex justify-end gap-4 md:pr-8 lg:pr-12 xl:pr-36 items-center">
               <TbPointFilled className="text-sm text-blue-400" />
-
               <div
                 className="flex items-center border-b-2 border-blue-500 hover:border-white duration-300
                py-4 hover:cursor-pointer"
               >
-                <a className="text-base text-white" href="">
-                  Поиск туров
-                </a>
-              </div>
-
-              <TbPointFilled className="text-sm text-blue-400" />
-
-              <div
-                className="flex items-center border-b-2 border-blue-500 hover:border-white duration-300
-               py-4 hover:cursor-pointer"
-              >
-                <a className="text-base text-white" href="">
+                <a
+                  className="text-base text-white"
+                  href="#hot-tours"
+                  onClick={scrollToHotTours}
+                >
                   Горящие туры
                 </a>
               </div>
@@ -79,7 +77,9 @@ export default function App() {
       </div>
 
       {/* Горящие туры */}
-      <HotTours />
+      <div ref={hotToursRef}>
+        <HotTours />
+      </div>
     </div>
   );
 }

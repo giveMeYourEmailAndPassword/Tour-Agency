@@ -37,6 +37,8 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   const [params, setParams] = useState<Params>({});
   const [requestId, setRequestId] = useState<string | null>(null);
   const [tours, setTours] = useState<any[]>([]);
+  const [allTours, setAllTours] = useState<any[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
   const [tourDataStatus, setTourDataStatus] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -150,6 +152,8 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     setLoading(true);
     setError(null);
     setTours([]);
+    setAllTours([]);
+    setCurrentPage(1);
 
     try {
       const requestData = {
@@ -192,26 +196,40 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   const fetchToursPage = async ({ pageParam = 1 }) => {
     if (!requestId) return null;
 
-    const tourResponse = await fetch(
-      `${API_BASE_URL}/results/${requestId}?page=${pageParam}`
-    );
-    const tourData = await tourResponse.json();
-    return tourData.data;
+    try {
+      const tourResponse = await fetch(
+        `${API_BASE_URL}/results/${requestId}?page=${pageParam}`
+      );
+      const tourData = await tourResponse.json();
+
+      if (tourData.data?.result?.hotel) {
+        // Объединяем существующие туры с новыми
+        setAllTours((prev) => [...prev, ...tourData.data.result.hotel]);
+      }
+
+      return tourData.data;
+    } catch (error) {
+      console.error("Ошибка при загрузке страницы:", error);
+      return null;
+    }
   };
 
-  const {
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    data: infiniteData,
-  } = useInfiniteQuery({
+  const { fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
     queryKey: ["tours", requestId],
     queryFn: fetchToursPage,
-    enabled: !!requestId,
+    enabled: !!requestId && tourDataStatus?.state === "finished",
     getNextPageParam: (lastPage, allPages) => {
       if (!lastPage?.result?.hotel?.length) return undefined;
-      return allPages.length + 1;
+      const nextPage = allPages.length + 1;
+      const totalPages = Math.ceil(tourDataStatus?.toursfound / 10);
+      return nextPage <= totalPages ? nextPage : undefined;
     },
+    // Добавляем настройки для предотвращения автоматического рефетчинга
+    refetchOnWindowFocus: false, // Отключаем обновление при фокусе окна
+    refetchOnMount: false, // Отключаем обновление при монтировании
+    refetchOnReconnect: false, // Отключаем обновление при переподключении
+    staleTime: Infinity, // Данные никогда не станут устаревшими
+    cacheTime: Infinity, // Кэш никогда не будет очищен
   });
 
   // Модифицируем startPolling
@@ -224,12 +242,13 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         try {
           attempts++;
           const tourResponse = await fetch(
-            `${API_BASE_URL}/results/${reqId}?onpage=1`
+            `${API_BASE_URL}/results/${reqId}?page=1`
           );
           const tourData = await tourResponse.json();
 
           if (tourData.data?.result?.hotel) {
             setTours(tourData.data.result.hotel);
+            setAllTours(tourData.data.result.hotel); // Инициализируем allTours первыми результатами
             saveToSession(tourData.data.result.hotel, reqId, params);
             setLoading(false);
           }
@@ -253,6 +272,13 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     [params, saveToSession]
   );
 
+  // Добавляем функцию для загрузки следующей страницы
+  const loadNextPage = useCallback(async () => {
+    if (isFetchingNextPage) return;
+    setCurrentPage((prev) => prev + 1);
+    await fetchNextPage();
+  }, [fetchNextPage, isFetchingNextPage]);
+
   // Загружаем сохраненные данные при монтировании компонента
   useEffect(() => {
     loadFromSession();
@@ -263,7 +289,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
       value={{
         params,
         requestId,
-        tours,
+        tours: allTours,
         loading,
         error,
         tourDataStatus,
@@ -271,7 +297,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         cities,
         countries,
         searchTours,
-        fetchNextPage,
+        fetchNextPage: loadNextPage,
         hasNextPage,
         isFetchingNextPage,
       }}

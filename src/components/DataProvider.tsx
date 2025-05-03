@@ -5,6 +5,7 @@ import React, {
   ReactNode,
   useCallback,
 } from "react";
+import { useInfiniteQuery } from "@tanstack/react-query";
 
 type Params = { [key: string]: any };
 type City = { id: string; label: string };
@@ -20,6 +21,9 @@ type DataContextType = {
   cities: City[];
   countries: Countries[];
   searchTours: () => Promise<void>;
+  fetchNextPage: () => Promise<void>;
+  hasNextPage: boolean;
+  isFetchingNextPage: boolean;
 };
 
 const API_BASE_URL =
@@ -185,7 +189,32 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [params]);
 
-  // Модифицируем функцию startPolling
+  const fetchToursPage = async ({ pageParam = 1 }) => {
+    if (!requestId) return null;
+
+    const tourResponse = await fetch(
+      `${API_BASE_URL}/results/${requestId}?page=${pageParam}`
+    );
+    const tourData = await tourResponse.json();
+    return tourData.data;
+  };
+
+  const {
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    data: infiniteData,
+  } = useInfiniteQuery({
+    queryKey: ["tours", requestId],
+    queryFn: fetchToursPage,
+    enabled: !!requestId,
+    getNextPageParam: (lastPage, allPages) => {
+      if (!lastPage?.result?.hotel?.length) return undefined;
+      return allPages.length + 1;
+    },
+  });
+
+  // Модифицируем startPolling
   const startPolling = useCallback(
     (reqId: string) => {
       let attempts = 0;
@@ -195,13 +224,12 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         try {
           attempts++;
           const tourResponse = await fetch(
-            `${API_BASE_URL}/results/${reqId}?onpage=12`
+            `${API_BASE_URL}/results/${reqId}?onpage=1`
           );
           const tourData = await tourResponse.json();
 
           if (tourData.data?.result?.hotel) {
             setTours(tourData.data.result.hotel);
-            // Сохраняем в sessionStorage при каждом обновлении туров
             saveToSession(tourData.data.result.hotel, reqId, params);
             setLoading(false);
           }
@@ -243,6 +271,9 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         cities,
         countries,
         searchTours,
+        fetchNextPage,
+        hasNextPage,
+        isFetchingNextPage,
       }}
     >
       {children}

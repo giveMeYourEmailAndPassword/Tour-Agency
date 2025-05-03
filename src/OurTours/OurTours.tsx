@@ -19,8 +19,18 @@ import {
 } from "./PronounsOfTheCountry/PronounsOfTheCountry";
 
 export default function OurTours() {
-  const { tours, loading, error, tourDataStatus, cities, countries, params } =
-    useContext(DataContext);
+  const {
+    tours,
+    loading,
+    error,
+    tourDataStatus,
+    cities,
+    countries,
+    params,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useContext(DataContext);
   const [activeTabs, setActiveTabs] = useState<{
     [hotelcode: string]: "info" | "reviews" | "map" | "tour" | null;
   }>({});
@@ -257,6 +267,15 @@ export default function OurTours() {
             </div>
           </div>
         ))}
+        <div className="w-full flex justify-center py-8">
+          <button
+            onClick={() => fetchNextPage()}
+            disabled={isFetchingNextPage}
+            className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors disabled:bg-gray-400"
+          >
+            {isFetchingNextPage ? "Загрузка..." : "Показать еще туры"}
+          </button>
+        </div>
       </div>
     </div>
   );

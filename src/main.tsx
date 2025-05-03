@@ -14,10 +14,10 @@ const queryClient = new QueryClient();
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <HeroUIProvider>
-      <DataProvider>
-        <BrowserRouter>
-          <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={queryClient}>
+      <HeroUIProvider>
+        <DataProvider>
+          <BrowserRouter>
             <Routes>
               {/* Главная страница */}
               <Route path="/" element={<App />} />
@@ -45,9 +45,9 @@ createRoot(document.getElementById("root")!).render(
                 element={<Booking />}
               />
             </Routes>
-          </QueryClientProvider>
-        </BrowserRouter>
-      </DataProvider>
-    </HeroUIProvider>
+          </BrowserRouter>
+        </DataProvider>
+      </HeroUIProvider>
+    </QueryClientProvider>
   </StrictMode>
 );

@@ -5,7 +5,7 @@ import React, {
   ReactNode,
   useCallback,
 } from "react";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 
 type Params = { [key: string]: any };
 type City = { id: string; label: string };
@@ -34,6 +34,8 @@ export const DataContext = createContext<DataContextType>(
 );
 
 export const DataProvider = ({ children }: { children: ReactNode }) => {
+  const queryClient = useQueryClient();
+
   const [params, setParams] = useState<Params>({});
   const [requestId, setRequestId] = useState<string | null>(null);
   const [tours, setTours] = useState<any[]>([]);
@@ -116,7 +118,6 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     );
   };
 
-  // Добавим сохранение всех важных данных в sessionStorage
   const saveToSession = useCallback(
     (tours: any[], requestId: string | null, params: Params) => {
       sessionStorage.setItem(
@@ -125,23 +126,39 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
           tours,
           requestId,
           params,
-          timestamp: Date.now(), // добавим timestamp для возможной проверки актуальности данных
+          timestamp: Date.now(),
+          currentPage: currentPage,
+          tourDataStatus,
         })
       );
     },
-    []
+    [currentPage, tourDataStatus]
   );
 
-  // Добавим загрузку данных из sessionStorage
   const loadFromSession = useCallback(() => {
     const savedData = sessionStorage.getItem("searchData");
     if (savedData) {
-      const { tours, requestId, params, timestamp } = JSON.parse(savedData);
+      const {
+        tours,
+        requestId,
+        params,
+        currentPage: savedPage,
+        tourDataStatus: savedStatus,
+      } = JSON.parse(savedData);
       setTours(tours);
+      setAllTours(tours);
       setRequestId(requestId);
       setParams(params);
+      setCurrentPage(savedPage || 1);
+      if (savedStatus) setTourDataStatus(savedStatus);
+
+      // Предварительно заполняем кэш React Query
+      queryClient.setQueryData(["tours", requestId], {
+        pages: [{ result: { hotel: tours } }],
+        pageParams: [1],
+      });
     }
-  }, []);
+  }, [queryClient]);
 
   // Добавим новую функцию для поиска туров
   const searchTours = useCallback(async () => {
@@ -193,6 +210,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [params]);
 
+  // Модифицируем fetchToursPage
   const fetchToursPage = async ({ pageParam = 1 }) => {
     if (!requestId) return null;
 
@@ -203,8 +221,9 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
       const tourData = await tourResponse.json();
 
       if (tourData.data?.result?.hotel) {
-        // Объединяем существующие туры с новыми
-        setAllTours((prev) => [...prev, ...tourData.data.result.hotel]);
+        const newTours = [...allTours, ...tourData.data.result.hotel];
+        setAllTours(newTours);
+        saveToSession(newTours, requestId, params);
       }
 
       return tourData.data;
@@ -224,12 +243,22 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
       const totalPages = Math.ceil(tourDataStatus?.toursfound / 10);
       return nextPage <= totalPages ? nextPage : undefined;
     },
-    // Добавляем настройки для предотвращения автоматического рефетчинга
-    refetchOnWindowFocus: false, // Отключаем обновление при фокусе окна
-    refetchOnMount: false, // Отключаем обновление при монтировании
-    refetchOnReconnect: false, // Отключаем обновление при переподключении
-    staleTime: Infinity, // Данные никогда не станут устаревшими
-    cacheTime: Infinity, // Кэш никогда не будет очищен
+    initialData: () => {
+      const savedData = sessionStorage.getItem("searchData");
+      if (savedData) {
+        const { tours } = JSON.parse(savedData);
+        return {
+          pages: [{ result: { hotel: tours } }],
+          pageParams: [1],
+        };
+      }
+      return undefined;
+    },
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    staleTime: Infinity,
+    cacheTime: Infinity,
   });
 
   // Модифицируем startPolling
@@ -248,8 +277,15 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
 
           if (tourData.data?.result?.hotel) {
             setTours(tourData.data.result.hotel);
-            setAllTours(tourData.data.result.hotel); // Инициализируем allTours первыми результатами
+            setAllTours(tourData.data.result.hotel);
             saveToSession(tourData.data.result.hotel, reqId, params);
+
+            // Обновляем кэш React Query
+            queryClient.setQueryData(["tours", reqId], {
+              pages: [{ result: { hotel: tourData.data.result.hotel } }],
+              pageParams: [1],
+            });
+
             setLoading(false);
           }
 
@@ -269,7 +305,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         }
       }, POLL_INTERVAL);
     },
-    [params, saveToSession]
+    [params, saveToSession, queryClient]
   );
 
   // Добавляем функцию для загрузки следующей страницы

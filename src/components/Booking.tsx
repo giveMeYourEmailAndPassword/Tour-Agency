@@ -1,5 +1,8 @@
 import { useState, useEffect } from "react";
 
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL || "http://localhost:8000/api";
+
 interface BookingForm {
   fullName: string;
   phone: string;
@@ -123,16 +126,13 @@ export default function Booking() {
       };
 
       // Отправляем запрос на бэкенд
-      const response = await fetch(
-        "http://localhost:8000/api/booking/request",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(bookingRequestData),
-        }
-      );
+      const response = await fetch(`${API_BASE_URL}/booking/request`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(bookingRequestData),
+      });
 
       if (!response.ok) {
         // Получаем детали ошибки

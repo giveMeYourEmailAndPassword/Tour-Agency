@@ -184,7 +184,7 @@ export default function HotTours() {
 
             <div className="flex flex-col relative">
               {/* Звездность и рейтинг отеля */}
-              <div className="flex items-center gap-2 justify-between px-2 bg-blue-400 py-1 absolute w-full -top-[27px]">
+              <div className="flex items-center gap-2 justify-between px-2 bg-blue-500 py-1 absolute w-full -top-[27px]">
                 <div className="flex gap-0.5">
                   {Array.from({ length: parseInt(tour.hotelstars) }, (_, i) => (
                     <GoStarFill key={i} className="text-white" />
@@ -228,7 +228,7 @@ export default function HotTours() {
                 </div>
 
                 {/* Цены */}
-                <div className="flex items-center gap-2 bg-blue-100 p-2 rounded-md justify-between">
+                <div className="flex items-center gap-2 bg-blue-200 p-2 rounded-md justify-between">
                   <div className="flex flex-col">
                     <span className="text-black line-through">
                       {tour.priceold * 2}

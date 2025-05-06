@@ -204,7 +204,7 @@ export default function OurTours() {
                       <div className="mt-4 h-[4.7rem]">
                         <p className="text-gray-700 text-sm">
                           {hotel.hotelrating !== "0" && (
-                            <span className="text-sm text-white font-medium bg-blue-400 py-0.5 px-1 rounded-lg mr-1">
+                            <span className="text-sm text-white font-medium bg-blue-500 py-0.5 px-1 rounded-lg mr-1">
                               {hotel.hotelrating.length === 1
                                 ? `${hotel.hotelrating}.0`
                                 : hotel.hotelrating}

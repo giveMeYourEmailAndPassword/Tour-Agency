@@ -25,6 +25,7 @@ import BookingPanel from "../components/BookingPanel";
 import Header from "../components/Header";
 import SimilarHotTours from "../components/SimilarHotTours";
 import Favorite from "../components/Favorite";
+import FloatingControls from "../components/FloatingControls";
 export default function HotelDetails() {
   const { hotelcode, tourId } = useParams();
   const location = useLocation();
@@ -476,8 +477,7 @@ export default function HotelDetails() {
         operatorLink={tour.operatorlink}
         roomType={tour.room}
       />
-      <ScrollToTopButton />
-      <Favorite />
+      <FloatingControls />
     </div>
   );
 }

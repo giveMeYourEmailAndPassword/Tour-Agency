@@ -28,9 +28,9 @@ export default function ScrollToTopButton() {
   return (
     <button
       onClick={scrollToTop}
-      className={`fixed bottom-[7.5rem] right-[2.1%] bg-blue-500 hover:bg-blue-500
+      className={`bg-blue-500 hover:bg-blue-500
       text-white rounded-full w-12 h-12 flex items-center justify-center 
-      shadow-sm z-50 transition-opacity duration-300
+      shadow-sm transition-opacity duration-300 mr-[28%]
       ${showButton ? "opacity-100" : "opacity-0 pointer-events-none"}`}
     >
       <svg

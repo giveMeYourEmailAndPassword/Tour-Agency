@@ -3,8 +3,7 @@ import Filters from "./components/Filters";
 import { TbPointFilled } from "react-icons/tb";
 import HotTours from "./components/HotTours";
 import { useState, useRef } from "react";
-import ScrollToTopButton from "./components/ScrollToTopButton";
-import Favorite from "./components/Favorite";
+import FloatingControls from "./components/FloatingControls";
 
 export default function App() {
   const [params, setParams] = useState({});
@@ -72,8 +71,7 @@ export default function App() {
         <HotTours />
       </div>
 
-      <ScrollToTopButton />
-      <Favorite />
+      <FloatingControls />
     </div>
   );
 }

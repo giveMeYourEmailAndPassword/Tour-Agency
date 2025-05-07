@@ -11,15 +11,15 @@ export default function Favorite() {
   };
 
   return (
-    <div className="fixed bottom-8 right-[0%] flex flex-col items-center z-50">
+    <div className="flex flex-col items-center" onClick={handleFavoriteClick}>
       <div
         className="bg-white hover:bg-gray-50 rounded-l-xl w-28
         h-20 flex flex-col items-center justify-center 
-        shadow-md  transition-all duration-300 border border-gray-200"
+        shadow-sm transition-all duration-300 border-2 border-r-0"
       >
-        <button onClick={handleFavoriteClick} className="">
+        <button className="">
           {isFavorite ? (
-            <FaHeart className="text-red-500" size={34} />
+            <FaHeart className="text-red-500" size={32} />
           ) : (
             <FaRegHeart className="text-gray-400" size={32} />
           )}

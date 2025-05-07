@@ -1,5 +1,8 @@
 import { IoMoonOutline } from "react-icons/io5";
 import { FaUtensils } from "react-icons/fa";
+import { useContext } from "react";
+import { FavoriteContext } from "../context/FavoriteContext";
+import { DataContext } from "../components/DataProvider";
 
 interface BookingPanelProps {
   price: string;
@@ -34,6 +37,8 @@ export default function BookingPanel({
   operatorLink,
   roomType,
 }: BookingPanelProps) {
+  const { addToFavorite } = useContext(DataContext);
+
   const handleBooking = () => {
     if (hotelcode && tourId) {
       // Сохраняем данные в localStorage перед переходом
@@ -59,6 +64,22 @@ export default function BookingPanel({
 
       window.location.href = `/hotel/${hotelcode}/${tourId}/booking?success=false`;
     }
+  };
+
+  const handleAddToFavorite = () => {
+    const tourData = {
+      hotelcode,
+      tourId,
+      hotelName,
+      price,
+      currency,
+      departure,
+      flyDate,
+      nights,
+      meal,
+    };
+
+    addToFavorite(tourData);
   };
 
   return (
@@ -90,9 +111,7 @@ export default function BookingPanel({
           {/* Кнопки действий */}
           <div className="flex gap-3">
             <button
-              onClick={() => {
-                /* Добавить в избранное */
-              }}
+              onClick={handleAddToFavorite}
               className="px-4 py-2 border-2 border-blue-600 text-blue-600 
               rounded-xl font-medium hover:bg-blue-50 transition-colors"
             >

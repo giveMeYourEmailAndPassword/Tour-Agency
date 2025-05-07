@@ -1,5 +1,5 @@
 import { FaHeart, FaRegHeart } from "react-icons/fa";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import {
   Modal,
   ModalContent,
@@ -8,16 +8,11 @@ import {
   ModalFooter,
 } from "@heroui/react";
 import FavoriteModal from "./FavoriteModal";
+import { DataContext } from "../../components/DataProvider";
 
 export default function Favorite() {
-  const [isFavorite, setIsFavorite] = useState(false);
-  const [favoriteCount, setFavoriteCount] = useState(0);
+  const { favoriteTours, isFavorite } = useContext(DataContext);
   const [isOpen, setIsOpen] = useState(false);
-
-  const handleFavoriteClick = () => {
-    setIsFavorite(!isFavorite);
-    setFavoriteCount((prev) => (isFavorite ? prev - 1 : prev + 1));
-  };
 
   return (
     <>
@@ -25,20 +20,16 @@ export default function Favorite() {
         className="flex flex-col items-center"
         onClick={() => setIsOpen(true)}
       >
-        <div
-          className="bg-white hover:bg-gray-50 rounded-l-xl w-28
-          h-20 flex flex-col items-center justify-center 
-          shadow-sm transition-all duration-300 border-2 border-r-0"
-        >
-          <button onClick={handleFavoriteClick} className="relative">
+        <div className="bg-white hover:bg-gray-50 rounded-l-xl w-28 h-20 flex flex-col items-center justify-center shadow-sm transition-all duration-300 border-2 border-r-0">
+          <button className="relative">
             {isFavorite ? (
               <FaHeart className="text-red-500" size={32} />
             ) : (
               <FaRegHeart className="text-gray-400" size={32} />
             )}
-            {favoriteCount > 0 && (
+            {favoriteTours.length > 0 && (
               <div className="absolute -top-2 -right-2 bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-medium">
-                {favoriteCount}
+                {favoriteTours.length}
               </div>
             )}
           </button>
@@ -60,17 +51,17 @@ export default function Favorite() {
             <ModalHeader className="flex gap-1">
               <div className="flex items-center gap-2">
                 <span className="text-2xl font-medium">Избранные туры</span>
-                {favoriteCount > 0 && (
+                {favoriteTours.length > 0 && (
                   <div className="flex items-center gap-1 bg-red-100 py-0.5 rounded-full shadow-sm whitespace-nowrap">
                     <span className="font-semibold text-base text-red-500">
-                      {favoriteCount}
+                      {favoriteTours.length}
                     </span>
                   </div>
                 )}
               </div>
             </ModalHeader>
             <ModalBody className="h-[60vh] overflow-y-auto">
-              <FavoriteModal />
+              <FavoriteModal tours={favoriteTours} />
             </ModalBody>
             <ModalFooter />
           </>

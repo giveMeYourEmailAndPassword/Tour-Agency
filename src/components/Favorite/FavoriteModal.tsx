@@ -1,21 +1,13 @@
-import { useState } from "react";
+import { FavoriteTourData } from "../../components/DataProvider";
 
-interface FavoriteTour {
-  id: number;
-  title: string;
-  price: number;
-  dates: {
-    startDate: string;
-    endDate: string;
-  };
+interface FavoriteModalProps {
+  tours: FavoriteTourData[];
 }
 
-export default function FavoriteModal() {
-  const [favoriteTours, setFavoriteTours] = useState<FavoriteTour[]>([]);
-
+export default function FavoriteModal({ tours }: FavoriteModalProps) {
   return (
     <div className="w-full">
-      {favoriteTours.length === 0 ? (
+      {tours.length === 0 ? (
         <div className="text-center py-8 text-gray-500">
           <p className="text-xl text-black">У вас пока нет избранных туров</p>
           <p className="mt-2 text-black">
@@ -24,17 +16,20 @@ export default function FavoriteModal() {
         </div>
       ) : (
         <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
-          {favoriteTours.map((tour) => (
+          {tours.map((tour) => (
             <div
-              key={tour.id}
+              key={`${tour.hotelcode}_${tour.tourId}`}
               className="border rounded-lg p-4 hover:bg-gray-50 transition-colors"
             >
-              <h3 className="font-medium text-lg">{tour.title}</h3>
-              <div className="text-sm text-gray-600 mt-2">
-                {tour.dates.startDate} - {tour.dates.endDate}
+              <h3 className="font-medium text-lg">{tour.hotelName}</h3>
+              <div className="mt-2 space-y-1 text-sm text-gray-600">
+                <p>Вылет: {tour.departure}</p>
+                <p>Дата: {tour.flyDate}</p>
+                <p>Ночей: {tour.nights}</p>
+                <p>Питание: {tour.meal}</p>
               </div>
               <div className="font-bold text-right mt-2">
-                {tour.price.toLocaleString()} ₽
+                {tour.price} {tour.currency}
               </div>
             </div>
           ))}

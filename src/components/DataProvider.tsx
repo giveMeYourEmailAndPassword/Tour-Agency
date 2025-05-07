@@ -10,6 +10,21 @@ import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 type Params = { [key: string]: any };
 type City = { id: string; label: string };
 type Countries = { id: string; label: string };
+
+// Добавьте новый интерфейс для избранных туров
+export interface FavoriteTourData {
+  hotelcode: string;
+  tourId: string;
+  hotelName: string;
+  price: string;
+  currency: string;
+  departure: string;
+  flyDate: string;
+  nights: number;
+  meal: string;
+}
+
+// Обновите тип контекста
 type DataContextType = {
   params: Params;
   requestId: string | null;
@@ -24,6 +39,10 @@ type DataContextType = {
   fetchNextPage: () => Promise<void>;
   hasNextPage: boolean;
   isFetchingNextPage: boolean;
+  favoriteTours: FavoriteTourData[];
+  addToFavorite: (tour: FavoriteTourData) => void;
+  removeFromFavorite: (hotelcode: string, tourId: string) => void;
+  isFavorite: boolean;
 };
 
 const API_BASE_URL =
@@ -50,6 +69,10 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   const [countries, setCountries] = useState<
     Array<{ id: string; label: string }>
   >([]);
+
+  // Добавьте новые состояния для избранного
+  const [favoriteTours, setFavoriteTours] = useState<FavoriteTourData[]>([]);
+  const [isFavorite, setIsFavorite] = useState(false);
 
   const setData = useCallback((key: keyof Params, value: any) => {
     setParams((prevParams) => ({ ...prevParams, [key]: value }));
@@ -320,6 +343,49 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     loadFromSession();
   }, [loadFromSession]);
 
+  // Загрузка избранных туров при монтировании
+  useEffect(() => {
+    const savedTours = localStorage.getItem("favoriteTours");
+    if (savedTours) {
+      const tours = JSON.parse(savedTours);
+      setFavoriteTours(tours);
+      setIsFavorite(tours.length > 0);
+    }
+  }, []);
+
+  // Функция добавления в избранное
+  const addToFavorite = useCallback((tour: FavoriteTourData) => {
+    setFavoriteTours((prev) => {
+      const exists = prev.some(
+        (t) => t.hotelcode === tour.hotelcode && t.tourId === tour.tourId
+      );
+
+      if (!exists) {
+        const newTours = [...prev, tour];
+        localStorage.setItem("favoriteTours", JSON.stringify(newTours));
+        setIsFavorite(true);
+        return newTours;
+      }
+
+      return prev;
+    });
+  }, []);
+
+  // Функция удаления из избранного
+  const removeFromFavorite = useCallback(
+    (hotelcode: string, tourId: string) => {
+      setFavoriteTours((prev) => {
+        const newTours = prev.filter(
+          (tour) => tour.hotelcode !== hotelcode || tour.tourId !== tourId
+        );
+        localStorage.setItem("favoriteTours", JSON.stringify(newTours));
+        setIsFavorite(newTours.length > 0);
+        return newTours;
+      });
+    },
+    []
+  );
+
   return (
     <DataContext.Provider
       value={{
@@ -336,6 +402,10 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         fetchNextPage: loadNextPage,
         hasNextPage,
         isFetchingNextPage,
+        favoriteTours,
+        addToFavorite,
+        removeFromFavorite,
+        isFavorite,
       }}
     >
       {children}

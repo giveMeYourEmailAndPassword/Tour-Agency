@@ -4,6 +4,7 @@ import { TbPointFilled } from "react-icons/tb";
 import HotTours from "./components/HotTours";
 import { useState, useRef } from "react";
 import ScrollToTopButton from "./components/ScrollToTopButton";
+import Favorite from "./components/Favorite";
 
 export default function App() {
   const [params, setParams] = useState({});
@@ -44,17 +45,6 @@ export default function App() {
                   Горящие туры
                 </a>
               </div>
-
-              <TbPointFilled className="text-sm text-blue-400" />
-
-              <div
-                className="flex items-center border-b-2 border-blue-500 hover:border-white duration-300
-               py-4 hover:cursor-pointer"
-              >
-                <a className="text-base text-white" href="">
-                  Корзина
-                </a>
-              </div>
             </div>
           </div>
         </div>
@@ -78,11 +68,12 @@ export default function App() {
       </div>
 
       {/* Горящие туры */}
-      <div ref={hotToursRef}>
+      <div ref={hotToursRef} className="pt-3">
         <HotTours />
       </div>
 
       <ScrollToTopButton />
+      <Favorite />
     </div>
   );
 }

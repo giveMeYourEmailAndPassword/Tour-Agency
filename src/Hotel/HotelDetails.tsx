@@ -24,7 +24,7 @@ import ScrollToTopButton from "../components/ScrollToTopButton";
 import BookingPanel from "../components/BookingPanel";
 import Header from "../components/Header";
 import SimilarHotTours from "../components/SimilarHotTours";
-
+import Favorite from "../components/Favorite";
 export default function HotelDetails() {
   const { hotelcode, tourId } = useParams();
   const location = useLocation();
@@ -477,6 +477,7 @@ export default function HotelDetails() {
         roomType={tour.room}
       />
       <ScrollToTopButton />
+      <Favorite />
     </div>
   );
 }

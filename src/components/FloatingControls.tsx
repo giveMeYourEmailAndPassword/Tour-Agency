@@ -1,5 +1,5 @@
 import ScrollToTopButton from "./ScrollToTopButton";
-import Favorite from "./Favorite";
+import Favorite from "./Favorite/Favorite";
 
 export default function FloatingControls() {
   return (

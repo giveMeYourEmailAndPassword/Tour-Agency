@@ -1,15 +1,41 @@
 import { FavoriteTourData } from "../../components/DataProvider";
 import useHotelDetails from "../../Hooks/UseHotelDetails";
-import { useContext } from "react";
+import { useContext, useState, useEffect } from "react";
 import { DataContext } from "../../components/DataProvider";
 import { FaTrash } from "react-icons/fa";
 import { GoStarFill } from "react-icons/go";
 import { parse, format } from "date-fns";
 import { ru } from "date-fns/locale";
 import { countryCodeMap } from "../../constants/countryCodeMap";
+import { Skeleton } from "@heroui/react";
 
 interface FavoriteModalProps {
   tours: FavoriteTourData[];
+}
+
+function FavoriteTourCardSkeleton() {
+  return (
+    <div className="bg-white shadow-md rounded-md flex flex-col w-full max-w-sm mx-auto">
+      <Skeleton className="h-48 rounded-lg" />
+
+      <div className="flex flex-col">
+        <Skeleton className="h-7 w-full mt-[-27px]" />
+
+        <div className="flex flex-col gap-2 px-2 pb-2 pt-1">
+          <div className="flex flex-col gap-1">
+            <Skeleton className="h-6 w-full" />
+            <Skeleton className="h-5 w-3/4" />
+          </div>
+
+          <div>
+            <Skeleton className="h-4 w-full" />
+          </div>
+
+          <Skeleton className="h-12 w-full rounded-md" />
+        </div>
+      </div>
+    </div>
+  );
 }
 
 function FavoriteTourCard({ tour }: { tour: FavoriteTourData }) {
@@ -25,13 +51,7 @@ function FavoriteTourCard({ tour }: { tour: FavoriteTourData }) {
   };
 
   if (isLoading) {
-    return (
-      <div className="bg-white shadow-md rounded-md">
-        <div className="flex items-center justify-center h-48">
-          <div className="animate-pulse text-gray-400">Загрузка данных...</div>
-        </div>
-      </div>
-    );
+    return <FavoriteTourCardSkeleton />;
   }
 
   if (!tourData || !hotelData) {
@@ -52,7 +72,7 @@ function FavoriteTourCard({ tour }: { tour: FavoriteTourData }) {
   }
 
   return (
-    <div className="bg-white shadow-md rounded-md flex flex-col">
+    <div className="bg-white shadow-md rounded-md flex flex-col w-80">
       <div className="relative">
         <img
           src={
@@ -88,7 +108,7 @@ function FavoriteTourCard({ tour }: { tour: FavoriteTourData }) {
             e.stopPropagation();
             removeFromFavorite(tour.hotelcode, tour.tourId);
           }}
-          className="absolute top-4 left-4 text-white hover:text-red-500 transition-colors p-1"
+          className="absolute top-4 right-4 text-white hover:text-red-500 transition-colors p-1"
           title="Удалить из избранного"
         >
           <FaTrash size={16} />
@@ -158,6 +178,16 @@ function FavoriteTourCard({ tour }: { tour: FavoriteTourData }) {
 }
 
 export default function FavoriteModal({ tours }: FavoriteModalProps) {
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <div className="w-full">
       {tours.length === 0 ? (
@@ -168,13 +198,19 @@ export default function FavoriteModal({ tours }: FavoriteModalProps) {
           </p>
         </div>
       ) : (
-        <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {tours.map((tour) => (
-            <FavoriteTourCard
-              key={`${tour.hotelcode}_${tour.tourId}`}
-              tour={tour}
-            />
-          ))}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-3">
+          {isLoading
+            ? [...Array(8)].map((_, index) => (
+                <div key={index}>
+                  <FavoriteTourCardSkeleton />
+                </div>
+              ))
+            : tours.map((tour) => (
+                <FavoriteTourCard
+                  key={`${tour.hotelcode}_${tour.tourId}`}
+                  tour={tour}
+                />
+              ))}
         </div>
       )}
     </div>

@@ -46,13 +46,13 @@ export default function Favorite() {
           closeButton: "text-xl",
         }}
       >
-        <ModalContent className="max-w-4xl max-h-[80vh] py-2">
+        <ModalContent className="max-w-5xl max-h-[66vh] py-2 pr-2">
           <>
             <ModalHeader className="flex gap-1">
               <div className="flex items-center gap-2">
                 <span className="text-2xl font-medium">Избранные туры</span>
                 {favoriteTours.length > 0 && (
-                  <div className="flex items-center gap-1 bg-red-100 py-0.5 rounded-full shadow-sm whitespace-nowrap">
+                  <div className="flex items-center gap-1 bg-red-100 py-0.5 px-3 rounded-full shadow-sm whitespace-nowrap">
                     <span className="font-semibold text-base text-red-500">
                       {favoriteTours.length}
                     </span>
@@ -60,7 +60,7 @@ export default function Favorite() {
                 )}
               </div>
             </ModalHeader>
-            <ModalBody className="h-[60vh] overflow-y-auto">
+            <ModalBody className="h-[60vh] overflow-y-auto  scrollbar-custom">
               <FavoriteModal tours={favoriteTours} />
             </ModalBody>
             <ModalFooter />

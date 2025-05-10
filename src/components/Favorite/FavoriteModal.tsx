@@ -1,7 +1,60 @@
 import { FavoriteTourData } from "../../components/DataProvider";
+import useHotelDetails from "../../Hooks/UseHotelDetails";
+import { useMemo } from "react";
 
 interface FavoriteModalProps {
   tours: FavoriteTourData[];
+}
+
+function FavoriteTourCard({ tour }: { tour: FavoriteTourData }) {
+  const { data, isLoading } = useHotelDetails(tour.hotelcode, tour.tourId);
+
+  const tourData = data?.tour?.data?.tour;
+  const hotelData = data?.hotel?.data?.hotel;
+
+  if (isLoading) {
+    return (
+      <div className="border rounded-lg p-4">
+        <div className="flex items-center justify-center h-32">
+          <div className="animate-pulse text-gray-400">Загрузка данных...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!tourData || !hotelData) {
+    return (
+      <div className="border rounded-lg p-4">
+        <div className="flex items-center justify-center h-32">
+          <div className="text-gray-400">Не удалось загрузить данные</div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="border rounded-lg p-4 hover:bg-gray-50 transition-colors">
+      <h3 className="font-medium text-lg text-gray-900">{hotelData.name}</h3>
+      <div className="mt-2 space-y-1">
+        <p className="text-sm text-gray-600">
+          Вылет из: {tourData.departurename}
+        </p>
+        <p className="text-sm text-gray-600">Дата: {tourData.flydate}</p>
+        <p className="text-sm text-gray-600">{tourData.nights} ночей</p>
+        <p className="text-sm text-gray-600">Питание: {tourData.meal}</p>
+      </div>
+      <div className="mt-3 text-right">
+        <span className="text-lg font-bold text-gray-900">
+          {tourData.price}
+          {tourData.currency === "EUR"
+            ? "€"
+            : tourData.currency === "USD"
+            ? "$"
+            : tourData.currency}
+        </span>
+      </div>
+    </div>
+  );
 }
 
 export default function FavoriteModal({ tours }: FavoriteModalProps) {
@@ -17,21 +70,10 @@ export default function FavoriteModal({ tours }: FavoriteModalProps) {
       ) : (
         <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
           {tours.map((tour) => (
-            <div
+            <FavoriteTourCard
               key={`${tour.hotelcode}_${tour.tourId}`}
-              className="border rounded-lg p-4 hover:bg-gray-50 transition-colors"
-            >
-              <h3 className="font-medium text-lg">{tour.hotelName}</h3>
-              <div className="mt-2 space-y-1 text-sm text-gray-600">
-                <p>Вылет: {tour.departure}</p>
-                <p>Дата: {tour.flyDate}</p>
-                <p>Ночей: {tour.nights}</p>
-                <p>Питание: {tour.meal}</p>
-              </div>
-              <div className="font-bold text-right mt-2">
-                {tour.price} {tour.currency}
-              </div>
-            </div>
+              tour={tour}
+            />
           ))}
         </div>
       )}

@@ -15,13 +15,6 @@ type Countries = { id: string; label: string };
 export interface FavoriteTourData {
   hotelcode: string;
   tourId: string;
-  hotelName: string;
-  price: string;
-  currency: string;
-  departure: string;
-  flyDate: string;
-  nights: number;
-  meal: string;
 }
 
 // Обновите тип контекста

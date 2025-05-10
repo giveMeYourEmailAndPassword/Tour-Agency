@@ -1,7 +1,6 @@
 import { IoMoonOutline } from "react-icons/io5";
 import { FaUtensils } from "react-icons/fa";
 import { useContext } from "react";
-import { FavoriteContext } from "../context/FavoriteContext";
 import { DataContext } from "../components/DataProvider";
 
 interface BookingPanelProps {
@@ -70,13 +69,6 @@ export default function BookingPanel({
     const tourData = {
       hotelcode,
       tourId,
-      hotelName,
-      price,
-      currency,
-      departure,
-      flyDate,
-      nights,
-      meal,
     };
 
     addToFavorite(tourData);

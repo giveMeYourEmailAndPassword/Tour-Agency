@@ -1,6 +1,12 @@
 import { FavoriteTourData } from "../../components/DataProvider";
 import useHotelDetails from "../../Hooks/UseHotelDetails";
-import { useMemo } from "react";
+import { useContext } from "react";
+import { DataContext } from "../../components/DataProvider";
+import { FaTrash } from "react-icons/fa";
+import { GoStarFill } from "react-icons/go";
+import { parse, format } from "date-fns";
+import { ru } from "date-fns/locale";
+import { countryCodeMap } from "../../constants/countryCodeMap";
 
 interface FavoriteModalProps {
   tours: FavoriteTourData[];
@@ -8,14 +14,20 @@ interface FavoriteModalProps {
 
 function FavoriteTourCard({ tour }: { tour: FavoriteTourData }) {
   const { data, isLoading } = useHotelDetails(tour.hotelcode, tour.tourId);
+  const { removeFromFavorite } = useContext(DataContext);
 
   const tourData = data?.tour?.data?.tour;
   const hotelData = data?.hotel?.data?.hotel;
 
+  const formatDate = (dateString: string) => {
+    const date = parse(dateString, "dd.MM.yyyy", new Date());
+    return format(date, "d MMMM", { locale: ru });
+  };
+
   if (isLoading) {
     return (
-      <div className="border rounded-lg p-4">
-        <div className="flex items-center justify-center h-32">
+      <div className="bg-white shadow-md rounded-md">
+        <div className="flex items-center justify-center h-48">
           <div className="animate-pulse text-gray-400">Загрузка данных...</div>
         </div>
       </div>
@@ -24,34 +36,122 @@ function FavoriteTourCard({ tour }: { tour: FavoriteTourData }) {
 
   if (!tourData || !hotelData) {
     return (
-      <div className="border rounded-lg p-4">
-        <div className="flex items-center justify-center h-32">
+      <div className="bg-white shadow-md rounded-md">
+        <div className="flex items-center justify-center h-48">
           <div className="text-gray-400">Не удалось загрузить данные</div>
+          <button
+            onClick={() => removeFromFavorite(tour.hotelcode, tour.tourId)}
+            className="text-gray-400 hover:text-red-500 transition-colors p-1"
+            title="Удалить из избранного"
+          >
+            <FaTrash size={16} />
+          </button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="border rounded-lg p-4 hover:bg-gray-50 transition-colors">
-      <h3 className="font-medium text-lg text-gray-900">{hotelData.name}</h3>
-      <div className="mt-2 space-y-1">
-        <p className="text-sm text-gray-600">
-          Вылет из: {tourData.departurename}
-        </p>
-        <p className="text-sm text-gray-600">Дата: {tourData.flydate}</p>
-        <p className="text-sm text-gray-600">{tourData.nights} ночей</p>
-        <p className="text-sm text-gray-600">Питание: {tourData.meal}</p>
+    <div className="bg-white shadow-md rounded-md flex flex-col">
+      <div className="relative">
+        <img
+          src={
+            (hotelData.hotelpicturebig &&
+            hotelData.hotelpicturebig.startsWith("//")
+              ? `https:${hotelData.hotelpicturebig}`
+              : hotelData.hotelpicturebig) ||
+            (tourData.hotelpicturebig &&
+            tourData.hotelpicturebig.startsWith("//")
+              ? `https:${tourData.hotelpicturebig}`
+              : tourData.hotelpicturebig) ||
+            "/default-hotel-image.jpg" // fallback изображение
+          }
+          alt={hotelData.name}
+          className="rounded-lg object-cover h-48 w-full"
+          onError={(e) => {
+            e.currentTarget.src = "/default-hotel-image.jpg"; // если изображение не загрузилось
+          }}
+        />
+        {tourData.priceold > tourData.price && (
+          <div className="absolute top-4 right-4 z-10 bg-white/85 px-2 py-1 rounded-full">
+            <span className="text-orange-500 text-sm font-medium">
+              -{" "}
+              {Math.round(
+                ((tourData.priceold - tourData.price) / tourData.priceold) * 100
+              )}
+              %
+            </span>
+          </div>
+        )}
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            removeFromFavorite(tour.hotelcode, tour.tourId);
+          }}
+          className="absolute top-4 left-4 text-white hover:text-red-500 transition-colors p-1"
+          title="Удалить из избранного"
+        >
+          <FaTrash size={16} />
+        </button>
       </div>
-      <div className="mt-3 text-right">
-        <span className="text-lg font-bold text-gray-900">
-          {tourData.price}
-          {tourData.currency === "EUR"
-            ? "€"
-            : tourData.currency === "USD"
-            ? "$"
-            : tourData.currency}
-        </span>
+
+      <div className="flex flex-col relative">
+        <div className="flex items-center gap-2 justify-between px-2 bg-blue-400 py-1 absolute w-full -top-[27px]">
+          <div className="flex gap-0.5">
+            {Array.from({ length: parseInt(hotelData.stars) }, (_, i) => (
+              <GoStarFill key={i} className="text-white" />
+            ))}
+          </div>
+          <span className="text-white text-sm font-medium">
+            {hotelData.rating === "0" ? "" : `${hotelData.rating} / 5`}
+          </span>
+        </div>
+
+        <div className="flex flex-col gap-2 px-2 pb-2 pt-1">
+          <div className="flex flex-col">
+            <h3 className="text-lg font-semibold truncate">
+              {hotelData.name.length > 26
+                ? `${hotelData.name.substring(0, 26)}...`
+                : hotelData.name}
+            </h3>
+            <p className="text-gray-500 font-medium text-sm flex items-center gap-1">
+              {countryCodeMap[hotelData.country] && (
+                <img
+                  src={`https://flagcdn.com/${countryCodeMap[
+                    hotelData.country
+                  ].toLowerCase()}.svg`}
+                  alt={hotelData.country}
+                  className="w-4 h-3 object-cover rounded-sm"
+                />
+              )}
+              {hotelData.country}, {hotelData.region}
+            </p>
+          </div>
+
+          <p className="text-blue-500 text-sm">
+            из {tourData.departurename}, {formatDate(tourData.flydate)}. На{" "}
+            {tourData.nights} ночей
+          </p>
+
+          <div className="flex items-center bg-blue-100 p-2 rounded-md justify-end">
+            <p className="text-black flex gap-2 items-baseline">
+              за {tourData.placement.split(" ")[0]}{" "}
+              {tourData.placement.split(" ")[0] === "2"
+                ? "двоих"
+                : tourData.placement.split(" ")[0] === "3"
+                ? "троих"
+                : "взрослых"}
+              <span className="text-lg text-orange-500 font-semibold">
+                {tourData.price}
+                {tourData.currency === "EUR"
+                  ? "€"
+                  : tourData.currency === "USD"
+                  ? "$"
+                  : tourData.currency}
+              </span>
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -68,7 +168,7 @@ export default function FavoriteModal({ tours }: FavoriteModalProps) {
           </p>
         </div>
       ) : (
-        <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
+        <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {tours.map((tour) => (
             <FavoriteTourCard
               key={`${tour.hotelcode}_${tour.tourId}`}

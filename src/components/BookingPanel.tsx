@@ -36,7 +36,13 @@ export default function BookingPanel({
   operatorLink,
   roomType,
 }: BookingPanelProps) {
-  const { addToFavorite } = useContext(DataContext);
+  const { addToFavorite, removeFromFavorite, favoriteTours } =
+    useContext(DataContext);
+
+  // Проверяем, есть ли тур в избранном
+  const isFavorite = favoriteTours.some(
+    (tour) => tour.hotelcode === hotelcode && tour.tourId === tourId
+  );
 
   const handleBooking = () => {
     if (hotelcode && tourId) {
@@ -65,13 +71,17 @@ export default function BookingPanel({
     }
   };
 
-  const handleAddToFavorite = () => {
+  const handleFavoriteClick = () => {
     const tourData = {
       hotelcode,
       tourId,
     };
 
-    addToFavorite(tourData);
+    if (isFavorite) {
+      removeFromFavorite(hotelcode, tourId);
+    } else {
+      addToFavorite(tourData);
+    }
   };
 
   return (
@@ -103,16 +113,20 @@ export default function BookingPanel({
           {/* Кнопки действий */}
           <div className="flex gap-3">
             <button
-              onClick={handleAddToFavorite}
-              className="px-4 py-2 border-2 border-blue-600 text-blue-600 
-              rounded-xl font-medium hover:bg-blue-50 transition-colors"
+              onClick={handleFavoriteClick}
+              className={`px-4 py-2 border-2 rounded-xl font-medium transition-colors
+                ${
+                  isFavorite
+                    ? "border-red-500 text-red-500 hover:bg-red-50"
+                    : "border-blue-600 text-blue-600 hover:bg-blue-50"
+                }`}
             >
-              В избранное
+              {isFavorite ? "Убрать из избранного" : "В избранное"}
             </button>
             <button
               onClick={handleBooking}
               className="px-6 py-2 bg-blue-600 text-white rounded-xl font-medium 
-              hover:bg-blue-500 transition-colors shadow-md"
+                hover:bg-blue-500 transition-colors shadow-md"
             >
               Забронировать
             </button>

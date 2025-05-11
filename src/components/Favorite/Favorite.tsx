@@ -52,8 +52,8 @@ export default function Favorite() {
               <div className="flex items-center gap-2">
                 <span className="text-2xl font-medium">Избранные туры</span>
                 {favoriteTours.length > 0 && (
-                  <div className="flex items-center gap-1 bg-red-100 py-0.5 px-3 rounded-full shadow-sm whitespace-nowrap">
-                    <span className="font-semibold text-base text-red-500">
+                  <div className="flex items-center gap-1 bg-blue-500 py-0.5 px-3 rounded-full shadow-sm whitespace-nowrap">
+                    <span className="font-semibold text-base text-white">
                       {favoriteTours.length}
                     </span>
                   </div>

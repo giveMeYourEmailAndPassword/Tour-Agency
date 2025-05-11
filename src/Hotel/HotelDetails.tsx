@@ -18,9 +18,8 @@ import { FaBed } from "react-icons/fa6";
 import { IoAirplane } from "react-icons/io5";
 import { FaYoutube } from "react-icons/fa";
 import { FaUtensils } from "react-icons/fa";
-import { parse, format } from "date-fns";
+import { parse, format, addDays } from "date-fns";
 import { ru } from "date-fns/locale";
-import ScrollToTopButton from "../components/ScrollToTopButton";
 import BookingPanel from "../components/BookingPanel";
 import Header from "../components/Header";
 import SimilarHotTours from "../components/SimilarHotTours";
@@ -91,12 +90,13 @@ export default function HotelDetails() {
       .join("\n");
   };
 
-  const formatDate = (dateString: string) => {
-    // Парсим строку в объект Date
+  const formatDate = (dateString: string, nights?: number) => {
     const date = parse(dateString, "dd.MM.yyyy", new Date());
-
-    // Форматируем дату в нужный формат
-    return format(date, "d MMMM", { locale: ru }); // "24 октября"
+    if (nights) {
+      const returnDate = addDays(date, parseInt(nights.toString()));
+      return format(returnDate, "d MMMM", { locale: ru });
+    }
+    return format(date, "d MMMM", { locale: ru });
   };
 
   const getMealType = () => {
@@ -298,7 +298,7 @@ export default function HotelDetails() {
               </div>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-4 w-[50%]">
               <h3 className="text-xl font-semibold text-gray-800">Перелет</h3>
               <div className="bg-amber-50 p-4 rounded-xl space-y-3">
                 <div className="flex items-center justify-between">
@@ -306,9 +306,7 @@ export default function HotelDetails() {
                     <IoAirplane className="-rotate-45 text-amber-600 text-lg" />
                     <p className="text-gray-700 font-medium">{`${tour.departurename} - ${tour.hotelregionname}`}</p>
                   </div>
-                  <p className="text-gray-600">
-                    {/* {formatDate(tourDetails.dateforward)} */}
-                  </p>
+                  <p className="text-black">{formatDate(tour.flydate)}</p>
                 </div>
 
                 <div className="flex items-center justify-between">
@@ -316,8 +314,8 @@ export default function HotelDetails() {
                     <IoAirplane className="rotate-[135deg] text-amber-600 text-lg" />
                     <p className="text-gray-700 font-medium">{`${tour.hotelregionname} - ${tour.departurename}`}</p>
                   </div>
-                  <p className="text-gray-600">
-                    {/* {formatDate(tourDetails.datebackward)} */}
+                  <p className="text-black">
+                    {formatDate(tour.flydate, tour.nights)}
                   </p>
                 </div>
               </div>
@@ -326,7 +324,6 @@ export default function HotelDetails() {
             <div className="flex justify-end pt-4">
               <div className="bg-gradient-to-r from-orange-500 to-orange-400 px-6 py-3 rounded-xl shadow-lg">
                 <p className="text-white flex items-baseline gap-2">
-                  <span className="text-lg">за двоих</span>
                   <span className="text-3xl font-bold">
                     {tour.price}
                     {tour.currency === "EUR"

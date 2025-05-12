@@ -23,8 +23,9 @@ import { ru } from "date-fns/locale";
 import BookingPanel from "../components/BookingPanel";
 import Header from "../components/Header";
 import SimilarHotTours from "../components/SimilarHotTours";
-import Favorite from "../components/Favorite/Favorite";
 import FloatingControls from "../components/FloatingControls";
+import SkeletonHotelDetails from "./SkeletonHotelDetails";
+
 export default function HotelDetails() {
   const { hotelcode, tourId } = useParams();
   const location = useLocation();
@@ -51,13 +52,7 @@ export default function HotelDetails() {
   }, [data?.hotel?.data?.hotel, isError]);
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
-        <div className="text-3xl font-medium text-blue-600 animate-pulse">
-          Загрузка данных об отеле...
-        </div>
-      </div>
-    );
+    return <SkeletonHotelDetails />;
   }
 
   if (isError || !data?.hotel?.data?.hotel) {

@@ -8,6 +8,7 @@ import { parse, format } from "date-fns";
 import { ru } from "date-fns/locale";
 import { countryCodeMap } from "../../constants/countryCodeMap";
 import { Skeleton } from "@heroui/react";
+import { useNavigate } from "react-router";
 
 interface FavoriteModalProps {
   tours: FavoriteTourData[];
@@ -39,6 +40,7 @@ function FavoriteTourCardSkeleton() {
 }
 
 function FavoriteTourCard({ tour }: { tour: FavoriteTourData }) {
+  const navigate = useNavigate();
   const { data, isLoading } = useHotelDetails(tour.hotelcode, tour.tourId);
   const { removeFromFavorite } = useContext(DataContext);
 
@@ -72,7 +74,10 @@ function FavoriteTourCard({ tour }: { tour: FavoriteTourData }) {
   }
 
   return (
-    <div className="bg-white shadow-md rounded-md flex flex-col w-80">
+    <div
+      className="bg-white shadow-md rounded-md flex flex-col w-80 cursor-pointer"
+      onClick={() => navigate(`/hotel/${tour.hotelcode}/${tour.tourId}`)}
+    >
       <div className="relative">
         <img
           src={

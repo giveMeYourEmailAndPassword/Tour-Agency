@@ -20,7 +20,11 @@ export default function Favorite() {
         className="flex flex-col items-center"
         onClick={() => setIsOpen(true)}
       >
-        <div className="bg-white hover:bg-gray-50 rounded-l-xl w-28 h-20 flex flex-col items-center justify-center shadow-sm transition-all duration-300 border-2 border-r-0">
+        <div
+          className="bg-white hover:bg-gray-50 rounded-l-xl lg:w-[6.8rem] lg:h-20
+          md:w-24 md:h-16 flex flex-col items-center justify-center shadow-sm
+         transition-all duration-300 border-2 border-r-0"
+        >
           <button className="relative">
             {isFavorite ? (
               <FaHeart className="text-red-500" size={32} />
@@ -28,12 +32,18 @@ export default function Favorite() {
               <FaRegHeart className="text-gray-400" size={32} />
             )}
             {favoriteTours.length > 0 && (
-              <div className="absolute -top-2 -right-2 bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-medium">
+              <div
+                className="absolute lg:-top-2 lg:-right-2 md:-top-1.5 md:-right-1.5
+               bg-blue-500 text-white rounded-full lg:w-5 lg:h-5 md:w-4 md:h-4
+               flex items-center justify-center text-xs font-medium"
+              >
                 {favoriteTours.length}
               </div>
             )}
           </button>
-          <div className="text-base font-normal text-gray-500">Избранное</div>
+          <div className="lg:text-base md:text-xs font-normal text-gray-500">
+            Избранное
+          </div>
         </div>
       </div>
 

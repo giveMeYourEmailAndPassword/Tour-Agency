@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FaBars } from "react-icons/fa";
+import { HiMiniBars4, HiOutlineBars3 } from "react-icons/hi2";
 import { LiaTimesSolid } from "react-icons/lia";
 
 export default function Header() {
@@ -25,7 +25,11 @@ export default function Header() {
             className="md:hidden text-blue-500"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
-            {isMenuOpen ? <LiaTimesSolid size={26} /> : <FaBars size={24} />}
+            {isMenuOpen ? (
+              <LiaTimesSolid size={26} />
+            ) : (
+              <HiOutlineBars3 size={26} />
+            )}
           </button>
 
           {/* Навигация */}

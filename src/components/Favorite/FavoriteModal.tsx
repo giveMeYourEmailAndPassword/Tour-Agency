@@ -58,17 +58,17 @@ function FavoriteTourCard({ tour }: { tour: FavoriteTourData }) {
 
   if (!tourData || !hotelData) {
     return (
-      <div className="bg-white shadow-md rounded-md">
-        <div className="flex items-center justify-center h-48">
-          <div className="text-gray-400">Не удалось загрузить данные</div>
-          <button
-            onClick={() => removeFromFavorite(tour.hotelcode, tour.tourId)}
-            className="text-gray-400 hover:text-red-500 transition-colors p-1"
-            title="Удалить из избранного"
-          >
-            <FaTrash size={16} />
-          </button>
+      <div className="bg-white shadow-md rounded-md relative">
+        <div className="flex items-center justify-center h-[20.8rem]">
+          <div className="text-gray-400 text-2xl">Тур продан</div>
         </div>
+        <button
+          onClick={() => removeFromFavorite(tour.hotelcode, tour.tourId)}
+          className="absolute top-4 right-4 text-gray-400 hover:text-red-500 transition-colors p-1"
+          title="Удалить из избранного"
+        >
+          <FaTrash size={16} />
+        </button>
       </div>
     );
   }

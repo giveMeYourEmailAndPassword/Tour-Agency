@@ -52,12 +52,18 @@ export default function App() {
         {/* Основной контент */}
         <div className="max-w-[1560px] mx-auto">
           <div className="md:pt-10 lg:pt-14 md:pb-28">
-            <div className="px-4 md:px-8 lg:px-12 xl:pl-36 mt-6 md:mt-12 mb-7 flex flex-col md:gap-4 gap-1">
+            <div className="px-4 md:px-8 lg:px-12 xl:pl-36 mt-6 md:mt-12 mb-3 md:flex flex-col md:gap-4 gap-1 hidden">
               <h1 className="text-2xl md:text-4xl lg:text-5xl text-white font-bold max-w-[60rem]">
                 Воплощай свои МЕЧТЫ в реальность вместе с нами
               </h1>
               <h2 className="text-base md:text-xl font-medium text-white">
                 Открывай мир с лёгкостью и вдохновением
+              </h2>
+            </div>
+
+            <div className="md:hidden px-4 md:px-8 lg:px-12 xl:pl-36 mt-6 md:mt-12 mb-2 flex-col md:gap-4 gap-1">
+              <h2 className="text-2xl font-medium text-white">
+                Открывайте мир вместе с нами
               </h2>
             </div>
 

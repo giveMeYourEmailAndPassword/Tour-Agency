@@ -120,13 +120,15 @@ export default function NewFlyingCountry() {
       onOpenChange={(open) => setIsOpen(open)}
       key={countries.length}
     >
-      <PopoverTrigger className="w-64 h-full bg-white hover:bg-slate-100 rounded-xl !z-0 !scale-100 !opacity-100 py-1">
+      <PopoverTrigger className="w-full md:w-64 h-12 md:h-full bg-white hover:bg-slate-100 rounded-xl !z-0 !scale-100 !opacity-100 py-1">
         <Button className="px-4">
           <div className="flex flex-col items-start justify-between w-full">
             {selectedCountryData && (
-              <span className="text-slate-600 mb-[1px] text-sm">Страна</span>
+              <span className="text-slate-600 mb-[1px] text-xs md:text-sm">
+                Страна
+              </span>
             )}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1 md:gap-2">
               {selectedCountryData && (
                 <img
                   src={`https://flagcdn.com/${
@@ -134,11 +136,11 @@ export default function NewFlyingCountry() {
                     "default"
                   }.svg`}
                   alt={selectedCountryData.label}
-                  className="w-6 h-4"
+                  className="w-5 h-4 md:w-6 md:h-4"
                 />
               )}
               <h1
-                className={`text-lg ${
+                className={`text-base md:text-lg ${
                   selectedCountryData
                     ? "text-black font-medium"
                     : "text-slate-600"

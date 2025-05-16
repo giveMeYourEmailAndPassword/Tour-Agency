@@ -40,6 +40,24 @@ p {
   background: #555; /* Цвет ползунка при наведении */
 }
 
+.scrollbar-custom2::-webkit-scrollbar {
+  width: 4px; /* Ширина скроллбара */
+}
+
+.scrollbar-custom2::-webkit-scrollbar-track {
+  background: #f1f1f1; /* Цвет трека (фона) скроллбара */
+  border-radius: 4px; /* Закругление углов трека */
+}
+
+.scrollbar-custom2::-webkit-scrollbar-thumb {
+  background: #888; /* Цвет ползунка скроллбара */
+  border-radius: 4px; /* Закругление углов ползунка */
+}
+
+.scrollbar-custom2::-webkit-scrollbar-thumb:hover {
+  background: #555; /* Цвет ползунка при наведении */
+}
+
 .yarl__thumbnails_thumbnail {
   border: 0.5px solid #fff !important;
   filter: brightness(50%) !important;

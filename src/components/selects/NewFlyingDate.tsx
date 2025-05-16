@@ -89,7 +89,7 @@ export default function NewFlyingDate() {
       </PopoverTrigger>
       <PopoverContent>
         <div className="px-1 py-1">
-          <div className="text-small font-bold mb-2">Ночей от:</div>
+          <div className="text-base font-medium mb-2">Даты вылета:</div>
           <I18nProvider locale="ru">
             <RangeCalendar
               onChange={handleRangeChange}

@@ -66,13 +66,16 @@ export default function NewDepartureCity() {
           </Button>
         </PopoverTrigger>
 
-        <PopoverContent className="w-44 py-2">
+        <PopoverContent className="w-56 py-2">
+          <div className="text-base font-medium mb-2 flex justify-start w-full">
+            Город вылета:
+          </div>
           <div className="flex flex-col gap-1 items-starts w-full">
             {filteredCities && filteredCities.length > 0 ? (
               filteredCities.map((city) => (
                 <button
-                  className={`text-black text-lg text-start hover:bg-gray-200 rounded-xl py-1 pl-4 ${
-                    selectedCity === city.id ? "font-semibold" : ""
+                  className={`text-black text-base text-start hover:bg-gray-200 rounded-xl py-1 pl-2   ${
+                    selectedCity === city.id ? "font-medium" : ""
                   }`}
                   key={city.id}
                   onClick={() => handleCitySelect(city)} // Обработчик выбора города

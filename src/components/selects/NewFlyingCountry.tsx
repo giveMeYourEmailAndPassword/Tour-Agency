@@ -2,13 +2,14 @@ import React, { useContext, useState, useEffect } from "react";
 import { Button, Popover, PopoverTrigger, PopoverContent } from "@heroui/react";
 import { DataContext } from "../DataProvider";
 import { FaSearch } from "react-icons/fa";
+import { RxCross2 } from "react-icons/rx";
 
 interface Country {
   id: number;
   label: string;
 }
 
-const countryCodeMap: { [key: number]: string } = {
+const countryCodeMap: Record<number, string> = {
   46: "GE", // Абхазия
   31: "AT", // Австрия
   55: "AZ", // Азербайджан
@@ -81,11 +82,22 @@ const countryCodeMap: { [key: number]: string } = {
   52: "CH", // Швейцария
 };
 
+const popularCountryIds = [11, 1, 2, 9, 8, 4, 24];
+
 export default function NewFlyingCountry() {
   const { setData, countries } = useContext(DataContext);
   const [selectedCountry, setSelectedCountry] = useState<number | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+
+  // Перемещаем объявление popularCountries сюда
+  const popularCountries = countries.filter((country) =>
+    popularCountryIds.includes(Number(country.id))
+  );
+
+  const filteredCountries = countries.filter((country) =>
+    country.label.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   useEffect(() => {
     if (countries.length > 0) {
@@ -106,9 +118,18 @@ export default function NewFlyingCountry() {
     }
   }, [selectedCountry, setData]);
 
+  useEffect(() => {
+    console.log("Все страны:", countries);
+    console.log("Популярные страны:", popularCountries);
+  }, [countries, popularCountries]);
+
   const handleCountrySelect = (country: { id: number; label: string }) => {
     setSelectedCountry(country.id);
     setIsOpen(false);
+  };
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
   };
 
   const selectedCountryData = countries.find(
@@ -119,8 +140,12 @@ export default function NewFlyingCountry() {
     <Popover
       placement="top"
       isOpen={isOpen}
-      onOpenChange={(open) => setIsOpen(open)}
+      onOpenChange={(open) => {
+        setIsOpen(open);
+        if (!open) setSearchQuery("");
+      }}
       key={countries.length}
+      shouldCloseOnScroll={false}
     >
       <PopoverTrigger className="w-full md:w-64 h-12 md:h-full bg-white hover:bg-slate-100 rounded-md md:rounded-xl !z-0 !scale-100 !opacity-100 py-1">
         <Button className="px-4">
@@ -155,44 +180,98 @@ export default function NewFlyingCountry() {
         </Button>
       </PopoverTrigger>
 
-      <PopoverContent className="w-[38rem] py-2 max-h-96">
-        <div className="pb-2 w-full">
+      <PopoverContent className="w-[34rem] py-2 max-h-96">
+        <div className="pb-2 pt-1 w-full">
           <div className="relative">
             <input
               type="text"
+              value={searchQuery}
+              onChange={handleSearchChange}
               placeholder="Введите название страны"
-              className="w-full pl-8 pr-4 py-1 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-blue-500 text-base"
+              className="w-full pl-8 pr-8 py-1 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-blue-500 text-base"
             />
             <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-600" />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery("")}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+              >
+                <RxCross2 className="text-lg" />
+              </button>
+            )}
           </div>
         </div>
-        <div className="grid grid-cols-3 gap-1 items-start w-full overflow-y-auto scrollbar-custom pr-2">
-          {countries.length > 0 ? (
-            countries.map((country) => (
-              <button
-                className={`text-black text-base text-start hover:bg-gray-200 rounded-xl py-1 pl-4 ${
-                  selectedCountry === country.id ? "font-semibold" : ""
-                }`}
-                key={country.id}
-                onClick={() => handleCountrySelect(country)}
-              >
-                <div className="flex items-center gap-2">
-                  <img
-                    src={`https://flagcdn.com/${
-                      countryCodeMap[country.id]?.toLowerCase() || "default"
-                    }.svg`}
-                    alt={country.label}
-                    className="w-6 h-4"
-                  />
-                  {country.label}
-                </div>
-              </button>
-            ))
-          ) : (
-            <button className="text-black text-lg text-start hover:bg-gray-200 rounded-xl py-1 pl-4">
-              Загрузка...
-            </button>
+
+        <div className="items-start w-full overflow-y-auto scrollbar-custom2 pr-2 h-[270px]">
+          {!searchQuery && (
+            <>
+              <div className="flex items-center justify-start w-full pl-2">
+                <p className="text-black text-base font-medium">Популярное</p>
+              </div>
+              <div className="grid grid-cols-3 gap-1 pb-2">
+                {popularCountries.map((country) => (
+                  <button
+                    className={`text-black text-base text-start hover:bg-gray-200 rounded-xl py-1 pl-4 ${
+                      selectedCountry === country.id ? "font-semibold" : ""
+                    }`}
+                    key={country.id}
+                    onClick={() => {
+                      handleCountrySelect(country);
+                      setSearchQuery("");
+                    }}
+                  >
+                    <div className="flex items-center gap-2">
+                      <img
+                        src={`https://flagcdn.com/${
+                          countryCodeMap[country.id]?.toLowerCase() || "default"
+                        }.svg`}
+                        alt={country.label}
+                        className="w-6 h-4"
+                      />
+                      {country.label}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </>
           )}
+
+          <div className="flex items-center justify-start w-full pl-2">
+            <p className="text-black text-base font-medium">
+              {!searchQuery ? "Все страны" : "Результаты поиска"}
+            </p>
+          </div>
+          <div className="grid grid-cols-3 gap-1">
+            {filteredCountries.length > 0 ? (
+              filteredCountries.map((country) => (
+                <button
+                  className={`text-black text-base text-start hover:bg-gray-200 rounded-xl py-1 pl-4 ${
+                    selectedCountry === country.id ? "font-semibold" : ""
+                  }`}
+                  key={country.id}
+                  onClick={() => {
+                    handleCountrySelect(country);
+                    setSearchQuery("");
+                  }}
+                >
+                  <div className="flex items-center gap-2">
+                    <img
+                      src={`https://flagcdn.com/${
+                        countryCodeMap[country.id]?.toLowerCase() || "default"
+                      }.svg`}
+                      alt={country.label}
+                      className="w-6 h-4"
+                    />
+                    {country.label}
+                  </div>
+                </button>
+              ))
+            ) : (
+              <div className="col-span-3 text-center text-gray-500 py-2 flex items-center justify-center h-full text-base">
+                Страны не найдены
+              </div>
+            )}
+          </div>
         </div>
       </PopoverContent>
     </Popover>

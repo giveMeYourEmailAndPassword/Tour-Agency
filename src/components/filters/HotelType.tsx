@@ -146,7 +146,7 @@ export default function HotelType() {
       <PopoverContent className="rounded-md">
         <div className="px-1 py-1 w-48">
           <div className="flex flex-col gap-1">
-            <h1 className="text-small font-semibold mb-2">ТИП ОТЕЛЯ / ТУРА</h1>
+            <h1 className="text-base font-medium">Тип отеля / тура</h1>
             {checkboxes.map(({ value, label }) => (
               <Checkbox
                 color="default"

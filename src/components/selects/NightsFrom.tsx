@@ -54,7 +54,7 @@ export default function NightsFrom() {
       </PopoverTrigger>
       <PopoverContent>
         <div className="px-1 py-1">
-          <div className="text-small font-semibold mb-2">Ночей от:</div>
+          <div className="text-base font-medium mb-2">Ночей от:</div>
           <RangeCalendar
             onChange={handleRangeChange}
             value={range} // Передаем текущее состояние в RangeCalendar

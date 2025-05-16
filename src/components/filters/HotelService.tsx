@@ -134,7 +134,7 @@ export default function HotelService() {
 
       <PopoverContent className="rounded-md">
         <div className="px-3 pt-3 w-72">
-          <h1 className="text-small font-semibold mb-2">УСЛУГИ В ОТЕЛЕ</h1>
+          <h1 className="text-base font-medium mb-2">Услуги в отеле</h1>
 
           <div className="flex border-b mb-2 gap-1">
             <button
@@ -168,10 +168,10 @@ export default function HotelService() {
             )}
           </div>
 
-          <div className="h-64 overflow-auto scrollbar-custom">
+          <div className="h-64 overflow-auto scrollbar-custom2">
             {filteredCheckboxes.map(({ group, options }) => (
               <div key={group} className="mb-3">
-                <h1 className="text-base font-semibold mb-1">{group}</h1>
+                <h1 className="text-base font-medium mb-1">{group}</h1>
                 <div className="flex flex-col gap-1">
                   {options.map(({ value, label }) => (
                     <Checkbox
@@ -193,7 +193,7 @@ export default function HotelService() {
           <div className="p-4 flex items-center justify-center">
             <button
               onClick={handleApply}
-              className={`px-14 py-2 border-2 text-xl rounded-full ${
+              className={`px-14 py-2 border-2 text-lg rounded-full ${
                 selectedValues.length >= 1
                   ? "border-blue-700 bg-blue-700 text-white"
                   : "text-gray-500"

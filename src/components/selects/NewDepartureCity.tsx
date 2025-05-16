@@ -37,7 +37,7 @@ export default function NewDepartureCity() {
         isOpen={isOpen}
         onOpenChange={(open) => setIsOpen(open)}
       >
-        <PopoverTrigger className="w-full md:w-64 h-full bg-white hover:bg-slate-100 rounded-xl !z-0 !scale-100 !opacity-100 py-1">
+        <PopoverTrigger className="w-full md:w-64 h-full bg-white hover:bg-slate-100 rounded-lg md:rounded-xl !z-0 !scale-100 !opacity-100 py-1">
           <Button className="px-4">
             <div className="flex flex-col items-start justify-between w-full">
               {selectedCityData && (

@@ -1,6 +1,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import { Button, Popover, PopoverTrigger, PopoverContent } from "@heroui/react";
 import { DataContext } from "../DataProvider";
+import { FaSearch } from "react-icons/fa";
 
 interface Country {
   id: number;
@@ -84,6 +85,7 @@ export default function NewFlyingCountry() {
   const { setData, countries } = useContext(DataContext);
   const [selectedCountry, setSelectedCountry] = useState<number | null>(null);
   const [isOpen, setIsOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     if (countries.length > 0) {
@@ -120,7 +122,7 @@ export default function NewFlyingCountry() {
       onOpenChange={(open) => setIsOpen(open)}
       key={countries.length}
     >
-      <PopoverTrigger className="w-full md:w-64 h-12 md:h-full bg-white hover:bg-slate-100 rounded-xl !z-0 !scale-100 !opacity-100 py-1">
+      <PopoverTrigger className="w-full md:w-64 h-12 md:h-full bg-white hover:bg-slate-100 rounded-md md:rounded-xl !z-0 !scale-100 !opacity-100 py-1">
         <Button className="px-4">
           <div className="flex flex-col items-start justify-between w-full">
             {selectedCountryData && (
@@ -153,12 +155,22 @@ export default function NewFlyingCountry() {
         </Button>
       </PopoverTrigger>
 
-      <PopoverContent className="w-[43rem] py-2 max-h-96 ">
+      <PopoverContent className="w-[38rem] py-2 max-h-96">
+        <div className="pb-2 w-full">
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Введите название страны"
+              className="w-full pl-8 pr-4 py-1 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-blue-500 text-base"
+            />
+            <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-600" />
+          </div>
+        </div>
         <div className="grid grid-cols-3 gap-1 items-start w-full overflow-y-auto scrollbar-custom pr-2">
           {countries.length > 0 ? (
             countries.map((country) => (
               <button
-                className={`text-black text-lg text-start hover:bg-gray-200 rounded-xl py-1 pl-4 ${
+                className={`text-black text-base text-start hover:bg-gray-200 rounded-xl py-1 pl-4 ${
                   selectedCountry === country.id ? "font-semibold" : ""
                 }`}
                 key={country.id}

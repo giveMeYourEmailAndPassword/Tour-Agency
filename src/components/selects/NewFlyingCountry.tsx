@@ -148,7 +148,7 @@ export default function NewFlyingCountry() {
       shouldCloseOnScroll={false}
     >
       <PopoverTrigger className="w-full md:w-64 h-12 md:h-full bg-white hover:bg-slate-100 rounded-md md:rounded-xl !z-0 !scale-100 !opacity-100 py-1">
-        <Button className="px-4">
+        <Button className="px-2 md:px-4">
           <div className="flex flex-col items-start justify-between w-full">
             {selectedCountryData && (
               <span className="text-slate-600 mb-[1px] text-xs md:text-sm">
@@ -163,7 +163,7 @@ export default function NewFlyingCountry() {
                     "default"
                   }.svg`}
                   alt={selectedCountryData.label}
-                  className="w-5 h-4 md:w-6 md:h-4"
+                  className="w-6 h-4"
                 />
               )}
               <h1
@@ -180,7 +180,7 @@ export default function NewFlyingCountry() {
         </Button>
       </PopoverTrigger>
 
-      <PopoverContent className="w-[34rem] py-2 max-h-96">
+      <PopoverContent className="w-full md:w-[34rem] py-2 max-h-96 rounded-md md:rounded-xl">
         <div className="pb-2 pt-1 w-full">
           <div className="relative">
             <input
@@ -188,7 +188,7 @@ export default function NewFlyingCountry() {
               value={searchQuery}
               onChange={handleSearchChange}
               placeholder="Введите название страны"
-              className="w-full pl-8 pr-8 py-1 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-blue-500 text-base"
+              className="w-full pl-8 pr-8 py-1 border-2 border-gray-300 rounded-md md:rounded-xl focus:outline-none focus:border-blue-500 text-base"
             />
             <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-600" />
             {searchQuery && (
@@ -196,7 +196,7 @@ export default function NewFlyingCountry() {
                 onClick={() => setSearchQuery("")}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
               >
-                <RxCross2 className="text-lg" />
+                <RxCross2 className="text-base md:text-lg" />
               </button>
             )}
           </div>
@@ -208,10 +208,10 @@ export default function NewFlyingCountry() {
               <div className="flex items-center justify-start w-full pl-2">
                 <p className="text-black text-base font-medium">Популярное</p>
               </div>
-              <div className="grid grid-cols-3 gap-1 pb-2">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-1 pb-2">
                 {popularCountries.map((country) => (
                   <button
-                    className={`text-black text-base text-start hover:bg-gray-200 rounded-xl py-1 pl-4 ${
+                    className={`text-black text-base text-start hover:bg-gray-200 rounded-md md:rounded-xl py-1 pl-4 ${
                       selectedCountry === country.id ? "font-semibold" : ""
                     }`}
                     key={country.id}
@@ -241,11 +241,11 @@ export default function NewFlyingCountry() {
               {!searchQuery ? "Все страны" : "Результаты поиска"}
             </p>
           </div>
-          <div className="grid grid-cols-3 gap-1">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-1">
             {filteredCountries.length > 0 ? (
               filteredCountries.map((country) => (
                 <button
-                  className={`text-black text-base text-start hover:bg-gray-200 rounded-xl py-1 pl-4 ${
+                  className={`text-black text-base text-start hover:bg-gray-200 rounded-md md:rounded-xl py-1 pl-4 ${
                     selectedCountry === country.id ? "font-semibold" : ""
                   }`}
                   key={country.id}

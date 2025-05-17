@@ -41,7 +41,13 @@ p {
 }
 
 .scrollbar-custom2::-webkit-scrollbar {
-  width: 4px; /* Ширина скроллбара */
+  width: 3px; /* Ширина скроллбара на телефонах */
+}
+
+@media (min-width: 768px) {
+  .scrollbar-custom2::-webkit-scrollbar {
+    width: 4px; /* Ширина скроллбара на десктопах */
+  }
 }
 
 .scrollbar-custom2::-webkit-scrollbar-track {

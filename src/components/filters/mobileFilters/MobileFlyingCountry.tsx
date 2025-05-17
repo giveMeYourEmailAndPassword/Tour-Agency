@@ -176,7 +176,7 @@ export default function MobileFlyingCountry() {
         scrollBehavior="inside"
         isDismissable={true}
         shouldBlockScroll={true}
-        className="h-[85vh]"
+        className="h-[85vh] !p-0 !m-0 !max-w-full"
         hideCloseButton={true}
         shadow="none"
       >

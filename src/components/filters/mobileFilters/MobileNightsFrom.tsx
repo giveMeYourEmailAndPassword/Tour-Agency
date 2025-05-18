@@ -63,7 +63,7 @@ export default function MobileNightsFrom() {
         scrollBehavior="inside"
         isDismissable={true}
         shouldBlockScroll={true}
-        className="h-[57vh] !p-0 !m-0 !max-w-full"
+        className="h-[318px] !p-0 !m-0 !max-w-full"
         hideCloseButton={true}
         shadow="none"
       >

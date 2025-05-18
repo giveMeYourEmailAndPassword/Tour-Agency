@@ -99,7 +99,7 @@ export default function MobileTourist() {
         scrollBehavior="inside"
         isDismissable={true}
         shouldBlockScroll={true}
-        className="h-[72vh] !p-0 !m-0 !max-w-full flex flex-col"
+        className="h-[590px] !p-0 !m-0 !max-w-full flex flex-col"
         hideCloseButton={true}
         shadow="none"
       >

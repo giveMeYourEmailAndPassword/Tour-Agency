@@ -36,11 +36,11 @@ export default function HotTours() {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col my-14 gap-8 max-w-[1560px] mx-auto px-4 md:px-8 lg:px-12 xl:px-36">
+      <div className="flex flex-col my-8 gap-8 max-w-[1560px] mx-auto px-4 md:px-8 lg:px-12 xl:px-36">
         <div className="flex flex-col gap-3">
           <div className="flex items-end gap-1">
-            <h2 className="text-2xl md:text-3xl font-semibold">Горящие туры</h2>
-            <BsFire className="text-3xl text-orange-500" />
+            <h2 className="text-xl md:text-3xl font-semibold">Горящие туры</h2>
+            <BsFire className="md:text-3xl text-2xl text-orange-500" />
           </div>
           <div className="flex gap-2">
             <button className="px-5 py-2 rounded-full font-semibold text-blue-500 bg-slate-200">

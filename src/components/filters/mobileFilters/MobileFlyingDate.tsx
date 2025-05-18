@@ -102,7 +102,7 @@ export default function MobileFlyingDate() {
         scrollBehavior="inside"
         isDismissable={true}
         shouldBlockScroll={true}
-        className="h-[70vh] !p-0 !m-0 !max-w-full"
+        className="h-[390px] !p-0 !m-0 !max-w-full"
         hideCloseButton={true}
         shadow="none"
       >
@@ -123,17 +123,12 @@ export default function MobileFlyingDate() {
                 onChange={handleRangeChange}
                 classNames={{
                   gridWrapper: "border-none rounded-none",
-                  gridBody: "border-none rounded-none bg-white",
+                  gridBody: "border-none rounded-none",
                   base: "rounded-none shadow-none bg-white",
+                  gridHeader: "shadow-none",
                   gridHeaderCell: "w-10",
                   cell: "w-10",
-                  cellButton: [
-                    "w-10 h-10",
-                    "[&[data-selected]]:bg-blue-100",
-                    "[&[data-selected-start]]:!bg-blue-500 [&[data-selected-start]]:!text-white",
-                    "[&[data-selected-end]]:!bg-blue-500 [&[data-selected-end]]:!text-white",
-                    "[&[data-hovered]]:bg-blue-50",
-                  ],
+                  cellButton: ["w-10 h-10"],
                   title: "text-lg",
                   prevButton: "text-xl",
                   nextButton: "text-xl",

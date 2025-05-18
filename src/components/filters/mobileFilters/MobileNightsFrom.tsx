@@ -63,7 +63,7 @@ export default function MobileNightsFrom() {
         scrollBehavior="inside"
         isDismissable={true}
         shouldBlockScroll={true}
-        className="h-[85vh] !p-0 !m-0 !max-w-full"
+        className="h-[57vh] !p-0 !m-0 !max-w-full"
         hideCloseButton={true}
         shadow="none"
       >
@@ -78,7 +78,7 @@ export default function MobileNightsFrom() {
             </button>
           </ModalHeader>
 
-          <ModalBody className="p-3">
+          <ModalBody className="p-3 flex flex-col items-center justify-start h-full">
             <RangeCalendar
               onChange={handleRangeChange}
               value={range}
@@ -88,7 +88,11 @@ export default function MobileNightsFrom() {
                 gridWrapper: "border-none rounded-none",
                 gridBody: "border-none rounded-none",
                 base: "rounded-none shadow-none bg-white",
+                cell: "w-10",
+                cellButton: ["w-10 h-10"],
+                title: "text-lg",
               }}
+              calendarWidth="100%"
             />
           </ModalBody>
         </ModalContent>

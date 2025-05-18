@@ -99,11 +99,11 @@ export default function MobileTourist() {
         scrollBehavior="inside"
         isDismissable={true}
         shouldBlockScroll={true}
-        className="h-[85vh] !p-0 !m-0 !max-w-full"
+        className="h-[72vh] !p-0 !m-0 !max-w-full flex flex-col"
         hideCloseButton={true}
         shadow="none"
       >
-        <ModalContent>
+        <ModalContent className="flex flex-col">
           <ModalHeader className="flex justify-between items-center border-b py-2 px-3">
             <h2 className="text-lg font-medium">Выберите туристов</h2>
             <button
@@ -114,10 +114,10 @@ export default function MobileTourist() {
             </button>
           </ModalHeader>
 
-          <ModalBody className="p-3">
-            <div className="flex flex-col items-center gap-4">
+          <ModalBody className="px-3 py-4 flex-1">
+            <div className="flex flex-col items-center gap-2 h-full">
               {/* Управление взрослыми */}
-              <div className="flex flex-col gap-4 items-center w-full">
+              <div className="flex flex-col items-center w-full">
                 <div className="flex items-center justify-between w-full bg-slate-100 rounded-full">
                   <Button
                     className="rounded-full min-w-16"
@@ -137,7 +137,7 @@ export default function MobileTourist() {
                 </div>
 
                 {/* Список детей */}
-                <div className="flex flex-col items-start gap-4 w-full">
+                <div className="flex flex-col items-start gap-2 w-full mt-2">
                   {childrenList.map((child, index) => (
                     <div
                       key={index}
@@ -166,7 +166,9 @@ export default function MobileTourist() {
                 </div>
 
                 {/* Добавление детей */}
-                <div className="w-full">
+                <div
+                  className={`w-full ${childrenList.length > 0 ? "mt-2" : ""}`}
+                >
                   {btnStatus ? (
                     <Button
                       className="w-full rounded-full text-base"
@@ -200,18 +202,17 @@ export default function MobileTourist() {
                   )}
                 </div>
               </div>
-
-              {/* Кнопка подтверждения */}
-              <div className="w-full mt-4">
-                <Button
-                  className="w-full text-base rounded-full bg-blue-500 text-white hover:bg-blue-700"
-                  onPress={handleConfirm}
-                >
-                  Выбрать
-                </Button>
-              </div>
             </div>
           </ModalBody>
+
+          <div className="p-4 mt-auto">
+            <Button
+              className="w-full text-base rounded-full bg-blue-500 text-white hover:bg-blue-700"
+              onPress={handleConfirm}
+            >
+              Выбрать
+            </Button>
+          </div>
         </ModalContent>
       </Modal>
     </>

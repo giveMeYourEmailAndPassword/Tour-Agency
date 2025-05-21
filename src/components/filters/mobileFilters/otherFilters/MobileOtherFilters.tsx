@@ -40,9 +40,16 @@ export default function MobileOtherFilters() {
         scrollBehavior="inside"
         isDismissable={true}
         shouldBlockScroll={true}
-        className="h-[590px] !p-0 !m-0 !max-w-full flex flex-col"
+        className="!p-0 !m-0 !max-w-full flex flex-col"
         hideCloseButton={true}
         shadow="none"
+        size="full"
+        motionProps={{
+          variants: {
+            enter: { opacity: 1, y: 0, transition: { duration: 0 } },
+            exit: { opacity: 0, y: 0, transition: { duration: 0 } },
+          },
+        }}
       >
         <ModalContent className="flex flex-col">
           <ModalHeader className="flex justify-between items-center border-b py-2 px-3">

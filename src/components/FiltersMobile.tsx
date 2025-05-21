@@ -7,7 +7,7 @@ import MobileOtherFilters from "./filters/mobileFilters/otherFilters/MobileOther
 export default function FiltersMobile() {
   return (
     <div className="flex flex-col items-center w-full pb-4">
-      <div className="w-full flex flex-col items-center justify-center px-4">
+      <div className="w-full flex flex-col items-center justify-center px-4 gap-[1px]">
         <div className="w-full">
           <MobileFlyingCountry />
         </div>

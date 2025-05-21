@@ -2,12 +2,15 @@ import MobileFlyingCountry from "./filters/mobileFilters/MobileFlyingCountry";
 import MobileFlyingDate from "./filters/mobileFilters/MobileFlyingDate";
 import MobileNightsFrom from "./filters/mobileFilters/MobileNightsFrom";
 import MobileTourist from "./filters/mobileFilters/MobileTourist";
+import MobileOtherFilters from "./filters/mobileFilters/otherFilters/MobileOtherFilters";
 
 export default function FiltersMobile() {
   return (
     <div className="flex flex-col items-center w-full pb-4">
-      <div className="rounded-xl w-full gap-[1px] flex flex-col items-center justify-center px-4">
-        <MobileFlyingCountry />
+      <div className="w-full flex flex-col items-center justify-center px-4">
+        <div className="w-full">
+          <MobileFlyingCountry />
+        </div>
         <div className="flex w-full gap-[2px]">
           <div className="w-1/2">
             <MobileFlyingDate />
@@ -21,7 +24,7 @@ export default function FiltersMobile() {
             <MobileTourist />
           </div>
           <div className="w-1/2">
-            <MobileFlyingDate />
+            <MobileOtherFilters />
           </div>
         </div>
       </div>

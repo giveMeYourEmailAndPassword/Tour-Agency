@@ -42,7 +42,8 @@ export default function MobileNightsFrom() {
     <>
       <Button
         onPress={() => setIsOpen(true)}
-        className="px-2 w-full md:w-64 h-12 md:h-full bg-white hover:bg-slate-100 rounded-md md:rounded-xl !z-0 !scale-100 !opacity-100 py-1"
+        radius="none"
+        className="px-2 w-full md:w-64 h-12 md:h-full bg-white hover:bg-slate-100 !z-0 !scale-100 !opacity-100 py-1"
       >
         <div className="flex flex-col items-start justify-between w-full">
           <span className="text-slate-600 mb-[1px] text-xs md:text-sm">

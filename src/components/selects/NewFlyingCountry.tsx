@@ -118,11 +118,6 @@ export default function NewFlyingCountry() {
     }
   }, [selectedCountry, setData]);
 
-  useEffect(() => {
-    console.log("Все страны:", countries);
-    console.log("Популярные страны:", popularCountries);
-  }, [countries, popularCountries]);
-
   const handleCountrySelect = (country: { id: number; label: string }) => {
     setSelectedCountry(country.id);
     setIsOpen(false);

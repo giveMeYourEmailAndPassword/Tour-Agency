@@ -7,6 +7,8 @@ import {
   Button,
 } from "@heroui/react";
 import { RxCross2 } from "react-icons/rx";
+import MobileStarsFilter from "./MobileStarsFilter";
+import MobileHotelType from "./MobileHotelType";
 
 export default function MobileOtherFilters() {
   const [isOpen, setIsOpen] = useState(false);
@@ -40,7 +42,7 @@ export default function MobileOtherFilters() {
         scrollBehavior="inside"
         isDismissable={true}
         shouldBlockScroll={true}
-        className="!p-0 !m-0 !max-w-full flex flex-col"
+        className="!p-0 !m-0 !max-w-full flex flex-col z-40 fixed inset-0 overflow-hidden"
         hideCloseButton={true}
         shadow="none"
         size="full"
@@ -51,7 +53,7 @@ export default function MobileOtherFilters() {
           },
         }}
       >
-        <ModalContent className="flex flex-col">
+        <ModalContent className="flex flex-col h-screen overflow-auto">
           <ModalHeader className="flex justify-between items-center border-b py-2 px-3">
             <h2 className="text-lg font-medium">Дополнительные фильтры</h2>
             <button
@@ -62,10 +64,15 @@ export default function MobileOtherFilters() {
             </button>
           </ModalHeader>
 
-          <ModalBody className="px-3 py-4 flex-1">
-            <div className="flex flex-col items-center gap-2 h-full">
-              {/* Здесь будет содержимое фильтров */}
-              {/* Например: выбор типа отеля, питания, рейтинга и т.д. */}
+          <ModalBody className="px-3 py-2 flex-1">
+            <div className="flex flex-col items-start gap-2 h-full w-full">
+              <div className="border-b border-slate-200 w-full">
+                <MobileStarsFilter />
+              </div>
+
+              <div className="border-b border-slate-200 w-full">
+                <MobileHotelType />
+              </div>
             </div>
           </ModalBody>
 

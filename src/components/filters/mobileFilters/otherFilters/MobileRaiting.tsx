@@ -11,51 +11,23 @@ import { RxCross2 } from "react-icons/rx";
 import { DataContext } from "../../../DataProvider";
 import { IoIosArrowDown } from "react-icons/io";
 
-export default function MobileHotelType() {
+export default function MobileRaiting() {
   const { setData } = useContext(DataContext);
   const [isOpen, setIsOpen] = useState(false);
 
-  // Определяем список чекбоксов
   const checkboxes = [
-    { value: "any", label: "Любой" },
-    { value: "hotel", label: "Отель" },
-    { value: "guesthouse", label: "Гостевой дом" },
-    { value: "apartments", label: "Апартаменты" },
-    { value: "villa", label: "Вилла" },
+    { value: "0", label: "Любой", span: "" },
+    { value: "2", label: "и более", span: "3,0" },
+    { value: "3", label: "и более", span: "3,5" },
+    { value: "4", label: "и более", span: "4,0" },
+    { value: "5", label: "и более", span: "4,5" },
   ];
 
-  const [selectedValues, setSelectedValues] = useState<string[]>(["any"]);
+  const [selectedValue, setSelectedValue] = useState<string>("0");
 
-  const handleChange = (isSelected: boolean, value: string) => {
-    let newSelectedValues = [...selectedValues];
-
-    if (value === "any") {
-      newSelectedValues = isSelected ? ["any"] : ["any"];
-    } else {
-      newSelectedValues = newSelectedValues.filter((v) => v !== "any");
-
-      if (isSelected) {
-        if (!newSelectedValues.includes(value)) {
-          newSelectedValues.push(value);
-        }
-      } else {
-        newSelectedValues = newSelectedValues.filter((v) => v !== value);
-      }
-
-      const allNonAny = checkboxes
-        .filter((c) => c.value !== "any")
-        .map((c) => c.value);
-      if (allNonAny.every((val) => newSelectedValues.includes(val))) {
-        newSelectedValues = ["any"];
-      }
-
-      if (newSelectedValues.length === 0) {
-        newSelectedValues = ["any"];
-      }
-    }
-
-    setSelectedValues(newSelectedValues);
-    setData("param6", newSelectedValues);
+  const handleChange = (value: string) => {
+    setSelectedValue(value);
+    setData("param8", [value]);
   };
 
   const getLabelByValue = (value: string) => {
@@ -64,33 +36,26 @@ export default function MobileHotelType() {
   };
 
   const getDisplayText = () => {
-    if (selectedValues.includes("any") || selectedValues.length === 0) {
-      return <p className="text-black text-base font-normal">Тип отеля</p>;
-    } else if (selectedValues.length === 1) {
-      return (
-        <div className="flex flex-col items-start">
-          <span className="text-slate-600 mb-[1px] text-xs">Тип отеля</span>
-          <p className="text-black text-base">
-            {getLabelByValue(selectedValues[0])}
-          </p>
-        </div>
-      );
+    const selectedCheckbox = checkboxes.find((c) => c.value === selectedValue);
+
+    if (selectedCheckbox?.value === "0") {
+      return <p className="text-black text-base font-normal">Рейтинг</p>;
     } else {
       return (
         <div className="flex flex-col items-start">
-          <span className="text-slate-600 mb-[1px] text-xs">Тип отеля</span>
+          <span className="text-slate-600 mb-[1px] text-xs">Рейтинг</span>
           <p className="text-black text-base">
-            {`Выбрано (${selectedValues.length})`}
+            <span className="font-medium">{selectedCheckbox?.span}</span> и
+            более
           </p>
         </div>
       );
-      return `Выбрано (${selectedValues.length})`;
     }
   };
 
   const handleConfirm = () => {
     setIsOpen(false);
-    setData("param6", selectedValues);
+    setData("param8", [selectedValue]);
   };
 
   return (
@@ -102,7 +67,7 @@ export default function MobileHotelType() {
          !z-0 !scale-100 !opacity-100 py-1 flex items-center justify-between"
       >
         <div className="flex flex-col items-start justify-between w-full px-2">
-          <p className="text-black text-base">{getDisplayText()}</p>
+          {getDisplayText()}
         </div>
         <IoIosArrowDown className="text-xl -rotate-90" />
       </Button>
@@ -122,7 +87,7 @@ export default function MobileHotelType() {
       >
         <ModalContent className="flex flex-col">
           <ModalHeader className="flex justify-between items-center border-b py-2 px-3">
-            <h2 className="text-lg font-medium">Выберите тип отеля</h2>
+            <h2 className="text-lg font-medium">Выберите рейтинг отеля</h2>
             <button
               onClick={() => setIsOpen(false)}
               className="p-2 hover:bg-gray-100 rounded-full"
@@ -133,17 +98,16 @@ export default function MobileHotelType() {
 
           <ModalBody className="px-3 py-4">
             <div className="flex flex-col gap-4">
-              {checkboxes.map(({ value, label }) => (
+              {checkboxes.map(({ value, label, span }) => (
                 <Checkbox
                   key={value}
                   color="default"
                   value={value}
-                  isSelected={selectedValues.includes(value)}
-                  onValueChange={(isSelected) =>
-                    handleChange(isSelected, value)
-                  }
+                  isSelected={selectedValue === value}
+                  onValueChange={() => handleChange(value)}
                   className="w-full"
                 >
+                  {span && <span className="font-medium">{span} </span>}
                   {label}
                 </Checkbox>
               ))}

@@ -9,6 +9,9 @@ import {
 import { RxCross2 } from "react-icons/rx";
 import MobileStarsFilter from "./MobileStarsFilter";
 import MobileHotelType from "./MobileHotelType";
+import MobileNourishment from "./MobileNourishment";
+import MobileRaiting from "./MobileRaiting";
+import MobileHotelService from "./MobileHotelService";
 
 export default function MobileOtherFilters() {
   const [isOpen, setIsOpen] = useState(false);
@@ -65,13 +68,25 @@ export default function MobileOtherFilters() {
           </ModalHeader>
 
           <ModalBody className="px-3 py-2 flex-1">
-            <div className="flex flex-col items-start gap-2 h-full w-full">
+            <div className="flex flex-col items-start h-full w-full">
               <div className="border-b border-slate-200 w-full">
                 <MobileStarsFilter />
               </div>
 
               <div className="border-b border-slate-200 w-full">
                 <MobileHotelType />
+              </div>
+
+              <div className="border-b border-slate-200 w-full">
+                <MobileNourishment />
+              </div>
+
+              <div className="border-b border-slate-200 w-full">
+                <MobileRaiting />
+              </div>
+
+              <div className="border-b border-slate-200 w-full">
+                <MobileHotelService />
               </div>
             </div>
           </ModalBody>

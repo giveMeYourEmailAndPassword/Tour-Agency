@@ -33,7 +33,7 @@ export default function MobileStarsFilter({
   };
 
   return (
-    <div className="flex items-center p-4 bg-white w-full">
+    <div className="flex items-center pt-2 pb-3 px-4 bg-white w-full">
       <div className="flex items-center w-full justify-between">
         <h1 className="text-base text-black">Класс отеля</h1>
 

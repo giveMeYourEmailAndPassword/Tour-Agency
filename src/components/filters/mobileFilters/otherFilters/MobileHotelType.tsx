@@ -84,7 +84,6 @@ export default function MobileHotelType() {
           </p>
         </div>
       );
-      return `Выбрано (${selectedValues.length})`;
     }
   };
 

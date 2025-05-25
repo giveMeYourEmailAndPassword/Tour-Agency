@@ -75,7 +75,7 @@ function FavoriteTourCard({ tour }: { tour: FavoriteTourData }) {
 
   return (
     <div
-      className="bg-white shadow-md rounded-md flex flex-col w-80 cursor-pointer"
+      className="bg-white shadow-md rounded-md flex flex-col w-full md:w-80 cursor-pointer"
       onClick={() => navigate(`/hotel/${tour.hotelcode}/${tour.tourId}`)}
     >
       <div className="relative">

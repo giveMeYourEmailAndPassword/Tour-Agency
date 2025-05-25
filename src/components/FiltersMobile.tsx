@@ -5,12 +5,14 @@ import MobileNightsFrom from "./filters/mobileFilters/MobileNightsFrom";
 import MobileTourist from "./filters/mobileFilters/MobileTourist";
 import MobileOtherFilters from "./filters/mobileFilters/otherFilters/MobileOtherFilters";
 import FindBtnMobile from "./filters/FindBtnMobile";
+import MobileFavorite from "./filters/OtherMobile/MobileFavorite";
 
 export default function FiltersMobile() {
   return (
     <div className="flex flex-col items-center w-full pb-4">
-      <div className="w-full flex items-start px-4">
+      <div className="w-full flex items-center justify-between px-4">
         <MobileDepartureCity />
+        <MobileFavorite />
       </div>
       <div className="w-full flex flex-col items-center justify-center px-4">
         <div className="w-full">

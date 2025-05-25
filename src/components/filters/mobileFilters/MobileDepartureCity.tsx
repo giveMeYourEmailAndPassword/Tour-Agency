@@ -55,7 +55,7 @@ export default function MobileDepartureCity() {
     <>
       <div
         onClick={() => setIsOpen(true)}
-        className="px-2 h-8 md:h-full cursor-pointer flex items-center justify-between"
+        className="h-12 md:h-full cursor-pointer flex items-center justify-between"
       >
         <div className="flex flex-col items-start justify-between w-full">
           <div className="flex items-end gap-1">

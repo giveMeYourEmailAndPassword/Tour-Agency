@@ -4,6 +4,7 @@ import MobileFlyingDate from "./filters/mobileFilters/MobileFlyingDate";
 import MobileNightsFrom from "./filters/mobileFilters/MobileNightsFrom";
 import MobileTourist from "./filters/mobileFilters/MobileTourist";
 import MobileOtherFilters from "./filters/mobileFilters/otherFilters/MobileOtherFilters";
+import FindBtnMobile from "./filters/FindBtnMobile";
 
 export default function FiltersMobile() {
   return (
@@ -30,6 +31,9 @@ export default function FiltersMobile() {
           <div className="w-1/2">
             <MobileOtherFilters />
           </div>
+        </div>
+        <div className="w-full">
+          <FindBtnMobile />
         </div>
       </div>
     </div>

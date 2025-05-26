@@ -15,6 +15,23 @@ import MobileHotelService from "./MobileHotelService";
 
 export default function MobileOtherFilters() {
   const [isOpen, setIsOpen] = useState(false);
+  const [activeFilters, setActiveFilters] = useState({
+    stars: false,
+    hotelType: false,
+    nourishment: false,
+    rating: false,
+    hotelService: false,
+  });
+
+  const totalActiveFilters =
+    Object.values(activeFilters).filter(Boolean).length;
+
+  const handleStarsFilterChange = (isActive: boolean) => {
+    setActiveFilters((prev) => ({
+      ...prev,
+      stars: isActive,
+    }));
+  };
 
   const handleConfirm = () => {
     setIsOpen(false);
@@ -32,7 +49,16 @@ export default function MobileOtherFilters() {
           <span className="text-slate-600 mb-[1px] text-xs md:text-sm">
             Дополнительно
           </span>
-          <p className="text-black text-base md:text-lg font-medium">Фильтры</p>
+          <div className="flex items-center justify-between w-full">
+            <p className="text-black text-base md:text-lg font-medium">
+              Фильтры
+            </p>
+            {totalActiveFilters > 0 && (
+              <div className="text-white text-sm font-medium mr-2 bg-orange-500 rounded-full h-5 w-5 flex items-center justify-center">
+                {totalActiveFilters}
+              </div>
+            )}
+          </div>
         </div>
       </Button>
 
@@ -70,7 +96,7 @@ export default function MobileOtherFilters() {
           <ModalBody className="px-3 py-2 flex-1">
             <div className="flex flex-col items-start h-full w-full">
               <div className="border-b border-slate-200 w-full">
-                <MobileStarsFilter />
+                <MobileStarsFilter onFilterChange={handleStarsFilterChange} />
               </div>
 
               <div className="border-b border-slate-200 w-full">

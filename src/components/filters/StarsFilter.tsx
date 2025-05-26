@@ -8,11 +8,11 @@ interface StarsFilterProps {
 }
 
 export default function StarsFilter({
-  initialRating = 3,
+  initialRating = 1,
   onRatingChange,
 }: StarsFilterProps) {
   const [rating, setRating] = useState(initialRating);
-  const [hoverRating, setHoverRating] = useState(3);
+  const [hoverRating, setHoverRating] = useState(1);
   const { setData } = useContext(DataContext);
 
   const handleClick = (newRating: number) => {

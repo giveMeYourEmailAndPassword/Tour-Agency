@@ -13,9 +13,9 @@ export default function MobileStarsFilter({
   onRatingChange,
   onFilterChange,
 }: MobileStarsFilterProps) {
-  const [rating, setRating] = useState(initialRating);
-  const [hoverRating, setHoverRating] = useState(1);
-  const { setData } = useContext(DataContext);
+  const { setData, params } = useContext(DataContext);
+  const [rating, setRating] = useState(params.param9 || initialRating);
+  const [hoverRating, setHoverRating] = useState(0);
 
   useEffect(() => {
     if (onFilterChange) {

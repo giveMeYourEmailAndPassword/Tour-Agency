@@ -35,7 +35,6 @@ export default function MobileOtherFilters() {
 
   const handleConfirm = () => {
     setIsOpen(false);
-    // Здесь будет логика применения фильтров
   };
 
   return (

@@ -11,8 +11,14 @@ import { RxCross2 } from "react-icons/rx";
 import { DataContext } from "../../../DataProvider";
 import { IoIosArrowDown } from "react-icons/io";
 
-export default function MobileNourishment() {
-  const { setData } = useContext(DataContext);
+interface MobileNourishmentProps {
+  onFilterChange?: (isActive: boolean) => void;
+}
+
+export default function MobileNourishment({
+  onFilterChange,
+}: MobileNourishmentProps) {
+  const { setData, params } = useContext(DataContext);
   const [isOpen, setIsOpen] = useState(false);
 
   // Определяем список чекбоксов
@@ -25,11 +31,14 @@ export default function MobileNourishment() {
     { value: "9", label: "Ультра все включено", span: "UAL" },
   ];
 
-  const [selectedValue, setSelectedValue] = useState<string>("2");
+  const [selectedValue, setSelectedValue] = useState(params.param7?.[0] || "2");
 
   const handleChange = (value: string) => {
     setSelectedValue(value);
     setData("param7", [value]);
+    if (onFilterChange) {
+      onFilterChange(value !== "2"); // "2" - это "Любое"
+    }
   };
 
   const getLabelByValue = (value: string) => {

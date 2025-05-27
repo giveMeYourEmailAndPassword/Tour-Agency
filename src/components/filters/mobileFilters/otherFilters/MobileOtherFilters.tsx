@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useContext, useEffect } from "react";
 import {
   Modal,
   ModalContent,
@@ -12,8 +12,10 @@ import MobileHotelType from "./MobileHotelType";
 import MobileNourishment from "./MobileNourishment";
 import MobileRaiting from "./MobileRaiting";
 import MobileHotelService from "./MobileHotelService";
+import { DataContext } from "../../../DataProvider";
 
 export default function MobileOtherFilters() {
+  const { params } = useContext(DataContext);
   const [isOpen, setIsOpen] = useState(false);
   const [activeFilters, setActiveFilters] = useState({
     stars: false,
@@ -23,6 +25,20 @@ export default function MobileOtherFilters() {
     hotelService: false,
   });
 
+  // Эффект для синхронизации состояния активных фильтров с контекстом
+  useEffect(() => {
+    setActiveFilters({
+      stars: params.param9 && params.param9 !== 1,
+      hotelType:
+        params.param6 &&
+        params.param6.length > 0 &&
+        !params.param6.includes("any"),
+      nourishment: params.param7 && params.param7.length > 0,
+      rating: params.param8 && params.param8 !== "0",
+      hotelService: params.param10 && params.param10.length > 0,
+    });
+  }, [params]);
+
   const totalActiveFilters =
     Object.values(activeFilters).filter(Boolean).length;
 
@@ -30,6 +46,34 @@ export default function MobileOtherFilters() {
     setActiveFilters((prev) => ({
       ...prev,
       stars: isActive,
+    }));
+  };
+
+  const handleHotelTypeChange = (isActive: boolean) => {
+    setActiveFilters((prev) => ({
+      ...prev,
+      hotelType: isActive,
+    }));
+  };
+
+  const handleNourishmentChange = (isActive: boolean) => {
+    setActiveFilters((prev) => ({
+      ...prev,
+      nourishment: isActive,
+    }));
+  };
+
+  const handleRatingChange = (isActive: boolean) => {
+    setActiveFilters((prev) => ({
+      ...prev,
+      rating: isActive,
+    }));
+  };
+
+  const handleHotelServiceChange = (isActive: boolean) => {
+    setActiveFilters((prev) => ({
+      ...prev,
+      hotelService: isActive,
     }));
   };
 
@@ -99,19 +143,19 @@ export default function MobileOtherFilters() {
               </div>
 
               <div className="border-b border-slate-200 w-full">
-                <MobileHotelType />
+                <MobileHotelType onFilterChange={handleHotelTypeChange} />
               </div>
 
               <div className="border-b border-slate-200 w-full">
-                <MobileNourishment />
+                <MobileNourishment onFilterChange={handleNourishmentChange} />
               </div>
 
               <div className="border-b border-slate-200 w-full">
-                <MobileRaiting />
+                <MobileRaiting onFilterChange={handleRatingChange} />
               </div>
 
               <div className="border-b border-slate-200 w-full">
-                <MobileHotelService />
+                <MobileHotelService onFilterChange={handleHotelServiceChange} />
               </div>
             </div>
           </ModalBody>

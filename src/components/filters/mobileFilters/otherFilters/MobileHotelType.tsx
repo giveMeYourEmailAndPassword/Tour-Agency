@@ -11,8 +11,14 @@ import { RxCross2 } from "react-icons/rx";
 import { DataContext } from "../../../DataProvider";
 import { IoIosArrowDown } from "react-icons/io";
 
-export default function MobileHotelType() {
-  const { setData } = useContext(DataContext);
+interface MobileHotelTypeProps {
+  onFilterChange?: (isActive: boolean) => void;
+}
+
+export default function MobileHotelType({
+  onFilterChange,
+}: MobileHotelTypeProps) {
+  const { setData, params } = useContext(DataContext);
   const [isOpen, setIsOpen] = useState(false);
 
   // Определяем список чекбоксов
@@ -24,7 +30,10 @@ export default function MobileHotelType() {
     { value: "villa", label: "Вилла" },
   ];
 
-  const [selectedValues, setSelectedValues] = useState<string[]>(["any"]);
+  // Используем значение из контекста, если оно есть, иначе ["any"]
+  const [selectedValues, setSelectedValues] = useState<string[]>(
+    params.param6 || ["any"]
+  );
 
   const handleChange = (isSelected: boolean, value: string) => {
     let newSelectedValues = [...selectedValues];
@@ -56,6 +65,10 @@ export default function MobileHotelType() {
 
     setSelectedValues(newSelectedValues);
     setData("param6", newSelectedValues);
+
+    if (onFilterChange) {
+      onFilterChange(!newSelectedValues.includes("any"));
+    }
   };
 
   const getLabelByValue = (value: string) => {

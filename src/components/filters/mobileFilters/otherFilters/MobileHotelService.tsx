@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import {
   Modal,
   ModalContent,
@@ -13,12 +13,27 @@ import { FaSearch } from "react-icons/fa";
 import service from "../../../data/HotelServiceData";
 import { IoIosArrowDown } from "react-icons/io";
 
-export default function MobileHotelService() {
-  const { setData } = useContext(DataContext);
+interface MobileHotelServiceProps {
+  onFilterChange?: (isActive: boolean) => void;
+}
+
+export default function MobileHotelService({
+  onFilterChange,
+}: MobileHotelServiceProps) {
+  const { setData, params } = useContext(DataContext);
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedValues, setSelectedValues] = useState<string[]>([]);
+  const [selectedValues, setSelectedValues] = useState<string[]>(
+    params.param10 || []
+  );
   const [activeTab, setActiveTab] = useState<"all" | "selected">("all");
   const [searchQuery, setSearchQuery] = useState("");
+
+  // Добавляем эффект для начальной синхронизации
+  useEffect(() => {
+    if (onFilterChange) {
+      onFilterChange(selectedValues.length > 0);
+    }
+  }, []); // Выполняется только при монтировании
 
   // Группировка сервисов
   const groupedServices = service.reduce((acc, item) => {
@@ -43,13 +58,22 @@ export default function MobileHotelService() {
   };
 
   const handleChange = (value: string) => {
-    setSelectedValues((prev) =>
-      prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]
-    );
+    setSelectedValues((prev) => {
+      const newValues = prev.includes(value)
+        ? prev.filter((v) => v !== value)
+        : [...prev, value];
+
+      // Сразу сохраняем в контекст
+      setData("param10", newValues);
+
+      if (onFilterChange) {
+        onFilterChange(newValues.length > 0);
+      }
+      return newValues;
+    });
   };
 
   const handleConfirm = () => {
-    setData("param10", selectedValues);
     setIsOpen(false);
     setSearchQuery("");
   };
@@ -58,6 +82,9 @@ export default function MobileHotelService() {
     setSelectedValues([]);
     setData("param10", []);
     setSearchQuery("");
+    if (onFilterChange) {
+      onFilterChange(false);
+    }
   };
 
   const getDisplayText = () => {

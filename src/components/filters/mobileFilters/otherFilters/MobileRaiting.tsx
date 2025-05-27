@@ -11,8 +11,12 @@ import { RxCross2 } from "react-icons/rx";
 import { DataContext } from "../../../DataProvider";
 import { IoIosArrowDown } from "react-icons/io";
 
-export default function MobileRaiting() {
-  const { setData } = useContext(DataContext);
+interface MobileRaitingProps {
+  onFilterChange?: (isActive: boolean) => void;
+}
+
+export default function MobileRaiting({ onFilterChange }: MobileRaitingProps) {
+  const { setData, params } = useContext(DataContext);
   const [isOpen, setIsOpen] = useState(false);
 
   const checkboxes = [
@@ -23,11 +27,14 @@ export default function MobileRaiting() {
     { value: "5", label: "и более", span: "4,5" },
   ];
 
-  const [selectedValue, setSelectedValue] = useState<string>("0");
+  const [selectedValue, setSelectedValue] = useState(params.param8?.[0] || "0");
 
   const handleChange = (value: string) => {
     setSelectedValue(value);
     setData("param8", [value]);
+    if (onFilterChange) {
+      onFilterChange(value !== "0"); // "0" - это "Любой"
+    }
   };
 
   const getLabelByValue = (value: string) => {

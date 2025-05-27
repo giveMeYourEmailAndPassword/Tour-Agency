@@ -109,117 +109,151 @@ export default function HotelDetails() {
   return (
     <div className="w-full bg-gradient-to-br from-blue-50 via-white to-indigo-50">
       <Header />
-      <div
-        className=" flex flex-col py-8 max-w-[1560px] mx-auto px-4 md:px-8 lg:px-12 xl:px-36 \
-    min-h-screen"
-      >
-        {/* Обертка для слайдера и информации */}
-        <div className="flex gap-2 h-[420px]">
-          {/* Галерея изображений */}
-          {hotel.images?.image.length > 0 && (
-            <div className="relative group w-[60%] h-full">
-              <Swiper
-                modules={[Navigation, Pagination, Autoplay]}
-                spaceBetween={10}
-                slidesPerView={1}
-                navigation={{
-                  nextEl: ".swiper-button-next",
-                  prevEl: ".swiper-button-prev",
-                }}
-                pagination={{
-                  clickable: true,
-                  bulletActiveClass: "!bg-white !scale-110",
-                  bulletClass: "swiper-pagination-bullet !mx-1",
-                }}
-                autoplay={{ delay: 2500, disableOnInteraction: false }}
-                loop={true}
-                className="h-full rounded-2xl"
-              >
-                {hotel.images.image.map((img: string, index: number) => (
-                  <SwiperSlide key={index} className="relative">
-                    <img
-                      src={`https:${img}`}
-                      alt={`Фото отеля ${hotel.name}`}
-                      className="w-full h-full object-cover rounded-2xl"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-b from-black/5 via-transparent to-black/60 rounded-2xl" />
-                  </SwiperSlide>
-                ))}
+      <div className="flex flex-col py-4 md:py-8 max-w-[1560px] mx-auto px-4 md:px-8 lg:px-12 xl:px-36 min-h-screen">
+        {/* Desktop версия */}
+        <div className="hidden md:block">
+          <div className="flex gap-2 h-[420px]">
+            {/* Галерея изображений */}
+            {hotel.images?.image.length > 0 && (
+              <div className="relative group w-[60%] h-full">
+                <Swiper
+                  modules={[Navigation, Pagination, Autoplay]}
+                  spaceBetween={10}
+                  slidesPerView={1}
+                  navigation={{
+                    nextEl: ".swiper-button-next",
+                    prevEl: ".swiper-button-prev",
+                  }}
+                  pagination={{
+                    clickable: true,
+                    bulletActiveClass: "!bg-white !scale-110",
+                    bulletClass: "swiper-pagination-bullet !mx-1",
+                  }}
+                  autoplay={{ delay: 2500, disableOnInteraction: false }}
+                  loop={true}
+                  className="h-full rounded-2xl"
+                >
+                  {hotel.images.image.map((img: string, index: number) => (
+                    <SwiperSlide key={index} className="relative">
+                      <img
+                        src={`https:${img}`}
+                        alt={`Фото отеля ${hotel.name}`}
+                        className="w-full h-full object-cover rounded-2xl"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-b from-black/5 via-transparent to-black/60 rounded-2xl" />
+                    </SwiperSlide>
+                  ))}
 
-                <div
-                  className="swiper-button-prev !text-white !opacity-0 group-hover:!opacity-100 transition-all duration-300 
-                !w-10 !h-10 !bg-black/30 !backdrop-blur-md !rounded-full after:!text-lg hover:!bg-black/35"
-                />
-                <div
-                  className="swiper-button-next !text-white !opacity-0 group-hover:!opacity-100 transition-all duration-300 
-                !w-10 !h-10 !bg-black/30 !backdrop-blur-md !rounded-full after:!text-lg hover:!bg-black/35"
-                />
-              </Swiper>
+                  <div
+                    className="swiper-button-prev !text-white !opacity-0 group-hover:!opacity-100 transition-all duration-300 
+                  !w-10 !h-10 !bg-black/30 !backdrop-blur-md !rounded-full after:!text-lg hover:!bg-black/35"
+                  />
+                  <div
+                    className="swiper-button-next !text-white !opacity-0 group-hover:!opacity-100 transition-all duration-300 
+                  !w-10 !h-10 !bg-black/30 !backdrop-blur-md !rounded-full after:!text-lg hover:!bg-black/35"
+                  />
+                </Swiper>
+              </div>
+            )}
+
+            {/* Блок с информацией справа */}
+            <div className="w-[40%] bg-white rounded-2xl shadow-[0_0_15px_rgba(0,0,0,0.05)] h-full">
+              <div className="flex justify-center gap-3 my-2">
+                <button
+                  onClick={() => setActiveTab("map")}
+                  className={`px-4 py-2 font-medium transition-all
+                  border-b-2 duration-300 flex items-center gap-2
+                  ${
+                    activeTab === "map"
+                      ? "text-blue-600 border-blue-600"
+                      : "text-gray-600 border-transparent hover:border-gray-400"
+                  }`}
+                >
+                  <TbMap2 className="text-blue-600 text-xl" />
+                  На карте
+                </button>
+
+                <button
+                  onClick={() => setActiveTab("reviews")}
+                  className={`px-4 py-2 font-medium transition-all
+                  border-b-2 duration-300 flex items-center gap-2
+                  ${
+                    activeTab === "reviews"
+                      ? "text-blue-600 border-blue-600"
+                      : "text-gray-600 border-transparent hover:border-gray-400"
+                  }`}
+                >
+                  Отзывы ({hotel.reviewscount})
+                </button>
+
+                <button
+                  onClick={() =>
+                    window.open(
+                      `https://www.youtube.com/results?search_query=${encodeURIComponent(
+                        hotel.name
+                      )}`,
+                      "_blank"
+                    )
+                  }
+                  className="px-4 py-2 text-white font-medium transition-all duration-300 bg-red-600 hover:bg-red-500 rounded-lg flex items-center gap-2"
+                >
+                  <FaYoutube className="text-white" />
+                  Обзоры
+                </button>
+              </div>
+              <div className="h-[calc(100%-60px)] px-2 pb-2">
+                {activeTab === "map" ? (
+                  <HotelMap
+                    hotelName={hotel.name}
+                    coordinates={[Number(hotel.coord1), Number(hotel.coord2)]}
+                    hotelRating={hotel.rating}
+                    hotelStars={hotel.stars}
+                  />
+                ) : (
+                  <ReviewsModal
+                    hotelName={hotel.name}
+                    hotelRating={hotel.rating}
+                    hotelStars={hotel.stars}
+                    reviews={hotel.reviews?.review || []}
+                  />
+                )}
+              </div>
             </div>
-          )}
+          </div>
+        </div>
 
-          {/* Блок с информацией справа */}
-          <div className="w-[40%] bg-white rounded-2xl shadow-[0_0_15px_rgba(0,0,0,0.05)] h-full">
-            <div className="flex justify-center gap-3 my-2">
-              <button
-                onClick={() => setActiveTab("map")}
-                className={`px-4 py-2 font-medium transition-all
-                border-b-2 duration-300 flex items-center gap-2
-                ${
-                  activeTab === "map"
-                    ? "text-blue-600 border-blue-600"
-                    : "text-gray-600 border-transparent hover:border-gray-400"
-                }`}
-              >
-                <TbMap2 className="text-blue-600 text-xl" />
-                На карте
-              </button>
-
-              <button
-                onClick={() => setActiveTab("reviews")}
-                className={`px-4 py-2 font-medium transition-all
-                border-b-2 duration-300 flex items-center gap-2
-                ${
-                  activeTab === "reviews"
-                    ? "text-blue-600 border-blue-600"
-                    : "text-gray-600 border-transparent hover:border-gray-400"
-                }`}
-              >
-                Отзывы ({hotel.reviewscount})
-              </button>
-
-              <button
-                onClick={() =>
-                  window.open(
-                    `https://www.youtube.com/results?search_query=${encodeURIComponent(
-                      hotel.name
-                    )}`,
-                    "_blank"
-                  )
-                }
-                className="px-4 py-2 text-white font-medium transition-all duration-300 bg-red-600 hover:bg-red-500 rounded-lg flex items-center gap-2"
-              >
-                <FaYoutube className="text-white" />
-                Обзоры
-              </button>
-            </div>
-            <div className="h-[calc(100%-60px)] px-2 pb-2">
-              {activeTab === "map" ? (
-                <HotelMap
-                  hotelName={hotel.name}
-                  coordinates={[Number(hotel.coord1), Number(hotel.coord2)]}
-                  hotelRating={hotel.rating}
-                  hotelStars={hotel.stars}
-                />
-              ) : (
-                <ReviewsModal
-                  hotelName={hotel.name}
-                  hotelRating={hotel.rating}
-                  hotelStars={hotel.stars}
-                  reviews={hotel.reviews?.review || []}
-                />
-              )}
-            </div>
+        {/* Mobile версия */}
+        <div className="block md:hidden">
+          <div className="flex gap-2">
+            {/* Галерея изображений */}
+            {hotel.images?.image.length > 0 && (
+              <div className="relative group w-full h-52">
+                <Swiper
+                  modules={[Navigation, Pagination, Autoplay]}
+                  spaceBetween={0}
+                  slidesPerView={1}
+                  pagination={{
+                    clickable: true,
+                    bulletActiveClass: "!bg-white !scale-110",
+                    bulletClass: "swiper-pagination-bullet !mx-0.5 !w-1 !h-1",
+                  }}
+                  autoplay={{ delay: 2500, disableOnInteraction: false }}
+                  loop={true}
+                  className="h-full rounded-lg"
+                >
+                  {hotel.images.image.map((img: string, index: number) => (
+                    <SwiperSlide key={index} className="relative">
+                      <img
+                        src={`https:${img}`}
+                        alt={`Фото отеля ${hotel.name}`}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-b from-black/5 via-transparent to-black/60" />
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
+              </div>
+            )}
           </div>
         </div>
 

@@ -86,25 +86,29 @@ export default function BookingPanel({
 
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-white shadow-[0_3px_12px_rgba(0,0,0,0.1)] z-50">
-      <div className="max-w-[1420px] mx-auto px-28 py-2 flex items-center justify-between">
+      <div className="max-w-[1420px] mx-auto md:px-28 py-2 flex items-center justify-between">
         {/* Информация о туре */}
-        <div className="flex items-center gap-8">
-          <div className="flex items-center gap-2">
-            <IoMoonOutline className="text-indigo-600 text-xl" />
-            <span className="text-gray-700 font-medium">{nights} ночей</span>
+        <div className="flex items-center gap-2 md:gap-8 mx-4 md:mx-0">
+          <div className="flex items-center gap-1 md:gap-2">
+            <IoMoonOutline className="text-indigo-600 text-sm md:text-xl" />
+            <span className="text-gray-700 font-medium text-xs md:text-base">
+              {nights} ночей
+            </span>
           </div>
-          <div className="flex items-center gap-2">
-            <FaUtensils className="text-purple-600 text-xl" />
-            <span className="text-gray-700 font-medium">{meal}</span>
+          <div className="flex items-center gap-1 md:gap-2">
+            <FaUtensils className="text-purple-600 text-sm md:text-xl" />
+            <span className="text-gray-700 font-medium text-xs md:text-base">
+              {meal}
+            </span>
           </div>
         </div>
 
         {/* Цена и кнопки */}
         <div className="flex items-center gap-6">
           {/* Цена */}
-          <div className="flex flex-col items-end">
-            <span className="text-gray-500">за двоих</span>
-            <span className="text-2xl font-bold text-gray-900">
+          <div className="flex flex-row md:flex-col items-end">
+            <span className="text-gray-500 text-xs md:text-base">за двоих</span>
+            <span className="text-lg md:text-2xl font-bold text-gray-900">
               {price}
               {currency === "EUR" ? "€" : currency === "USD" ? "$" : currency}
             </span>
@@ -112,7 +116,7 @@ export default function BookingPanel({
 
           {/* Кнопки действий */}
           <div className="flex gap-3">
-            <button
+            {/* <button
               onClick={handleFavoriteClick}
               className={`px-4 py-2 border-2 rounded-xl font-medium transition-colors
                 ${
@@ -122,10 +126,10 @@ export default function BookingPanel({
                 }`}
             >
               {isFavorite ? "Убрать из избранного" : "В избранное"}
-            </button>
+            </button> */}
             <button
               onClick={handleBooking}
-              className="px-6 py-2 bg-blue-600 text-white rounded-xl font-medium 
+              className="mx-4 md:mx-6 px-2 py-2 bg-blue-600 text-white text-xs md:text-base rounded-xl font-medium 
                 hover:bg-blue-500 transition-colors shadow-md"
             >
               Забронировать

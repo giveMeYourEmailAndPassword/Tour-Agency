@@ -317,10 +317,10 @@ export default function HotelDetails() {
                     {tour.nights} ночей
                   </p>
                 </div>
-                <div className="flex items-center gap-2 bg-purple-50 px-4 py-2 rounded-xl">
+                {/* <div className="flex items-center gap-2 bg-purple-50 px-4 py-2 rounded-xl">
                   <FaUtensils className="text-purple-600 text-lg" />
                   <p className="text-gray-700 font-medium">{getMealType()}</p>
-                </div>
+                </div> */}
               </div>
             </div>
 

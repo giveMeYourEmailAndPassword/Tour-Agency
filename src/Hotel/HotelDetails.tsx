@@ -102,6 +102,7 @@ export default function HotelDetails() {
       FB: "Полный пансион",
       AI: "Все включено",
       UAI: "Ультра все включено",
+      "AI+": "Ультра все включено",
     };
     return mealTypes[tour.meal as keyof typeof mealTypes] || tour.meal;
   };

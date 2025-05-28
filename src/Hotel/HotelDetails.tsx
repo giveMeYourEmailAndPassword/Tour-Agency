@@ -301,7 +301,7 @@ export default function HotelDetails() {
         <div className="container mx-auto pb-8 mt-8">
           <div className="bg-white rounded-2xl shadow-sm p-6 space-y-6">
             <div className="space-y-4">
-              <h2 className="text-2xl font-bold text-gray-800">
+              <h2 className="text-lg md:text-2xl font-semibold text-gray-800">
                 Информация о туре
               </h2>
               <div className="flex gap-6">
@@ -387,8 +387,12 @@ export default function HotelDetails() {
         <div className="container mx-auto pb-14">
           {hotel.description && (
             <div className="flex flex-col py-2">
-              <h2 className="text-2xl font-semibold">Информация об отеле</h2>
-              <p className="text-black text-lg">{hotel.description}</p>
+              <h2 className="text-lg md:text-2xl font-semibold">
+                Информация об отеле
+              </h2>
+              <p className="text-black text-base md:text-lg">
+                {hotel.description}
+              </p>
             </div>
           )}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2 auto-rows-auto">

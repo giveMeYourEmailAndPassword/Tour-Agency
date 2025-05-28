@@ -235,7 +235,7 @@ export default function HotelDetails() {
                   pagination={{
                     clickable: true,
                     bulletActiveClass: "!bg-white !scale-110",
-                    bulletClass: "swiper-pagination-bullet !mx-0.5 !w-1 !h-1",
+                    bulletClass: "swiper-pagination-bullet !mx-1 !w-2 !h-2",
                   }}
                   autoplay={{ delay: 2500, disableOnInteraction: false }}
                   loop={true}
@@ -259,26 +259,43 @@ export default function HotelDetails() {
 
         <div className="flex flex-col py-4">
           <div className="flex items-baseline gap-3">
-            <h1 className="text-3xl font-bold bg-clip-text text-gray-800 truncate max-w-[70%]">
+            <h1 className="text-2xl md:text-3xl font-bold bg-clip-text text-gray-800 md:truncate md:max-w-[70%]">
               {hotel.name}
             </h1>
-            <div className="flex-shrink-0 flex gap-2">
-              <div className="flex items-center gap-1 bg-yellow-100 px-3 py-1 rounded-full shadow-sm whitespace-nowrap">
-                <span className="text-yellow-500 text-2xl">★</span>
-                <span className="font-semibold text-lg">{hotel.rating}</span>
+            <div className="flex-shrink-0 gap-2 hidden md:flex">
+              <div className="flex items-center gap-1 bg-yellow-100 px-2 md:px-3 py-1 rounded-full shadow-sm whitespace-nowrap">
+                <span className="text-yellow-500 text-xl md:text-2xl">★</span>
+                <span className="font-semibold text-base md:text-lg">
+                  {hotel.rating}
+                </span>
               </div>
-              <div className="bg-blue-100 px-3 py-1 rounded-full shadow-sm flex items-center whitespace-nowrap">
-                <span className="text-blue-600 font-semibold text-lg">
+              <div className="bg-blue-100 px-2 md:px-3 py-1 rounded-full shadow-sm flex items-center whitespace-nowrap">
+                <span className="text-blue-600 font-semibold text-base md:text-lg">
                   {hotel.stars} / 5
                 </span>
               </div>
             </div>
           </div>
 
-          <p className="text-gray-600 text-xl flex items-center gap-1">
-            <PiMapPinFill className="text-blue-600" />
-            {hotel.country}, {hotel.region}
-          </p>
+          <div className="flex items-center gap-2">
+            <p className="text-gray-600 text-base md:text-xl flex items-center gap-1">
+              <PiMapPinFill className="text-blue-600" />
+              {hotel.country}, {hotel.region}
+            </p>
+            <div className="flex-shrink-0 flex gap-1 md:hidden">
+              <div className="flex items-center gap-1 bg-yellow-100 px-2 md:px-3 py-0.5 rounded-full shadow-sm whitespace-nowrap">
+                <span className="text-yellow-500 text-base md:text-2xl">★</span>
+                <span className="font-semibold text-sm md:text-lg">
+                  {hotel.rating}
+                </span>
+              </div>
+              <div className="bg-blue-100 px-2 md:px-3 py-0.5 rounded-full shadow-sm flex items-center whitespace-nowrap">
+                <span className="text-blue-600 font-semibold text-sm md:text-lg">
+                  {hotel.stars} / 5
+                </span>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div className="container mx-auto pb-8 mt-8">

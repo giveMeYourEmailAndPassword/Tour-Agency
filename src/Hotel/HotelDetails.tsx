@@ -300,12 +300,12 @@ export default function HotelDetails() {
         </div>
 
         <div className="container mx-auto pb-8 mt-8">
-          <div className="bg-white rounded-2xl shadow-sm p-6 space-y-6">
-            <div className="space-y-4">
+          <div className="bg-white rounded-lg md:rounded-2xl shadow-sm p-3 md:p-6 space-y-6">
+            <div className="space-y-2 md:space-y-4">
               <h2 className="text-lg md:text-2xl font-semibold text-gray-800">
                 Информация о туре
               </h2>
-              <div className="flex gap-6">
+              <div className="flex gap-2 md:gap-6">
                 <div className="flex items-center gap-2 bg-blue-50 px-4 py-2 rounded-xl">
                   <ImCalendar className="text-blue-600 text-lg" />
                   <p className="text-gray-700 font-medium">
@@ -318,23 +318,27 @@ export default function HotelDetails() {
                     {tour.nights} ночей
                   </p>
                 </div>
-                {/* <div className="flex items-center gap-2 bg-purple-50 px-4 py-2 rounded-xl">
+                <div className="hidden md:flex items-center gap-2 bg-purple-50 px-4 py-2 rounded-xl">
                   <FaUtensils className="text-purple-600 text-lg" />
                   <p className="text-gray-700 font-medium">{getMealType()}</p>
-                </div> */}
+                </div>
+              </div>
+              <div className="flex md:hidden items-center gap-2 bg-purple-50 px-4 py-2 rounded-xl w-fit">
+                <FaUtensils className="text-purple-600 text-lg" />
+                <p className="text-gray-700 font-medium">{getMealType()}</p>
               </div>
             </div>
 
-            <div className="space-y-4">
-              <h3 className="text-xl font-semibold text-gray-800">
+            <div className="space-y-2 md:space-y-4">
+              <h3 className="text-lg md:text-xl font-semibold text-gray-800">
                 Размещение
               </h3>
-              <div className="flex gap-6">
-                <div className="flex items-center gap-2 bg-green-50 px-4 py-2 rounded-xl">
+              <div className="flex flex-col md:flex-row gap-2 md:gap-6">
+                <div className="flex w-fit items-center gap-2 bg-green-50 px-4 py-2 rounded-xl">
                   <FaHome className="text-green-600 text-lg" />
                   <p className="text-gray-700 font-medium">{tour.room}</p>
                 </div>
-                <div className="flex items-center gap-2 bg-teal-50 px-4 py-2 rounded-xl">
+                <div className="flex w-fit items-center gap-2 bg-teal-50 px-4 py-2 rounded-xl">
                   <FaBed className="text-teal-600 text-lg" />
                   <p className="text-gray-700 font-medium">
                     {tour.placement === "2 взрослых"
@@ -345,8 +349,10 @@ export default function HotelDetails() {
               </div>
             </div>
 
-            <div className="space-y-4 w-[50%]">
-              <h3 className="text-xl font-semibold text-gray-800">Перелет</h3>
+            <div className="space-y-2 md:space-y-4 w-full md:w-[50%]">
+              <h3 className="text-lg md:text-xl font-semibold text-gray-800">
+                Перелет
+              </h3>
               <div className="bg-amber-50 p-4 rounded-xl space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
@@ -368,10 +374,10 @@ export default function HotelDetails() {
               </div>
             </div>
 
-            <div className="flex justify-end pt-4">
-              <div className="bg-gradient-to-r from-orange-500 to-orange-400 px-6 py-3 rounded-xl shadow-lg">
+            <div className="hidden md:flex justify-end md:pt-4">
+              <div className="bg-gradient-to-r from-orange-500 to-orange-400 px-6 py-2 md:py-3 rounded-xl shadow-lg">
                 <p className="text-white flex items-baseline gap-2">
-                  <span className="text-3xl font-bold">
+                  <span className="text-2xl font-semibold md:text-3xl md:font-bold">
                     {tour.price}
                     {tour.currency === "EUR"
                       ? "€"

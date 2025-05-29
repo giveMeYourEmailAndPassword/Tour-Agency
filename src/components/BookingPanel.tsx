@@ -141,7 +141,7 @@ export default function BookingPanel({
 
             <button
               onClick={handleBooking}
-              className="mr-3 md:mr-0 px-2 md:px-4 py-2 bg-blue-600 text-white text-xs md:text-base rounded-xl font-medium 
+              className="mr-3 md:mr-0 px-4 py-2 bg-blue-600 text-white text-sm md:text-base rounded-xl font-medium 
                 hover:bg-blue-500 transition-colors shadow-md"
             >
               Забронировать

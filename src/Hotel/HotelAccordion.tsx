@@ -21,18 +21,18 @@ export default function AccordionSection({
         onClick={onToggle}
         className="w-full py-2 px-3 flex justify-between items-center"
       >
-        <h2 className="text-sm md:text-lg text-gray-600">{title}</h2>
+        <h2 className="text-base md:text-lg text-gray-600">{title}</h2>
         <span className="text-gray-600">
           {isOpen ? (
-            <CiSquareMinus className="w-5 h-5 md:w-7 md:h-7 text-gray-500" />
+            <CiSquareMinus className="w-6 h-6 md:w-7 md:h-7 text-gray-500" />
           ) : (
-            <CiSquarePlus className="w-5 h-5 md:w-7 md:h-7 text-gray-500" />
+            <CiSquarePlus className="w-6 h-6 md:w-7 md:h-7 text-gray-500" />
           )}
         </span>
       </button>
       {isOpen && (
         <div className="px-3 md:px-8 pb-3 md:pb-8">
-          <p className="text-gray-700 leading-relaxed whitespace-pre-line text-xs md:text-base">
+          <p className="text-gray-700 leading-relaxed whitespace-pre-line text-sm md:text-base">
             {formatText(content)}
           </p>
         </div>

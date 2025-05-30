@@ -175,12 +175,12 @@ export default function Booking() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
       {isSuccess ? (
-        <div className="flex flex-col items-center justify-center">
-          <div className="bg-white p-8 rounded-xl shadow-lg max-w-md w-full">
-            <h2 className="text-2xl font-bold text-green-600 text-center mb-4">
+        <div className="flex flex-col items-center justify-center p-4 md:p-0">
+          <div className="bg-white p-4 md:p-8 rounded-lg md:rounded-xl shadow-lg max-w-md w-full">
+            <h2 className="text-2xl font-bold text-green-600 text-center mb-2 md:mb-4">
               Бронирование успешно выполнено!
             </h2>
-            <p className="text-gray-600 text-center mb-6">
+            <p className="text-gray-600 text-center mb-2 md:mb-6">
               Спасибо за ваш выбор! Детали бронирования отправлены на вашу
               почту.
             </p>
@@ -194,9 +194,9 @@ export default function Booking() {
           </div>
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center w-[96vh] mx-auto px-4">
-          <div className="bg-white rounded-xl shadow-lg p-6 pt-8 w-full">
-            <div className="flex flex-col mb-6">
+        <div className="flex flex-col items-center justify-center w-full  md:w-[96vh] md:mx-auto p-4 md:px-4">
+          <div className="bg-white rounded-lg md:rounded-xl shadow-lg p-3 md:p-6 md:pt-8 w-full">
+            <div className="flex flex-col mb-2 md:mb-6">
               <h1 className="text-2xl font-bold text-gray-900 ">
                 Бронирование тура
               </h1>
@@ -209,8 +209,8 @@ export default function Booking() {
             </div>
 
             {/* Информация о туре */}
-            <div className="bg-gray-50 p-4 rounded-lg mb-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="bg-gray-50 p-4 rounded-lg mb-2 md:mb-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
                 <div className="space-y-2">
                   <p className="text-gray-600">
                     <span className="font-medium">Вылет из:</span>{" "}
@@ -236,7 +236,7 @@ export default function Booking() {
 
             {/* Форма */}
             <form onSubmit={handleBooking}>
-              <div className="space-y-4">
+              <div className="space-y-2 md:space-y-4">
                 <div className="relative">
                   <label className="block text-gray-700 mb-2">Ваше имя</label>
                   <div className="relative">
@@ -315,7 +315,7 @@ export default function Booking() {
               <div className="flex justify-between items-center">
                 <div className="flex flex-col items-center mt-2">
                   <p className="text-gray-600 font-medium">Стоимость тура:</p>
-                  <p className="text-orange-500 font-medium text-4xl">
+                  <p className="text-orange-500 font-bold text-3xl md:text-4xl">
                     {bookingDetails.price}
                     {bookingDetails.currency === "EUR"
                       ? "€"

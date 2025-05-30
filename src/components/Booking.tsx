@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import Header from "./Header";
 
 const API_BASE_URL =
   import.meta.env.VITE_API_URL || "http://localhost:8000/api";
@@ -174,6 +175,7 @@ export default function Booking() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
+      <Header />
       {isSuccess ? (
         <div className="flex flex-col items-center justify-center p-4 md:p-0">
           <div className="bg-white p-4 md:p-8 rounded-lg md:rounded-xl shadow-lg max-w-md w-full">

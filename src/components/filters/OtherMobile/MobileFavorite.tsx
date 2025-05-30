@@ -40,11 +40,11 @@ export default function MobileFavorite() {
         shouldBlockScroll={false}
         backdrop="opaque"
         placement="bottom"
-        className="!p-0 !m-0 !max-w-full"
+        className="!p-0 !m-0 !max-w-full flex flex-col fixed inset-0 overflow-hidden"
         hideCloseButton={true}
         size="full"
       >
-        <ModalContent className="flex flex-col h-screen">
+        <ModalContent className="flex flex-col h-screen overflow-auto">
           <ModalHeader className="flex justify-between items-center border-b py-2 px-3">
             <div className="flex items-center gap-2">
               <span className="text-lg font-medium">Избранные туры</span>

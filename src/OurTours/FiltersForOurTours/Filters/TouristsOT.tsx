@@ -5,13 +5,10 @@ import { DataContext } from "../../../components/DataProvider";
 
 export default function TouristsOT() {
   const { setData, params } = useContext(DataContext);
-
-  const [adults, setAdults] = useState<number>(params?.param5?.adults || 2); // Количество взрослых
-  const [btnStatus, setBtnStatus] = useState<boolean>(true); // Управление кнопкой "Добавить ребенка"
-  const [childrenList, setChildrenList] = useState<
-    { id: string; age: number; text: string; key: number }[] // Список детей
-  >(params?.param5?.childrenList || []);
-  const [isPopoverOpen, setIsPopoverOpen] = useState<boolean>(false); // Управление видимостью Popover
+  const adults = params?.param5?.adults || 2;
+  const childrenList = params?.param5?.childrenList || [];
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+  const [btnStatus, setBtnStatus] = useState(true);
 
   const children = [
     { id: "до 2", age: 1, text: "лет" },
@@ -33,13 +30,13 @@ export default function TouristsOT() {
 
   const counterPlus = () => {
     if (adults < 6) {
-      setAdults((count) => count + 1);
+      setData("param5", { adults: adults + 1, childrenList });
     }
   };
 
   const counterMinus = () => {
     if (adults > 1) {
-      setAdults((count) => count - 1);
+      setData("param5", { adults: adults - 1, childrenList });
     }
   };
 
@@ -50,13 +47,18 @@ export default function TouristsOT() {
   };
 
   const handleAddChild = (child: { id: string; age: number; text: string }) => {
-    // Добавляем выбранного ребенка в список
-    setChildrenList((prev) => [...prev, { ...child, key: Date.now() }]);
-    setBtnStatus(true); // Возвращаем кнопку "Добавить ребенка"
+    setData("param5", {
+      adults,
+      childrenList: [...childrenList, { ...child, key: Date.now() }],
+    });
+    setBtnStatus(true);
   };
 
   const minusChild = (key: number) => {
-    setChildrenList((prev) => prev.filter((child) => child.key !== key));
+    setData("param5", {
+      adults,
+      childrenList: childrenList.filter((child) => child.key !== key),
+    });
   };
 
   // Добавляем useEffect для обновления контекста при изменении adults или childrenList
@@ -72,8 +74,10 @@ export default function TouristsOT() {
   // Используем useEffect для передачи данных в контекст
   useEffect(() => {
     if (params?.param5) {
-      setAdults(params.param5.adults || 2);
-      setChildrenList(params.param5.childrenList || []);
+      setData("param5", {
+        adults: params.param5.adults || 2,
+        childrenList: params.param5.childrenList || [],
+      });
     }
   }, [params?.param5]);
 

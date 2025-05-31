@@ -1,4 +1,4 @@
-import { useContext, useState, useEffect } from "react";
+import { useContext } from "react";
 import { Button, Popover, PopoverTrigger, PopoverContent } from "@heroui/react";
 import { RangeCalendar } from "@heroui/react";
 import { DataContext } from "../../../components/DataProvider";
@@ -9,6 +9,12 @@ import { ru } from "date-fns/locale"; // Локализация для русс�
 
 export default function NewFlyingDateOT() {
   const { setData, params } = useContext(DataContext);
+  const startDate =
+    params?.param4?.startDate ||
+    format(new Date().setDate(new Date().getDate() + 1), "dd.MM.yyyy");
+  const endDate =
+    params?.param4?.endDate ||
+    format(new Date().setDate(new Date().getDate() + 7), "dd.MM.yyyy");
 
   // Функция для преобразования строки даты в формате dd.MM.yyyy в объект даты
   const parseDateFromContext = (dateString: string) => {
@@ -26,20 +32,17 @@ export default function NewFlyingDateOT() {
     }
   };
 
-  // Инициализируем состояние с дефолтными значениями
-  const [range, setRange] = useState({
-    start: params?.param4?.startDate
-      ? parseDateFromContext(params.param4.startDate)
-      : today(getLocalTimeZone()).add({ days: 1 }),
-    end: params?.param4?.endDate
-      ? parseDateFromContext(params.param4.endDate)
-      : today(getLocalTimeZone()).add({ weeks: 1 }),
-  });
+  const range = {
+    start:
+      parseDateFromContext(startDate) ||
+      today(getLocalTimeZone()).add({ days: 1 }),
+    end:
+      parseDateFromContext(endDate) ||
+      today(getLocalTimeZone()).add({ weeks: 1 }),
+  };
 
-  // Обработчик изменения диапазона
   const handleRangeChange = (value: { start: any; end: any }) => {
     if (value.start && value.end) {
-      // Преобразуем даты в объекты Date
       const startDate = new Date(
         value.start.year,
         value.start.month - 1,
@@ -51,43 +54,12 @@ export default function NewFlyingDateOT() {
         value.end.day
       );
 
-      // Обновляем локальное состояние
-      setRange({ start: value.start, end: value.end });
-
-      // Форматируем даты для контекста
-      const formattedStartDate = format(startDate, "dd.MM.yyyy");
-      const formattedEndDate = format(endDate, "dd.MM.yyyy");
-
-      // Передаем данные в контекст
       setData("param4", {
-        startDate: formattedStartDate,
-        endDate: formattedEndDate,
+        startDate: format(startDate, "dd.MM.yyyy"),
+        endDate: format(endDate, "dd.MM.yyyy"),
       });
     }
   };
-
-  useEffect(() => {
-    const startDate = new Date(
-      range.start.year,
-      range.start.month - 1,
-      range.start.day
-    );
-    const endDate = new Date(
-      range.end.year,
-      range.end.month - 1,
-      range.end.day
-    );
-
-    // Форматируем даты для контекста
-    const formattedStartDate = format(startDate, "dd.MM.yyyy");
-    const formattedEndDate = format(endDate, "dd.MM.yyyy");
-
-    // Передаем данные в контекст
-    setData("param4", {
-      startDate: formattedStartDate,
-      endDate: formattedEndDate,
-    });
-  }, []);
 
   // Форматируем даты для отображения в кнопке
   const formatDisplayDate = (date: any) => {

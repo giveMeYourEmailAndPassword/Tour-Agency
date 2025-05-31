@@ -4,7 +4,7 @@ import { DataContext } from "../../../components/DataProvider";
 
 export default function StarsFilterOT() {
   const { setData, params } = useContext(DataContext);
-  const rating = params?.param9 || 3;
+  const rating = params?.param9 || 1;
 
   const handleClick = (newRating: number) => {
     setData("param9", newRating);

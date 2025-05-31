@@ -4,29 +4,25 @@ import { DataContext } from "../../../components/DataProvider";
 
 export default function NewDepartureCityOT() {
   const { setData, cities, params } = useContext(DataContext);
-  const [selectedCity, setSelectedCity] = useState(params?.param1 || "0");
+  const selectedCity = params?.param1 || "0";
   const [isOpen, setIsOpen] = useState(false);
 
   // Обновляем состояние при изменении параметров в контексте
   useEffect(() => {
     if (params?.param1 !== undefined) {
-      setSelectedCity(params.param1);
+      setData("param1", params.param1);
     }
   }, [params?.param1]);
 
   useEffect(() => {
     if (cities.length > 0 && !cities.find((city) => city.id === selectedCity)) {
-      setSelectedCity(cities[1].id);
+      setData("param1", cities[1].id);
     }
   }, [cities]);
 
-  useEffect(() => {
-    setData("param1", selectedCity);
-  }, [selectedCity, setData]);
-
   // Обработчик выбора города
   const handleCitySelect = (city) => {
-    setSelectedCity(city.id);
+    setData("param1", city.id);
     setIsOpen(false);
   };
 

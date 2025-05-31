@@ -82,35 +82,11 @@ const countryCodeMap: { [key: string]: string } = {
 
 export default function NewFlyingCountryOT() {
   const { setData, countries, params } = useContext(DataContext);
-  const [selectedCountry, setSelectedCountry] = useState<string | null>(
-    params?.param2 || null
-  );
+  const selectedCountry = params?.param2 || null;
   const [isOpen, setIsOpen] = useState(false);
 
-  useEffect(() => {
-    if (params?.param2) {
-      setSelectedCountry(params.param2);
-    }
-  }, [params?.param2]);
-
-  useEffect(() => {
-    if (selectedCountry !== null) {
-      setData("param2", selectedCountry);
-    }
-  }, [selectedCountry, setData]);
-
-  useEffect(() => {
-    if (
-      countries.length > 0 &&
-      selectedCountry &&
-      !countries.find((country) => country.id === selectedCountry)
-    ) {
-      setSelectedCountry(null);
-    }
-  }, [countries]);
-
   const handleCountrySelect = (country: { id: string; label: string }) => {
-    setSelectedCountry(country.id);
+    setData("param2", country.id);
     setIsOpen(false);
   };
 

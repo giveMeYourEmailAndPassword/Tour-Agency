@@ -142,19 +142,25 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     }));
   }, []);
 
-  // Загружаем параметры из URL и запускаем поиск при монтировании
+  // фывввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввв
+  // Изменяем эффект для загрузки параметров и запуска поиска при монтировании
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.toString() && window.location.pathname === "/OurTours") {
-      const urlParamsObj = parseUrlParams();
-      if (Object.keys(urlParamsObj).length > 0) {
-        setParams(urlParamsObj);
-        // Запускаем поиск после небольшой задержки, чтобы состояние успело обновиться
-        setTimeout(() => {
-          searchTours();
-        }, 0);
+    const initializeSearch = async () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.toString() && window.location.pathname === "/OurTours") {
+        const urlParamsObj = parseUrlParams();
+        if (Object.keys(urlParamsObj).length > 0) {
+          // Сначала обновляем параметры
+          setParams(urlParamsObj);
+          // Ждем 1 секунду перед запуском поиска
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+          // Запускаем поиск
+          await searchTours();
+        }
       }
-    }
+    };
+
+    initializeSearch();
   }, []); // Выполняется только при монтировании
 
   // Обработчик изменения города отправления
@@ -408,18 +414,6 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     },
     [params, saveToSession, queryClient]
   );
-
-  // Добавляем эффект для автоматического запуска поиска при монтировании и изменении URL
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.toString() && window.location.pathname === "/OurTours") {
-      const urlParamsObj = parseUrlParams();
-      if (Object.keys(urlParamsObj).length > 0) {
-        setParams(urlParamsObj);
-        searchTours();
-      }
-    }
-  }, [window.location.pathname, window.location.search]);
 
   // Добавляем функцию для загрузки следующей страницы
   const loadNextPage = useCallback(async () => {

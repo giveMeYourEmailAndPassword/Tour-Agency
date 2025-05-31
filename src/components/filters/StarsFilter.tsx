@@ -11,9 +11,9 @@ export default function StarsFilter({
   initialRating = 1,
   onRatingChange,
 }: StarsFilterProps) {
-  const [rating, setRating] = useState(initialRating);
-  const [hoverRating, setHoverRating] = useState(1);
-  const { setData } = useContext(DataContext);
+  const { setData, params } = useContext(DataContext);
+  const [rating, setRating] = useState(() => params.param9 || 1);
+  const [hoverRating, setHoverRating] = useState(() => params.param9 || 1);
 
   const handleClick = (newRating: number) => {
     setRating(newRating);

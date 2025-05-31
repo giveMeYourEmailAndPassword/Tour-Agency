@@ -13,9 +13,7 @@ import service from "../../../components/data/HotelServiceData";
 
 export default function HotelServiceOT() {
   const { setData, params } = useContext(DataContext);
-  const [selectedValues, setSelectedValues] = useState<string[]>(
-    params?.param10 || []
-  );
+  const selectedValues = params?.param10 || [];
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"all" | "selected">("all");
 
@@ -41,18 +39,17 @@ export default function HotelServiceOT() {
   };
 
   const handleChange = (value: string) => {
-    setSelectedValues((prev) =>
-      prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]
-    );
+    const newSelectedValues = selectedValues.includes(value)
+      ? selectedValues.filter((v) => v !== value)
+      : [...selectedValues, value];
+    setData("param10", newSelectedValues);
   };
 
   const handleApply = () => {
-    setData("param10", selectedValues);
-    setIsOpen(false); // Закрываем Popover после выбора
+    setIsOpen(false);
   };
 
   const handleReset = () => {
-    setSelectedValues([]);
     setData("param10", []);
   };
 

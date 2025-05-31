@@ -10,11 +10,9 @@ import { IoIosArrowDown } from "react-icons/io";
 import { IoClose } from "react-icons/io5"; // Значок "крестик" для сброса
 import { DataContext } from "../../../components/DataProvider";
 
-export default function NourishmentOTT() {
+export default function RaitingOT() {
   const { setData, params } = useContext(DataContext);
-  const [selectedValue, setSelectedValue] = useState<string>(
-    params?.param8?.[0] || "0"
-  );
+  const selectedValue = params?.param8?.[0] || "0";
   const [isOpen, setIsOpen] = useState(false);
 
   // Определяем список чекбоксов
@@ -27,8 +25,7 @@ export default function NourishmentOTT() {
   ];
 
   const handleChange = (value: string) => {
-    setSelectedValue(value);
-    setData("param8", [value]); // Передаем значение как массив
+    setData("param8", [value]);
   };
 
   // Функция для получения ярлыка (label) по значению чекбокса
@@ -64,8 +61,7 @@ export default function NourishmentOTT() {
 
   // Обработчик нажатия на крестик — сбрасываем выбор, возвращая "Любое"
   const handleReset = () => {
-    setSelectedValue("0");
-    setData("param7", ["0"]); // Сбрасываем значение в DataContext
+    setData("param8", ["0"]);
   };
 
   return (

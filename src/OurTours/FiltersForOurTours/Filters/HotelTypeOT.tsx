@@ -12,9 +12,7 @@ import { DataContext } from "../../../components/DataProvider";
 
 export default function HotelTypeOT() {
   const { setData, params } = useContext(DataContext);
-  const [selectedValues, setSelectedValues] = useState<string[]>(
-    params?.param6 || ["any"]
-  );
+  const selectedValues = params?.param6 || ["any"];
   const [isOpen, setIsOpen] = useState(false);
 
   // Определяем список чекбоксов
@@ -30,23 +28,18 @@ export default function HotelTypeOT() {
     let newSelectedValues = [...selectedValues];
 
     if (value === "any") {
-      // Если выбирается "Любой", то он единственный в списке.
-      newSelectedValues = isSelected ? ["any"] : ["any"];
+      newSelectedValues = ["any"];
     } else {
-      // Если выбирается другой чекбокс, удаляем "any" (если он был выбран)
       newSelectedValues = newSelectedValues.filter((v) => v !== "any");
 
       if (isSelected) {
-        // Добавляем значение, если его ещё нет
         if (!newSelectedValues.includes(value)) {
           newSelectedValues.push(value);
         }
       } else {
-        // Убираем значение, если оно было выбрано
         newSelectedValues = newSelectedValues.filter((v) => v !== value);
       }
 
-      // Если выбраны все доступные значения (кроме "any"), то автоматически возвращаем "any"
       const allNonAny = checkboxes
         .filter((c) => c.value !== "any")
         .map((c) => c.value);
@@ -58,9 +51,6 @@ export default function HotelTypeOT() {
         newSelectedValues = ["any"];
       }
     }
-
-    "Выбраны:", newSelectedValues;
-    setSelectedValues(newSelectedValues);
 
     setData("param6", newSelectedValues);
   };
@@ -104,7 +94,7 @@ export default function HotelTypeOT() {
 
   // Обработчик нажатия на крестик — сбрасываем выбор, возвращая "any"
   const handleReset = () => {
-    setSelectedValues(["any"]);
+    setData("param6", ["any"]);
   };
 
   selectedValues;

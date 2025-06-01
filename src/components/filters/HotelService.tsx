@@ -103,6 +103,7 @@ export default function HotelService() {
       placement="bottom"
       isOpen={isOpen}
       onOpenChange={(open) => setIsOpen(open)}
+      shouldCloseOnScroll={false}
     >
       <PopoverTrigger className="!z-0 !scale-100 !opacity-100 w-[20%]">
         <Button

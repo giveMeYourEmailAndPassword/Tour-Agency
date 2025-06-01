@@ -142,34 +142,16 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     }));
   }, []);
 
-  // фывввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввв
-  // Изменяем эффект для загрузки параметров и запуска поиска при монтировании
+  // Эффект только для загрузки параметров из URL
   useEffect(() => {
-    const initializeSearch = async () => {
-      const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.toString() && window.location.pathname === "/OurTours") {
-        const urlParamsObj = parseUrlParams();
-        if (Object.keys(urlParamsObj).length > 0) {
-          // Сначала обновляем параметры
-          setParams(urlParamsObj);
-          // Ждем 1 секунду перед запуском поиска
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-          // Запускаем поиск
-          await searchTours();
-        }
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.toString() && window.location.pathname === "/OurTours") {
+      const urlParamsObj = parseUrlParams();
+      if (Object.keys(urlParamsObj).length > 0) {
+        setParams(urlParamsObj);
       }
-    };
-
-    initializeSearch();
+    }
   }, []); // Выполняется только при монтировании
-
-  // Обработчик изменения города отправления
-  const setDepartureCity = useCallback(
-    (cityId: string) => {
-      setData("param1", cityId); // Сохраняем выбранный город в params
-    },
-    [setData]
-  );
 
   // Запрос списка городов
   useEffect(() => {

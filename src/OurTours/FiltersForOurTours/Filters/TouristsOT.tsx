@@ -3,14 +3,25 @@ import { Button } from "@heroui/react";
 import { useContext, useState, useEffect } from "react";
 import { DataContext } from "../../../components/DataProvider";
 
+interface Child {
+  id: string;
+  age: number;
+  text: string;
+  key?: number;
+}
+
+interface ChildWithKey extends Child {
+  key: number;
+}
+
 export default function TouristsOT() {
   const { setData, params } = useContext(DataContext);
   const adults = params?.param5?.adults || 2;
-  const childrenList = params?.param5?.childrenList || [];
+  const childrenList = (params?.param5?.childrenList || []) as ChildWithKey[];
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const [btnStatus, setBtnStatus] = useState(true);
 
-  const children = [
+  const children: Child[] = [
     { id: "до 2", age: 1, text: "лет" },
     { id: "2", age: 2, text: "года" },
     { id: "3", age: 3, text: "года" },
@@ -40,13 +51,11 @@ export default function TouristsOT() {
     }
   };
 
-  const checkBtn = (
-    childrenList: { id: string; age: number; text: string; key: number }[]
-  ) => {
+  const checkBtn = (childrenList: ChildWithKey[]) => {
     return childrenList.length < 3;
   };
 
-  const handleAddChild = (child: { id: string; age: number; text: string }) => {
+  const handleAddChild = (child: Child) => {
     setData("param5", {
       adults,
       childrenList: [...childrenList, { ...child, key: Date.now() }],
@@ -61,25 +70,20 @@ export default function TouristsOT() {
     });
   };
 
-  // Добавляем useEffect для обновления контекста при изменении adults или childrenList
+  // Инициализация начальных значений только при монтировании компонента
   useEffect(() => {
-    setData("param5", { adults, childrenList });
-  }, [adults, childrenList, setData]);
+    if (!params?.param5) {
+      setData("param5", {
+        adults: 2,
+        childrenList: [],
+      });
+    }
+  }, []); // Пустой массив зависимостей означает, что эффект выполнится только при монтировании
 
   // Закрытие Popover
   const handleConfirm = () => {
     setIsPopoverOpen(false); // Закрываем Popover
   };
-
-  // Используем useEffect для передачи данных в контекст
-  useEffect(() => {
-    if (params?.param5) {
-      setData("param5", {
-        adults: params.param5.adults || 2,
-        childrenList: params.param5.childrenList || [],
-      });
-    }
-  }, [params?.param5]);
 
   return (
     <Popover
@@ -130,7 +134,7 @@ export default function TouristsOT() {
 
               {/* Рендеринг списка детей */}
               <div className="flex flex-col items-start gap-4">
-                {childrenList.map((child, index) => (
+                {childrenList.map((child: ChildWithKey, index: number) => (
                   <div
                     key={index}
                     className="flex items-center justify-between w-72 bg-slate-100 rounded-full"

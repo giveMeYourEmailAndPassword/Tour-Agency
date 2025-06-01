@@ -1,5 +1,3 @@
-import { useContext } from "react";
-import { DataContext } from "../../components/DataProvider";
 import NewDepartureCityOT from "./Filters/NewDepartureCityOT";
 import NewFlyingCountryOT from "./Filters/NewFlyingCountryOT";
 import NewFlyingDateOT from "./Filters/NewFlyingDateOT";

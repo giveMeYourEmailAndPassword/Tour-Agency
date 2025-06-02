@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useContext, useState } from "react";
 import {
   Button,
   Popover,
@@ -7,17 +7,14 @@ import {
   Checkbox,
 } from "@heroui/react";
 import { IoIosArrowDown } from "react-icons/io";
-import { IoClose } from "react-icons/io5"; // Значок "крестик" для сброса
+import { IoClose } from "react-icons/io5";
 import { DataContext } from "../../../components/DataProvider";
 
 export default function NourishmentOT() {
   const { setData, params } = useContext(DataContext);
-  const [selectedValue, setSelectedValue] = useState<string>(
-    params?.param7?.[0] || "2"
-  );
+  const selectedValue = params?.param7?.[0] || "2";
   const [isOpen, setIsOpen] = useState(false);
 
-  // Определяем список чекбоксов
   const checkboxes = [
     { value: "2", label: "Любое", span: "" },
     { value: "3", label: "- Только завтрак", span: "BB" },
@@ -28,17 +25,14 @@ export default function NourishmentOT() {
   ];
 
   const handleChange = (value: string) => {
-    setSelectedValue(value);
-    setData("param7", [value]); // Передаем значение как массив
+    setData("param7", [value]);
   };
 
-  // Функция для получения ярлыка (label) по значению чекбокса
   const getLabelByValue = (value: string) => {
     const checkbox = checkboxes.find((c) => c.value === value);
     return checkbox ? checkbox.label : "";
   };
 
-  // Функция для формирования текста, который показывается на кнопке
   const getDisplayText = () => {
     const selectedCheckbox = checkboxes.find((c) => c.value === selectedValue);
 
@@ -63,10 +57,8 @@ export default function NourishmentOT() {
     }
   };
 
-  // Обработчик нажатия на крестик — сбрасываем выбор, возвращая "Любое"
   const handleReset = () => {
-    setSelectedValue("2");
-    setData("param7", ["2"]); // Сбрасываем значение в DataContext
+    setData("param7", ["2"]);
   };
 
   return (
@@ -106,15 +98,13 @@ export default function NourishmentOT() {
       <PopoverContent className="rounded-md">
         <div className="px-1 py-1">
           <div className="flex flex-col gap-1">
-            <h1 className="text-small font-semibold mb-2">ПИТАНИЕ ОТ:</h1>
+            <h1 className="text-base font-medium mb-2">Питание от:</h1>
             {checkboxes.map(({ value, label, span }) => (
               <Checkbox
                 color="default"
                 key={value}
                 value={value}
-                // Выбран ли чекбокс (если его значение равно выбранному значению)
                 isSelected={selectedValue === value}
-                // При изменении состояния чекбокса вызывается handleChange
                 onValueChange={() => handleChange(value)}
               >
                 <span className="font-medium">{span} </span>

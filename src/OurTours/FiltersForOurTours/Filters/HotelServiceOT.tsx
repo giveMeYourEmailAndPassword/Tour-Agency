@@ -13,9 +13,7 @@ import service from "../../../components/data/HotelServiceData";
 
 export default function HotelServiceOT() {
   const { setData, params } = useContext(DataContext);
-  const [selectedValues, setSelectedValues] = useState<string[]>(
-    params?.param10 || []
-  );
+  const selectedValues = params?.param10 || [];
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"all" | "selected">("all");
 
@@ -41,18 +39,17 @@ export default function HotelServiceOT() {
   };
 
   const handleChange = (value: string) => {
-    setSelectedValues((prev) =>
-      prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]
-    );
+    const newSelectedValues = selectedValues.includes(value)
+      ? selectedValues.filter((v) => v !== value)
+      : [...selectedValues, value];
+    setData("param10", newSelectedValues);
   };
 
   const handleApply = () => {
-    setData("param10", selectedValues);
-    setIsOpen(false); // Закрываем Popover после выбора
+    setIsOpen(false);
   };
 
   const handleReset = () => {
-    setSelectedValues([]);
     setData("param10", []);
   };
 
@@ -103,6 +100,7 @@ export default function HotelServiceOT() {
       placement="bottom"
       isOpen={isOpen}
       onOpenChange={(open) => setIsOpen(open)}
+      shouldCloseOnScroll={false}
     >
       <PopoverTrigger className="!z-0 !scale-100 !opacity-100 w-[20%]">
         <Button
@@ -136,7 +134,7 @@ export default function HotelServiceOT() {
 
       <PopoverContent className="rounded-md">
         <div className="px-3 pt-3 w-72">
-          <h1 className="text-small font-semibold mb-2">УСЛУГИ В ОТЕЛЕ</h1>
+          <h1 className="text-base font-medium mb-2">Услуги в отеле</h1>
 
           <div className="flex border-b mb-2 gap-1">
             <button
@@ -170,10 +168,10 @@ export default function HotelServiceOT() {
             )}
           </div>
 
-          <div className="h-64 overflow-auto scrollbar-custom">
+          <div className="h-64 overflow-auto scrollbar-custom2">
             {filteredCheckboxes.map(({ group, options }) => (
               <div key={group} className="mb-3">
-                <h1 className="text-base font-semibold mb-1">{group}</h1>
+                <h1 className="text-base font-medium mb-1">{group}</h1>
                 <div className="flex flex-col gap-1">
                   {options.map(({ value, label }) => (
                     <Checkbox
@@ -195,7 +193,7 @@ export default function HotelServiceOT() {
           <div className="p-4 flex items-center justify-center">
             <button
               onClick={handleApply}
-              className={`px-14 py-2 border-2 text-xl rounded-full ${
+              className={`px-14 py-2 border-2 text-lg rounded-full ${
                 selectedValues.length >= 1
                   ? "border-blue-700 bg-blue-700 text-white"
                   : "text-gray-500"

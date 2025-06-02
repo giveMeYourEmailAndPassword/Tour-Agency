@@ -3,17 +3,25 @@ import { Button } from "@heroui/react";
 import { useContext, useState, useEffect } from "react";
 import { DataContext } from "../../../components/DataProvider";
 
+interface Child {
+  id: string;
+  age: number;
+  text: string;
+  key?: number;
+}
+
+interface ChildWithKey extends Child {
+  key: number;
+}
+
 export default function TouristsOT() {
   const { setData, params } = useContext(DataContext);
+  const adults = params?.param5?.adults || 2;
+  const childrenList = (params?.param5?.childrenList || []) as ChildWithKey[];
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+  const [btnStatus, setBtnStatus] = useState(true);
 
-  const [adults, setAdults] = useState<number>(params?.param5?.adults || 2); // Количество взрослых
-  const [btnStatus, setBtnStatus] = useState<boolean>(true); // Управление кнопкой "Добавить ребенка"
-  const [childrenList, setChildrenList] = useState<
-    { id: string; age: number; text: string; key: number }[] // Список детей
-  >(params?.param5?.childrenList || []);
-  const [isPopoverOpen, setIsPopoverOpen] = useState<boolean>(false); // Управление видимостью Popover
-
-  const children = [
+  const children: Child[] = [
     { id: "до 2", age: 1, text: "лет" },
     { id: "2", age: 2, text: "года" },
     { id: "3", age: 3, text: "года" },
@@ -33,49 +41,49 @@ export default function TouristsOT() {
 
   const counterPlus = () => {
     if (adults < 6) {
-      setAdults((count) => count + 1);
+      setData("param5", { adults: adults + 1, childrenList });
     }
   };
 
   const counterMinus = () => {
     if (adults > 1) {
-      setAdults((count) => count - 1);
+      setData("param5", { adults: adults - 1, childrenList });
     }
   };
 
-  const checkBtn = (
-    childrenList: { id: string; age: number; text: string; key: number }[]
-  ) => {
+  const checkBtn = (childrenList: ChildWithKey[]) => {
     return childrenList.length < 3;
   };
 
-  const handleAddChild = (child: { id: string; age: number; text: string }) => {
-    // Добавляем выбранного ребенка в список
-    setChildrenList((prev) => [...prev, { ...child, key: Date.now() }]);
-    setBtnStatus(true); // Возвращаем кнопку "Добавить ребенка"
+  const handleAddChild = (child: Child) => {
+    setData("param5", {
+      adults,
+      childrenList: [...childrenList, { ...child, key: Date.now() }],
+    });
+    setBtnStatus(true);
   };
 
   const minusChild = (key: number) => {
-    setChildrenList((prev) => prev.filter((child) => child.key !== key));
+    setData("param5", {
+      adults,
+      childrenList: childrenList.filter((child) => child.key !== key),
+    });
   };
 
-  // Добавляем useEffect для обновления контекста при изменении adults или childrenList
+  // Инициализация начальных значений только при монтировании компонента
   useEffect(() => {
-    setData("param5", { adults, childrenList });
-  }, [adults, childrenList, setData]);
+    if (!params?.param5) {
+      setData("param5", {
+        adults: 2,
+        childrenList: [],
+      });
+    }
+  }, []); // Пустой массив зависимостей означает, что эффект выполнится только при монтировании
 
   // Закрытие Popover
   const handleConfirm = () => {
     setIsPopoverOpen(false); // Закрываем Popover
   };
-
-  // Используем useEffect для передачи данных в контекст
-  useEffect(() => {
-    if (params?.param5) {
-      setAdults(params.param5.adults || 2);
-      setChildrenList(params.param5.childrenList || []);
-    }
-  }, [params?.param5]);
 
   return (
     <Popover
@@ -105,7 +113,7 @@ export default function TouristsOT() {
       </PopoverTrigger>
       <PopoverContent>
         <div className="px-1 py-1 w-80">
-          <div className="text-base font-bold mb-4">ТУРИСТЫ</div>
+          <div className="text-base font-medium mb-4">Туристы</div>
           <div className="flex flex-col items-center gap-4">
             {/* Управление взрослыми */}
             <div className="flex flex-col gap-4 items-center">
@@ -126,7 +134,7 @@ export default function TouristsOT() {
 
               {/* Рендеринг списка детей */}
               <div className="flex flex-col items-start gap-4">
-                {childrenList.map((child, index) => (
+                {childrenList.map((child: ChildWithKey, index: number) => (
                   <div
                     key={index}
                     className="flex items-center justify-between w-72 bg-slate-100 rounded-full"

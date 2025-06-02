@@ -67,17 +67,91 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   const [favoriteTours, setFavoriteTours] = useState<FavoriteTourData[]>([]);
   const [isFavorite, setIsFavorite] = useState(false);
 
-  const setData = useCallback((key: keyof Params, value: any) => {
-    setParams((prevParams) => ({ ...prevParams, [key]: value }));
+  // Функция для преобразования параметров URL в объект params
+  const parseUrlParams = useCallback(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const parsedParams: Params = {};
+
+    // Базовые параметры
+    const departure = urlParams.get("departure");
+    if (departure) parsedParams.param1 = departure;
+
+    const country = urlParams.get("country");
+    if (country) parsedParams.param2 = country;
+
+    // Ночи
+    const nightsFrom = urlParams.get("nightsFrom");
+    const nightsTo = urlParams.get("nightsTo");
+    if (nightsFrom || nightsTo) {
+      parsedParams.param3 = {
+        startDay: nightsFrom ? parseInt(nightsFrom) : undefined,
+        endDay: nightsTo ? parseInt(nightsTo) : undefined,
+      };
+    }
+
+    // Даты
+    const dateFrom = urlParams.get("dateFrom");
+    const dateTo = urlParams.get("dateTo");
+    if (dateFrom || dateTo) {
+      parsedParams.param4 = {
+        startDate: dateFrom || undefined,
+        endDate: dateTo || undefined,
+      };
+    }
+
+    // Туристы
+    const adults = urlParams.get("adults");
+    const children = urlParams.get("children");
+    if (adults || children) {
+      parsedParams.param5 = {
+        adults: adults ? parseInt(adults) : 2,
+        childrenList: children
+          ? children.split(",").map((age) => parseInt(age))
+          : [],
+      };
+    }
+
+    // Тип отеля
+    const hotelTypes = urlParams.get("hotelTypes");
+    if (hotelTypes) parsedParams.param6 = hotelTypes.split(",");
+
+    // Питание
+    const meal = urlParams.get("meal");
+    if (meal) parsedParams.param7 = [meal];
+
+    // Рейтинг
+    const rating = urlParams.get("rating");
+    if (rating) parsedParams.param8 = [rating];
+
+    // Звезды
+    const stars = urlParams.get("stars");
+    if (stars) parsedParams.param9 = parseInt(stars);
+
+    // Услуги отеля
+    const services = urlParams.get("services");
+    if (services) parsedParams.param10 = services.split(",");
+
+    return parsedParams;
   }, []);
 
-  // Обработчик изменения города отправления
-  const setDepartureCity = useCallback(
-    (cityId: string) => {
-      setData("param1", cityId); // Сохраняем выбранный город в params
-    },
-    [setData]
-  );
+  // Модифицируем setData, чтобы он только обновлял состояние без изменения URL
+  const setData = useCallback((key: keyof Params, value: any) => {
+    setParams((prevParams) => ({
+      ...prevParams,
+      [key]: value,
+    }));
+  }, []);
+
+  // Эффект только для загрузки параметров из URL
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.toString() && window.location.pathname === "/OurTours") {
+      const urlParamsObj = parseUrlParams();
+      if (Object.keys(urlParamsObj).length > 0) {
+        setParams(urlParamsObj);
+      }
+    }
+  }, []); // Выполняется только при монтировании
 
   // Запрос списка городов
   useEffect(() => {
@@ -176,7 +250,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [queryClient]);
 
-  // Добавим новую функцию для поиска туров
+  // Модифицируем функцию searchTours
   const searchTours = useCallback(async () => {
     if (!areParamsReady(params)) {
       return;
@@ -216,7 +290,6 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
 
       if (responseData.result?.requestid) {
         setRequestId(responseData.result.requestid);
-        // Сразу начинаем поллинг, не пытаясь получить первый результат
         startPolling(responseData.result.requestid);
       }
     } catch (error) {

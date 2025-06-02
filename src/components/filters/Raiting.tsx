@@ -10,8 +10,8 @@ import { IoIosArrowDown } from "react-icons/io";
 import { IoClose } from "react-icons/io5"; // Значок "крестик" для сброса
 import { DataContext } from "../DataProvider";
 
-export default function Nourishment() {
-  const { setData } = useContext(DataContext);
+export default function Raiting() {
+  const { setData, params } = useContext(DataContext);
   const [isOpen, setIsOpen] = useState(false);
 
   // Определяем список чекбоксов
@@ -24,7 +24,9 @@ export default function Nourishment() {
   ];
 
   // Состояние для выбранного значения. По умолчанию выбран "Любой".
-  const [selectedValue, setSelectedValue] = useState<string>("0");
+  const [selectedValue, setSelectedValue] = useState(
+    () => params.param8?.[0] || "0"
+  );
 
   const handleChange = (value: string) => {
     setSelectedValue(value);
@@ -65,7 +67,7 @@ export default function Nourishment() {
   // Обработчик нажатия на крестик — сбрасываем выбор, возвращая "Любое"
   const handleReset = () => {
     setSelectedValue("0");
-    setData("param7", ["0"]); // Сбрасываем значение в DataContext
+    setData("param8", ["0"]); // Сбрасываем значение в DataContext
   };
 
   return (

@@ -3,7 +3,6 @@ import { createRoot } from "react-dom/client";
 import "../css/index.css";
 import { BrowserRouter, Routes, Route } from "react-router";
 import App from "./App.tsx";
-import OurTours from "./OurTours/OurTours/OurTours.tsx";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import HotelDetails from "./Hotel/HotelDetails.tsx";
 import { HeroUIProvider } from "@heroui/react";
@@ -15,10 +14,10 @@ const queryClient = new QueryClient();
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <HeroUIProvider>
-        <DataProvider>
-          <BrowserRouter>
+    <BrowserRouter>
+      <QueryClientProvider client={queryClient}>
+        <HeroUIProvider>
+          <DataProvider>
             <Routes>
               {/* Главная страница */}
               <Route path="/" element={<App />} />
@@ -46,9 +45,9 @@ createRoot(document.getElementById("root")!).render(
                 element={<Booking />}
               />
             </Routes>
-          </BrowserRouter>
-        </DataProvider>
-      </HeroUIProvider>
-    </QueryClientProvider>
+          </DataProvider>
+        </HeroUIProvider>
+      </QueryClientProvider>
+    </BrowserRouter>
   </StrictMode>
 );

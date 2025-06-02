@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { DataContext } from "../../components/DataProvider";
 import { GoStarFill } from "react-icons/go";
 import { Skeleton } from "@heroui/react";
@@ -17,7 +17,7 @@ import {
   getCityDeclension,
   getCountryDeclension,
 } from "../PronounsOfTheCountry/PronounsOfTheCountry";
-import ScrollToTopButton from "../../components/ScrollToTopButton";
+import FloatingControls from "../../components/FloatingControls";
 
 export default function OurTours() {
   const {
@@ -31,6 +31,7 @@ export default function OurTours() {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
+    searchTours,
   } = useContext(DataContext);
   const [activeTabs, setActiveTabs] = useState<{
     [hotelcode: string]: "info" | "reviews" | "map" | "tour" | null;
@@ -50,6 +51,37 @@ export default function OurTours() {
           : "(Выберите страну)"
       } из ${getCityDeclension(selectedCity, "from")}`
     : "\u00A0".repeat(14);
+
+  // Добавляем состояние для отслеживания попыток поиска
+  const [searchAttempts, setSearchAttempts] = useState(0);
+
+  // Добавляем эффект для автоматического перезапуска поиска
+  useEffect(() => {
+    if (tours.length === 0 && !loading && searchAttempts < 3) {
+      const timer = setTimeout(() => {
+        setSearchAttempts((prev) => prev + 1);
+        searchTours();
+      }, 0);
+
+      return () => clearTimeout(timer);
+    }
+  }, [tours.length, loading, searchAttempts]);
+
+  // Проверяем наличие стран
+  if (countries.length === 0) {
+    return (
+      <div className="w-full min-h-screen bg-gray-50">
+        <Header />
+        <div className="w-full bg-blue-500">
+          <div className="max-w-[1560px] mx-auto mb-8">
+            <div className="flex flex-col gap-12 h-96 pt-12">
+              {/* Пустой div для сохранения высоты */}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (
@@ -100,6 +132,7 @@ export default function OurTours() {
             </div>
           ))}
         </div>
+        <FloatingControls />
       </div>
     );
   }
@@ -156,9 +189,11 @@ export default function OurTours() {
       <div className="w-full bg-blue-500">
         <div className="max-w-[1560px] mx-auto mb-8">
           <div className="flex flex-col gap-12 h-96 pt-12">
-            <h1 className="text-2xl md:text-4xl lg:text-5xl text-white font-bold max-w-[80rem] px-4 md:px-36">
-              {title}
-            </h1>
+            {countries.length > 0 && (
+              <h1 className="text-2xl md:text-4xl lg:text-5xl text-white font-bold max-w-[80rem] px-4 md:px-36">
+                {title}
+              </h1>
+            )}
             <div className="hidden md:block">
               <OurToursFilters />
             </div>
@@ -278,8 +313,9 @@ export default function OurTours() {
         ) : (
           <div className="flex flex-col items-center justify-center w-full h-[30vh]">
             <p className="text-xl text-gray-500 mb-4">
-              К сожалению, по вашему запросу ничего не найдено. Повторите запрос
-              заново.
+              {searchAttempts < 3
+                ? ""
+                : "К сожалению, по вашему запросу ничего не найдено. Пожалуйста, измените параметры поиска."}
             </p>
           </div>
         )}
@@ -297,7 +333,7 @@ export default function OurTours() {
             </div>
           )}
       </div>
-      <ScrollToTopButton />
+      <FloatingControls />
     </div>
   );
 }

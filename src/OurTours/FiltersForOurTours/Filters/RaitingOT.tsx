@@ -10,11 +10,9 @@ import { IoIosArrowDown } from "react-icons/io";
 import { IoClose } from "react-icons/io5"; // Значок "крестик" для сброса
 import { DataContext } from "../../../components/DataProvider";
 
-export default function NourishmentOTT() {
+export default function RaitingOT() {
   const { setData, params } = useContext(DataContext);
-  const [selectedValue, setSelectedValue] = useState<string>(
-    params?.param8?.[0] || "0"
-  );
+  const selectedValue = params?.param8?.[0] || "0";
   const [isOpen, setIsOpen] = useState(false);
 
   // Определяем список чекбоксов
@@ -27,8 +25,7 @@ export default function NourishmentOTT() {
   ];
 
   const handleChange = (value: string) => {
-    setSelectedValue(value);
-    setData("param8", [value]); // Передаем значение как массив
+    setData("param8", [value]);
   };
 
   // Функция для получения ярлыка (label) по значению чекбокса
@@ -64,8 +61,7 @@ export default function NourishmentOTT() {
 
   // Обработчик нажатия на крестик — сбрасываем выбор, возвращая "Любое"
   const handleReset = () => {
-    setSelectedValue("0");
-    setData("param7", ["0"]); // Сбрасываем значение в DataContext
+    setData("param8", ["0"]);
   };
 
   return (
@@ -105,7 +101,7 @@ export default function NourishmentOTT() {
       <PopoverContent className="rounded-md">
         <div className="px-1 py-1">
           <div className="flex flex-col gap-1 w-40">
-            <h1 className="text-small font-semibold mb-2">РЕЙТИНГ</h1>
+            <h1 className="text-base font-medium">Рейтинг</h1>
             {checkboxes.map(({ value, label, span }) => (
               <Checkbox
                 color="default"

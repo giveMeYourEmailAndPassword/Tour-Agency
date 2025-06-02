@@ -17,7 +17,7 @@ import {
   getCityDeclension,
   getCountryDeclension,
 } from "../PronounsOfTheCountry/PronounsOfTheCountry";
-import ScrollToTopButton from "../../components/ScrollToTopButton";
+import FloatingControls from "../../components/FloatingControls";
 
 export default function OurTours() {
   const {
@@ -66,6 +66,22 @@ export default function OurTours() {
       return () => clearTimeout(timer);
     }
   }, [tours.length, loading, searchAttempts]);
+
+  // Проверяем наличие стран
+  if (countries.length === 0) {
+    return (
+      <div className="w-full min-h-screen bg-gray-50">
+        <Header />
+        <div className="w-full bg-blue-500">
+          <div className="max-w-[1560px] mx-auto mb-8">
+            <div className="flex flex-col gap-12 h-96 pt-12">
+              {/* Пустой div для сохранения высоты */}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (
@@ -116,6 +132,7 @@ export default function OurTours() {
             </div>
           ))}
         </div>
+        <FloatingControls />
       </div>
     );
   }
@@ -172,9 +189,11 @@ export default function OurTours() {
       <div className="w-full bg-blue-500">
         <div className="max-w-[1560px] mx-auto mb-8">
           <div className="flex flex-col gap-12 h-96 pt-12">
-            <h1 className="text-2xl md:text-4xl lg:text-5xl text-white font-bold max-w-[80rem] px-4 md:px-36">
-              {title}
-            </h1>
+            {countries.length > 0 && (
+              <h1 className="text-2xl md:text-4xl lg:text-5xl text-white font-bold max-w-[80rem] px-4 md:px-36">
+                {title}
+              </h1>
+            )}
             <div className="hidden md:block">
               <OurToursFilters />
             </div>
@@ -314,7 +333,7 @@ export default function OurTours() {
             </div>
           )}
       </div>
-      <ScrollToTopButton />
+      <FloatingControls />
     </div>
   );
 }

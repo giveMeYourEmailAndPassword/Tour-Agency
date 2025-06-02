@@ -101,7 +101,7 @@ export default function RaitingOT() {
       <PopoverContent className="rounded-md">
         <div className="px-1 py-1">
           <div className="flex flex-col gap-1 w-40">
-            <h1 className="text-small font-semibold mb-2">РЕЙТИНГ</h1>
+            <h1 className="text-base font-medium">Рейтинг</h1>
             {checkboxes.map(({ value, label, span }) => (
               <Checkbox
                 color="default"

@@ -67,7 +67,7 @@ export default function Raiting() {
   // Обработчик нажатия на крестик — сбрасываем выбор, возвращая "Любое"
   const handleReset = () => {
     setSelectedValue("0");
-    setData("param7", ["0"]); // Сбрасываем значение в DataContext
+    setData("param8", ["0"]); // Сбрасываем значение в DataContext
   };
 
   return (

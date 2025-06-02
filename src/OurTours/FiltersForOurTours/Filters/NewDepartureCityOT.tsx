@@ -39,11 +39,17 @@ export default function NewDepartureCityOT() {
         isOpen={isOpen}
         onOpenChange={(open) => setIsOpen(open)}
       >
-        <PopoverTrigger className="w-64 h-full bg-white hover:bg-slate-100 rounded-xl !z-0 !scale-100 !opacity-100 py-1">
+        <PopoverTrigger className="w-full md:w-64 h-full bg-white hover:bg-slate-100 rounded-lg md:rounded-xl !z-0 !scale-100 !opacity-100 py-1">
           <Button className="px-4">
             <div className="flex flex-col items-start justify-between w-full">
               {selectedCityData && (
-                <span className="text-slate-600 mb-[1px] text-sm">
+                <span
+                  className={`text-slate-600 mb-[1px] ${
+                    selectedCityData?.id === selectedCity
+                      ? "text-sm"
+                      : "text-sm"
+                  }`}
+                >
                   Город вылета
                 </span>
               )}
@@ -62,13 +68,16 @@ export default function NewDepartureCityOT() {
           </Button>
         </PopoverTrigger>
 
-        <PopoverContent className="w-44 py-2">
+        <PopoverContent className="w-56 py-2">
+          <div className="text-base font-medium mb-2 flex justify-start w-full">
+            Город вылета:
+          </div>
           <div className="flex flex-col gap-1 items-starts w-full">
             {filteredCities && filteredCities.length > 0 ? (
               filteredCities.map((city) => (
                 <button
-                  className={`text-black text-lg text-start hover:bg-gray-200 rounded-xl py-1 pl-4 ${
-                    selectedCity === city.id ? "font-semibold" : ""
+                  className={`text-black text-base text-start hover:bg-gray-200 rounded-xl py-1 pl-2 ${
+                    selectedCity === city.id ? "font-medium" : ""
                   }`}
                   key={city.id}
                   onClick={() => handleCitySelect(city)}

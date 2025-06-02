@@ -81,7 +81,7 @@ export default function NewFlyingDateOT() {
       </PopoverTrigger>
       <PopoverContent>
         <div className="px-1 py-1">
-          <div className="text-small font-bold mb-2">Ночей от:</div>
+          <div className="text-base font-medium mb-2">Даты вылета:</div>
           <I18nProvider locale="ru">
             <RangeCalendar
               onChange={handleRangeChange}
@@ -91,7 +91,7 @@ export default function NewFlyingDateOT() {
                 base: "rounded-none shadow-none bg-white",
               }}
               minValue={today(getLocalTimeZone())}
-              value={range} // Используем текущее состояние для отображения в календаре
+              value={range}
             />
           </I18nProvider>
         </div>

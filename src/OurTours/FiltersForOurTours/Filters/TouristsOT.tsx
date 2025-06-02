@@ -113,7 +113,7 @@ export default function TouristsOT() {
       </PopoverTrigger>
       <PopoverContent>
         <div className="px-1 py-1 w-80">
-          <div className="text-base font-bold mb-4">ТУРИСТЫ</div>
+          <div className="text-base font-medium mb-4">Туристы</div>
           <div className="flex flex-col items-center gap-4">
             {/* Управление взрослыми */}
             <div className="flex flex-col gap-4 items-center">

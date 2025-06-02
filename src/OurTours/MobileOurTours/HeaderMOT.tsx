@@ -50,11 +50,9 @@ export default function HeaderMOT() {
 
         {selectedCountry && (
           <div className="flex flex-col items-center text-white bg-blue-700 rounded-full w-[95%] px-4">
-            <span className="text-base font-medium mb-[-4px]">
-              {selectedCountry}
-            </span>
+            <span className="text-base font-medium">{selectedCountry}</span>
             {params.param4?.startDate && params.param4?.endDate && (
-              <div className="flex items-center text-sm opacity-80">
+              <div className="flex items-center text-xs opacity-80">
                 <span>
                   {formatDate(params.param4.startDate)} -{" "}
                   {formatDate(params.param4.endDate)}, {params.param3?.startDay}{" "}

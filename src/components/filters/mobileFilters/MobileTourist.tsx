@@ -70,7 +70,7 @@ export default function MobileTourist() {
 
   useEffect(() => {
     setData("param5", { childrenList, adults });
-  }, []);
+  }, [adults, childrenList, setData]);
 
   return (
     <>

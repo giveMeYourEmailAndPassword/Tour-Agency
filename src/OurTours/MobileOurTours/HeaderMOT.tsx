@@ -37,7 +37,7 @@ export default function HeaderMOT() {
 
   return (
     <div className="w-full bg-blue-500 shadow-sm">
-      <div className="flex justify-between items-center px-4 py-2 gap-2">
+      <div className="flex justify-between items-center px-2 py-2 gap-2">
         <a
           className="text-white bg-blue-700 rounded-full p-2 
                      transition-all duration-200 
@@ -49,7 +49,7 @@ export default function HeaderMOT() {
         </a>
 
         {selectedCountry && (
-          <div className="flex flex-col items-center text-white bg-blue-700 rounded-full w-[27vh] px-4">
+          <div className="flex flex-col items-center text-white bg-blue-700 rounded-full w-[95%] px-4">
             <span className="text-base font-medium mb-[-4px]">
               {selectedCountry}
             </span>

@@ -10,12 +10,14 @@ interface HotelImageProps {
   imageUrl: string;
   hotelName: string;
   hotelcode: string;
+  isMobile?: boolean;
 }
 
 export const HotelImage = ({
   imageUrl,
   hotelName,
   hotelcode,
+  isMobile = false,
 }: HotelImageProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [shouldFetch, setShouldFetch] = useState(false);
@@ -40,15 +42,22 @@ export const HotelImage = ({
         <img
           src={imageUrl || "/placeholder.jpg"}
           alt={hotelName}
-          className="rounded-r-md w-full h-52 object-cover"
+          className={
+            isMobile
+              ? "w-28 h-28 object-cover rounded-lg"
+              : "rounded-r-md w-full h-52 object-cover"
+          }
         />
         <button
           onClick={handleSearchClick}
-          className="absolute bottom-0 left-0 p-2 bg-black/65 rounded-tr-xl
-                   opacity-0 group-hover:opacity-100 transition-opacity 
-                   duration-300"
+          className={`absolute bottom-0 left-0 p-2 bg-black/65 
+            ${isMobile ? "rounded-bl-lg" : "rounded-tr-xl"}
+            opacity-0 group-hover:opacity-100 transition-opacity 
+            duration-300`}
         >
-          <FaSearch className="w-5 h-5 text-gray-200" />
+          <FaSearch
+            className={`${isMobile ? "w-4 h-4" : "w-5 h-5"} text-gray-200`}
+          />
         </button>
       </div>
       <Lightbox

@@ -44,19 +44,19 @@ export const HotelImage = ({
           alt={hotelName}
           className={
             isMobile
-              ? "w-28 h-28 object-cover rounded-lg"
+              ? "w-32 h-28 object-cover rounded-lg"
               : "rounded-r-md w-full h-52 object-cover"
           }
         />
         <button
           onClick={handleSearchClick}
           className={`absolute bottom-0 left-0 p-2 bg-black/65 
-            ${isMobile ? "rounded-bl-lg" : "rounded-tr-xl"}
+            ${isMobile ? "rounded-bl-lg p-1" : "rounded-tr-xl"}
             opacity-0 group-hover:opacity-100 transition-opacity 
             duration-300`}
         >
           <FaSearch
-            className={`${isMobile ? "w-4 h-4" : "w-5 h-5"} text-gray-200`}
+            className={`${isMobile ? "w-3 h-3" : "w-5 h-5"} text-gray-200`}
           />
         </button>
       </div>

@@ -85,7 +85,7 @@ export default function MobileToursContent({
             <p className="text-base font-medium text-gray-900">
               {formatDate(tour.flydate)}
             </p>
-            <p className="text-xl font-bold text-black">
+            <p className="text-lg font-bold text-black">
               {tour.price}
               {tour.currency === "EUR"
                 ? "€"

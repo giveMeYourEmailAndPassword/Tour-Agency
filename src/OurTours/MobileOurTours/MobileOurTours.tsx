@@ -117,7 +117,7 @@ export default function MobileOurTours() {
                   isMobile={true}
                 />
                 {hotel.hotelrating !== "0" && (
-                  <span className="absolute -right-3 top-5 text-xs text-white border-2 border-white font-semibold bg-blue-500 py-0.5 px-1 rounded-lg">
+                  <span className="absolute -right-3.5 top-5 text-xs text-white border-2 border-white font-semibold bg-blue-500 py-0.5 px-1 rounded-lg">
                     {hotel.hotelrating.length === 1
                       ? `${hotel.hotelrating}.0`
                       : hotel.hotelrating}
@@ -147,7 +147,7 @@ export default function MobileOurTours() {
                 </div>
 
                 <div className="flex items-center justify-between mt-4">
-                  <p className="text-black text-xl font-semibold">
+                  <p className="text-black text-lg font-semibold">
                     <span className="text-black text-base">Туры от</span>{" "}
                     {hotel.price}
                     {hotel.currency === "EUR"

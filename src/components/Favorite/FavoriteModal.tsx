@@ -121,7 +121,7 @@ function FavoriteTourCard({ tour }: { tour: FavoriteTourData }) {
       </div>
 
       <div className="flex flex-col relative">
-        <div className="flex items-center gap-2 justify-between px-2 bg-blue-400 py-1 absolute w-full -top-[27px]">
+        <div className="flex items-center gap-2 justify-between px-2 bg-blue-400 py-1 absolute w-full h-7 -top-[27px]">
           <div className="flex gap-0.5">
             {Array.from({ length: parseInt(hotelData.stars) }, (_, i) => (
               <GoStarFill key={i} className="text-white" />

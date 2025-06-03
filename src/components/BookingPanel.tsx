@@ -106,9 +106,9 @@ export default function BookingPanel({
         {/* Цена и кнопки */}
         <div className="flex items-center md:gap-4 w-full md:w-auto justify-between md:justify-start">
           {/* Цена */}
-          <div className="flex flex-col ml-4 md:items-end">
-            <span className="text-gray-500 text-xs md:text-base">за двоих</span>
-            <span className="text-lg md:text-2xl font-bold text-gray-900">
+          <div className="flex flex-col ml-4 md:items-end text-center">
+            <span className="text-gray-500 text-sm md:text-base">за двоих</span>
+            <span className="text-xl md:text-2xl font-bold text-gray-900">
               {price}
               {currency === "EUR" ? "€" : currency === "USD" ? "$" : currency}
             </span>

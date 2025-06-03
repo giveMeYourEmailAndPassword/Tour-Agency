@@ -299,7 +299,7 @@ export default function HotelDetails() {
           </div>
         </div>
 
-        <div className="container mx-auto pb-8 mt-4 md:mt-8">
+        <div className="container mx-auto pb-4 mt-4 md:mt-8">
           <div className="bg-white rounded-lg md:rounded-2xl shadow-sm p-2 md:p-6 space-y-3">
             <div className="space-y-1 md:space-y-4">
               <h2 className="text-lg md:text-2xl font-semibold text-gray-800">

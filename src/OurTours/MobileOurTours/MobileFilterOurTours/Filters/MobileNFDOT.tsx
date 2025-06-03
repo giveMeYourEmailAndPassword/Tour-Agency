@@ -78,18 +78,20 @@ export default function MobileNewFlyingDateOT() {
 
   return (
     <>
-      <div
-        onClick={() => setIsOpen(true)}
-        className="h-12 md:h-full cursor-pointer flex items-center justify-between"
+      <Button
+        onPress={() => setIsOpen(true)}
+        radius="none"
+        className="px-2 w-full md:w-64 h-12 md:h-full bg-white hover:bg-slate-100 !z-0 !scale-100 !opacity-100 py-1"
       >
         <div className="flex flex-col items-start justify-between w-full">
-          <div className="flex items-end gap-1">
-            <span className="text-white text-lg">
-              {formatDisplayDate(range.start)} - {formatDisplayDate(range.end)}
-            </span>
-          </div>
+          <span className="text-slate-600 mb-[1px] text-xs md:text-sm">
+            Даты вылета
+          </span>
+          <p className="text-black text-base md:text-lg font-medium">
+            {formatDisplayDate(range.start)} - {formatDisplayDate(range.end)}
+          </p>
         </div>
-      </div>
+      </Button>
 
       <Modal
         isOpen={isOpen}

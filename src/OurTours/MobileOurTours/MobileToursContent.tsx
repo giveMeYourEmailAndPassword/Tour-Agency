@@ -74,7 +74,7 @@ export default function MobileToursContent({
   };
 
   return (
-    <div className="mt-2 space-y-2">
+    <div className="mt-2 space-y-1">
       {displayedTours.map((tour, index) => (
         <div
           key={index}
@@ -132,7 +132,7 @@ export default function MobileToursContent({
                 )}
               </button>
 
-              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-white">
+              <div className="flex items-center justify-center border-2 w-8 h-8 rounded-full bg-white">
                 <IoIosArrowForward className="text-slate-500 text-lg" />
               </div>
             </div>

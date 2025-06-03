@@ -192,7 +192,7 @@ export default function HotTours() {
                     <GoStarFill key={i} className="text-white" />
                   ))}
                 </div>
-                <span className="text-white text-sm font-medium h-5">
+                <span className="text-white text-sm font-bold h-5">
                   {tour.hotelrating === "0" ? "" : tour.hotelrating + " / 5"}
                 </span>
               </div>

@@ -127,7 +127,7 @@ function FavoriteTourCard({ tour }: { tour: FavoriteTourData }) {
               <GoStarFill key={i} className="text-white" />
             ))}
           </div>
-          <span className="text-white text-sm font-medium">
+          <span className="text-white text-sm font-bold">
             {hotelData.rating === "0" ? "" : `${hotelData.rating} / 5`}
           </span>
         </div>

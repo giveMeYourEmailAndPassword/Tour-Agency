@@ -205,7 +205,7 @@ export default function MobileOurTours() {
             <button
               onClick={() => fetchNextPage()}
               disabled={isFetchingNextPage}
-              className="w-full py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors disabled:bg-gray-400 mt-4"
+              className="w-full py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors disabled:bg-gray-400 mt-2"
             >
               {isFetchingNextPage ? "Загрузка..." : "Показать еще туры"}
             </button>

@@ -27,14 +27,14 @@ export default function App() {
       <Header />
 
       {/* Секция с синим фоном */}
-      <div className="w-full bg-blue-500">
+      <div className="w-full bg-blue-500 mt-1 md:mt-0">
         {/* Навигация - выносим за пределы max-w контейнера */}
         <div className="w-full border-b border-blue-400">
           <div className="max-w-[1560px] mx-auto">
             <div className="flex justify-end gap-1 md:gap-4 pr-4 md:pr-8 lg:pr-12 xl:pr-36 items-center">
               <TbPointFilled className="text-sm text-blue-400" />
               <div
-                className="flex items-center border-b-2 border-blue-500 hover:border-white duration-300
+                className="flex items-center justify-center border-b-2 border-blue-500 hover:border-white duration-300
                md:py-4 py-3 hover:cursor-pointer"
               >
                 <a
@@ -62,7 +62,7 @@ export default function App() {
             </div>
 
             <div className="md:hidden px-4 md:px-8 lg:px-12 xl:pl-36 mt-6 md:mt-12 mb-2 flex-col md:gap-4 gap-1">
-              <h2 className="text-2xl font-medium text-white">
+              <h2 className="text-3xl font-bold text-white">
                 Открывайте мир вместе <br /> с нами
               </h2>
             </div>

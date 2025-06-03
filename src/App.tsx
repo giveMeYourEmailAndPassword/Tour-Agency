@@ -62,7 +62,7 @@ export default function App() {
             </div>
 
             <div className="md:hidden px-4 md:px-8 lg:px-12 xl:pl-36 mt-6 md:mt-12 mb-2 flex-col md:gap-4 gap-1">
-              <h2 className="text-3xl font-bold text-white">
+              <h2 className="text-2xl font-bold text-white">
                 Открывайте мир вместе <br /> с нами
               </h2>
             </div>

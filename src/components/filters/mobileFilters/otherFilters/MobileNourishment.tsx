@@ -11,13 +11,7 @@ import { RxCross2 } from "react-icons/rx";
 import { DataContext } from "../../../DataProvider";
 import { IoIosArrowDown } from "react-icons/io";
 
-interface MobileNourishmentProps {
-  onFilterChange?: (isActive: boolean) => void;
-}
-
-export default function MobileNourishment({
-  onFilterChange,
-}: MobileNourishmentProps) {
+export default function MobileNourishment() {
   const { setData, params } = useContext(DataContext);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -31,34 +25,25 @@ export default function MobileNourishment({
     { value: "9", label: "Ультра все включено", span: "UAL" },
   ];
 
-  const [selectedValue, setSelectedValue] = useState(params.param7?.[0] || "2");
+  const selectedValue = params.param7?.[0] || "2";
 
   const handleChange = (value: string) => {
-    setSelectedValue(value);
     setData("param7", [value]);
-    if (onFilterChange) {
-      onFilterChange(value !== "2"); // "2" - это "Любое"
-    }
-  };
-
-  const getLabelByValue = (value: string) => {
-    const checkbox = checkboxes.find((c) => c.value === value);
-    return checkbox ? checkbox.label : "";
   };
 
   const getDisplayText = () => {
     const selectedCheckbox = checkboxes.find((c) => c.value === selectedValue);
 
     if (selectedCheckbox?.value === "2") {
-      return <p className="text-black text-base font-normal">Питание</p>;
+      return <span className="text-black text-base font-normal">Питание</span>;
     } else {
       return (
         <div className="flex flex-col items-start">
           <span className="text-slate-600 mb-[1px] text-xs">Питание</span>
-          <p className="text-black text-base">
+          <span className="text-black text-base">
             <span className="font-medium">{selectedCheckbox?.span}</span> и
             лучше
-          </p>
+          </span>
         </div>
       );
     }
@@ -66,7 +51,6 @@ export default function MobileNourishment({
 
   const handleConfirm = () => {
     setIsOpen(false);
-    setData("param7", [selectedValue]);
   };
 
   return (

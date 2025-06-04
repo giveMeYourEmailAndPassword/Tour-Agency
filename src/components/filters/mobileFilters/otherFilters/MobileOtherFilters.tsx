@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect } from "react";
+import { useState, useContext, useMemo } from "react";
 import {
   Modal,
   ModalContent,
@@ -17,17 +17,9 @@ import { DataContext } from "../../../DataProvider";
 export default function MobileOtherFilters() {
   const { params } = useContext(DataContext);
   const [isOpen, setIsOpen] = useState(false);
-  const [activeFilters, setActiveFilters] = useState({
-    stars: false,
-    hotelType: false,
-    nourishment: false,
-    rating: false,
-    hotelService: false,
-  });
 
-  // Эффект для синхронизации состояния активных фильтров с контекстом
-  useEffect(() => {
-    setActiveFilters({
+  const activeFilters = useMemo(
+    () => ({
       stars: params.param9 && params.param9 !== 1,
       hotelType:
         params.param6 &&
@@ -36,46 +28,12 @@ export default function MobileOtherFilters() {
       nourishment: params.param7 && params.param7.length > 0,
       rating: params.param8 && params.param8 !== "0",
       hotelService: params.param10 && params.param10.length > 0,
-    });
-  }, [params]);
+    }),
+    [params]
+  );
 
   const totalActiveFilters =
     Object.values(activeFilters).filter(Boolean).length;
-
-  const handleStarsFilterChange = (isActive: boolean) => {
-    setActiveFilters((prev) => ({
-      ...prev,
-      stars: isActive,
-    }));
-  };
-
-  const handleHotelTypeChange = (isActive: boolean) => {
-    setActiveFilters((prev) => ({
-      ...prev,
-      hotelType: isActive,
-    }));
-  };
-
-  const handleNourishmentChange = (isActive: boolean) => {
-    setActiveFilters((prev) => ({
-      ...prev,
-      nourishment: isActive,
-    }));
-  };
-
-  const handleRatingChange = (isActive: boolean) => {
-    setActiveFilters((prev) => ({
-      ...prev,
-      rating: isActive,
-    }));
-  };
-
-  const handleHotelServiceChange = (isActive: boolean) => {
-    setActiveFilters((prev) => ({
-      ...prev,
-      hotelService: isActive,
-    }));
-  };
 
   const handleConfirm = () => {
     setIsOpen(false);
@@ -139,23 +97,23 @@ export default function MobileOtherFilters() {
           <ModalBody className="px-3 py-2 flex-1">
             <div className="flex flex-col items-start h-full w-full">
               <div className="border-b border-slate-200 w-full">
-                <MobileStarsFilter onFilterChange={handleStarsFilterChange} />
+                <MobileStarsFilter initialRating={1} />
               </div>
 
               <div className="border-b border-slate-200 w-full">
-                <MobileHotelType onFilterChange={handleHotelTypeChange} />
+                <MobileHotelType />
               </div>
 
               <div className="border-b border-slate-200 w-full">
-                <MobileNourishment onFilterChange={handleNourishmentChange} />
+                <MobileNourishment />
               </div>
 
               <div className="border-b border-slate-200 w-full">
-                <MobileRaiting onFilterChange={handleRatingChange} />
+                <MobileRaiting />
               </div>
 
               <div className="border-b border-slate-200 w-full">
-                <MobileHotelService onFilterChange={handleHotelServiceChange} />
+                <MobileHotelService />
               </div>
             </div>
           </ModalBody>

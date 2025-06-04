@@ -11,13 +11,7 @@ import { RxCross2 } from "react-icons/rx";
 import { DataContext } from "../../../DataProvider";
 import { IoIosArrowDown } from "react-icons/io";
 
-interface MobileHotelTypeProps {
-  onFilterChange?: (isActive: boolean) => void;
-}
-
-export default function MobileHotelType({
-  onFilterChange,
-}: MobileHotelTypeProps) {
+export default function MobileHotelType() {
   const { setData, params } = useContext(DataContext);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -30,10 +24,7 @@ export default function MobileHotelType({
     { value: "villa", label: "Вилла" },
   ];
 
-  // Используем значение из контекста, если оно есть, иначе ["any"]
-  const [selectedValues, setSelectedValues] = useState<string[]>(
-    params.param6 || ["any"]
-  );
+  const selectedValues = params.param6 || ["any"];
 
   const handleChange = (isSelected: boolean, value: string) => {
     let newSelectedValues = [...selectedValues];
@@ -63,12 +54,7 @@ export default function MobileHotelType({
       }
     }
 
-    setSelectedValues(newSelectedValues);
     setData("param6", newSelectedValues);
-
-    if (onFilterChange) {
-      onFilterChange(!newSelectedValues.includes("any"));
-    }
   };
 
   const getLabelByValue = (value: string) => {
@@ -78,23 +64,25 @@ export default function MobileHotelType({
 
   const getDisplayText = () => {
     if (selectedValues.includes("any") || selectedValues.length === 0) {
-      return <p className="text-black text-base font-normal">Тип отеля</p>;
+      return (
+        <span className="text-black text-base font-normal">Тип отеля</span>
+      );
     } else if (selectedValues.length === 1) {
       return (
         <div className="flex flex-col items-start">
           <span className="text-slate-600 mb-[1px] text-xs">Тип отеля</span>
-          <p className="text-black text-base">
+          <span className="text-black text-base">
             {getLabelByValue(selectedValues[0])}
-          </p>
+          </span>
         </div>
       );
     } else {
       return (
         <div className="flex flex-col items-start">
           <span className="text-slate-600 mb-[1px] text-xs">Тип отеля</span>
-          <p className="text-black text-base">
+          <span className="text-black text-base">
             {`Выбрано (${selectedValues.length})`}
-          </p>
+          </span>
         </div>
       );
     }
@@ -102,7 +90,6 @@ export default function MobileHotelType({
 
   const handleConfirm = () => {
     setIsOpen(false);
-    setData("param6", selectedValues);
   };
 
   return (
@@ -114,7 +101,7 @@ export default function MobileHotelType({
          !z-0 !scale-100 !opacity-100 py-1 flex items-center justify-between"
       >
         <div className="flex flex-col items-start justify-between w-full px-2">
-          <p className="text-black text-base">{getDisplayText()}</p>
+          {getDisplayText()}
         </div>
         <IoIosArrowDown className="text-xl -rotate-90" />
       </Button>

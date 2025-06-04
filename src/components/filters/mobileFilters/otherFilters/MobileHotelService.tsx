@@ -1,4 +1,4 @@
-import { useContext, useState, useEffect, useCallback } from "react";
+import { useContext, useState } from "react";
 import {
   Modal,
   ModalContent,
@@ -12,37 +12,14 @@ import { DataContext } from "../../../DataProvider";
 import { FaSearch } from "react-icons/fa";
 import service from "../../../data/HotelServiceData";
 import { IoIosArrowDown } from "react-icons/io";
-import { GoStarFill } from "react-icons/go";
 
-interface MobileHotelServiceProps {
-  onFilterChange?: (isActive: boolean) => void;
-}
-
-export default function MobileHotelService({
-  onFilterChange,
-}: MobileHotelServiceProps) {
+export default function MobileHotelService() {
   const { setData, params } = useContext(DataContext);
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedValues, setSelectedValues] = useState<string[]>(
-    params.param10 || []
-  );
   const [activeTab, setActiveTab] = useState<"all" | "selected">("all");
   const [searchQuery, setSearchQuery] = useState("");
-  const [hoverRating, setHoverRating] = useState(0);
-  const rating = params?.param9 || 1;
 
-  // Мемоизируем функцию проверки активности фильтра
-  const checkFilterActive = useCallback(() => {
-    return rating !== 1;
-  }, [rating]);
-
-  // Вызываем onFilterChange только при монтировании и изменении rating
-  useEffect(() => {
-    if (onFilterChange) {
-      const isActive = checkFilterActive();
-      onFilterChange(isActive);
-    }
-  }, [checkFilterActive, onFilterChange]);
+  const selectedValues = params.param10 || [];
 
   // Группировка сервисов
   const groupedServices = service.reduce((acc, item) => {
@@ -67,19 +44,10 @@ export default function MobileHotelService({
   };
 
   const handleChange = (value: string) => {
-    setSelectedValues((prev) => {
-      const newValues = prev.includes(value)
-        ? prev.filter((v) => v !== value)
-        : [...prev, value];
-
-      // Сразу сохраняем в контекст
-      setData("param10", newValues);
-
-      if (onFilterChange) {
-        onFilterChange(newValues.length > 0);
-      }
-      return newValues;
-    });
+    const newValues = selectedValues.includes(value)
+      ? selectedValues.filter((v) => v !== value)
+      : [...selectedValues, value];
+    setData("param10", newValues);
   };
 
   const handleConfirm = () => {
@@ -88,32 +56,30 @@ export default function MobileHotelService({
   };
 
   const handleReset = () => {
-    setSelectedValues([]);
     setData("param10", []);
     setSearchQuery("");
-    if (onFilterChange) {
-      onFilterChange(false);
-    }
   };
 
   const getDisplayText = () => {
     if (selectedValues.length === 0) {
-      return <p className="text-black text-base font-normal">Услуги отеля</p>;
+      return (
+        <span className="text-black text-base font-normal">Услуги отеля</span>
+      );
     } else if (selectedValues.length === 1) {
       const serviceName = getServiceNameById(selectedValues[0]);
       return (
         <div className="flex flex-col items-start">
           <span className="text-slate-600 mb-[1px] text-xs">Услуги отеля</span>
-          <p className="text-black text-base">{serviceName}</p>
+          <span className="text-black text-base">{serviceName}</span>
         </div>
       );
     } else {
       return (
         <div className="flex flex-col items-start">
           <span className="text-slate-600 mb-[1px] text-xs">Услуги отеля</span>
-          <p className="text-black text-base">
+          <span className="text-black text-base">
             Выбрано ({selectedValues.length})
-          </p>
+          </span>
         </div>
       );
     }
@@ -131,21 +97,6 @@ export default function MobileHotelService({
     }))
     .filter(({ options }) => options.length > 0);
 
-  const handleClick = (newRating: number) => {
-    if (onFilterChange) {
-      onFilterChange(newRating !== 1);
-    }
-    setData("param9", newRating);
-  };
-
-  const handleMouseEnter = (newHoverRating: number) => {
-    setHoverRating(newHoverRating);
-  };
-
-  const handleMouseLeave = () => {
-    setHoverRating(0);
-  };
-
   return (
     <>
       <Button
@@ -157,7 +108,6 @@ export default function MobileHotelService({
         <div className="flex flex-col items-start justify-between w-full px-2">
           {getDisplayText()}
         </div>
-
         <IoIosArrowDown className="text-xl -rotate-90" />
       </Button>
 

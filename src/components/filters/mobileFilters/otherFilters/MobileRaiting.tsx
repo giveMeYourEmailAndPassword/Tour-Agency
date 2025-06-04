@@ -11,11 +11,7 @@ import { RxCross2 } from "react-icons/rx";
 import { DataContext } from "../../../DataProvider";
 import { IoIosArrowDown } from "react-icons/io";
 
-interface MobileRaitingProps {
-  onFilterChange?: (isActive: boolean) => void;
-}
-
-export default function MobileRaiting({ onFilterChange }: MobileRaitingProps) {
+export default function MobileRaiting() {
   const { setData, params } = useContext(DataContext);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -27,34 +23,25 @@ export default function MobileRaiting({ onFilterChange }: MobileRaitingProps) {
     { value: "5", label: "и более", span: "4,5" },
   ];
 
-  const [selectedValue, setSelectedValue] = useState(params.param8?.[0] || "0");
+  const selectedValue = params.param8?.[0] || "0";
 
   const handleChange = (value: string) => {
-    setSelectedValue(value);
     setData("param8", [value]);
-    if (onFilterChange) {
-      onFilterChange(value !== "0"); // "0" - это "Любой"
-    }
-  };
-
-  const getLabelByValue = (value: string) => {
-    const checkbox = checkboxes.find((c) => c.value === value);
-    return checkbox ? checkbox.label : "";
   };
 
   const getDisplayText = () => {
     const selectedCheckbox = checkboxes.find((c) => c.value === selectedValue);
 
     if (selectedCheckbox?.value === "0") {
-      return <p className="text-black text-base font-normal">Рейтинг</p>;
+      return <span className="text-black text-base font-normal">Рейтинг</span>;
     } else {
       return (
         <div className="flex flex-col items-start">
           <span className="text-slate-600 mb-[1px] text-xs">Рейтинг</span>
-          <p className="text-black text-base">
+          <span className="text-black text-base">
             <span className="font-medium">{selectedCheckbox?.span}</span> и
             более
-          </p>
+          </span>
         </div>
       );
     }
@@ -62,7 +49,6 @@ export default function MobileRaiting({ onFilterChange }: MobileRaitingProps) {
 
   const handleConfirm = () => {
     setIsOpen(false);
-    setData("param8", [selectedValue]);
   };
 
   return (

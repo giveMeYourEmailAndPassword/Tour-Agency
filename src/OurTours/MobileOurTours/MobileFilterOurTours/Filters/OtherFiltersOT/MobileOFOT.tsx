@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect } from "react";
+import { useState, useContext, useMemo } from "react";
 import {
   Modal,
   ModalContent,
@@ -11,21 +11,15 @@ import MobileSFOT from "./MobileSFOT";
 import { DataContext } from "../../../../../components/DataProvider";
 import MobileHotelTypeOT from "./MobileHTOT";
 import MobileHotelServiceOT from "./MobileHSOT";
+import MobileNourishmentOT from "./MobileNOT";
+import MobileRaitingOT from "./MobileROT";
 
 export default function MobileOtherFiltersOT() {
   const { params } = useContext(DataContext);
   const [isOpen, setIsOpen] = useState(false);
-  const [activeFilters, setActiveFilters] = useState({
-    stars: false,
-    hotelType: false,
-    nourishment: false,
-    rating: false,
-    hotelService: false,
-  });
 
-  // Эффект для синхронизации состояния активных фильтров с контекстом
-  useEffect(() => {
-    setActiveFilters({
+  const activeFilters = useMemo(
+    () => ({
       stars: params?.param9 && params.param9 !== 1,
       hotelType:
         params?.param6 &&
@@ -34,46 +28,12 @@ export default function MobileOtherFiltersOT() {
       nourishment: params?.param7 && params.param7.length > 0,
       rating: params?.param8 && params.param8 !== "0",
       hotelService: params?.param10 && params.param10.length > 0,
-    });
-  }, [params]);
+    }),
+    [params]
+  );
 
   const totalActiveFilters =
     Object.values(activeFilters).filter(Boolean).length;
-
-  const handleStarsFilterChange = (isActive: boolean) => {
-    setActiveFilters((prev) => ({
-      ...prev,
-      stars: isActive,
-    }));
-  };
-
-  const handleHotelTypeChange = (isActive: boolean) => {
-    setActiveFilters((prev) => ({
-      ...prev,
-      hotelType: isActive,
-    }));
-  };
-
-  const handleNourishmentChange = (isActive: boolean) => {
-    setActiveFilters((prev) => ({
-      ...prev,
-      nourishment: isActive,
-    }));
-  };
-
-  const handleRatingChange = (isActive: boolean) => {
-    setActiveFilters((prev) => ({
-      ...prev,
-      rating: isActive,
-    }));
-  };
-
-  const handleHotelServiceChange = (isActive: boolean) => {
-    setActiveFilters((prev) => ({
-      ...prev,
-      hotelService: isActive,
-    }));
-  };
 
   const handleConfirm = () => {
     setIsOpen(false);
@@ -92,9 +52,9 @@ export default function MobileOtherFiltersOT() {
             Дополнительно
           </span>
           <div className="flex items-center justify-between w-full">
-            <p className="text-black text-base md:text-lg font-medium">
+            <span className="text-black text-base md:text-lg font-medium">
               Фильтры
-            </p>
+            </span>
             {totalActiveFilters > 0 && (
               <div className="text-white text-sm font-medium mr-2 bg-orange-500 rounded-full h-5 w-5 flex items-center justify-center">
                 {totalActiveFilters}
@@ -138,29 +98,23 @@ export default function MobileOtherFiltersOT() {
           <ModalBody className="px-3 py-2 flex-1">
             <div className="flex flex-col items-start h-full w-full">
               <div className="border-b border-slate-200 w-full">
-                <MobileSFOT
-                  initialRating={1}
-                  onFilterChange={handleStarsFilterChange}
-                />
+                <MobileSFOT initialRating={1} />
               </div>
 
-              {/* Здесь будут добавлены остальные фильтры по мере их создания */}
               <div className="border-b border-slate-200 w-full">
-                <MobileHotelTypeOT onFilterChange={handleHotelTypeChange} />
+                <MobileHotelTypeOT />
               </div>
 
-              {/* <div className="border-b border-slate-200 w-full">
-                        <MobileNourishmentOT onFilterChange={handleNourishmentChange} />
-                    </div> */}
-              {/* 
               <div className="border-b border-slate-200 w-full">
-                <MobileRaitingOT onFilterChange={handleRatingChange} />
-              </div> */}
+                <MobileNourishmentOT />
+              </div>
 
               <div className="border-b border-slate-200 w-full">
-                <MobileHotelServiceOT
-                  onFilterChange={handleHotelServiceChange}
-                />
+                <MobileRaitingOT />
+              </div>
+
+              <div className="border-b border-slate-200 w-full">
+                <MobileHotelServiceOT />
               </div>
             </div>
           </ModalBody>

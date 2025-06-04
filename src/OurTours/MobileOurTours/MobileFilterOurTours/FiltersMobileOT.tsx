@@ -1,3 +1,4 @@
+import MobileFindBtnOT from "./Filters/MobileFindBtnOT";
 import MobileNewDepartureCityOT from "./Filters/MobileNDCOT";
 import MobileNewFlyingCountryOT from "./Filters/MobileNFCOT";
 import MobileNewFlyingDateOT from "./Filters/MobileNFDOT";
@@ -5,7 +6,11 @@ import MobileNightsFromOT from "./Filters/MobileNFOT";
 import MobileTouristOT from "./Filters/MobileTOT";
 import MobileOtherFiltersOT from "./Filters/OtherFiltersOT/MobileOFOT";
 
-export default function FiltersMobileOT() {
+interface FiltersMobileOTProps {
+  onClose: () => void;
+}
+
+export default function FiltersMobileOT({ onClose }: FiltersMobileOTProps) {
   return (
     <div className="flex flex-col items-center w-full pb-4">
       <div className="w-full flex items-center justify-between">
@@ -31,7 +36,9 @@ export default function FiltersMobileOT() {
             <MobileOtherFiltersOT />
           </div>
         </div>
-        <div className="w-full"></div>
+        <div className="w-full">
+          <MobileFindBtnOT onClose={onClose} />
+        </div>
       </div>
     </div>
   );

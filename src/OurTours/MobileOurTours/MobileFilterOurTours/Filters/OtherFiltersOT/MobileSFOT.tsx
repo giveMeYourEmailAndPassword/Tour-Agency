@@ -1,34 +1,19 @@
-import { useState, useContext, useEffect } from "react";
+import { useState, useContext } from "react";
 import { GoStarFill } from "react-icons/go";
 import { DataContext } from "../../../../../components/DataProvider";
 
 interface MobileStarsFilterOTProps {
   initialRating?: number;
-  onRatingChange?: (rating: number) => void;
-  onFilterChange?: (isActive: boolean) => void;
 }
 
 export default function MobileSFOT({
   initialRating = 1,
-  onRatingChange,
-  onFilterChange,
 }: MobileStarsFilterOTProps) {
   const { setData, params } = useContext(DataContext);
   const [hoverRating, setHoverRating] = useState(0);
   const rating = params?.param9 || initialRating;
 
-  useEffect(() => {
-    if (onFilterChange && rating !== initialRating) {
-      onFilterChange(true);
-    } else if (onFilterChange) {
-      onFilterChange(false);
-    }
-  }, [rating, initialRating, onFilterChange]);
-
   const handleClick = (newRating: number) => {
-    if (onRatingChange) {
-      onRatingChange(newRating);
-    }
     setData("param9", newRating);
   };
 

@@ -1,21 +1,16 @@
 import { useState } from "react";
-import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  Button,
-} from "@heroui/react";
+import { Modal, ModalContent, ModalHeader, ModalBody } from "@heroui/react";
 import { RxCross2 } from "react-icons/rx";
 import { useContext } from "react";
 import { DataContext } from "../../../components/DataProvider";
 import { parse, format } from "date-fns";
 import { ru } from "date-fns/locale";
 import FiltersMobileOT from "./FiltersMobileOT";
+import { FaSearch } from "react-icons/fa";
 
 export default function MobileFilterOurTours() {
   const [isOpen, setIsOpen] = useState(false);
-  const { params, countries } = useContext(DataContext);
+  const { params, countries, searchTours, loading } = useContext(DataContext);
 
   const selectedCountry = countries.find(
     (country) => country.id === params.param2
@@ -31,6 +26,11 @@ export default function MobileFilterOurTours() {
       console.error("Error parsing date:", error);
       return dateString;
     }
+  };
+
+  const handleSearchClick = async () => {
+    await searchTours();
+    setIsOpen(false);
   };
 
   return (
@@ -91,17 +91,24 @@ export default function MobileFilterOurTours() {
 
           <ModalBody className="px-3 py-2 flex-1">
             <div className="flex flex-col items-start h-full w-full">
-              <FiltersMobileOT />
+              <FiltersMobileOT onClose={() => setIsOpen(false)} />
             </div>
           </ModalBody>
 
           <div className="p-4 mt-auto">
-            <Button
-              className="w-full text-base rounded-full bg-blue-500 text-white hover:bg-blue-700"
-              onPress={() => setIsOpen(false)}
+            <div
+              className={`rounded-lg flex items-center h-12 w-full justify-center
+                ${
+                  loading ? "bg-gray-400" : "bg-orange-500 hover:bg-orange-600"
+                } 
+                duration-500 cursor-pointer`}
+              onClick={handleSearchClick}
             >
-              Применить
-            </Button>
+              <FaSearch className="text-white mr-2 text-lg" />
+              <p className="text-white font-medium text-lg">
+                {loading ? "Поиск..." : "Найти тур"}
+              </p>
+            </div>
           </div>
         </ModalContent>
       </Modal>

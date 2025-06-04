@@ -11,16 +11,11 @@ import { RxCross2 } from "react-icons/rx";
 import { DataContext } from "../../../../../components/DataProvider";
 import { IoIosArrowDown } from "react-icons/io";
 
-interface MobileHotelTypeOTProps {
-  onFilterChange?: (isActive: boolean) => void;
-}
-
-export default function MobileHotelTypeOT({
-  onFilterChange,
-}: MobileHotelTypeOTProps) {
+export default function MobileHotelTypeOT() {
   const { setData, params } = useContext(DataContext);
   const [isOpen, setIsOpen] = useState(false);
 
+  // Определяем список чекбоксов
   const checkboxes = [
     { value: "any", label: "Любой" },
     { value: "hotel", label: "Отель" },
@@ -29,7 +24,7 @@ export default function MobileHotelTypeOT({
     { value: "villa", label: "Вилла" },
   ];
 
-  const selectedValues = params?.param6 || ["any"];
+  const selectedValues = params.param6 || ["any"];
 
   const handleChange = (isSelected: boolean, value: string) => {
     let newSelectedValues = [...selectedValues];
@@ -60,10 +55,6 @@ export default function MobileHotelTypeOT({
     }
 
     setData("param6", newSelectedValues);
-
-    if (onFilterChange) {
-      onFilterChange(!newSelectedValues.includes("any"));
-    }
   };
 
   const getLabelByValue = (value: string) => {
@@ -73,23 +64,25 @@ export default function MobileHotelTypeOT({
 
   const getDisplayText = () => {
     if (selectedValues.includes("any") || selectedValues.length === 0) {
-      return <p className="text-black text-base font-normal">Тип отеля</p>;
+      return (
+        <span className="text-black text-base font-normal">Тип отеля</span>
+      );
     } else if (selectedValues.length === 1) {
       return (
         <div className="flex flex-col items-start">
           <span className="text-slate-600 mb-[1px] text-xs">Тип отеля</span>
-          <p className="text-black text-base">
+          <span className="text-black text-base">
             {getLabelByValue(selectedValues[0])}
-          </p>
+          </span>
         </div>
       );
     } else {
       return (
         <div className="flex flex-col items-start">
           <span className="text-slate-600 mb-[1px] text-xs">Тип отеля</span>
-          <p className="text-black text-base">
+          <span className="text-black text-base">
             {`Выбрано (${selectedValues.length})`}
-          </p>
+          </span>
         </div>
       );
     }

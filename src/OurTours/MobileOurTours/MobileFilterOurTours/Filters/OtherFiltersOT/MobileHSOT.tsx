@@ -13,22 +13,24 @@ import { FaSearch } from "react-icons/fa";
 import service from "../../../../../components/data/HotelServiceData";
 import { IoIosArrowDown } from "react-icons/io";
 
-interface MobileHotelServiceOTProps {
-  onFilterChange?: (isActive: boolean) => void;
+interface GroupedServices {
+  [key: string]: Array<{
+    id: string;
+    name: string;
+    group: string;
+  }>;
 }
 
-export default function MobileHotelServiceOT({
-  onFilterChange,
-}: MobileHotelServiceOTProps) {
+export default function MobileHotelServiceOT() {
   const { setData, params } = useContext(DataContext);
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"all" | "selected">("all");
   const [searchQuery, setSearchQuery] = useState("");
 
-  const selectedValues = params?.param10 || [];
+  const selectedValues = params.param10 || [];
 
   // Группировка сервисов
-  const groupedServices = service.reduce((acc, item) => {
+  const groupedServices = service.reduce<GroupedServices>((acc, item) => {
     if (!acc[item.group]) {
       acc[item.group] = [];
     }
@@ -51,14 +53,9 @@ export default function MobileHotelServiceOT({
 
   const handleChange = (value: string) => {
     const newValues = selectedValues.includes(value)
-      ? selectedValues.filter((v) => v !== value)
+      ? selectedValues.filter((v: string) => v !== value)
       : [...selectedValues, value];
-
     setData("param10", newValues);
-
-    if (onFilterChange) {
-      onFilterChange(newValues.length > 0);
-    }
   };
 
   const handleConfirm = () => {
@@ -69,29 +66,28 @@ export default function MobileHotelServiceOT({
   const handleReset = () => {
     setData("param10", []);
     setSearchQuery("");
-    if (onFilterChange) {
-      onFilterChange(false);
-    }
   };
 
   const getDisplayText = () => {
     if (selectedValues.length === 0) {
-      return <p className="text-black text-base font-normal">Услуги отеля</p>;
+      return (
+        <span className="text-black text-base font-normal">Услуги отеля</span>
+      );
     } else if (selectedValues.length === 1) {
       const serviceName = getServiceNameById(selectedValues[0]);
       return (
         <div className="flex flex-col items-start">
           <span className="text-slate-600 mb-[1px] text-xs">Услуги отеля</span>
-          <p className="text-black text-base">{serviceName}</p>
+          <span className="text-black text-base">{serviceName}</span>
         </div>
       );
     } else {
       return (
         <div className="flex flex-col items-start">
           <span className="text-slate-600 mb-[1px] text-xs">Услуги отеля</span>
-          <p className="text-black text-base">
+          <span className="text-black text-base">
             Выбрано ({selectedValues.length})
-          </p>
+          </span>
         </div>
       );
     }
@@ -194,9 +190,9 @@ export default function MobileHotelServiceOT({
                   >
                     ВЫБРАНО
                     <div className="bg-slate-600 rounded-full h-4 px-2 inline-flex items-center ml-1">
-                      <p className="text-xs text-white">
+                      <span className="text-xs text-white">
                         {selectedValues.length}
-                      </p>
+                      </span>
                     </div>
                   </button>
                   <button

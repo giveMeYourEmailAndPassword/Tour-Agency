@@ -63,6 +63,9 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     Array<{ id: string; label: string }>
   >([]);
 
+  // Добавляем новое состояние для countryRequests
+  const [countryRequests, setCountryRequests] = useState<CountryRequests>({});
+
   // Добавьте новые состояния для избранного
   const [favoriteTours, setFavoriteTours] = useState<FavoriteTourData[]>([]);
   const [isFavorite, setIsFavorite] = useState(false);
@@ -256,6 +259,11 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
       return;
     }
 
+    // Проверяем, есть ли уже активный поиск для текущих параметров
+    if (loading) {
+      return;
+    }
+
     setLoading(true);
     setError(null);
     setTours([]);
@@ -279,6 +287,15 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         services: params.param10?.join(",") ?? "",
       };
 
+      // Создаем ключ для кэширования запроса
+      const cacheKey = JSON.stringify(requestData);
+
+      // Проверяем, есть ли уже запрос с такими параметрами
+      const existingRequests = countryRequests[params.param2];
+      if (existingRequests?.requestId) {
+        return;
+      }
+
       const requestResponse = await fetch(`${API_BASE_URL}/search`, {
         method: "POST",
         headers: {
@@ -286,33 +303,57 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         },
         body: JSON.stringify(requestData),
       });
+
       const responseData = await requestResponse.json();
 
-      if (responseData.result?.requestid) {
-        setRequestId(responseData.result.requestid);
-        startPolling(responseData.result.requestid);
+      // Обрабатываем ответ с requestId для каждой страны
+      if (responseData) {
+        const countryRequestsData = Object.entries(responseData).reduce(
+          (acc, [country, data]: [string, any]) => ({
+            ...acc,
+            [country]: { requestId: data.requestId },
+          }),
+          {}
+        );
+
+        setCountryRequests(countryRequestsData);
+
+        // Запускаем поллинг для каждой страны только один раз
+        Object.entries(countryRequestsData).forEach(
+          ([country, { requestId }]) => {
+            if (requestId) {
+              startPolling(requestId, country);
+            }
+          }
+        );
       }
     } catch (error) {
       console.error("Ошибка:", error);
       setError("Ошибка при загрузке данных");
+    } finally {
       setLoading(false);
     }
-  }, [params]);
+  }, [params, areParamsReady]); // Убираем лишние зависимости
 
   // Модифицируем fetchToursPage
   const fetchToursPage = async ({ pageParam = 1 }) => {
-    if (!requestId) return null;
+    if (!params.param2) return null;
+
+    const selectedCountry = params.param2;
+    const countryRequestId = countryRequests[selectedCountry]?.requestId;
+
+    if (!countryRequestId) return null;
 
     try {
       const tourResponse = await fetch(
-        `${API_BASE_URL}/results/${requestId}?page=${pageParam}`
+        `${API_BASE_URL}/results/${countryRequestId}?page=${pageParam}`
       );
       const tourData = await tourResponse.json();
 
       if (tourData.data?.result?.hotel) {
         const newTours = [...allTours, ...tourData.data.result.hotel];
         setAllTours(newTours);
-        saveToSession(newTours, requestId, params);
+        saveToSession(newTours, countryRequestId, params);
       }
 
       return tourData.data;
@@ -323,9 +364,16 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const { fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
-    queryKey: ["tours", requestId],
+    queryKey: [
+      "tours",
+      params.param2,
+      countryRequests[params.param2]?.requestId,
+    ],
     queryFn: fetchToursPage,
-    enabled: !!requestId && tourDataStatus?.state === "finished",
+    enabled:
+      !!params.param2 &&
+      !!countryRequests[params.param2]?.requestId &&
+      tourDataStatus?.state === "finished",
     getNextPageParam: (lastPage, allPages) => {
       if (!lastPage?.result?.hotel?.length) return undefined;
       const nextPage = allPages.length + 1;
@@ -349,53 +397,6 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     staleTime: Infinity,
     cacheTime: Infinity,
   });
-
-  // Модифицируем startPolling
-  const startPolling = useCallback(
-    (reqId: string) => {
-      let attempts = 0;
-      const MAX_ATTEMPTS = 20;
-
-      const intervalId = setInterval(async () => {
-        try {
-          attempts++;
-          const tourResponse = await fetch(
-            `${API_BASE_URL}/results/${reqId}?page=1`
-          );
-          const tourData = await tourResponse.json();
-
-          if (tourData.data?.result?.hotel) {
-            setTours(tourData.data.result.hotel);
-            setAllTours(tourData.data.result.hotel);
-            saveToSession(tourData.data.result.hotel, reqId, params);
-
-            // Обновляем кэш React Query
-            queryClient.setQueryData(["tours", reqId], {
-              pages: [{ result: { hotel: tourData.data.result.hotel } }],
-              pageParams: [1],
-            });
-
-            setLoading(false);
-          }
-
-          if (
-            tourData.data?.status?.state === "finished" ||
-            attempts >= MAX_ATTEMPTS
-          ) {
-            setTourDataStatus(tourData.data.status);
-            clearInterval(intervalId);
-            setLoading(false);
-          }
-        } catch (error) {
-          console.error("Ошибка при запросе:", error);
-          setError("Ошибка при получении туров");
-          clearInterval(intervalId);
-          setLoading(false);
-        }
-      }, POLL_INTERVAL);
-    },
-    [params, saveToSession, queryClient]
-  );
 
   // Добавляем функцию для загрузки следующей страницы
   const loadNextPage = useCallback(async () => {
@@ -450,6 +451,74 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
       });
     },
     []
+  );
+
+  // Модифицируем startPolling
+  const startPolling = useCallback(
+    (reqId: string, countryName: string) => {
+      let attempts = 0;
+      const MAX_ATTEMPTS = 20;
+      let isPolling = true; // Флаг для отслеживания активного поллинга
+
+      const intervalId = setInterval(async () => {
+        if (!isPolling) {
+          clearInterval(intervalId);
+          return;
+        }
+
+        try {
+          attempts++;
+          const tourResponse = await fetch(
+            `${API_BASE_URL}/results/${reqId}?page=1`
+          );
+          const tourData = await tourResponse.json();
+
+          if (tourData.data?.result?.hotel) {
+            // Обновляем туры для конкретной страны в кэше
+            queryClient.setQueryData(
+              ["tours", countryName, reqId],
+              (oldData: any) => ({
+                pages: [{ result: { hotel: tourData.data.result.hotel } }],
+                pageParams: [1],
+              })
+            );
+
+            // Если это выбранная страна, обновляем состояние
+            if (countryName === params.param2) {
+              setTours(tourData.data.result.hotel);
+              setAllTours(tourData.data.result.hotel);
+              saveToSession(tourData.data.result.hotel, reqId, params);
+            }
+          }
+
+          if (
+            tourData.data?.status?.state === "finished" ||
+            attempts >= MAX_ATTEMPTS
+          ) {
+            if (countryName === params.param2) {
+              setTourDataStatus(tourData.data.status);
+            }
+            isPolling = false;
+            clearInterval(intervalId);
+            setLoading(false);
+          }
+        } catch (error) {
+          console.error("Ошибка при запросе:", error);
+          isPolling = false;
+          clearInterval(intervalId);
+          if (countryName === params.param2) {
+            setError("Ошибка при получении туров");
+            setLoading(false);
+          }
+        }
+      }, POLL_INTERVAL);
+
+      return () => {
+        isPolling = false;
+        clearInterval(intervalId);
+      };
+    },
+    [params.param2, queryClient, saveToSession]
   );
 
   return (

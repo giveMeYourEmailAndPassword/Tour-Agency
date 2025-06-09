@@ -41,6 +41,7 @@ type DataContextType = {
   addToFavorite: (tour: FavoriteTourData) => void;
   removeFromFavorite: (hotelcode: string, tourId: string) => void;
   isFavorite: boolean;
+  countryResults: any;
 };
 
 const API_BASE_URL =
@@ -66,6 +67,36 @@ const fetchTourData = async (requestId: string, page: number) => {
 
   const data = await response.json();
   return data.data;
+};
+
+// Добавим новый тип для результатов по странам
+type CountryResults = {
+  [country: string]: {
+    data: {
+      result: {
+        hotel: Array<{
+          hotelcode: number;
+          price: number;
+          hotelname: string;
+          hotelstars: number;
+          hotelrating: string;
+          hoteldescription: string;
+          picturelink: string;
+          // ... остальные поля отеля
+        }>;
+      };
+      status: {
+        state: string;
+        progress: number;
+        requestid: number;
+        hotelsfound: number;
+        toursfound: number;
+        minprice: number;
+        maxprice: number;
+        timepassed: number;
+      };
+    };
+  };
 };
 
 export const DataProvider = ({ children }: { children: ReactNode }) => {
@@ -97,6 +128,9 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   const [countryPages, setCountryPages] = useState<{
     [country: string]: number;
   }>({});
+
+  // Добавляем состояние для результатов по странам
+  const [countryResults, setCountryResults] = useState<CountryResults>({});
 
   // Используем useQuery для каждой страны
   const {
@@ -486,12 +520,12 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     []
   );
 
-  // Модифицируем startPolling
+  // Модифицируем функцию startPolling
   const startPolling = useCallback(
     (reqId: string, countryName: string) => {
       let attempts = 0;
       const MAX_ATTEMPTS = 20;
-      let isPolling = true; // Флаг для отслеживания активного поллинга
+      let isPolling = true;
 
       const intervalId = setInterval(async () => {
         if (!isPolling) {
@@ -507,20 +541,16 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
           const tourData = await tourResponse.json();
 
           if (tourData.data?.result?.hotel) {
-            // Обновляем туры для конкретной страны в кэше
-            queryClient.setQueryData(
-              ["tours", countryName, reqId],
-              (oldData: any) => ({
-                pages: [{ result: { hotel: tourData.data.result.hotel } }],
-                pageParams: [1],
-              })
-            );
+            // Обновляем результаты для конкретной страны
+            setCountryResults((prev) => ({
+              ...prev,
+              [countryName]: tourData,
+            }));
 
-            // Если это выбранная страна, обновляем состояние
+            // Если это выбранная страна, обновляем основное состояние
             if (countryName === params.param2) {
               setTours(tourData.data.result.hotel);
-              setAllTours(tourData.data.result.hotel);
-              saveToSession(tourData.data.result.hotel, reqId, params);
+              setTourDataStatus(tourData.data.status);
             }
           }
 
@@ -528,9 +558,6 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
             tourData.data?.status?.state === "finished" ||
             attempts >= MAX_ATTEMPTS
           ) {
-            if (countryName === params.param2) {
-              setTourDataStatus(tourData.data.status);
-            }
             isPolling = false;
             clearInterval(intervalId);
             setLoading(false);
@@ -539,10 +566,8 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
           console.error("Ошибка при запросе:", error);
           isPolling = false;
           clearInterval(intervalId);
-          if (countryName === params.param2) {
-            setError("Ошибка при получении туров");
-            setLoading(false);
-          }
+          setLoading(false);
+          setError("Ошибка при получении туров");
         }
       }, POLL_INTERVAL);
 
@@ -551,7 +576,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         clearInterval(intervalId);
       };
     },
-    [params.param2, queryClient, saveToSession]
+    [params.param2]
   );
 
   return (
@@ -574,6 +599,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         addToFavorite,
         removeFromFavorite,
         isFavorite,
+        countryResults,
       }}
     >
       {children}

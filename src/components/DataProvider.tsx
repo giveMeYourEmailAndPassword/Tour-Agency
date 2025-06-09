@@ -4,8 +4,13 @@ import React, {
   useEffect,
   ReactNode,
   useCallback,
+  useMemo,
 } from "react";
-import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  useInfiniteQuery,
+  useQueryClient,
+  useQuery,
+} from "@tanstack/react-query";
 
 type Params = { [key: string]: any };
 type City = { id: string; label: string };
@@ -45,6 +50,24 @@ export const DataContext = createContext<DataContextType>(
   {} as DataContextType
 );
 
+// Создадим отдельную функцию для запроса данных
+const fetchTourData = async (requestId: string, page: number) => {
+  if (!requestId) {
+    throw new Error("RequestId не предоставлен");
+  }
+
+  const response = await fetch(
+    `${API_BASE_URL}/results/${requestId}?page=${page}`
+  );
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  const data = await response.json();
+  return data.data;
+};
+
 export const DataProvider = ({ children }: { children: ReactNode }) => {
   const queryClient = useQueryClient();
 
@@ -69,6 +92,57 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   // Добавьте новые состояния для избранного
   const [favoriteTours, setFavoriteTours] = useState<FavoriteTourData[]>([]);
   const [isFavorite, setIsFavorite] = useState(false);
+
+  // Добавим состояние для отслеживания текущей страницы для каждой страны
+  const [countryPages, setCountryPages] = useState<{
+    [country: string]: number;
+  }>({});
+
+  // Используем useQuery для каждой страны
+  const {
+    data: tourData,
+    error: tourError,
+    isLoading: isTourLoading,
+    isError: isTourError,
+    refetch: refetchTours,
+  } = useQuery({
+    queryKey: [
+      "tourData",
+      params.param2,
+      countryRequests[params.param2]?.requestId,
+      currentPage,
+    ],
+    queryFn: () =>
+      fetchTourData(countryRequests[params.param2]?.requestId, currentPage),
+    enabled: !!params.param2 && !!countryRequests[params.param2]?.requestId,
+    onSuccess: (data) => {
+      if (data?.result?.hotel) {
+        // Обновляем туры только если есть новые данные
+        setAllTours((prev) => {
+          const newTours = [...prev, ...data.result.hotel];
+          // Сохраняем в сессию
+          saveToSession(
+            newTours,
+            countryRequests[params.param2]?.requestId,
+            params
+          );
+          return newTours;
+        });
+
+        // Обновляем статус для текущей страны
+        if (data.status) {
+          setTourDataStatus(data.status);
+        }
+      }
+    },
+    onError: (error) => {
+      console.error("Ошибка при загрузке туров:", error);
+      setError("Ошибка при загрузке туров");
+    },
+    retry: 2, // Количество повторных попыток при ошибке
+    staleTime: 1000 * 60 * 5, // Данные считаются свежими в течение 5 минут
+    cacheTime: 1000 * 60 * 30, // Кэш хранится 30 минут
+  });
 
   // Функция для преобразования параметров URL в объект params
   const parseUrlParams = useCallback(() => {
@@ -335,75 +409,34 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [params, areParamsReady]); // Убираем лишние зависимости
 
-  // Модифицируем fetchToursPage
-  const fetchToursPage = async ({ pageParam = 1 }) => {
-    if (!params.param2) return null;
-
-    const selectedCountry = params.param2;
-    const countryRequestId = countryRequests[selectedCountry]?.requestId;
-
-    if (!countryRequestId) return null;
-
-    try {
-      const tourResponse = await fetch(
-        `${API_BASE_URL}/results/${countryRequestId}?page=${pageParam}`
-      );
-      const tourData = await tourResponse.json();
-
-      if (tourData.data?.result?.hotel) {
-        const newTours = [...allTours, ...tourData.data.result.hotel];
-        setAllTours(newTours);
-        saveToSession(newTours, countryRequestId, params);
-      }
-
-      return tourData.data;
-    } catch (error) {
-      console.error("Ошибка при загрузке страницы:", error);
-      return null;
-    }
-  };
-
-  const { fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
-    queryKey: [
-      "tours",
-      params.param2,
-      countryRequests[params.param2]?.requestId,
-    ],
-    queryFn: fetchToursPage,
-    enabled:
-      !!params.param2 &&
-      !!countryRequests[params.param2]?.requestId &&
-      tourDataStatus?.state === "finished",
-    getNextPageParam: (lastPage, allPages) => {
-      if (!lastPage?.result?.hotel?.length) return undefined;
-      const nextPage = allPages.length + 1;
-      const totalPages = Math.ceil(tourDataStatus?.toursfound / 10);
-      return nextPage <= totalPages ? nextPage : undefined;
-    },
-    initialData: () => {
-      const savedData = sessionStorage.getItem("searchData");
-      if (savedData) {
-        const { tours } = JSON.parse(savedData);
-        return {
-          pages: [{ result: { hotel: tours } }],
-          pageParams: [1],
-        };
-      }
-      return undefined;
-    },
-    refetchOnWindowFocus: false,
-    refetchOnMount: false,
-    refetchOnReconnect: false,
-    staleTime: Infinity,
-    cacheTime: Infinity,
-  });
-
-  // Добавляем функцию для загрузки следующей страницы
+  // Обновляем функцию loadNextPage
   const loadNextPage = useCallback(async () => {
-    if (isFetchingNextPage) return;
+    if (isTourLoading) return;
+
+    const currentCountry = params.param2;
+    if (!currentCountry) return;
+
     setCurrentPage((prev) => prev + 1);
-    await fetchNextPage();
-  }, [fetchNextPage, isFetchingNextPage]);
+    setCountryPages((prev) => ({
+      ...prev,
+      [currentCountry]: (prev[currentCountry] || 1) + 1,
+    }));
+
+    await refetchTours();
+  }, [isTourLoading, params.param2, refetchTours]);
+
+  // Добавляем эффект для сброса страницы при смене страны
+  useEffect(() => {
+    setCurrentPage(1);
+    setAllTours([]);
+  }, [params.param2]);
+
+  // Обновляем проверку hasNextPage
+  const hasNextPage = useMemo(() => {
+    if (!tourDataStatus?.toursfound) return false;
+    const totalPages = Math.ceil(tourDataStatus.toursfound / 10);
+    return currentPage < totalPages;
+  }, [tourDataStatus, currentPage]);
 
   // Загружаем сохраненные данные при монтировании компонента
   useEffect(() => {
@@ -527,8 +560,8 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         params,
         requestId,
         tours: allTours,
-        loading,
-        error,
+        loading: isTourLoading,
+        error: tourError ? String(tourError) : null,
         tourDataStatus,
         setData,
         cities,
@@ -536,7 +569,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         searchTours,
         fetchNextPage: loadNextPage,
         hasNextPage,
-        isFetchingNextPage,
+        isFetchingNextPage: isTourLoading,
         favoriteTours,
         addToFavorite,
         removeFromFavorite,

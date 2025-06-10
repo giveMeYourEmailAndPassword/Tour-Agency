@@ -42,6 +42,7 @@ type DataContextType = {
   removeFromFavorite: (hotelcode: string, tourId: string) => void;
   isFavorite: boolean;
   countryResults: any;
+  searchMultyTours: () => Promise<void>;
 };
 
 const API_BASE_URL =
@@ -441,7 +442,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     } finally {
       setLoading(false);
     }
-  }, [params, areParamsReady]); // Убираем лишние зависимости
+  }, [params, areParamsReady]);
 
   // Обновляем функцию loadNextPage
   const loadNextPage = useCallback(async () => {
@@ -579,6 +580,87 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     [params.param2]
   );
 
+  const searchMultyTours = useCallback(async () => {
+    if (!areParamsReady(params)) {
+      return;
+    }
+
+    // Проверяем, есть ли уже активный поиск для текущих параметров
+    if (loading) {
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+    setTours([]);
+    setAllTours([]);
+    setCurrentPage(1);
+
+    try {
+      const requestData = {
+        departure: params.param1,
+        country: params.param2,
+        datefrom: params.param4.startDate,
+        dateto: params.param4.endDate,
+        nightsfrom: params.param3?.startDay?.toString() || "",
+        nightsto: params.param3?.endDay?.toString() || "",
+        adults: params.param5?.adults?.toString() || "2",
+        child: (params.param5?.childrenList.length || 0).toString(),
+        hoteltypes: params.param6?.join(",") ?? "any",
+        mealbetter: params.param7?.[0] ?? "2",
+        rating: params.param8?.[0] ?? "0",
+        starsbetter: params.param9?.toString() ?? "1",
+        services: params.param10?.join(",") ?? "",
+      };
+
+      // Создаем ключ для кэширования запроса
+      const cacheKey = JSON.stringify(requestData);
+
+      // Проверяем, есть ли уже запрос с такими параметрами
+      const existingRequests = countryRequests[params.param2];
+      if (existingRequests?.requestId) {
+        return;
+      }
+
+      const requestResponse = await fetch(`${API_BASE_URL}/search`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestData),
+      });
+
+      const responseData = await requestResponse.json();
+
+      // Обрабатываем ответ с requestId для каждой страны
+      if (responseData) {
+        const countryRequestsData = Object.entries(responseData).reduce(
+          (acc, [country, data]: [string, any]) => ({
+            ...acc,
+            [country]: { requestId: data.requestId },
+          }),
+          {}
+        );
+
+        setCountryRequests(countryRequestsData);
+
+        // Запускаем поллинг для каждой страны только один раз
+        Object.entries(countryRequestsData).forEach(
+          ([country, { requestId }]) => {
+            if (requestId) {
+              startPolling(requestId, country);
+            }
+          }
+        );
+      }
+    } catch (error) {
+      console.error("Ошибка:", error);
+      setError("Ошибка при загрузке данных");
+    } finally {
+      setLoading(false);
+    }
+  }, [params, areParamsReady]);
+
   return (
     <DataContext.Provider
       value={{
@@ -600,6 +682,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         removeFromFavorite,
         isFavorite,
         countryResults,
+        searchMultyTours,
       }}
     >
       {children}

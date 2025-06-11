@@ -18,6 +18,7 @@ import {
   getCountryDeclension,
 } from "../OurTours/PronounsOfTheCountry/PronounsOfTheCountry";
 import FloatingControls from "../components/FloatingControls";
+import { DataContextManager } from "./DataProviderManager/DataProviderManager";
 
 export default function OurToursForManager() {
   const {
@@ -33,9 +34,9 @@ export default function OurToursForManager() {
     countryResults,
   } = useContext(DataContext);
 
-  // Добавляем состояние для активной страны
+  // Добавляем состояние для активной страны с значением по умолчанию
   const [activeCountry, setActiveCountry] = useState<string>(
-    params.param2 || ""
+    params?.param2 || ""
   );
 
   // Состояние для табов отелей
@@ -43,12 +44,15 @@ export default function OurToursForManager() {
     [hotelcode: string]: "info" | "reviews" | "map" | "tour" | null;
   }>({});
 
-  // Изменим получение доступных стран
+  // Изменим получение доступных стран с проверкой на существование
   const availableCountries = useMemo(() => {
     if (!countryResults) return [];
 
-    return Object.entries(countryResults)
-      .filter(([_, data]) => data?.data?.result?.hotel?.length > 0)
+    return Object.entries(countryResults || {})
+      .filter(
+        ([_, data]) =>
+          data?.data?.result?.hotel && data.data.result.hotel.length > 0
+      )
       .map(([countryId]) => countryId);
   }, [countryResults]);
 
@@ -58,7 +62,7 @@ export default function OurToursForManager() {
     setActiveTabs({}); // Сбрасываем активные табы при смене страны
   };
 
-  // Получаем выбранный город и страну
+  // Получаем выбранный город и страну с проверкой на существование
   const selectedCity =
     cities.find((city) => city.id === params?.param1)?.label || "";
   const selectedCountry =
@@ -216,7 +220,7 @@ export default function OurToursForManager() {
           {Object.keys(countryResults || {}).map((countryId) => {
             const country = countries.find((c) => c.id === countryId);
             const hotelCount =
-              countryResults[countryId]?.data?.result?.hotel?.length || 0;
+              countryResults?.[countryId]?.data?.result?.hotel?.length || 0;
 
             return (
               <button

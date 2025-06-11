@@ -6,11 +6,7 @@ import React, {
   useCallback,
   useMemo,
 } from "react";
-import {
-  useInfiniteQuery,
-  useQueryClient,
-  useQuery,
-} from "@tanstack/react-query";
+import { useQueryClient, useQuery } from "@tanstack/react-query";
 
 type Params = { [key: string]: any };
 type City = { id: string; label: string };
@@ -521,8 +517,8 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     []
   );
 
-  // Модифицируем функцию startPolling
-  const startPolling = useCallback(
+  // Модифицируем функцию startPollingForManager
+  const startPollingForManager = useCallback(
     (reqId: string, countryName: string) => {
       let attempts = 0;
       const MAX_ATTEMPTS = 20;
@@ -622,7 +618,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         return;
       }
 
-      const requestResponse = await fetch(`${API_BASE_URL}/search`, {
+      const requestResponse = await fetch(`${API_BASE_URL}/search-manager`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -648,7 +644,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         Object.entries(countryRequestsData).forEach(
           ([country, { requestId }]) => {
             if (requestId) {
-              startPolling(requestId, country);
+              startPollingForManager(requestId, country);
             }
           }
         );

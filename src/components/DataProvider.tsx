@@ -157,13 +157,17 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   // Эффект только для загрузки параметров из URL
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.toString() && window.location.pathname === "/OurTours") {
+    if (
+      urlParams.toString() &&
+      (window.location.pathname === "/OurTours" ||
+        window.location.pathname === "/OurToursForManager")
+    ) {
       const urlParamsObj = parseUrlParams();
       if (Object.keys(urlParamsObj).length > 0) {
         setParams(urlParamsObj);
       }
     }
-  }, []); // Выполняется только при монтировании
+  }, []);
 
   // Запрос списка городов
   useEffect(() => {

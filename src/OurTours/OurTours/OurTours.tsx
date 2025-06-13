@@ -29,7 +29,6 @@ export default function OurTours() {
     countries,
     params,
     fetchNextPage,
-    hasNextPage,
     isFetchingNextPage,
     searchTours,
   } = useContext(DataContext);

@@ -1,4 +1,4 @@
-import { useContext, useState, useMemo } from "react";
+import { useContext, useState, useMemo, useEffect } from "react";
 import { DataContext } from "../components/DataProvider";
 import { GoStarFill } from "react-icons/go";
 import { Skeleton } from "@heroui/react";
@@ -13,13 +13,15 @@ import { HotelToursButton } from "../components/HotelToursButton";
 import { HotelToursContent } from "../components/HotelToursContent";
 import Header from "../components/Header";
 import OurToursFilters from "../OurTours/FiltersForOurTours/OurToursFilter";
-import {
-  getCityDeclension,
-  getCountryDeclension,
-} from "../OurTours/PronounsOfTheCountry/PronounsOfTheCountry";
 import FloatingControls from "../components/FloatingControls";
 
 export default function OurToursForManager() {
+  const countryTranslations: { [key: string]: string } = {
+    Vietnam: "Вьетнам",
+    Maldives: "Мальдивы",
+    // Добавьте другие страны по необходимости
+  };
+
   const {
     loading,
     error,
@@ -30,6 +32,7 @@ export default function OurToursForManager() {
     fetchNextPage,
     isFetchingNextPage,
     countryResults,
+    searchMultyTours,
   } = useContext(DataContext);
 
   // Добавляем состояние для активной страны с значением по умолчанию
@@ -41,6 +44,30 @@ export default function OurToursForManager() {
   const [activeTabs, setActiveTabs] = useState<{
     [hotelcode: string]: "info" | "reviews" | "map" | "tour" | null;
   }>({});
+
+  // Обновляем эффект для установки активной страны при изменении params.param2
+  useEffect(() => {
+    if (params.param2) {
+      setActiveCountry(params.param2);
+    }
+  }, [params.param2]);
+
+  // Оставляем существующий эффект для поиска
+  useEffect(() => {
+    if (
+      params.param1 &&
+      params.param2 &&
+      params.param4?.startDate &&
+      params.param4?.endDate
+    ) {
+      searchMultyTours();
+    }
+  }, [
+    params.param1,
+    params.param2,
+    params.param4?.startDate,
+    params.param4?.endDate,
+  ]);
 
   // Изменим получение доступных стран с проверкой на существование
   const availableCountries = useMemo(() => {
@@ -80,6 +107,7 @@ export default function OurToursForManager() {
             </div>
           </div>
         </div>
+
         <div className="max-w-[1560px] flex flex-wrap gap-4 justify-center items-center mx-auto pb-8">
           {[...Array(6)].map((_, index) => (
             <div
@@ -185,32 +213,34 @@ export default function OurToursForManager() {
       </div>
 
       {/* Изменим отображение табов стран */}
-      <div className="max-w-[1560px] mx-auto mt-4 mb-8">
-        <div className="flex gap-2 px-4 border-b">
-          {Object.keys(countryResults || {}).map((countryId) => {
-            const country = countries.find((c) => c.id === countryId);
-            const hotelCount =
-              countryResults?.[countryId]?.data?.result?.hotel?.length || 0;
+      <div className="flex gap-2 px-4 border-b md:px-36">
+        {Object.keys(countryResults || {}).map((countryId) => {
+          const country = countries.find((c) => c.id === countryId);
 
-            return (
-              <button
-                key={countryId}
-                onClick={() => handleCountryChange(countryId)}
-                className={`px-4 py-2 text-sm font-medium rounded-t-lg transition-colors
-                  ${
-                    activeCountry === countryId
-                      ? "bg-blue-500 text-white"
-                      : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                  }`}
-              >
-                {country?.label || countryId} ({hotelCount})
-              </button>
-            );
-          })}
-        </div>
+          // Получаем название страны
+          const countryName =
+            country?.label ||
+            countryTranslations[countryId] || // Используем перевод если есть
+            countryId; // Если нет перевода, используем оригинал
+
+          return (
+            <button
+              key={countryId}
+              onClick={() => handleCountryChange(countryId)}
+              className={`px-4 py-2 text-sm md:text-base font-medium rounded-t-lg transition-colors
+          ${
+            activeCountry === countryId
+              ? "bg-blue-500 text-white"
+              : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+          }`}
+            >
+              {countryName}
+            </button>
+          );
+        })}
       </div>
 
-      <div className="max-w-[1560px] flex flex-wrap gap-4 justify-center items-center mx-auto pb-8">
+      <div className="max-w-[1560px] flex flex-wrap md:pt-4 gap-4 justify-center items-center mx-auto pb-8">
         {loading ? (
           // Скелетон загрузки
           Array.from({ length: 6 }).map((_, index) => (

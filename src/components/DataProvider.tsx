@@ -575,15 +575,24 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
 
       if (responseData) {
         const countryRequestsData = Object.entries(responseData).reduce(
-          (acc, [country, data]: [string, any]) => ({
-            ...acc,
-            [country]: { requestId: data.requestId },
-          }),
+          (acc, [country, data]: [string, any]) => {
+            if (country === "Selected country") {
+              return {
+                ...acc,
+                [params.param2]: { requestId: data.requestId },
+              };
+            }
+            return {
+              ...acc,
+              [country]: { requestId: data.requestId },
+            };
+          },
           {}
         );
 
         setCountryRequests(countryRequestsData);
 
+        // Запускаем поллинг для каждой страны
         Object.entries(countryRequestsData).forEach(
           ([country, { requestId }]) => {
             if (requestId) {
@@ -595,7 +604,6 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     } catch (error) {
       console.error("Ошибка:", error);
       setError("Ошибка при загрузке данных");
-    } finally {
       setLoading(false);
     }
   }, [params, areParamsReady, loading, countryRequests]);

@@ -19,7 +19,9 @@ export default function OurToursForManager() {
   const countryTranslations: { [key: string]: string } = {
     Vietnam: "Вьетнам",
     Maldives: "Мальдивы",
-    // Добавьте другие страны по необходимости
+    UAE: "ОАЭ",
+    Thailand: "Таиланд",
+    Italy: "Италия",
   };
 
   const {
@@ -108,7 +110,15 @@ export default function OurToursForManager() {
           </div>
         </div>
 
-        <div className="max-w-[1560px] flex flex-wrap gap-4 justify-center items-center mx-auto pb-8">
+        <div className="flex gap-2 border-b md:px-36">
+          {[...Array(6)].map((_, index) => (
+            <div key={index}>
+              <Skeleton className="h-10 w-24 rounded-t-lg" />
+            </div>
+          ))}
+        </div>
+
+        <div className="max-w-[1560px] flex md:mt-4 flex-wrap gap-4 justify-center items-center mx-auto pb-8">
           {[...Array(6)].map((_, index) => (
             <div
               key={index}
@@ -398,11 +408,7 @@ export default function OurToursForManager() {
               )
             )
           ) : (
-            <div className="flex flex-col items-center justify-center w-full h-[30vh]">
-              <p className="text-xl text-gray-500 mb-4">
-                Выберите страну для просмотра туров
-              </p>
-            </div>
+            <div className="flex flex-col items-center justify-center w-full h-[30vh]"></div>
           )
         ) : (
           <div className="flex flex-col items-center justify-center w-full h-[30vh]">

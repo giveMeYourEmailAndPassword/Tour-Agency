@@ -18,11 +18,9 @@ import {
   getCountryDeclension,
 } from "../OurTours/PronounsOfTheCountry/PronounsOfTheCountry";
 import FloatingControls from "../components/FloatingControls";
-import { DataContextManager } from "./DataProviderManager/DataProviderManager";
 
 export default function OurToursForManager() {
   const {
-    tours,
     loading,
     error,
     tourDataStatus,
@@ -68,31 +66,6 @@ export default function OurToursForManager() {
   const selectedCountry =
     countries.find((country) => country.id === params?.param2)?.label || "";
 
-  // Формируем заголовок
-  const title = selectedCity
-    ? `Туры ${
-        selectedCountry && countries.length > 0
-          ? `в ${getCountryDeclension(selectedCountry, "to")}`
-          : "(Выберите страну)"
-      } из ${getCityDeclension(selectedCity, "from")}`
-    : "\u00A0".repeat(14);
-
-  // Проверяем наличие стран
-  if (countries.length === 0) {
-    return (
-      <div className="w-full min-h-screen bg-gray-50">
-        <Header />
-        <div className="w-full bg-blue-500">
-          <div className="max-w-[1560px] mx-auto mb-8">
-            <div className="flex flex-col gap-12 h-96 pt-12">
-              {/* Пустой div для сохранения высоты */}
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   if (loading) {
     return (
       <div className="w-full min-h-screen bg-gray-50">
@@ -101,8 +74,7 @@ export default function OurToursForManager() {
           <div className="max-w-[1560px] md:mx-auto mb-8">
             <div className="flex flex-col gap-12 h-96 pt-12">
               <h1 className="text-2xl md:text-4xl lg:text-5xl text-white font-bold max-w-[80rem] px-4 md:px-36">
-                Для менеджеров <br />
-                {title}
+                Поиск туров для менеджеров
               </h1>
               <OurToursFilters />
             </div>
@@ -167,8 +139,7 @@ export default function OurToursForManager() {
           <div className="max-w-[1560px] mx-auto mb-8">
             <div className="flex flex-col gap-12 h-96 pt-12">
               <h1 className="text-2xl md:text-4xl lg:text-5xl text-white font-semibold md:font-bold max-w-[80rem] px-4 md:px-36">
-                Для менеджеров <br />
-                {title}
+                Поиск туров для менеджеров
               </h1>
               <div className="hidden md:block">
                 <OurToursFilters />
@@ -203,8 +174,7 @@ export default function OurToursForManager() {
           <div className="flex flex-col gap-12 h-96 pt-12">
             {countries.length > 0 && (
               <h1 className="text-2xl md:text-4xl lg:text-5xl text-white font-bold max-w-[80rem] px-4 md:px-36">
-                Для менеджеров <br />
-                {title}
+                Поиск туров для менеджеров
               </h1>
             )}
             <div className="hidden md:block">

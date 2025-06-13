@@ -66,6 +66,12 @@ export default function Header() {
             >
               О нас
             </a>
+            <a
+              className="text-blue-500 font-medium text-lg md:text-xl"
+              href="/ForManager"
+            >
+              Для менеджеров
+            </a>
           </nav>
         </div>
       </div>

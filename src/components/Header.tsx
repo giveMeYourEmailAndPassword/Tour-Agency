@@ -1,80 +1,69 @@
-import { useState } from "react";
-import { HiMiniBars4, HiOutlineBars3 } from "react-icons/hi2";
-import { LiaTimesSolid } from "react-icons/lia";
+import { FiSearch } from "react-icons/fi";
+import {
+  FaPlane,
+  FaMapMarkerAlt,
+  FaCalendarAlt,
+  FaUserFriends,
+  FaMoon,
+  FaStar,
+} from "react-icons/fa";
+import NewDepartureCity from "./selects/NewDepartureCity";
+import NewFlyingCountry from "./selects/NewFlyingCountry";
+import NightsFrom from "./selects/NightsFrom";
 
 export default function Header() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
   return (
-    <>
-      {/* Добавляем пустой div для компенсации высоты фиксированного header */}
-      <div className="h-[56px] md:h-[64px]"></div>
-      <div className="fixed top-0 left-0 right-0 bg-white shadow-md z-40">
-        <div className="flex justify-between items-center px-4 md:px-8 lg:px-12 xl:px-36 py-4 max-w-[1560px] mx-auto">
-          <div>
-            <a
-              className="text-blue-500 font-semibold text-xl md:text-2xl"
-              href="/"
-            >
-              BE TRAVEL
-            </a>
+    <header className="bg-white shadow-[0px_0px_16px_0px_rgba(0,0,0,0.05)]">
+      <div className="max-w-[1440px] mx-auto px-4 py-3 flex items-center justify-center gap-2">
+        {/* Город вылета */}
+        <NewDepartureCity />
+
+        {/* Страна, город */}
+        <NewFlyingCountry />
+
+        {/* Даты вылета */}
+        <div className="flex items-center gap-4 px-6 py-1 border border-[#DBE0E5] rounded-lg min-w-[180px]">
+          <FaCalendarAlt className="text-[#FF621F] w-6 h-6" />
+          <div className="flex flex-col">
+            <span className="text-sm font-normal text-[#7E8389]">
+              Даты вылета
+            </span>
+            <span className="text-lg font-medium text-[#2E2E32]">
+              7 августа
+            </span>
           </div>
-
-          {/* Кнопка гамбургер для мобильных */}
-          <button
-            className="md:hidden text-blue-500"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-          >
-            {isMenuOpen ? (
-              <LiaTimesSolid size={26} />
-            ) : (
-              <HiOutlineBars3 size={26} />
-            )}
-          </button>
-
-          {/* Навигация */}
-          <nav
-            className={`
-            ${isMenuOpen ? "flex" : "hidden"} 
-            md:flex
-            flex-col md:flex-row
-            absolute md:relative
-            top-full md:top-auto
-            left-0 md:left-auto
-            right-0 md:right-auto
-            bg-white md:bg-transparent
-            shadow-md md:shadow-none
-            p-4 md:p-0
-            gap-4 md:gap-6
-          `}
-          >
-            <a
-              className="text-blue-500 font-medium text-lg md:text-xl"
-              href="/"
-            >
-              Главная
-            </a>
-            <a
-              className="text-blue-500 font-medium text-lg md:text-xl"
-              href="/tours"
-            >
-              Туры
-            </a>
-            <a
-              className="text-blue-500 font-medium text-lg md:text-xl"
-              href="/about"
-            >
-              О нас
-            </a>
-            <a
-              className="text-blue-500 font-medium text-lg md:text-xl"
-              href="/ForManager"
-            >
-              Для менеджеров
-            </a>
-          </nav>
         </div>
+
+        {/* Туристы */}
+        <div className="flex items-center gap-4 px-6 py-1 border border-[#DBE0E5] rounded-lg min-w-[180px]">
+          <FaUserFriends className="text-[#FF621F] w-6 h-6" />
+          <div className="flex flex-col">
+            <span className="text-sm font-normal text-[#7E8389]">Туристы</span>
+            <span className="text-lg font-medium text-[#2E2E32]">
+              2 взрослых
+            </span>
+          </div>
+        </div>
+
+        {/* Ночей */}
+        <NightsFrom />
+
+        {/* Звезд */}
+        <div className="flex items-center gap-4 px-6 py-1 border border-[#DBE0E5] rounded-lg min-w-[180px]">
+          <FaStar className="text-[#FF621F] w-6 h-6" />
+          <div className="flex flex-col">
+            <span className="text-sm font-normal text-[#7E8389]">Звезд</span>
+            <span className="text-lg font-medium text-[#2E2E32]">
+              1-5 звезд
+            </span>
+          </div>
+        </div>
+
+        {/* Поиск */}
+        <button className="w-[60px] h-[60px] flex items-center justify-center border border-[#FF621F] bg-[#FF621F] rounded-lg">
+          <FiSearch className="w-8 h-8 text-[#FAFBF6]" />
+        </button>
       </div>
-    </>
+    </header>
   );
 }

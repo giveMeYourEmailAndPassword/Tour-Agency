@@ -1,15 +1,7 @@
-import NightsFrom from "./selects/NightsFrom";
-import Tourists from "./selects/Tourists";
-import FindTourBtn from "./selects/FindTour";
-import NewFlyingDate from "./selects/NewFlyingDate";
-import StarsFilter from "./filters/StarsFilter";
-import HotelType from "./filters/HotelType";
-import Nourushment from "./filters/Nourishment";
-import Raiting from "./filters/Raiting";
-import HotelService from "./filters/HotelService";
-import NewDepartureCity from "./selects/NewDepartureCity";
-import NewFlyingCountry from "./selects/NewFlyingCountry";
 import { useEffect } from "react";
+import FilterSection from "./filters/FilterSection";
+import Checkbox from "./filters/Checkbox";
+import Tag from "./filters/Tag";
 
 export default function Filters() {
   useEffect(() => {
@@ -17,52 +9,94 @@ export default function Filters() {
   }, []);
 
   return (
-    <div className="flex flex-col items-center w-full px-4 md:px-8 lg:px-12 xl:px-36">
-      <div className="bg-blue-600 rounded-xl w-full md:py-4 gap-3 flex flex-col items-center justify-center px-4">
-        {/* Основные фильтры */}
-        <div className="flex lg:flex-row bg-white rounded-lg p-2 gap-3 justify-between items-center w-full">
-          {/* Город вылета */}
-          <NewDepartureCity />
-          {/* <DepartureCity /> */}
-          <div className="border border-l h-14"></div>
+    <div className="w-[240px] border border-[#DBE0E5] rounded-lg p-4 flex flex-col gap-3">
+      {/* Тип отеля */}
+      <FilterSection title="Тип отеля">
+        <Checkbox label="Любой" checked />
+        <Checkbox label="Отель" />
+        <Checkbox label="Гостевой дом" />
+        <Checkbox label="Апартаменты" />
+        <Checkbox label="Вилла" />
+      </FilterSection>
 
-          {/* Страна */}
-          <NewFlyingCountry />
-          {/* <FlyingCountry /> */}
-          <div className="border border-l h-14"></div>
+      {/* Рейтинг */}
+      <FilterSection title="Рейтинг">
+        <Checkbox label="Любой" checked />
+        <Checkbox label="3,0 и более" />
+        <Checkbox label="3,5 и более" />
+        <Checkbox label="4,0 и более" />
+        <Checkbox label="4,5 и более" />
+      </FilterSection>
 
-          {/* Дата вылета */}
-          <NewFlyingDate />
-          <div className="border border-l h-14"></div>
-
-          {/* На сколько ночей */}
-          <NightsFrom />
-          <div className="border border-l h-14"></div>
-
-          {/* Туристы */}
-          <Tourists />
-
-          {/* Кнопка поиска */}
-          <FindTourBtn />
+      {/* Услуги отеля */}
+      <FilterSection title="Услуги отеля">
+        <div className="flex flex-wrap gap-1">
+          <Tag label="Водные горки" onRemove={() => {}} />
+          <Tag label="Детское меню" onRemove={() => {}} />
+          <Tag label="Кухня в номере" onRemove={() => {}} />
         </div>
+      </FilterSection>
 
-        <div className="flex justify-between w-full">
-          {/* Звездность */}
-          <StarsFilter />
+      {/* Для детей */}
+      <FilterSection title="Для детей" isCollapsible>
+        <Checkbox label="Водные горки" checked />
+        <Checkbox label="Детское меню" checked />
+        <Checkbox label="Мини-клуб" />
+        <Checkbox label="Детская анимация" />
+        <Checkbox label="Детская площадка" />
+      </FilterSection>
 
-          {/* Тип отеля */}
-          <HotelType />
+      {/* Номер */}
+      <FilterSection title="Номер" isCollapsible>
+        <Checkbox label="Кухня в номере" checked />
+        <Checkbox label="Балкон в номере" />
+        <Checkbox label="Wi-Fi в номере" />
+        <Checkbox label="Кондиционер" />
+        <Checkbox label="Размещение с животными" />
+      </FilterSection>
 
-          {/* Питание */}
-          <Nourushment />
+      {/* Пляж */}
+      <FilterSection title="Пляж" isCollapsible>
+        <Checkbox label="Первая линия" />
+        <Checkbox label="Собственный пляж" />
+        <Checkbox label="Песчаный пляж" />
+        <Checkbox label="Галечный пляж" />
+      </FilterSection>
 
-          {/* Рейтинг */}
-          <Raiting />
+      {/* Территория */}
+      <FilterSection title="Территория" isCollapsible>
+        <Checkbox label="Бассейн" />
+        <Checkbox label="Бассейн с подогревом" />
+        <Checkbox label="Водные горки" />
+        <Checkbox label="СПА-центр" />
+        <Checkbox label="Ресторан/кафе" />
+        <Checkbox label="Спортзал" />
+        <Checkbox label="Теннис" />
+        <Checkbox label="Футбол" />
+        <Checkbox label="Новый отель" />
+      </FilterSection>
 
-          {/* Услуги отеля */}
-          <HotelService />
-        </div>
-      </div>
+      {/* Услуги */}
+      <FilterSection title="Услуги" isCollapsible>
+        <Checkbox label="Анимация" />
+        <Checkbox label="Дискотека" />
+        <Checkbox label="Wi-Fi" />
+        <Checkbox label="Размещение одиноких мужчин" />
+        <Checkbox label="Только для взрослых" />
+      </FilterSection>
+
+      {/* Тип отеля */}
+      <FilterSection title="Тип отеля" isCollapsible>
+        <Checkbox label="Активный" />
+        <Checkbox label="Городской" />
+        <Checkbox label="Семейный" />
+        <Checkbox label="VIP" />
+      </FilterSection>
+
+      {/* Доп.фильтры */}
+      <FilterSection title="Доп.фильтры">
+        <Checkbox label="Мгновенное подтверждение" />
+      </FilterSection>
     </div>
   );
 }

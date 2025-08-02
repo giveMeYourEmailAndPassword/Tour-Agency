@@ -1,97 +1,80 @@
-import React, { useContext, useState, useEffect } from "react";
-import { Button, Popover, PopoverTrigger, PopoverContent } from "@heroui/react";
+import React, { useContext, useState, useEffect, useRef } from "react";
 import { DataContext } from "../DataProvider";
+import { FaPlane } from "react-icons/fa";
+
+const CITIES = [
+  {
+    id: "80",
+    name: "Бишкек",
+    namefrom: "Бишкека",
+  },
+  {
+    id: "60",
+    name: "Алматы",
+    namefrom: "Алматы",
+  },
+];
 
 export default function NewDepartureCity() {
-  const { setData, cities } = useContext(DataContext);
-  const [selectedCity, setSelectedCity] = useState(80); // Инициализируем null или id города по умолчанию
+  const { setData } = useContext(DataContext);
+  const [selectedCity, setSelectedCity] = useState("80");
   const [isOpen, setIsOpen] = useState(false);
-
-  useEffect(() => {
-    if (cities.length > 0 && !cities.find((city) => city.id === selectedCity)) {
-      setSelectedCity(cities[1].id); // Например, устанавливаем первый город, если текущий не найден
-    }
-  }, [cities]);
+  const dropdownRef = useRef(null);
 
   useEffect(() => {
     setData("param1", selectedCity);
   }, [selectedCity, setData]);
 
-  // Обработчик выбора города
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   const handleCitySelect = (city) => {
-    setSelectedCity(city.id); // Устанавливаем id выбранного города
-    setIsOpen(false); // Закрываем Popover
+    setSelectedCity(city.id);
+    setIsOpen(false);
   };
 
-  // Находим выбранный город по id
-  const selectedCityData = cities.find((city) => city.id === selectedCity);
-  selectedCityData;
-
-  // Фильтруем список городов, исключая Москву
-  const filteredCities = cities.filter((city, index) => index !== 2);
+  const selectedCityData = CITIES.find((city) => city.id === selectedCity);
 
   return (
-    <>
-      <Popover
-        placement="top"
-        isOpen={isOpen}
-        onOpenChange={(open) => setIsOpen(open)}
+    <div className="relative" ref={dropdownRef}>
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex items-center gap-4 px-6 py-1 border border-[#DBE0E5] rounded-lg min-w-[180px] bg-white hover:bg-gray-50 duration-300"
       >
-        <PopoverTrigger className="w-full md:w-64 h-full bg-white hover:bg-slate-100 rounded-lg md:rounded-xl !z-0 !scale-100 !opacity-100 py-1">
-          <Button className="px-4">
-            <div className="flex flex-col items-start justify-between w-full">
-              {selectedCityData && (
-                <span
-                  className={` text-slate-600 mb-[1px] ${
-                    selectedCityData?.id === selectedCity
-                      ? "text-sm"
-                      : "text-sm"
-                  }`}
-                >
-                  Город вылета
-                </span>
-              )}
-              <div className="flex items-center gap-2">
-                <h1
-                  className={`text-lg ${
-                    selectedCityData
-                      ? "text-black font-medium"
-                      : "text-slate-600"
-                  }`}
-                >
-                  {selectedCityData ? selectedCityData.label : ""}
-                </h1>
-              </div>
-            </div>
-          </Button>
-        </PopoverTrigger>
+        <FaPlane className="text-[#FF621F] w-6 h-6 flex-shrink-0" />
+        <div className="flex flex-col items-start">
+          <span className="text-sm font-normal text-[#7E8389]">
+            Город вылета
+          </span>
+          <span className="text-lg font-medium text-[#2E2E32]">
+            {selectedCityData?.name}
+          </span>
+        </div>
+      </button>
 
-        <PopoverContent className="w-56 py-2">
-          <div className="text-base font-medium mb-2 flex justify-start w-full">
-            Город вылета:
-          </div>
-          <div className="flex flex-col gap-1 items-starts w-full">
-            {filteredCities && filteredCities.length > 0 ? (
-              filteredCities.map((city) => (
-                <button
-                  className={`text-black text-base text-start hover:bg-gray-200 rounded-xl py-1 pl-2   ${
-                    selectedCity === city.id ? "font-medium" : ""
-                  }`}
-                  key={city.id}
-                  onClick={() => handleCitySelect(city)} // Обработчик выбора города
-                >
-                  {city.label}
-                </button>
-              ))
-            ) : (
-              <button className="text-black text-lg text-start hover:bg-gray-200 rounded-xl py-1 pl-4">
-                Загрузка...
-              </button>
-            )}
-          </div>
-        </PopoverContent>
-      </Popover>
-    </>
+      {isOpen && (
+        <div className="absolute top-full left-0 mt-1 w-full bg-white rounded-md shadow-lg border border-[#DBE0E5] z-10">
+          {CITIES.map((city) => (
+            <button
+              key={city.id}
+              onClick={() => handleCitySelect(city)}
+              className={`w-full text-left px-4 pr-10 py-2 hover:bg-gray-50 duration-300
+                ${selectedCity === city.id ? "bg-orange-100 font-medium" : ""}
+              `}
+            >
+              <span className="text-[#2E2E32] text-base">{city.name}</span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }
-//

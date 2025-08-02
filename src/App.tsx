@@ -81,6 +81,7 @@ export default function App() {
 
       {/* Горящие туры */}
       <div ref={hotToursRef} className="pt-3">
+        {/* старая версия сайта */}
         <HotTours />
       </div>
 

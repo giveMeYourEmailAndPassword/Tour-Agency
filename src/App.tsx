@@ -5,6 +5,7 @@ import HotTours from "./components/HotTours";
 import { useState, useRef } from "react";
 import FloatingControls from "./components/FloatingControls";
 import FiltersMobile from "./components/FiltersMobile";
+import HotelCard from "./Test";
 
 export default function App() {
   const [params, setParams] = useState({});

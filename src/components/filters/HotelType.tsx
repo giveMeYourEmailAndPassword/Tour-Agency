@@ -1,171 +1,86 @@
 import React, { useState, useContext } from "react";
-import {
-  Button,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  Checkbox,
-} from "@heroui/react";
-import { IoIosArrowDown } from "react-icons/io";
-import { IoClose } from "react-icons/io5"; // Значок "крестик" для сброса
 import { DataContext } from "../DataProvider";
+
+const HOTEL_TYPES = [
+  { value: "any", label: "Любой" },
+  { value: "hotel", label: "Отель" },
+  { value: "guesthouse", label: "Гостевой дом" },
+  { value: "apartments", label: "Апартаменты" },
+  { value: "villa", label: "Вилла" },
+];
 
 export default function HotelType() {
   const { setData, params } = useContext(DataContext);
-  const [isOpen, setIsOpen] = useState(false);
-
-  // Определяем список чекбоксов
-  const checkboxes = [
-    { value: "any", label: "Любой" },
-    { value: "hotel", label: "Отель" },
-    { value: "guesthouse", label: "Гостевой дом" },
-    { value: "apartments", label: "Апартаменты" },
-    { value: "villa", label: "Вилла" },
-  ];
-
-  // Состояние для выбранных значений. По умолчанию выбран "Любой".
   const [selectedValues, setSelectedValues] = useState(
     () => params.param6 || ["any"]
   );
 
-  const handleChange = (isSelected: boolean, value: string) => {
+  const handleChange = (value: string) => {
     let newSelectedValues = [...selectedValues];
-
     if (value === "any") {
-      // Если выбирается "Любой", то он единственный в списке.
-      newSelectedValues = isSelected ? ["any"] : ["any"];
+      // Если выбирается "Любой", то он единственный в списке
+      newSelectedValues = selectedValues.includes("any") ? [] : ["any"];
     } else {
-      // Если выбирается другой чекбокс, удаляем "any" (если он был выбран)
+      // Если выбирается другой чекбокс, удаляем "any"
       newSelectedValues = newSelectedValues.filter((v) => v !== "any");
 
-      if (isSelected) {
-        // Добавляем значение, если его ещё нет
-        if (!newSelectedValues.includes(value)) {
-          newSelectedValues.push(value);
-        }
-      } else {
+      if (newSelectedValues.includes(value)) {
         // Убираем значение, если оно было выбрано
         newSelectedValues = newSelectedValues.filter((v) => v !== value);
+      } else {
+        // Добавляем значение, если его ещё нет
+        newSelectedValues.push(value);
       }
 
-      // Если выбраны все доступные значения (кроме "any"), то автоматически возвращаем "any"
-      const allNonAny = checkboxes
-        .filter((c) => c.value !== "any")
-        .map((c) => c.value);
-      if (allNonAny.every((val) => newSelectedValues.includes(val))) {
-        newSelectedValues = ["any"];
-      }
-
-      if (newSelectedValues.length === 0) {
+      // Если ничего не выбрано или выбраны все типы, возвращаем "any"
+      if (
+        newSelectedValues.length === 0 ||
+        newSelectedValues.length === HOTEL_TYPES.length - 1
+      ) {
         newSelectedValues = ["any"];
       }
     }
 
-    "Выбраны:", newSelectedValues;
     setSelectedValues(newSelectedValues);
-
     setData("param6", newSelectedValues);
   };
 
-  // Функция для получения ярлыка (label) по значению чекбокса
-  const getLabelByValue = (value: string) => {
-    const checkbox = checkboxes.find((c) => c.value === value);
-    return checkbox ? checkbox.label : "";
-  };
-
-  // Функция для формирования текста, который показывается на кнопке
-  const getDisplayText = () => {
-    // Если выбран "any" или ничего не выбрано — показываем базовый текст
-    if (selectedValues.includes("any") || selectedValues.length === 0) {
-      return (
-        <>
-          <h1 className="text-base">Курорт / отели</h1>
-        </>
-      );
-    } else if (selectedValues.length === 1) {
-      // Если выбран один тип (и это не "any")
-      return (
-        <div className="flex flex-col items-start">
-          <h1>Курорт / отели</h1>
-          <div className="text-base">{getLabelByValue(selectedValues[0])}</div>
-        </div>
-      );
-    } else if (selectedValues.length > 1) {
-      // Если выбрано 2 и более типа, выводим количество
-      return (
-        <>
-          <div className="flex flex-col items-start">
-            <h1>Курорт / отели</h1>
-            <div className="text-base">{`Типов отелей (${selectedValues.length})`}</div>
-          </div>
-        </>
-      );
-    }
-    return "Курорт / отель";
-  };
-
-  // Обработчик нажатия на крестик — сбрасываем выбор, возвращая "any"
-  const handleReset = () => {
-    setSelectedValues(["any"]);
-  };
-
-  selectedValues;
-
   return (
-    <Popover placement="bottom" onOpenChange={(open) => setIsOpen(open)}>
-      <PopoverTrigger className="!z-0 !scale-100 !opacity-100 w-[20%]">
-        <Button
-          className="px-4 bg-blue-600 rounded-lg border border-slate-300"
-          size="lg"
-        >
-          <div className="flex items-center justify-between w-full">
-            {/* Блок с текстом выбранного варианта */}
-            <div className="flex items-center gap-2">
-              <h1 className="text-sm text-white">{getDisplayText()}</h1>
+    <div className="flex flex-col gap-1.5">
+      <span className="text-[#2E2E32] text-base font-semibold">Тип отеля</span>
+      <div className="flex flex-col gap-0.5">
+        {HOTEL_TYPES.map(({ value, label }) => (
+          <label key={value} className="flex items-center gap-3 cursor-pointer">
+            <div
+              className={`w-4 h-4 rounded border flex items-center justify-center ${
+                selectedValues.includes(value)
+                  ? "bg-[#FF621F] border-[#FF621F]"
+                  : "border-[#7E8389]"
+              }`}
+              onClick={() => handleChange(value)}
+            >
+              {selectedValues.includes(value) && (
+                <svg
+                  width="11"
+                  height="8"
+                  viewBox="0 0 11 8"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M1.33301 4L3.99967 6.66667L9.33301 1.33334"
+                    stroke="white"
+                    strokeWidth="1.6"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              )}
             </div>
-            {/* Стрелка, указывающая на возможность открытия поповера */}
-            {selectedValues.includes("any") ? (
-              <IoIosArrowDown
-                className={`text-xl text-white transform transition-transform ${
-                  isOpen ? "rotate-180" : ""
-                }`}
-              />
-            ) : (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleReset();
-                }}
-                className="text-white"
-              >
-                <IoClose className="text-xl" />
-              </button>
-            )}
-          </div>
-        </Button>
-      </PopoverTrigger>
-
-      <PopoverContent className="rounded-md">
-        <div className="px-1 py-1 w-48">
-          <div className="flex flex-col gap-1">
-            <h1 className="text-base font-medium">Тип отеля / тура</h1>
-            {checkboxes.map(({ value, label }) => (
-              <Checkbox
-                color="default"
-                key={value}
-                value={value}
-                // Выбран ли чекбокс (если в списке выбранных значений содержится его value)
-                isSelected={selectedValues.includes(value)}
-                // При изменении состояния чекбокса вызывается handleChange
-                onValueChange={(isSelected) => handleChange(isSelected, value)}
-                // Если выбран "any", то остальные чекбоксы делаем неактивными
-              >
-                {label}
-              </Checkbox>
-            ))}
-          </div>
-        </div>
-      </PopoverContent>
-    </Popover>
+            <span className="text-base text-[#2E2E32]">{label}</span>
+          </label>
+        ))}
+      </div>
+    </div>
   );
 }

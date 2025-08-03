@@ -2,6 +2,8 @@ import { useEffect } from "react";
 import FilterSection from "./filters/FilterSection";
 import Checkbox from "./filters/Checkbox";
 import Tag from "./filters/Tag";
+import HotelType from "./filters/HotelType";
+import Raiting from "./filters/Raiting";
 
 export default function Filters() {
   useEffect(() => {
@@ -11,22 +13,10 @@ export default function Filters() {
   return (
     <div className="w-[240px] border border-[#DBE0E5] rounded-lg p-4 flex flex-col gap-3">
       {/* Тип отеля */}
-      <FilterSection title="Тип отеля">
-        <Checkbox label="Любой" checked />
-        <Checkbox label="Отель" />
-        <Checkbox label="Гостевой дом" />
-        <Checkbox label="Апартаменты" />
-        <Checkbox label="Вилла" />
-      </FilterSection>
+      <HotelType />
 
       {/* Рейтинг */}
-      <FilterSection title="Рейтинг">
-        <Checkbox label="Любой" checked />
-        <Checkbox label="3,0 и более" />
-        <Checkbox label="3,5 и более" />
-        <Checkbox label="4,0 и более" />
-        <Checkbox label="4,5 и более" />
-      </FilterSection>
+      <Raiting />
 
       {/* Услуги отеля */}
       <FilterSection title="Услуги отеля">

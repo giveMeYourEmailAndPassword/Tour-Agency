@@ -1,23 +1,11 @@
 import React, { useContext, useState, useEffect, useRef } from "react";
 import { DataContext } from "../DataProvider";
 import { FaPlane } from "react-icons/fa";
-
-const CITIES = [
-  {
-    id: "80",
-    name: "Бишкек",
-    namefrom: "Бишкека",
-  },
-  {
-    id: "60",
-    name: "Алматы",
-    namefrom: "Алматы",
-  },
-];
+import { departures } from "../data/destinations";
 
 export default function NewDepartureCity() {
   const { setData } = useContext(DataContext);
-  const [selectedCity, setSelectedCity] = useState("80");
+  const [selectedCity, setSelectedCity] = useState("80"); // Бишкек по умолчанию
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -37,11 +25,13 @@ export default function NewDepartureCity() {
   }, []);
 
   const handleCitySelect = (city) => {
-    setSelectedCity(city.id);
+    setSelectedCity(String(city.id));
     setIsOpen(false);
   };
 
-  const selectedCityData = CITIES.find((city) => city.id === selectedCity);
+  const selectedCityData = departures.find(
+    (city) => String(city.id) === selectedCity
+  );
 
   return (
     <div className="relative" ref={dropdownRef}>
@@ -62,12 +52,12 @@ export default function NewDepartureCity() {
 
       {isOpen && (
         <div className="absolute top-full left-0 mt-1 w-full bg-white rounded-md shadow-lg border border-[#DBE0E5] z-10">
-          {CITIES.map((city) => (
+          {departures.map((city) => (
             <button
               key={city.id}
               onClick={() => handleCitySelect(city)}
               className={`w-full text-left px-4 pr-10 py-2 hover:bg-gray-50 duration-300
-                ${selectedCity === city.id ? "bg-orange-100 font-medium" : ""}
+                ${selectedCity === String(city.id) ? "bg-orange-100" : ""}
               `}
             >
               <span className="text-[#2E2E32] text-base">{city.name}</span>

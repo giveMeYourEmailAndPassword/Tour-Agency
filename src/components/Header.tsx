@@ -10,6 +10,8 @@ import {
 import NewDepartureCity from "./selects/NewDepartureCity";
 import NewFlyingCountry from "./selects/NewFlyingCountry";
 import NightsFrom from "./selects/NightsFrom";
+import StarsFilter from "./selects/StarsFilter";
+import Tourists from "./selects/Tourists";
 
 export default function Header() {
   return (
@@ -35,29 +37,13 @@ export default function Header() {
         </div>
 
         {/* Туристы */}
-        <div className="flex items-center gap-4 px-6 py-1 border border-[#DBE0E5] rounded-lg min-w-[180px]">
-          <FaUserFriends className="text-[#FF621F] w-6 h-6" />
-          <div className="flex flex-col">
-            <span className="text-sm font-normal text-[#7E8389]">Туристы</span>
-            <span className="text-lg font-medium text-[#2E2E32]">
-              2 взрослых
-            </span>
-          </div>
-        </div>
+        <Tourists />
 
         {/* Ночей */}
         <NightsFrom />
 
         {/* Звезд */}
-        <div className="flex items-center gap-4 px-6 py-1 border border-[#DBE0E5] rounded-lg min-w-[180px]">
-          <FaStar className="text-[#FF621F] w-6 h-6" />
-          <div className="flex flex-col">
-            <span className="text-sm font-normal text-[#7E8389]">Звезд</span>
-            <span className="text-lg font-medium text-[#2E2E32]">
-              1-5 звезд
-            </span>
-          </div>
-        </div>
+        <StarsFilter />
 
         {/* Поиск */}
         <button className="w-[60px] h-[60px] flex items-center justify-center border border-[#FF621F] bg-[#FF621F] rounded-lg">

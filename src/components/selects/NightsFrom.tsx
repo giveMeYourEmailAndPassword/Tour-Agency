@@ -103,7 +103,7 @@ export default function NightsFrom() {
       {isOpen && (
         <div className="absolute top-full left-0 mt-1 w-[234px] bg-white rounded-lg shadow-lg border border-[#DBE0E5] p-5">
           {/* Слайдер */}
-          <div className="relative h-6 mb-8" ref={sliderRef}>
+          <div className="relative h-6 mb-4" ref={sliderRef}>
             <div className="absolute top-1/2 -translate-y-1/2 w-full h-3 bg-[#DBE0E5] rounded-lg">
               <div
                 className="absolute h-full bg-[#FF621F] rounded-lg"
@@ -153,12 +153,12 @@ export default function NightsFrom() {
           </div>
 
           {/* Кнопки выбора количества ночей */}
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-[6px]">
             {NIGHTS.map((night) => (
               <button
                 key={night}
                 onClick={() => handleNightSelect(night)}
-                className={`py-2 px-3 text-lg font-medium rounded-[30px] border transition-colors
+                className={`py-1 px-3 text-base rounded-[30px] border transition-colors
                   ${
                     night === selectedNights
                       ? "border-[#FF621F] text-[#2E2E32]"

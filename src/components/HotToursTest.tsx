@@ -1,0 +1,205 @@
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import { parse, format, addDays } from "date-fns";
+import { ru } from "date-fns/locale";
+import { Skeleton } from "@heroui/react";
+import starFilled from "../assets/icons/star-filled.svg";
+import starOutline from "../assets/icons/star-outline.svg";
+import utensils from "../assets/icons/utensils.svg";
+import bed from "../assets/icons/bed.svg";
+
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL || "http://localhost:8000/api";
+
+const fetchHotTours = async () => {
+  const response = await axios.get(`${API_BASE_URL}/hot-tours`);
+  return response.data;
+};
+
+// Функция для обрезки названия отеля после 3-го пробела
+const truncateHotelName = (name: string) => {
+  const words = name.split(" ");
+  if (words.length > 3) {
+    return words.slice(0, 3).join(" ") + "...";
+  }
+  return name;
+};
+
+// Форматирование даты
+const formatDate = (dateString: string) => {
+  const date = parse(dateString, "dd.MM.yyyy", new Date());
+  return format(date, "d MMMM", { locale: ru });
+};
+
+// Получение конечной даты
+const getEndDate = (startDate: string, nights: number) => {
+  const date = parse(startDate, "dd.MM.yyyy", new Date());
+  return format(addDays(date, nights), "d MMMM", { locale: ru });
+};
+
+// Определение типа питания
+const getMealType = (meal: string) => {
+  const mealTypes: { [key: string]: string } = {
+    BB: "Завтрак",
+    HB: "Полупансион",
+    FB: "Полный пансион",
+    AI: "Всё включено",
+    UAI: "Ультра всё включено",
+    RO: "Без питания",
+  };
+  return mealTypes[meal] || meal;
+};
+
+export default function HotToursTest() {
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["hotTours"],
+    queryFn: fetchHotTours,
+  });
+
+  // Фильтруем только туры из Бишкека (код 80)
+  const bishkekTours =
+    data?.hottours?.tour.filter((tour: any) => tour.departurecode === "80") ||
+    [];
+
+  if (isLoading) {
+    return (
+      <div className="ml-3 flex-grow">
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-4">
+          {[...Array(22)].map((_, index) => (
+            <div
+              key={index}
+              className="w-full flex items-center gap-2.5 p-4 bg-white border border-[#DBE0E5] rounded-[10px]"
+            >
+              <div className="w-full flex flex-col gap-2">
+                <Skeleton className="w-full h-36 rounded" />
+                <div className="w-full flex flex-col gap-2">
+                  <div className="w-full flex justify-between items-center gap-1">
+                    <div className="flex items-center gap-0.5">
+                      <Skeleton className="w-24 h-4" />
+                    </div>
+                    <Skeleton className="w-24 h-4" />
+                  </div>
+                  <Skeleton className="w-full h-7" />
+                  <Skeleton className="w-3/4 h-5" />
+                </div>
+                <div className="w-full flex items-center gap-3 pb-1 border-b border-[#DBE0E5]">
+                  <Skeleton className="w-20 h-6" />
+                </div>
+                <div className="w-full flex justify-between items-center">
+                  <Skeleton className="w-20 h-7" />
+                  <div className="flex flex-col items-end gap-1">
+                    <Skeleton className="w-32 h-4" />
+                    <Skeleton className="w-24 h-4" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="ml-3 flex-grow">
+        <div className="text-center text-red-500">Ошибка загрузки данных.</div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="ml-3 flex-grow">
+      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-2">
+        {bishkekTours.map((tour: any, index: number) => (
+          <div
+            key={index}
+            className="w-full flex items-center gap-2.5 p-4 bg-white border border-[#DBE0E5] rounded-[10px]"
+          >
+            <div className="w-full flex flex-col gap-2">
+              {/* Изображение */}
+              <div className="w-full h-36 rounded">
+                <img
+                  src={
+                    tour.hotelpicture
+                      ? `https:${tour.hotelpicture}`
+                      : "/default-image.jpg"
+                  }
+                  alt={tour.hotelname}
+                  className="w-full h-full object-cover rounded"
+                />
+              </div>
+
+              {/* Информация об отеле */}
+              <div className="w-full flex flex-col gap-2">
+                <div className="w-full flex justify-between items-center gap-1">
+                  <div className="flex items-center gap-0.5">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <img
+                        key={i}
+                        src={
+                          i < parseInt(tour.hotelstars)
+                            ? starFilled
+                            : starOutline
+                        }
+                        alt={
+                          i < parseInt(tour.hotelstars)
+                            ? "filled star"
+                            : "outline star"
+                        }
+                        className="w-4 h-4"
+                      />
+                    ))}
+                    {tour.hotelrating !== "0" && (
+                      <div className="bg-[#FF621F] text-white text-xs font-medium px-1 rounded-[20px] ml-0.5">
+                        {tour.hotelrating}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <h3 className="text-[#2E2E32] text-lg font-bold leading-[1.22]">
+                  {truncateHotelName(tour.hotelname)}
+                </h3>
+                <p className="text-[#6B7280] text-base leading-[1.29]">
+                  {tour.countryname}, {tour.hotelregionname}
+                </p>
+              </div>
+
+              {/* Теги */}
+              <div className="w-full flex items-center gap-3 pb-1 border-b border-[#DBE0E5]">
+                <div className="flex items-center gap-1">
+                  <img src={utensils} alt="meal" className="w-3.5 h-3.5" />
+                  <span className="text-sm text-[#2E2E32]">
+                    {getMealType(tour.meal)}
+                  </span>
+                </div>
+              </div>
+
+              {/* Цена и даты */}
+              <div className="w-full flex justify-between items-center">
+                <span className="text-xl font-bold text-[#2E2E32]">
+                  {tour.price * 2}
+                  {tour.currency === "EUR"
+                    ? "€"
+                    : tour.currency === "USD"
+                    ? "$"
+                    : tour.currency}
+                </span>
+                <div className="flex flex-col items-end">
+                  <span className="text-xs font-bold text-[#2E2E32]">
+                    {formatDate(tour.flydate)} -{" "}
+                    {getEndDate(tour.flydate, parseInt(tour.nights))}
+                  </span>
+                  <span className="text-sm text-[#6B7280]">
+                    кол-во ночей: {tour.nights}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}

@@ -1,13 +1,11 @@
 import Header from "./components/Header";
 import Filters from "./components/Filters";
-import { TbPointFilled } from "react-icons/tb";
-import HotTours from "./components/HotTours";
 import { useState, useRef } from "react";
-import FloatingControls from "./components/FloatingControls";
 import FiltersMobile from "./components/FiltersMobile";
-import HotelCard from "./Test";
+import HotToursTest from "./components/HotToursTest";
 
 export default function App() {
+  const [showResults, setShowResults] = useState(false);
   const [params, setParams] = useState({});
   const hotToursRef = useRef(null);
 
@@ -25,14 +23,17 @@ export default function App() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      <Header onSearch={() => setShowResults(true)} />
 
-      {/* Секция с синим фоном */}
-      <div className="w-fullmt-1 md:mt-0 bg-white">
-        <div className="max-w-[1440px] mx-auto">
-          {/* Фильтры */}
-          <div className="md:block hidden">
-            <Filters />
+      {/* Секция с белым фоном */}
+      <div className="w-full mt-1 md:mt-0 bg-white">
+        <div className="max-w-[1560px] mx-auto">
+          {/* Фильтры и горящие туры */}
+          <div className="md:block hidden mt-4">
+            <div className="flex items-start">
+              <Filters />
+              <HotToursTest />
+            </div>
           </div>
           <div className="block md:hidden">
             <FiltersMobile />

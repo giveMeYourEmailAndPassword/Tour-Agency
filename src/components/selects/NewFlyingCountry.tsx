@@ -6,7 +6,11 @@ import { destinations } from "../data/destinations";
 export default function NewFlyingCountry() {
   const { setData } = useContext(DataContext);
   const [selectedCountry, setSelectedCountry] = useState(4); // По умолчанию Турция
-  const [selectedRegions, setSelectedRegions] = useState<number[]>([]); // Массив выбранных регионов
+  const [selectedRegions, setSelectedRegions] = useState<number[]>(() => {
+    // Находим Турцию и получаем все её регионы
+    const turkey = destinations.find((country) => country.id === 4);
+    return turkey ? turkey.regions.map((region) => region.id) : [];
+  }); // По умолчанию все регионы Турции
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
 

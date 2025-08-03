@@ -1,212 +1,196 @@
 import React, { useState, useContext } from "react";
-import {
-  Button,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  Checkbox,
-} from "@heroui/react";
-import { IoIosArrowDown } from "react-icons/io";
-import { IoClose } from "react-icons/io5";
 import { DataContext } from "../DataProvider";
-import service from "../data/HotelServiceData";
+
+interface TagProps {
+  label: string;
+  onRemove: () => void;
+}
+
+const Tag: React.FC<TagProps> = ({ label, onRemove }) => (
+  <div className="flex items-center gap-2 px-2 py-1 rounded-lg bg-[#FDDEC2]">
+    <span className="text-base text-[#2E2E32]">{label}</span>
+    <button onClick={onRemove} className="text-[#2E2E32]">
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 16 16"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M4 4L12 12M4 12L12 4"
+          stroke="currentColor"
+          strokeWidth="1.6"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    </button>
+  </div>
+);
+
+// Группируем сервисы по категориям
+const CATEGORIES = {
+  "Услуги отеля": [], // Пустой массив, так как это заголовок для выбранных услуг
+  "Для детей": [
+    "Водные горки",
+    "Детское меню",
+    "Мини-клуб",
+    "Детская анимация",
+    "Детская площадка",
+  ],
+  Номер: [
+    "Кухня в номере",
+    "Балкон в номере",
+    "Wi-Fi в номере",
+    "Кондиционер",
+    "Размещение с животными",
+  ],
+  Пляж: ["Первая линия", "Собственный пляж", "Песчаный пляж", "Галечный пляж"],
+  Территория: [
+    "Бассейн",
+    "Бассейн с подогревом",
+    "Водные горки",
+    "СПА-центр",
+    "Ресторан/кафе",
+    "Спортзал",
+    "Теннис",
+    "Футбол",
+    "Новый отель",
+  ],
+  Услуги: [
+    "Анимация",
+    "Дискотека",
+    "Wi-Fi",
+    "Размещение одиноких мужчин",
+    "Только для взрослых",
+  ],
+  "Тип отеля": ["Активный", "Городской", "Семейный", "VIP"],
+};
 
 export default function HotelService() {
   const { setData, params } = useContext(DataContext);
-  const [isOpen, setIsOpen] = useState(false);
-  const [selectedValues, setSelectedValues] = useState(
+  const [selectedServices, setSelectedServices] = useState<string[]>(
     () => params.param10 || []
   );
-  const [activeTab, setActiveTab] = useState<"all" | "selected">("all");
+  const [expandedSections, setExpandedSections] = useState<string[]>([
+    "Для детей",
+  ]); // По умолчанию открыта секция "Для детей"
 
-  const groupedServices = service.reduce((acc, item) => {
-    if (!acc[item.group]) {
-      acc[item.group] = [];
-    }
-    acc[item.group].push(item);
-    return acc;
-  }, {});
+  const toggleService = (service: string) => {
+    setSelectedServices((prev) => {
+      const newServices = prev.includes(service)
+        ? prev.filter((s) => s !== service)
+        : [...prev, service];
 
-  const checkboxes = Object.keys(groupedServices).map((group) => ({
-    group,
-    options: groupedServices[group].map((service) => ({
-      label: service.name,
-      value: service.id,
-    })),
-  }));
-
-  const getServiceNameById = (id: string) => {
-    const serviceItem = service.find((item) => item.id === id);
-    return serviceItem ? serviceItem.name : "";
+      // Обновляем контекст данных
+      setData("param10", newServices);
+      return newServices;
+    });
   };
 
-  const handleChange = (value: string) => {
-    setSelectedValues((prev) =>
-      prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]
+  const toggleSection = (section: string) => {
+    if (section === "Услуги отеля") return; // Не сворачиваем секцию с тегами
+    setExpandedSections((prev) =>
+      prev.includes(section)
+        ? prev.filter((s) => s !== section)
+        : [...prev, section]
     );
   };
 
-  const handleApply = () => {
-    setData("param10", selectedValues);
-    setIsOpen(false); // Закрываем Popover после выбора
+  const removeService = (service: string) => {
+    toggleService(service);
   };
-
-  const handleReset = () => {
-    setSelectedValues([]);
-    setData("param10", []);
-  };
-
-  const getDisplayText = () => {
-    if (selectedValues.length === 1) {
-      const serviceName = getServiceNameById(selectedValues[0]);
-      const truncatedServiceName =
-        serviceName.length > 16
-          ? serviceName.slice(0, 16) + "..."
-          : serviceName;
-
-      return (
-        <div className="flex flex-col items-start">
-          <h1 className="sigma-sigma-boy text-sm">Услуги отеля</h1>
-          <div className="text-base">
-            <p>{truncatedServiceName}</p>
-          </div>
-        </div>
-      );
-    } else if (selectedValues.length > 1) {
-      return (
-        <div className="flex flex-col items-start">
-          <h1 className="sigma-sigma-boy text-sm">Услуги отеля</h1>
-          <div className="text-base">
-            <p className="">Выбрано {`(${selectedValues.length})`}</p>
-          </div>
-        </div>
-      );
-    } else {
-      return <>Услуги отеля</>;
-    }
-  };
-
-  const filteredCheckboxes =
-    activeTab === "selected"
-      ? checkboxes
-          .map(({ group, options }) => ({
-            group,
-            options: options.filter((option) =>
-              selectedValues.includes(option.value)
-            ),
-          }))
-          .filter(({ options }) => options.length > 0)
-      : checkboxes;
 
   return (
-    <Popover
-      placement="bottom"
-      isOpen={isOpen}
-      onOpenChange={(open) => setIsOpen(open)}
-      shouldCloseOnScroll={false}
-    >
-      <PopoverTrigger className="!z-0 !scale-100 !opacity-100 w-[20%]">
-        <Button
-          className="px-4 bg-blue-600 rounded-lg border border-slate-300"
-          size="lg"
-        >
-          <div className="flex items-center justify-between w-full">
-            <div className="flex items-center gap-2">
-              <h1 className="text-white">{getDisplayText()}</h1>
-            </div>
-            {selectedValues.length === 0 ? (
-              <IoIosArrowDown
-                className={`text-xl text-white transform transition-transform ${
-                  isOpen ? "rotate-180" : ""
-                }`}
+    <div className="flex flex-col gap-3">
+      {/* Заголовок "Услуги отеля" и теги */}
+      <div className="flex flex-col gap-2">
+        <span className="text-base text-[#2E2E32] font-semibold border-b border-[#DBE0E5] pb-2">
+          Услуги отеля
+        </span>
+        {selectedServices.length > 0 && (
+          <div className="flex flex-wrap gap-1">
+            {selectedServices.map((service) => (
+              <Tag
+                key={service}
+                label={service}
+                onRemove={() => removeService(service)}
               />
-            ) : (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleReset();
-                }}
-                className="text-white"
-              >
-                <IoClose className="text-xl" />
-              </button>
-            )}
-          </div>
-        </Button>
-      </PopoverTrigger>
-
-      <PopoverContent className="rounded-md">
-        <div className="px-3 pt-3 w-72">
-          <h1 className="text-base font-medium mb-2">Услуги в отеле</h1>
-
-          <div className="flex border-b mb-2 gap-1">
-            <button
-              className={`text-gray-800 text-xs font-medium px-1 mb-[-1px] pb-1 ${
-                activeTab === "all" ? "border-b-2 border-black mb-0" : ""
-              }`}
-              onClick={() => setActiveTab("all")}
-            >
-              ВСЕ
-            </button>
-            {selectedValues.length >= 1 && (
-              <button
-                className={`text-gray-800 text-xs font-medium px-1 mb-[-1px] pb-1 ${
-                  activeTab === "selected" ? "border-b-2 border-black mb-0" : ""
-                }`}
-                onClick={() => setActiveTab("selected")}
-              >
-                ВЫБРАНО
-                <div className="bg-slate-600 rounded-full h-4 px-2 inline-flex items-center ml-1">
-                  <p className="text-xs text-white">{selectedValues.length}</p>
-                </div>
-              </button>
-            )}
-            {selectedValues.length >= 1 && (
-              <button
-                className="text-gray-800 text-xs font-medium px-1 mb-[-1px] pb-1"
-                onClick={handleReset}
-              >
-                СБРОС
-              </button>
-            )}
-          </div>
-
-          <div className="h-64 overflow-auto scrollbar-custom2">
-            {filteredCheckboxes.map(({ group, options }) => (
-              <div key={group} className="mb-3">
-                <h1 className="text-base font-medium mb-1">{group}</h1>
-                <div className="flex flex-col gap-1">
-                  {options.map(({ value, label }) => (
-                    <Checkbox
-                      color="default"
-                      size="sm"
-                      key={value}
-                      value={value}
-                      isSelected={selectedValues.includes(value)}
-                      onValueChange={() => handleChange(value)}
-                    >
-                      <p className="text-sm text-black"> {label}</p>
-                    </Checkbox>
-                  ))}
-                </div>
-              </div>
             ))}
           </div>
+        )}
+      </div>
 
-          <div className="p-4 flex items-center justify-center">
+      {/* Секции с услугами */}
+      {Object.entries(CATEGORIES).map(([category, services]) => {
+        if (category === "Услуги отеля") return null; // Пропускаем, так как уже отобразили выше
+        return (
+          <div key={category} className="flex flex-col gap-1.5">
             <button
-              onClick={handleApply}
-              className={`px-14 py-2 border-2 text-lg rounded-full ${
-                selectedValues.length >= 1
-                  ? "border-blue-700 bg-blue-700 text-white"
-                  : "text-gray-500"
-              }`}
+              className="flex items-center justify-between text-[#2E2E32] text-base font-semibold"
+              onClick={() => toggleSection(category)}
             >
-              Выбрать
+              <span>{category}</span>
+              <svg
+                className={`w-5 h-5 transform transition-transform ${
+                  expandedSections.includes(category) ? "rotate-180" : ""
+                }`}
+                viewBox="0 0 20 20"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M15 12.5L10 7.5L5 12.5"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
             </button>
+
+            {expandedSections.includes(category) && (
+              <div className="flex flex-col gap-0.5">
+                {services.map((service) => (
+                  <label
+                    key={service}
+                    className="flex items-center gap-3 cursor-pointer"
+                  >
+                    <div
+                      className={`w-4 h-4 rounded border flex items-center justify-center ${
+                        selectedServices.includes(service)
+                          ? "bg-[#FF621F] border-[#FF621F]"
+                          : "border-[#7E8389]"
+                      }`}
+                      onClick={() => toggleService(service)}
+                    >
+                      {selectedServices.includes(service) && (
+                        <svg
+                          width="11"
+                          height="8"
+                          viewBox="0 0 11 8"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M1.33301 4L3.99967 6.66667L9.33301 1.33334"
+                            stroke="white"
+                            strokeWidth="1.6"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      )}
+                    </div>
+                    <span className="text-base text-[#2E2E32]">{service}</span>
+                  </label>
+                ))}
+              </div>
+            )}
           </div>
-        </div>
-      </PopoverContent>
-    </Popover>
+        );
+      })}
+    </div>
   );
 }

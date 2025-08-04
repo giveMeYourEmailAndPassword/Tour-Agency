@@ -14,7 +14,7 @@ interface HeaderProps {
 export default function Header({ onSearch }: HeaderProps) {
   return (
     <div className="w-full bg-white">
-      <div className="max-w-[1300px] mx-auto">
+      <div className="max-w-[1332px] mx-auto">
         <div className="flex items-center justify-between gap-2 px-6 py-4 w-full">
           {/* Город вылета */}
           <NewDepartureCity />

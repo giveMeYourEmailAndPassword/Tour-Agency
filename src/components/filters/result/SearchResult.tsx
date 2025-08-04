@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { DataContext } from "../../DataProvider";
 import { parse, format, addDays } from "date-fns";
 import { ru } from "date-fns/locale";
-import starFilled from "../../../assets/star.svg";
+import starFilled from "../../../assets/star_fill.svg";
 import starOutline from "../../../assets/star.svg";
 import utensils from "../../../assets/moon_stars.svg";
 import bed from "../../../assets/person_luggage.svg";

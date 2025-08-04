@@ -8,7 +8,7 @@ import { ru } from "date-fns/locale"; // Русская локализация
 import { Skeleton } from "@heroui/react";
 import { useState } from "react";
 import { countryCodeMap } from "../constants/countryCodeMap";
-import starFilled from "../assets/star.svg";
+import starFilled from "../assets/star_fill.svg";
 import starOutline from "../assets/star.svg";
 import utensils from "../assets/moon_stars.svg";
 import bed from "../assets/person_luggage.svg";

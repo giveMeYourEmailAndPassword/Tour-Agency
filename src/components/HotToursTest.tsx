@@ -3,7 +3,7 @@ import axios from "axios";
 import { parse, format, addDays } from "date-fns";
 import { ru } from "date-fns/locale";
 import { Skeleton } from "@heroui/react";
-import starFilled from "../assets/star.svg";
+import starFilled from "../assets/star_fill.svg";
 import starOutline from "../assets/star.svg";
 import utensils from "../assets/moon_stars.svg";
 import bed from "../assets/person_luggage.svg";
@@ -63,7 +63,7 @@ export default function HotToursTest() {
 
   if (isLoading) {
     return (
-      <div className="ml-3 flex-grow">
+      <div className="ml-2 flex-grow">
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-4">
           {[...Array(22)].map((_, index) => (
             <div
@@ -102,14 +102,14 @@ export default function HotToursTest() {
 
   if (isError) {
     return (
-      <div className="ml-3 flex-grow">
+      <div className="ml-2 flex-grow">
         <div className="text-center text-red-500">Ошибка загрузки данных.</div>
       </div>
     );
   }
 
   return (
-    <div className="ml-3 flex-grow">
+    <div className="ml-2 flex-grow">
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-2">
         {bishkekTours.map((tour: any, index: number) => (
           <div

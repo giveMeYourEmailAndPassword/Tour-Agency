@@ -15,8 +15,18 @@ export default function NewFlyingCountry() {
   const dropdownRef = useRef(null);
 
   useEffect(() => {
-    setData("param2", selectedCountry);
-    setData("param3", selectedRegions);
+    // Формируем строку для регионов в формате "countryId,regionId,countryId,regionId"
+    if (selectedRegions.length > 0) {
+      const countryRegionPairs = selectedRegions
+        .map((regionId) => `${selectedCountry},${regionId}`)
+        .join(",");
+      setData("countryRegionPairs", countryRegionPairs);
+    } else {
+      // Если регионы не выбраны, отправляем только страну
+      setData("countryRegionPairs", `${selectedCountry},0`);
+    }
+    // Убираем установку param2, так как теперь используем только countryRegionPairs
+    setData("param2", undefined);
   }, [selectedCountry, selectedRegions, setData]);
 
   useEffect(() => {

@@ -16,7 +16,7 @@ export default function NightsFrom() {
   const sliderRef = useRef(null);
 
   useEffect(() => {
-    setData("param3", { start: sliderValue[0], end: sliderValue[1] });
+    setData("param3", { startDay: sliderValue[0], endDay: sliderValue[1] });
   }, [sliderValue, setData]);
 
   useEffect(() => {

@@ -1,0 +1,205 @@
+import { useState } from "react";
+import {
+  format,
+  addMonths,
+  startOfMonth,
+  endOfMonth,
+  eachDayOfInterval,
+  isSameMonth,
+  isSameDay,
+  addDays,
+  getDay,
+} from "date-fns";
+import { ru } from "date-fns/locale";
+import arrow from "../../assets/arrow.svg";
+
+interface CalendarProps {
+  selectedStartDate: Date | null;
+  selectedEndDate: Date | null;
+  onDateSelect: (start: Date | null, end: Date | null) => void;
+  minDate?: Date;
+}
+
+function SingleCalendar({
+  currentMonth,
+  selectedStartDate,
+  selectedEndDate,
+  onDateSelect,
+  minDate,
+  onHover,
+  hoverDate,
+}: {
+  currentMonth: Date;
+  selectedStartDate: Date | null;
+  selectedEndDate: Date | null;
+  onDateSelect: (date: Date) => void;
+  minDate: Date;
+  onHover: (date: Date) => void;
+  hoverDate: Date | null;
+}) {
+  // Получаем все дни текущего месяца
+  const days = eachDayOfInterval({
+    start: startOfMonth(currentMonth),
+    end: endOfMonth(currentMonth),
+  });
+
+  // Получаем дни предыдущего месяца для заполнения первой недели
+  const firstDayOfMonth = startOfMonth(currentMonth);
+  const startingDayOfWeek = getDay(firstDayOfMonth);
+  const prevMonthDays = Array.from(
+    { length: startingDayOfWeek === 0 ? 6 : startingDayOfWeek - 1 },
+    (_, i) =>
+      addDays(
+        firstDayOfMonth,
+        -(startingDayOfWeek === 0 ? 6 : startingDayOfWeek - 1) + i
+      )
+  );
+
+  // Получаем дни следующего месяца для заполнения последней недели
+  const lastDayOfMonth = endOfMonth(currentMonth);
+  const endingDayOfWeek = getDay(lastDayOfMonth);
+  const nextMonthDays = Array.from(
+    { length: endingDayOfWeek === 0 ? 0 : 7 - endingDayOfWeek },
+    (_, i) => addDays(lastDayOfMonth, i + 1)
+  );
+
+  // Все дни для отображения в календаре
+  const allDays = [...prevMonthDays, ...days, ...nextMonthDays];
+
+  // Названия дней недели
+  const weekDays = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
+
+  const isInRange = (date: Date) => {
+    if (!selectedStartDate) return false;
+    if (selectedEndDate) {
+      return date >= selectedStartDate && date <= selectedEndDate;
+    }
+    if (hoverDate) {
+      return (
+        (date >= selectedStartDate && date <= hoverDate) ||
+        (date >= hoverDate && date <= selectedStartDate)
+      );
+    }
+    return false;
+  };
+
+  return (
+    <div className="bg-white w-[320px]">
+      <h2 className="text-lg font-medium text-[#2E2E32] capitalize mb-6 text-center">
+        {format(currentMonth, "LLLL yyyy", { locale: ru })}
+      </h2>
+      <div className="grid grid-cols-7 gap-[2px]">
+        {weekDays.map((day) => (
+          <div
+            key={day}
+            className="text-center text-sm text-[#6B7280] py-2 font-medium"
+          >
+            {day}
+          </div>
+        ))}
+        {allDays.map((date, index) => {
+          const isCurrentMonth = isSameMonth(date, currentMonth);
+          const isSelected =
+            (selectedStartDate && isSameDay(date, selectedStartDate)) ||
+            (selectedEndDate && isSameDay(date, selectedEndDate));
+          const isRangeDate = isInRange(date);
+          const isPastDate = date < minDate;
+          const isWeekend = [0, 6].includes(getDay(date));
+
+          return (
+            <button
+              key={index}
+              onClick={() => onDateSelect(date)}
+              onMouseEnter={() => onHover(date)}
+              disabled={isPastDate}
+              className={`
+                py-3 text-sm font-medium rounded-lg transition-colors
+                ${
+                  isCurrentMonth
+                    ? isWeekend
+                      ? "text-[#FF621F]"
+                      : "text-[#2E2E32]"
+                    : "text-[#A1A1AA]"
+                }
+                ${
+                  isSelected ? "bg-[#FF621F] text-white hover:bg-[#FF621F]" : ""
+                }
+                ${isRangeDate && !isSelected ? "bg-[#FFF1EC]" : ""}
+                ${
+                  isPastDate
+                    ? "text-[#A1A1AA] cursor-not-allowed"
+                    : "hover:bg-[#EFF2F6]"
+                }
+              `}
+            >
+              {format(date, "d")}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+export default function Calendar({
+  selectedStartDate,
+  selectedEndDate,
+  onDateSelect,
+  minDate = new Date(),
+}: CalendarProps) {
+  const [baseMonth, setBaseMonth] = useState(new Date());
+  const [hoverDate, setHoverDate] = useState<Date | null>(null);
+
+  const handleDateClick = (date: Date) => {
+    if (date < minDate) return;
+
+    if (!selectedStartDate || (selectedStartDate && selectedEndDate)) {
+      onDateSelect(date, null);
+    } else {
+      if (date < selectedStartDate) {
+        onDateSelect(date, selectedStartDate);
+      } else {
+        onDateSelect(selectedStartDate, date);
+      }
+    }
+  };
+
+  return (
+    <div className="w-[680px]">
+      <div className="absolute top-16 flex justify-between w-[94%]">
+        <button
+          onClick={() => setBaseMonth((prev) => addMonths(prev, -1))}
+          className="p-2 text-[#2E2E32] hover:bg-[#EFF2F6] rounded-lg"
+        >
+          <img src={arrow} alt="arrow" className="w-6 h-6 rotate-180" />
+        </button>
+        <button
+          onClick={() => setBaseMonth((prev) => addMonths(prev, 1))}
+          className="p-2 text-[#2E2E32] hover:bg-[#EFF2F6] rounded-lg"
+        >
+          <img src={arrow} alt="arrow" className="w-6 h-6" />
+        </button>
+      </div>
+      <div className="flex justify-between">
+        <SingleCalendar
+          currentMonth={baseMonth}
+          selectedStartDate={selectedStartDate}
+          selectedEndDate={selectedEndDate}
+          onDateSelect={handleDateClick}
+          minDate={minDate}
+          onHover={setHoverDate}
+          hoverDate={hoverDate}
+        />
+        <SingleCalendar
+          currentMonth={addMonths(baseMonth, 1)}
+          selectedStartDate={selectedStartDate}
+          selectedEndDate={selectedEndDate}
+          onDateSelect={handleDateClick}
+          minDate={minDate}
+          onHover={setHoverDate}
+          hoverDate={hoverDate}
+        />
+      </div>
+    </div>
+  );
+}

@@ -6,6 +6,7 @@ import StarsFilter from "./selects/StarsFilter";
 import Tourists from "./selects/Tourists";
 import FindTourBtn from "./selects/FindTour";
 import calendar from "../assets/calendar.svg";
+import NewFlyingDate from "./selects/NewFlyingDate";
 
 interface HeaderProps {
   onSearch: () => void;
@@ -23,18 +24,7 @@ export default function Header({ onSearch }: HeaderProps) {
           <NewFlyingCountry />
 
           {/* Даты вылета */}
-
-          <div className="flex items-center gap-4 px-6 py-1 border border-[#DBE0E5] rounded-lg w-[200px]">
-            <img src={calendar} alt="calendar" className="w-6 h-6" />
-            <div className="flex flex-col">
-              <span className="text-sm font-normal text-[#7E8389]">
-                Даты вылета
-              </span>
-              <span className="text-lg font-medium text-[#2E2E32]">
-                7 августа
-              </span>
-            </div>
-          </div>
+          <NewFlyingDate />
 
           {/* Ночей */}
 

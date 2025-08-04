@@ -3,14 +3,14 @@ import { DataContext } from "../DataProvider";
 import moon from "../../assets/moon_stars.svg";
 
 const NIGHTS = [5, 7, 9, 11, 14, 16];
-const MIN_NIGHTS = 5;
+const MIN_NIGHTS = 3;
 const MAX_NIGHTS = 16;
 
 export default function NightsFrom() {
   const { setData } = useContext(DataContext);
   const [selectedNights, setSelectedNights] = useState(7);
   const [isOpen, setIsOpen] = useState(false);
-  const [sliderValue, setSliderValue] = useState([7, 9]);
+  const [sliderValue, setSliderValue] = useState([5, 7]);
   const [isDragging, setIsDragging] = useState<null | "start" | "end">(null);
   const dropdownRef = useRef(null);
   const sliderRef = useRef(null);
@@ -77,10 +77,23 @@ export default function NightsFrom() {
 
   const handleNightSelect = (night) => {
     setSelectedNights(night);
-    // Устанавливаем диапазон с учетом границ
-    const start = Math.max(MIN_NIGHTS, night - 2);
-    const end = Math.min(MAX_NIGHTS, night + 2);
+    // Находим ближайшую пару для выбранного количества ночей
+    let start, end;
+
+    if (night === MIN_NIGHTS) {
+      start = MIN_NIGHTS;
+      end = 5;
+    } else if (night === MAX_NIGHTS) {
+      start = 14;
+      end = MAX_NIGHTS;
+    } else {
+      // Для остальных случаев берем диапазон -2/0
+      start = Math.max(MIN_NIGHTS, night - 2);
+      end = night;
+    }
+
     setSliderValue([start, end]);
+    setIsOpen(false);
   };
 
   return (
@@ -165,7 +178,7 @@ export default function NightsFrom() {
                       : "border-[#DBE0E5] text-[#2E2E32] hover:border-[#FF621F]"
                   }`}
               >
-                {night} дней
+                {night} ночей
               </button>
             ))}
           </div>

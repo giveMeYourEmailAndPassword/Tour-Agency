@@ -58,17 +58,21 @@ export default function SearchResult() {
   // Состояние для отслеживания попыток поиска
   const [searchAttempts, setSearchAttempts] = useState(0);
 
-  // Эффект для автоматического перезапуска поиска
+  // Эффект для отслеживания состояния поиска
   useEffect(() => {
-    if (tours.length === 0 && !loading && searchAttempts < 3) {
+    if (tourDataStatus?.state === "searching" && tours.length > 0) {
+      // Если есть результаты и поиск все еще идет, показываем их
+      setSearchAttempts(0); // Сбрасываем попытки, так как у нас есть результаты
+    } else if (!loading && tours.length === 0 && searchAttempts < 3) {
+      // Если нет результатов и не достигнут лимит попыток, пробуем снова
       const timer = setTimeout(() => {
         setSearchAttempts((prev) => prev + 1);
         searchTours();
-      }, 0);
+      }, 2000); // Добавляем небольшую задержку между попытками
 
       return () => clearTimeout(timer);
     }
-  }, [tours.length, loading, searchAttempts]);
+  }, [tours.length, loading, searchAttempts, tourDataStatus, searchTours]);
 
   // Получаем выбранный город и страну
   const selectedCity =
@@ -99,7 +103,11 @@ export default function SearchResult() {
         <div className="mb-6">
           <h2 className="text-2xl font-semibold text-[#2E2E32]">
             {tours.length > 0
-              ? `Найдено ${tourDataStatus?.hotelsfound || tours.length} туров`
+              ? `${
+                  tourDataStatus?.state === "finished"
+                    ? `Найдено ${tourDataStatus?.hotelsfound} туров`
+                    : `Найдено ${tours.length} туров (поиск продолжается...)`
+                }`
               : searchAttempts >= 3
               ? "К сожалению, по вашему запросу ничего не найдено"
               : "Поиск туров..."}

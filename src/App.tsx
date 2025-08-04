@@ -1,17 +1,11 @@
 import Header from "./components/Header";
 import Filters from "./components/Filters";
-import { useState, useRef } from "react";
+import { useState } from "react";
 import FiltersMobile from "./components/FiltersMobile";
 import SearchResults from "./components/SearchResults";
 
 export default function App() {
   const [showResults, setShowResults] = useState(false);
-  const hotToursRef = useRef(null);
-
-  const scrollToHotTours = (e) => {
-    e.preventDefault();
-    hotToursRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -24,7 +18,18 @@ export default function App() {
           <div className="md:block hidden mt-4">
             <div className="flex items-start">
               <Filters />
-              {showResults && <SearchResults />}
+              {showResults ? (
+                <SearchResults />
+              ) : (
+                <div className="flex-1 p-8 text-center">
+                  <h2 className="text-2xl font-semibold text-[#2E2E32] mb-4">
+                    Это тестовая демка
+                  </h2>
+                  <p className="text-[#6B7280]">
+                    Для начала выберите параметры поиска и нажмите кнопку поиска
+                  </p>
+                </div>
+              )}
             </div>
           </div>
           <div className="block md:hidden">

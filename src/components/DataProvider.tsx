@@ -218,7 +218,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   const areParamsReady = (params: Params) => {
     return (
       params.param1 &&
-      params.countryRegionPairs &&
+      params.param2 &&
       params.param4?.startDate &&
       params.param4?.endDate
     );
@@ -281,6 +281,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     try {
       const requestData = {
         departure: params.param1,
+        country: params.param2,
         datefrom: params.param4.startDate,
         dateto: params.param4.endDate,
         nightsfrom: params.param3?.startDay?.toString() || "",
@@ -292,7 +293,6 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         rating: params.param8?.[0] ?? "0",
         starsbetter: params.param9?.toString() ?? "1",
         services: params.param10?.join(",") ?? "",
-        countryRegionPairs: params.countryRegionPairs || "",
       };
 
       const requestResponse = await fetch(`${API_BASE_URL}/search`, {
@@ -544,6 +544,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     try {
       const requestData = {
         departure: params.param1,
+        country: params.param2,
         datefrom: params.param4.startDate,
         dateto: params.param4.endDate,
         nightsfrom: params.param3?.startDay?.toString() || "",
@@ -555,7 +556,6 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         rating: params.param8?.[0] ?? "0",
         starsbetter: params.param9?.toString() ?? "1",
         services: params.param10?.join(",") ?? "",
-        countryRegionPairs: params.countryRegionPairs || "",
       };
 
       const existingRequests = countryRequests[params.param2];

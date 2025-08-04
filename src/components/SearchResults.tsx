@@ -1,20 +1,11 @@
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
 import { parse, format, addDays } from "date-fns";
 import { ru } from "date-fns/locale";
 import { Skeleton } from "@heroui/react";
 import starFilled from "../assets/star_fill.svg";
 import starOutline from "../assets/star.svg";
 import utensils from "../assets/moon_stars.svg";
-import bed from "../assets/person_luggage.svg";
-
-const API_BASE_URL =
-  import.meta.env.VITE_API_URL || "http://localhost:8000/api";
-
-const fetchHotTours = async () => {
-  const response = await axios.get(`${API_BASE_URL}/hot-tours`);
-  return response.data;
-};
+import { useContext } from "react";
+import { DataContext } from "./DataProvider";
 
 // Функция для обрезки названия отеля после 3-го пробела
 const truncateHotelName = (name: string) => {
@@ -50,18 +41,10 @@ const getMealType = (meal: string) => {
   return mealTypes[meal] || meal;
 };
 
-export default function HotToursTest() {
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ["hotTours"],
-    queryFn: fetchHotTours,
-  });
+export default function SearchResults() {
+  const { tours, loading, error } = useContext(DataContext);
 
-  // Фильтруем только туры из Бишкека (код 80)
-  const bishkekTours =
-    data?.hottours?.tour.filter((tour: any) => tour.departurecode === "80") ||
-    [];
-
-  if (isLoading) {
+  if (loading) {
     return (
       <div className="ml-2 flex-grow">
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-4">
@@ -100,10 +83,18 @@ export default function HotToursTest() {
     );
   }
 
-  if (isError) {
+  if (error) {
     return (
       <div className="ml-2 flex-grow">
-        <div className="text-center text-red-500">Ошибка загрузки данных.</div>
+        <div className="text-center text-red-500">{error}</div>
+      </div>
+    );
+  }
+
+  if (!tours || tours.length === 0) {
+    return (
+      <div className="ml-2 flex-grow">
+        <div className="text-center text-gray-500">Нет результатов поиска.</div>
       </div>
     );
   }
@@ -111,7 +102,7 @@ export default function HotToursTest() {
   return (
     <div className="ml-2 flex-grow">
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-2">
-        {bishkekTours.map((tour: any, index: number) => (
+        {tours.map((tour: any, index: number) => (
           <div
             key={index}
             className="w-full flex items-center gap-2.5 p-4 bg-white border border-[#DBE0E5] rounded-[10px]"
@@ -120,11 +111,7 @@ export default function HotToursTest() {
               {/* Изображение */}
               <div className="w-full h-36 rounded">
                 <img
-                  src={
-                    tour.hotelpicture
-                      ? `https:${tour.hotelpicture}`
-                      : "/default-image.jpg"
-                  }
+                  src={tour.picturelink}
                   alt={tour.hotelname}
                   className="w-full h-full object-cover rounded"
                 />
@@ -162,7 +149,7 @@ export default function HotToursTest() {
                   {truncateHotelName(tour.hotelname)}
                 </h3>
                 <p className="text-[#6B7280] text-base leading-[1.29]">
-                  {tour.countryname}, {tour.hotelregionname}
+                  {tour.countryname}, {tour.regionname}
                 </p>
               </div>
 
@@ -188,11 +175,14 @@ export default function HotToursTest() {
                 </span>
                 <div className="flex flex-col items-end">
                   <span className="text-xs font-bold text-[#2E2E32]">
-                    {formatDate(tour.flydate)} -{" "}
-                    {getEndDate(tour.flydate, parseInt(tour.nights))}
+                    {formatDate(tour.tours.tour[0].flydate)} -{" "}
+                    {getEndDate(
+                      tour.tours.tour[0].flydate,
+                      tour.tours.tour[0].nights
+                    )}
                   </span>
                   <span className="text-sm text-[#6B7280]">
-                    кол-во ночей: {tour.nights}
+                    кол-во ночей: {tour.tours.tour[0].nights}
                   </span>
                 </div>
               </div>

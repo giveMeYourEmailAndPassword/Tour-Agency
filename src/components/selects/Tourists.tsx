@@ -1,6 +1,7 @@
 import React, { useContext, useState, useEffect, useRef } from "react";
 import { DataContext } from "../DataProvider";
-import { FaUserFriends } from "react-icons/fa";
+import person_luggage from "../../assets/person_luggage.svg";
+import Vector from "../../assets/Vector.svg";
 
 const AGES = Array.from({ length: 14 }, (_, i) => i + 1); // [1, 2, ..., 14]
 
@@ -61,9 +62,13 @@ export default function Tourists() {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-4 px-6 py-1 border border-[#DBE0E5] rounded-lg min-w-[180px] bg-white hover:bg-gray-50 duration-300 w-[200px]"
+        className="flex items-center gap-4 px-6 py-1 border border-[#DBE0E5] rounded-lg bg-white hover:bg-gray-50 duration-300 w-[200px]"
       >
-        <FaUserFriends className="text-[#FF621F] w-6 h-6 flex-shrink-0" />
+        <img
+          src={person_luggage}
+          alt="person_luggage"
+          className="w-6 h-6 flex-shrink-0"
+        />
         <div className="flex flex-col items-start">
           <span className="text-sm font-normal text-[#7E8389]">Туристы</span>
           <span className="text-lg font-medium text-[#2E2E32]">
@@ -132,22 +137,7 @@ export default function Tourists() {
               onClick={() => setIsSelectingAge(true)}
               className="w-full text-left px-5 py-2.5 hover:bg-gray-50 duration-300 flex items-center gap-4"
             >
-              <div className="w-5 h-5">
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 20 20"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M0.01 0C8.68 0 15.95 6.8 16.92 15.62C13.34 13.77 8.85 13.86 5.35 15.88C3.97 16.66 2.76 17.68 1.77 18.88C1.88 17.64 2.1 16.43 2.43 15.26C-0.14 12.05 -0.93 7.38 0.82 3.36C0.53 2.27 0.26 1.15 0.01 0Z"
-                    fill="#FF621F"
-                  />
-                  <circle cx="6.67" cy="8.33" r="1.25" fill="#FF621F" />
-                  <circle cx="10.83" cy="8.33" r="1.25" fill="#FF621F" />
-                </svg>
-              </div>
+              <img src={Vector} alt="Vector" className="w-5 h-5" />
               <span className="text-[#2E2E32] text-lg">Добавить ребенка</span>
             </button>
           )}

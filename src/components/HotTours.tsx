@@ -8,10 +8,10 @@ import { ru } from "date-fns/locale"; // Русская локализация
 import { Skeleton } from "@heroui/react";
 import { useState } from "react";
 import { countryCodeMap } from "../constants/countryCodeMap";
-import starFilled from "../assets/icons/star-filled.svg";
-import starOutline from "../assets/icons/star-outline.svg";
-import utensils from "../assets/icons/utensils.svg";
-import bed from "../assets/icons/bed.svg";
+import starFilled from "../assets/star.svg";
+import starOutline from "../assets/star.svg";
+import utensils from "../assets/moon_stars.svg";
+import bed from "../assets/person_luggage.svg";
 
 const API_BASE_URL =
   import.meta.env.VITE_API_URL || "http://localhost:8000/api";

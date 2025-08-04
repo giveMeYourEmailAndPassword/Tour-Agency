@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect, useRef } from "react";
 import { DataContext } from "../DataProvider";
-import { FaMoon } from "react-icons/fa";
+import moon from "../../assets/moon_stars.svg";
 
 const NIGHTS = [5, 7, 9, 11, 14, 16];
 const MIN_NIGHTS = 5;
@@ -87,9 +87,9 @@ export default function NightsFrom() {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-4 px-6 py-1 border border-[#DBE0E5] rounded-lg min-w-[180px] bg-white hover:bg-gray-50 duration-300 w-[190px]"
+        className="flex items-center gap-4 px-6 py-1 border border-[#DBE0E5] rounded-lg bg-white hover:bg-gray-50 duration-300 w-[200px]"
       >
-        <FaMoon className="text-[#FF621F] w-6 h-6 flex-shrink-0" />
+        <img src={moon} alt="moon" className="w-6 h-6 flex-shrink-0" />
         <div className="flex flex-col items-start">
           <span className="text-sm font-normal text-[#7E8389]">Ночей</span>
           <span className="text-lg font-medium text-[#2E2E32]">

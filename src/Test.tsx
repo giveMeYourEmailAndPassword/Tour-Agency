@@ -1,8 +1,8 @@
 import React from "react";
-import starFilled from "./assets/icons/star-filled.svg";
-import starOutline from "./assets/icons/star-outline.svg";
-import utensils from "./assets/icons/utensils.svg";
-import bed from "./assets/icons/bed.svg";
+import starFilled from "./assets/star.svg";
+import starOutline from "./assets/star.svg";
+import utensils from "./assets/moon_stars.svg";
+import bed from "./assets/person_luggage.svg";
 
 interface HotelCardProps {
   image: string;

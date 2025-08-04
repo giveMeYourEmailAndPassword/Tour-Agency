@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect, useRef } from "react";
 import { DataContext } from "../DataProvider";
-import { FaPlane } from "react-icons/fa";
+import plane_departure from "../../assets/plane_departure.svg";
 import { departures } from "../data/destinations";
 
 export default function NewDepartureCity() {
@@ -37,9 +37,9 @@ export default function NewDepartureCity() {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-4 px-6 py-1 border border-[#DBE0E5] rounded-lg min-w-[180px] bg-white hover:bg-gray-50 duration-300"
+        className="flex items-center gap-4 px-6 py-1 border border-[#DBE0E5] rounded-lg bg-white hover:bg-gray-50 duration-300 w-[180px]"
       >
-        <FaPlane className="text-[#FF621F] w-6 h-6 flex-shrink-0" />
+        <img src={plane_departure} alt="plane_departure" className="w-6 h-6" />
         <div className="flex flex-col items-start">
           <span className="text-sm font-normal text-[#7E8389]">
             Город вылета

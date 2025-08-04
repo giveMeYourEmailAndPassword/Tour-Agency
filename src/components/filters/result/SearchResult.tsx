@@ -2,10 +2,10 @@ import React, { useContext, useEffect, useState } from "react";
 import { DataContext } from "../../DataProvider";
 import { parse, format, addDays } from "date-fns";
 import { ru } from "date-fns/locale";
-import starFilled from "../../../assets/icons/star-filled.svg";
-import starOutline from "../../../assets/icons/star-outline.svg";
-import utensils from "../../../assets/icons/utensils.svg";
-import bed from "../../../assets/icons/bed.svg";
+import starFilled from "../../../assets/star.svg";
+import starOutline from "../../../assets/star.svg";
+import utensils from "../../../assets/moon_stars.svg";
+import bed from "../../../assets/person_luggage.svg";
 
 // Функция для обрезки названия отеля после 3-го пробела
 const truncateHotelName = (name: string) => {

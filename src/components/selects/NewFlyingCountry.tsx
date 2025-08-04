@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect, useRef } from "react";
 import { DataContext } from "../DataProvider";
-import { FaMapMarkerAlt, FaChevronRight } from "react-icons/fa";
+import marker from "../../assets/marker.svg";
 import { destinations } from "../data/destinations";
 
 export default function NewFlyingCountry() {
@@ -75,9 +75,9 @@ export default function NewFlyingCountry() {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-4 px-6 py-1 border border-[#DBE0E5] rounded-lg min-w-[180px] bg-white hover:bg-gray-50 duration-300 w-[200px]"
+        className="flex items-center gap-4 px-6 py-1 border border-[#DBE0E5] rounded-lg bg-white hover:bg-gray-50 duration-300 w-[220px]"
       >
-        <FaMapMarkerAlt className="text-[#FF621F] w-6 h-6 flex-shrink-0" />
+        <img src={marker} alt="marker" className="w-6 h-6 flex-shrink-0" />
         <div className="flex flex-col items-start">
           <span className="text-sm font-normal text-[#7E8389]">
             Страна, город
@@ -101,7 +101,7 @@ export default function NewFlyingCountry() {
                 `}
               >
                 <span className="text-[#2E2E32] text-base">{country.name}</span>
-                <FaChevronRight className="text-[#2E2E32] w-4 h-4" />
+                <img src={marker} alt="marker" className="w-4 h-4" />
               </button>
             ))}
           </div>

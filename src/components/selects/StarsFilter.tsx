@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect, useRef } from "react";
 import { DataContext } from "../DataProvider";
-import { FaStar } from "react-icons/fa";
+import star from "../../assets/star.svg";
 
 const STARS = [
   { id: 0, name: "1-5 звeзд" },
@@ -43,9 +43,9 @@ export default function StarsFilter() {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-4 px-6 py-1 border border-[#DBE0E5] rounded-lg min-w-[180px] bg-white hover:bg-gray-50 duration-300 w-[190px]"
+        className="flex items-center gap-4 px-6 py-1 border border-[#DBE0E5] rounded-lg bg-white hover:bg-gray-50 duration-300 w-[180px]"
       >
-        <FaStar className="text-[#FF621F] w-6 h-6 flex-shrink-0" />
+        <img src={star} alt="star" className="w-6 h-6 flex-shrink-0" />
         <div className="flex flex-col items-start">
           <span className="text-sm font-normal text-[#7E8389]">Звезд</span>
           <span className="text-lg font-medium text-[#2E2E32]">

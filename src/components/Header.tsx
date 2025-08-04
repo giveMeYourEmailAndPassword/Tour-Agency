@@ -5,7 +5,7 @@ import NightsFrom from "./selects/NightsFrom";
 import StarsFilter from "./selects/StarsFilter";
 import Tourists from "./selects/Tourists";
 import FindTourBtn from "./selects/FindTour";
-import { FaCalendarAlt } from "react-icons/fa";
+import calendar from "../assets/calendar.svg";
 
 interface HeaderProps {
   onSearch: () => void;
@@ -14,8 +14,8 @@ interface HeaderProps {
 export default function Header({ onSearch }: HeaderProps) {
   return (
     <div className="w-full bg-white">
-      <div className="max-w-[1440px] mx-auto">
-        <div className="flex items-center gap-2 px-6 py-4">
+      <div className="max-w-[1300px] mx-auto">
+        <div className="flex items-center justify-between gap-2 px-6 py-4 w-full">
           {/* Город вылета */}
           <NewDepartureCity />
 
@@ -23,8 +23,9 @@ export default function Header({ onSearch }: HeaderProps) {
           <NewFlyingCountry />
 
           {/* Даты вылета */}
-          <div className="flex items-center gap-4 px-6 py-1 border border-[#DBE0E5] rounded-lg min-w-[180px]">
-            <FaCalendarAlt className="text-[#FF621F] w-6 h-6" />
+
+          <div className="flex items-center gap-4 px-6 py-1 border border-[#DBE0E5] rounded-lg w-[200px]">
+            <img src={calendar} alt="calendar" className="w-6 h-6" />
             <div className="flex flex-col">
               <span className="text-sm font-normal text-[#7E8389]">
                 Даты вылета
@@ -36,15 +37,19 @@ export default function Header({ onSearch }: HeaderProps) {
           </div>
 
           {/* Ночей */}
+
           <NightsFrom />
 
           {/* Звезд */}
+
           <StarsFilter />
 
           {/* Туристы */}
+
           <Tourists />
 
           {/* Поиск */}
+
           <FindTourBtn onSearch={onSearch} />
         </div>
       </div>

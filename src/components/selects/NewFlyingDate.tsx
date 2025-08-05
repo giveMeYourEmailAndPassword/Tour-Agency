@@ -46,22 +46,51 @@ export default function NewFlyingDate() {
   // Форматируем даты для отображения в кнопке
   const formatDisplayDate = (date: Date | null) => {
     if (!date) return "";
-    return format(date, "d MMMM", { locale: ru });
+    return format(date, "d MMM", { locale: ru });
+  };
+
+  // Добавляем новую функцию для форматирования диапазона дат
+  const formatDateRange = (start: Date | null, end: Date | null) => {
+    if (!start || !end) return "";
+
+    const startMonth = start.getMonth();
+    const endMonth = end.getMonth();
+
+    if (startMonth === endMonth) {
+      // Если даты в одном месяце
+      return `${format(start, "d", { locale: ru })} - ${format(
+        end,
+        "d"
+      )} ${format(end, "MMMM", { locale: ru })}`;
+    } else {
+      // Если даты в разных месяцах
+      return `${format(start, "d MMM", { locale: ru })}. - ${format(
+        end,
+        "d MMM",
+        { locale: ru }
+      )}.`;
+    }
   };
 
   return (
     <Popover placement="bottom">
       <PopoverTrigger className="!z-0 !scale-100 !opacity-100">
         <Button
-          className="p-7 bg-white hover:bg-slate-100 border border-[#DBE0E5] rounded-lg"
+          className="p-7 bg-white hover:bg-slate-100 border border-[#DBE0E5] rounded-lg w-[220px]"
           size="lg"
         >
           <img src={calendar} alt="calendar" className="w-6 h-6" />
           <div className="flex flex-col justify-between">
-            <h1 className="text-sm mb-[1px] text-[#6B7280]">Даты вылета</h1>
-            <p className="text-[#2E2E32] text-lg font-medium">
-              {formatDisplayDate(dateRange.start)}
-            </p>
+            {!dateRange.start || !dateRange.end ? (
+              <h1 className="text-base text-[#6B7280]">Даты вылета</h1>
+            ) : (
+              <>
+                <h1 className="text-sm mb-[1px] text-[#6B7280]">Даты вылета</h1>
+                <p className="text-[#2E2E32] text-lg font-medium">
+                  {formatDateRange(dateRange.start, dateRange.end)}
+                </p>
+              </>
+            )}
           </div>
         </Button>
       </PopoverTrigger>

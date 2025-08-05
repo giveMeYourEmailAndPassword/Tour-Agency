@@ -2,10 +2,32 @@ import { parse, format, addDays } from "date-fns";
 import { ru } from "date-fns/locale";
 import { Skeleton } from "@heroui/react";
 import starFilled from "../assets/star_fill.svg";
-import starOutline from "../assets/star.svg";
+import starOutline from "../assets/star_unfill.svg";
 import utensils from "../assets/utensils.svg";
 import { useContext } from "react";
 import { DataContext } from "./DataProvider";
+// Импорты
+// Импорты
+
+interface Tour {
+  hotelcode: string;
+  picturelink: string;
+  hotelname: string;
+  hotelstars: string;
+  hotelrating: string;
+  countryname: string;
+  regionname: string;
+  price: string;
+  currency: string;
+  tours: {
+    tour: Array<{
+      tourid: string;
+      meal: string;
+      flydate: string;
+      nights: number;
+    }>;
+  };
+}
 
 // Функция для обрезки названия отеля после 3-го пробела
 const truncateHotelName = (name: string) => {
@@ -103,10 +125,21 @@ export default function SearchResults() {
   return (
     <div className="ml-2 flex-grow">
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-2">
-        {tours.map((tour: any, index: number) => (
+        {tours.map((tour: Tour, index: number) => (
           <div
             key={index}
-            className="w-full flex items-center gap-2.5 p-4 bg-white border border-[#DBE0E5] rounded-[10px]"
+            onClick={() => {
+              // Сохраняем туры для этого отеля в localStorage
+              const hotelTours = tours.filter(
+                (t) => t.hotelcode === tour.hotelcode
+              );
+              localStorage.setItem(
+                "selectedHotelTours",
+                JSON.stringify(hotelTours)
+              );
+              window.location.href = `/hotel/${tour.hotelcode}`;
+            }}
+            className="w-full flex items-center gap-2.5 p-4 bg-white border border-[#DBE0E5] rounded-[10px] cursor-pointer hover:shadow-lg transition-all duration-300"
           >
             <div className="w-full flex flex-col gap-2">
               {/* Изображение */}
@@ -140,7 +173,9 @@ export default function SearchResults() {
                     ))}
                     {tour.hotelrating !== "0" && (
                       <div className="bg-[#FF621F] text-white text-xs font-medium px-1 rounded-[20px] ml-0.5">
-                        {tour.hotelrating}
+                        {tour.hotelrating.length === 1
+                          ? `${tour.hotelrating}.0`
+                          : tour.hotelrating}
                       </div>
                     )}
                   </div>

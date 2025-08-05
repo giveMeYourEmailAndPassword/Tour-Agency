@@ -11,6 +11,7 @@ import Booking from "./components/Booking.tsx";
 import ResponsiveOurTours from "./OurTours/ResponsiveOurTours.tsx";
 import AppForManager from "./ForManager/AppForManager.tsx";
 import OurToursForManager from "./ForManager/OurToursForManager.tsx";
+import HotelToursInfo from "./components/HotelToursInfo.tsx";
 
 const queryClient = new QueryClient();
 
@@ -43,6 +44,8 @@ createRoot(document.getElementById("root")!).render(
                 path="/hotel/:hotelcode/:tourId"
                 element={<HotelDetails />}
               />
+
+              <Route path="/hotel/:hotelcode" element={<HotelToursInfo />} />
 
               <Route
                 path="/OurTours/hotel/:hotelcode/:tourId/booking"

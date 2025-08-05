@@ -21,7 +21,6 @@ import { FaUtensils } from "react-icons/fa";
 import { parse, format, addDays } from "date-fns";
 import { ru } from "date-fns/locale";
 import BookingPanel from "../components/BookingPanel";
-import Header from "../components/Header";
 import SimilarHotTours from "../components/SimilarHotTours";
 import FloatingControls from "../components/FloatingControls";
 import SkeletonHotelDetails from "./SkeletonHotelDetails";
@@ -109,7 +108,6 @@ export default function HotelDetails() {
 
   return (
     <div className="w-full bg-gradient-to-br from-blue-50 via-white to-indigo-50">
-      <Header />
       <div className="flex flex-col py-4 md:py-8 max-w-[1560px] mx-auto px-4 md:px-8 lg:px-12 xl:px-36 min-h-screen">
         {/* Desktop версия */}
         <div className="hidden md:block">

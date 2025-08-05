@@ -3,7 +3,7 @@ import { ru } from "date-fns/locale";
 import { Skeleton } from "@heroui/react";
 import starFilled from "../assets/star_fill.svg";
 import starOutline from "../assets/star.svg";
-import utensils from "../assets/moon_stars.svg";
+import utensils from "../assets/utensils.svg";
 import { useContext } from "react";
 import { DataContext } from "./DataProvider";
 
@@ -31,6 +31,7 @@ const getEndDate = (startDate: string, nights: number) => {
 // Определение типа питания
 const getMealType = (meal: string) => {
   const mealTypes: { [key: string]: string } = {
+    "": "Без питания",
     BB: "Завтрак",
     HB: "Полупансион",
     FB: "Полный пансион",
@@ -156,17 +157,17 @@ export default function SearchResults() {
               {/* Теги */}
               <div className="w-full flex items-center gap-3 pb-1 border-b border-[#DBE0E5]">
                 <div className="flex items-center gap-1">
-                  <img src={utensils} alt="meal" className="w-3.5 h-3.5" />
                   <span className="text-sm text-[#2E2E32]">
-                    {getMealType(tour.meal)}
+                    {getMealType(tour.tours.tour[0].meal)}
                   </span>
+                  <img src={utensils} alt="meal" className="w-3.5 h-3.5" />
                 </div>
               </div>
 
               {/* Цена и даты */}
               <div className="w-full flex justify-between items-center">
                 <span className="text-xl font-bold text-[#2E2E32]">
-                  {tour.price * 2}
+                  {tour.price}
                   {tour.currency === "EUR"
                     ? "€"
                     : tour.currency === "USD"

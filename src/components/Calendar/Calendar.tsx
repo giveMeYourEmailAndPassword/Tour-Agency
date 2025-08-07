@@ -13,11 +13,24 @@ import {
 import { ru } from "date-fns/locale";
 import arrow from "../../assets/arrow.svg";
 
+interface CalendarPriceDay {
+  date: string;
+  price: number;
+  operator: string;
+}
+
+interface CalendarMonth {
+  days: CalendarPriceDay[];
+}
+
 interface CalendarProps {
   selectedStartDate: Date | null;
   selectedEndDate: Date | null;
   onDateSelect: (start: Date | null, end: Date | null) => void;
   minDate?: Date;
+  prices?: {
+    [key: string]: CalendarMonth;
+  };
 }
 
 function SingleCalendar({
@@ -28,6 +41,7 @@ function SingleCalendar({
   minDate,
   onHover,
   hoverDate,
+  prices,
 }: {
   currentMonth: Date;
   selectedStartDate: Date | null;
@@ -36,6 +50,9 @@ function SingleCalendar({
   minDate: Date;
   onHover: (date: Date) => void;
   hoverDate: Date | null;
+  prices?: {
+    [key: string]: CalendarMonth;
+  };
 }) {
   // Получаем все дни текущего месяца
   const days = eachDayOfInterval({
@@ -83,6 +100,17 @@ function SingleCalendar({
     return false;
   };
 
+  const getPrice = (date: Date) => {
+    if (!prices) return null;
+    const monthKey = (date.getMonth() + 1).toString();
+    const monthData = prices[monthKey];
+    if (!monthData) return null;
+
+    const dateStr = format(date, "dd.MM.yyyy");
+    const priceData = monthData.days.find((day) => day.date === dateStr);
+    return priceData?.price;
+  };
+
   return (
     <div className="bg-white w-[320px]">
       <h2 className="text-lg font-medium text-[#2E2E32] capitalize mb-6 text-center">
@@ -105,22 +133,23 @@ function SingleCalendar({
           const isRangeDate = isInRange(date);
           const isPastDate = date < minDate;
           const isWeekend = [0, 6].includes(getDay(date));
+          const price = getPrice(date);
 
           return (
-            <button
-              key={index}
-              onClick={() => onDateSelect(date)}
-              onMouseEnter={() => onHover(date)}
-              disabled={isPastDate}
-              className={`
-                py-3 text-sm font-medium rounded-lg transition-colors
-                ${
-                  isCurrentMonth
-                    ? isWeekend
-                      ? "text-[#FF621F]"
-                      : "text-[#2E2E32]"
-                    : "text-[#A1A1AA]"
-                }
+            <div key={index} className="flex flex-col items-center">
+              <button
+                onClick={() => onDateSelect(date)}
+                onMouseEnter={() => onHover(date)}
+                disabled={isPastDate}
+                className={`
+                  py-1 text-sm font-medium rounded-lg transition-colors w-full flex flex-col items-center h-[44px]
+                  ${
+                    isCurrentMonth
+                      ? isWeekend
+                        ? "text-[#FF621F]"
+                        : "text-[#2E2E32]"
+                      : "text-[#A1A1AA]"
+                  }
                 ${
                   isSelected ? "bg-[#FF621F] text-white hover:bg-[#FF621F]" : ""
                 }
@@ -131,9 +160,21 @@ function SingleCalendar({
                     : "hover:bg-[#EFF2F6]"
                 }
               `}
-            >
-              {format(date, "d")}
-            </button>
+              >
+                <span>{format(date, "d")}</span>
+                <span
+                  className={`text-xs h-[14px] ${
+                    isSelected
+                      ? "text-white"
+                      : isRangeDate
+                      ? "text-[#FF621F]"
+                      : "text-[#bfc1c5]"
+                  }`}
+                >
+                  {price && isCurrentMonth && !isPastDate ? price : ""}
+                </span>
+              </button>
+            </div>
           );
         })}
       </div>
@@ -146,6 +187,7 @@ export default function Calendar({
   selectedEndDate,
   onDateSelect,
   minDate = new Date(),
+  prices,
 }: CalendarProps) {
   const [baseMonth, setBaseMonth] = useState(new Date());
   const [hoverDate, setHoverDate] = useState<Date | null>(null);
@@ -189,6 +231,7 @@ export default function Calendar({
           minDate={minDate}
           onHover={setHoverDate}
           hoverDate={hoverDate}
+          prices={prices}
         />
         <SingleCalendar
           currentMonth={addMonths(baseMonth, 1)}
@@ -198,6 +241,7 @@ export default function Calendar({
           minDate={minDate}
           onHover={setHoverDate}
           hoverDate={hoverDate}
+          prices={prices}
         />
       </div>
     </div>

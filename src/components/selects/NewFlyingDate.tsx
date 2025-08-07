@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import {
   Button,
   Popover,
@@ -12,9 +12,34 @@ import { ru } from "date-fns/locale";
 import Calendar from "../Calendar/Calendar";
 import calendar from "../../assets/calendar.svg";
 
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL || "http://localhost:8000/api";
+
+interface CalendarPriceDay {
+  date: string;
+  price: number;
+  operator: string;
+}
+
+interface CalendarPriceData {
+  data: {
+    regular: number;
+    calendar: {
+      month: {
+        [key: string]: {
+          days: CalendarPriceDay[];
+        };
+      };
+    };
+  };
+}
+
 export default function NewFlyingDate() {
-  const { setData } = useContext(DataContext);
+  const { setData, params } = useContext(DataContext);
   const [flexibleDates, setFlexibleDates] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [calendarPrices, setCalendarPrices] =
+    useState<CalendarPriceData | null>(null);
 
   // Инициализируем состояние с дефолтными значениями
   const [dateRange, setDateRange] = useState<{
@@ -25,16 +50,54 @@ export default function NewFlyingDate() {
     end: addWeeks(new Date(), 1),
   });
 
+  // Функция для получения цен календаря
+  const fetchCalendarPrices = async (months: string) => {
+    if (!params.param1 || !params.param2) return; // Проверяем наличие города и страны
+
+    try {
+      const queryParams = new URLSearchParams({
+        country: params.param2,
+        departure: params.param1,
+        month: months, // Теперь передаем строку с месяцами через запятую
+        formmode: "1",
+        regular: "1",
+      });
+
+      const response = await fetch(
+        `${API_BASE_URL}/calendar-price?${queryParams}`
+      );
+      const data: CalendarPriceData = await response.json();
+      setCalendarPrices(data);
+
+      // Здесь можно добавить обработку полученных данных
+      console.log("Calendar prices for months", months, ":", data);
+
+      return data;
+    } catch (error) {
+      console.error("Error fetching calendar prices:", error);
+    }
+  };
+
+  // Обработчик открытия календаря
+  const handleCalendarOpen = async () => {
+    setIsOpen(true);
+
+    const currentDate = new Date();
+    const currentMonth = currentDate.getMonth() + 1; // +1 так как getMonth() возвращает 0-11
+    const nextMonth = currentMonth === 12 ? 1 : currentMonth + 1;
+
+    // Отправляем один запрос с двумя месяцами
+    await fetchCalendarPrices(`${currentMonth},${nextMonth}`);
+  };
+
   // Обработчик изменения диапазона
   const handleDateChange = (start: Date | null, end: Date | null) => {
     setDateRange({ start, end });
 
     if (start && end) {
-      // Форматируем даты для контекста
       const formattedStartDate = format(start, "dd.MM.yyyy");
       const formattedEndDate = format(end, "dd.MM.yyyy");
 
-      // Передаем данные в контекст
       setData("param4", {
         startDate: formattedStartDate,
         endDate: formattedEndDate,
@@ -73,7 +136,7 @@ export default function NewFlyingDate() {
   };
 
   return (
-    <Popover placement="bottom">
+    <Popover placement="bottom" open={isOpen} onOpenChange={handleCalendarOpen}>
       <PopoverTrigger className="!z-0 !scale-100 !opacity-100">
         <Button
           className="p-7 bg-white hover:bg-slate-100 border border-[#DBE0E5] rounded-lg w-[220px]"
@@ -121,6 +184,7 @@ export default function NewFlyingDate() {
               selectedEndDate={dateRange.end}
               onDateSelect={handleDateChange}
               minDate={new Date()}
+              prices={calendarPrices?.data.calendar.month} // Передаем цены в календарь
             />
           </div>
         </div>

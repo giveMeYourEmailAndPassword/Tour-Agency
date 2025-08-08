@@ -6,6 +6,7 @@ import starOutline from "../assets/star_unfill.svg";
 import utensils from "../assets/utensils.svg";
 import { useContext } from "react";
 import { DataContext } from "./DataProvider";
+import { useNavigate } from "react-router-dom";
 // Импорты
 // Импорты
 
@@ -66,12 +67,13 @@ const getMealType = (meal: string) => {
 
 export default function SearchResults() {
   const { tours, loading, error } = useContext(DataContext);
+  const navigate = useNavigate();
 
   if (loading) {
     return (
-      <div className="ml-2 flex-grow">
+      <div className="ml-2 flex-grow pb-4">
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-4">
-          {[...Array(22)].map((_, index) => (
+          {[...Array(36)].map((_, index) => (
             <div
               key={index}
               className="w-full flex items-center gap-2.5 p-4 bg-white border border-[#DBE0E5] rounded-[10px]"
@@ -123,21 +125,19 @@ export default function SearchResults() {
   }
 
   return (
-    <div className="ml-2 flex-grow">
+    <div className="ml-2 flex-grow pb-4">
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-2">
         {tours.map((tour: Tour, index: number) => (
           <div
             key={index}
             onClick={() => {
-              // Сохраняем туры для этого отеля в localStorage
               const hotelTours = tours.filter(
                 (t) => t.hotelcode === tour.hotelcode
               );
-              localStorage.setItem(
-                "selectedHotelTours",
-                JSON.stringify(hotelTours)
-              );
-              window.location.href = `/hotel/${tour.hotelcode}`;
+
+              navigate(`/hotel/${tour.hotelcode}`, {
+                state: { hotelTours: hotelTours },
+              });
             }}
             className="w-full flex items-center gap-2.5 p-4 bg-white border border-[#DBE0E5] rounded-[10px] cursor-pointer hover:shadow-lg transition-all duration-300"
           >

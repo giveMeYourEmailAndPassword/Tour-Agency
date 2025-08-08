@@ -108,12 +108,12 @@ export default function HotelToursInfo() {
               {hotel.country}, {hotel.region}
             </p>
             <div className="flex gap-3">
-              {hotel.meallist && (
-                <div className="flex items-center gap-1">
-                  <span className="text-sm text-[#2E2E32]">Питание</span>
-                  <FaUtensils className="w-3.5 h-3.5 text-[#2E2E32]" />
-                </div>
-              )}
+              <div className="flex items-center gap-1">
+                <span className="text-sm text-[#2E2E32]">
+                  {getMealType(selectedTours[0].tours.tour[0].meal)}
+                </span>
+                <FaUtensils className="w-3.5 h-3.5 text-[#2E2E32]" />
+              </div>
               {hotel.beach && (
                 <div className="flex items-center gap-1">
                   <span className="text-sm text-[#2E2E32]">
@@ -127,8 +127,8 @@ export default function HotelToursInfo() {
         </div>
 
         {/* Галерея и контент */}
-        <div className="flex justify-between">
-          <div className="flex flex-col gap-1 h-[420px]">
+        <div className="flex justify-between gap-4">
+          <div className="flex flex-col gap-1 h-[560px]">
             {/* Основное фото */}
             <div className="w-full rounded-sm overflow-hidden">
               <img
@@ -140,14 +140,11 @@ export default function HotelToursInfo() {
             {/* Дополнительные фото */}
             <div className="grid grid-cols-4 gap-1">
               {hotel.images.image.slice(1, 5).map((image, index) => (
-                <div
-                  key={index}
-                  className="w-full h-[90px] rounded-sm overflow-hidden"
-                >
+                <div key={index} className="w-full rounded-sm overflow-hidden">
                   <img
                     src={`https:${image}`}
                     alt={`${hotel.name} ${index + 1}`}
-                    className="w-full h-full object-cover"
+                    className="w-full h-[80%] object-cover"
                   />
                 </div>
               ))}
@@ -155,7 +152,7 @@ export default function HotelToursInfo() {
           </div>
 
           {/* Описание и туры */}
-          <div className="flex gap-4">
+          <div className="flex gap-4 w-[50%]">
             <div className="w-full">
               <div className="text-lg text-[#6B7280] mb-4">
                 {hotel.description}
@@ -170,7 +167,7 @@ export default function HotelToursInfo() {
                       className="space-y-2"
                     >
                       <h3 className="text-base font-semibold text-[#2E2E32]">
-                        Номер стандарт, 2 взрослых
+                        Вариант {variantIndex + 1}
                       </h3>
                       <div className="flex justify-between items-start">
                         <div className="w-[330px] space-y-2">
@@ -179,7 +176,7 @@ export default function HotelToursInfo() {
                             {tourVariant.nights} ночей
                           </p>
                           <p className="text-xs font-semibold text-[#2E2E32]">
-                            {tour.room}
+                            {`Номер ${tourVariant.room}, ${tourVariant.adults} взрослых`}
                           </p>
                         </div>
                         <div className="w-[330px] space-y-2">

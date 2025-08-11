@@ -20,6 +20,7 @@ interface Tour {
   regionname: string;
   price: string;
   currency: string;
+  hoteldescription: string;
   tours: {
     tour: Array<{
       tourid: string;
@@ -136,7 +137,10 @@ export default function SearchResults() {
               );
 
               navigate(`/hotel/${tour.hotelcode}`, {
-                state: { hotelTours: hotelTours },
+                state: {
+                  hotelTours: hotelTours,
+                  hotelDescription: tour.hoteldescription,
+                },
               });
             }}
             className="w-full flex items-center gap-2.5 p-4 bg-white border border-[#DBE0E5] rounded-[10px] cursor-pointer hover:shadow-lg transition-all duration-300"

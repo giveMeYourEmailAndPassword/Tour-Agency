@@ -8,6 +8,11 @@ import { ru } from "date-fns/locale";
 import { IoAirplane } from "react-icons/io5";
 import { FaUtensils } from "react-icons/fa";
 import { FaUmbrellaBeach } from "react-icons/fa";
+import { useState } from "react";
+import Lightbox from "yet-another-react-lightbox";
+import Thumbnails from "yet-another-react-lightbox/plugins/thumbnails";
+import "yet-another-react-lightbox/styles.css";
+import "yet-another-react-lightbox/plugins/thumbnails.css";
 
 interface Tour {
   tours: {
@@ -25,7 +30,10 @@ interface Tour {
 export default function HotelToursInfo() {
   const location = useLocation();
   const selectedTours = location.state?.hotelTours || [];
+  const hotelDescription = location.state?.hotelDescription || "";
   const { hotel, isLoading, error } = useHotelToursInfo();
+  const [isOpen, setIsOpen] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   const formatDate = (dateString: string) => {
     const date = parse(dateString, "dd.MM.yyyy", new Date());
@@ -48,6 +56,16 @@ export default function HotelToursInfo() {
       RO: "Без питания",
     };
     return mealTypes[meal] || meal;
+  };
+
+  const slides =
+    hotel?.images?.image?.map((img: string) => ({
+      src: `https:${img}`,
+    })) || [];
+
+  const handleImageClick = (index: number) => {
+    setCurrentIndex(index);
+    setIsOpen(true);
   };
 
   if (isLoading) {
@@ -135,6 +153,7 @@ export default function HotelToursInfo() {
                 src={`https:${hotel.images.image[0]}`}
                 alt={hotel.name}
                 className="w-full h-full object-cover"
+                onClick={() => handleImageClick(0)}
               />
             </div>
             {/* Дополнительные фото */}
@@ -145,6 +164,7 @@ export default function HotelToursInfo() {
                     src={`https:${image}`}
                     alt={`${hotel.name} ${index + 1}`}
                     className="w-full h-[80%] object-cover"
+                    onClick={() => handleImageClick(index + 1)}
                   />
                 </div>
               ))}
@@ -155,6 +175,7 @@ export default function HotelToursInfo() {
           <div className="flex gap-4 w-[50%]">
             <div className="w-full">
               <div className="text-lg text-[#6B7280] mb-4">
+                {hotelDescription} {""}
                 {hotel.description}
               </div>
 
@@ -219,6 +240,13 @@ export default function HotelToursInfo() {
           </div>
         </div>
       </div>
+      <Lightbox
+        open={isOpen}
+        close={() => setIsOpen(false)}
+        slides={slides}
+        plugins={[Thumbnails]}
+        index={currentIndex}
+      />
     </div>
   );
 }

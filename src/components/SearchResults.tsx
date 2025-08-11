@@ -73,7 +73,7 @@ export default function SearchResults() {
   if (loading) {
     return (
       <div className="ml-2 flex-grow pb-4">
-        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-2">
           {[...Array(36)].map((_, index) => (
             <div
               key={index}
@@ -143,7 +143,7 @@ export default function SearchResults() {
                 },
               });
             }}
-            className="w-full flex items-center gap-2.5 p-4 bg-white border border-[#DBE0E5] rounded-[10px] cursor-pointer hover:shadow-lg transition-all duration-300"
+            className="w-full flex items-center gap-2.5 p-4 bg-white border border-[#DBE0E5] rounded-[10px] cursor-pointer transition-all duration-300"
           >
             <div className="w-full flex flex-col gap-2">
               {/* Изображение */}

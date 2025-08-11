@@ -18,7 +18,7 @@ export default function FindTourBtn({ onSearch }: FindTourBtnProps) {
     <button
       onClick={handleSearchClick}
       disabled={loading}
-      className="w-[60px] h-[60px] flex items-center justify-center border border-[#FF621F] bg-[#FF621F] rounded-lg hover:bg-[#E55A1C] transition-colors duration-300 disabled:bg-gray-400 disabled:border-gray-400"
+      className="w-[70px] h-[58px] flex items-center justify-center border border-[#FF621F] bg-[#FF621F] rounded-lg hover:bg-[#E55A1C] transition-colors duration-300 disabled:bg-gray-400 disabled:border-gray-400"
     >
       <FiSearch className="w-8 h-8 text-[#FAFBF6]" />
     </button>

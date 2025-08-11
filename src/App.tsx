@@ -22,13 +22,10 @@ export default function App() {
   };
 
   useEffect(() => {
-    console.log("Проверка параметров:", params);
     if (areParamsReady(params) && !isFetching) {
-      console.log("Параметры готовы, выполняем запрос");
       setIsFetching(true); // Устанавливаем состояние, что запрос начался
       searchTours()
         .then(() => {
-          console.log("Поиск завершен");
           setShowResults(true);
         })
         .catch((error) => {
@@ -37,10 +34,6 @@ export default function App() {
         .finally(() => {
           setIsFetching(false); // Сбрасываем состояние после завершения запроса
         });
-    } else {
-      console.log(
-        "Параметры не готовы или запрос уже выполняется, запрос не выполнен"
-      );
     }
   }, [params, searchTours]); // Убедитесь, что isFetching не является зависимостью
 

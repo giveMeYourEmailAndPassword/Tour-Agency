@@ -108,7 +108,7 @@ export default function HotelToursInfo() {
             </div>
             {hotel.rating !== "0" && (
               <div className="bg-[#FF621F] text-white text-xs font-medium px-2 py-0.5 rounded-[20px]">
-                {hotel.rating}
+                {hotel.rating.length === 1 ? `${hotel.rating}.0` : hotel.rating}
               </div>
             )}
           </div>

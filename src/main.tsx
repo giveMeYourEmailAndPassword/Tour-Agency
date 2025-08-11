@@ -1,4 +1,4 @@
-import { StrictMode } from "react";
+// import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "../css/index.css";
 import { BrowserRouter, Routes, Route } from "react-router";
@@ -16,50 +16,50 @@ import HotelToursInfo from "./components/HotelToursInfo.tsx";
 const queryClient = new QueryClient();
 
 createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <BrowserRouter>
-      <QueryClientProvider client={queryClient}>
-        <HeroUIProvider>
-          <DataProvider>
-            <Routes>
-              {/* Главная страница */}
-              <Route path="/" element={<App />} />
+  // <StrictMode>
+  <BrowserRouter>
+    <QueryClientProvider client={queryClient}>
+      <HeroUIProvider>
+        <DataProvider>
+          <Routes>
+            {/* Главная страница */}
+            <Route path="/" element={<App />} />
 
-              <Route path="/ForManager" element={<AppForManager />} />
+            <Route path="/ForManager" element={<AppForManager />} />
 
-              <Route
-                path="/OurToursForManager"
-                element={<OurToursForManager />}
-              />
+            <Route
+              path="/OurToursForManager"
+              element={<OurToursForManager />}
+            />
 
-              {/* Наши туры (место где показываются наши туры) */}
-              <Route path="/OurTours" element={<ResponsiveOurTours />} />
+            {/* Наши туры (место где показываются наши туры) */}
+            <Route path="/OurTours" element={<ResponsiveOurTours />} />
 
-              <Route
-                path="/OurTours/hotel/:hotelcode/:tourId"
-                element={<HotelDetails />}
-              />
+            <Route
+              path="/OurTours/hotel/:hotelcode/:tourId"
+              element={<HotelDetails />}
+            />
 
-              <Route
-                path="/hotel/:hotelcode/:tourId"
-                element={<HotelDetails />}
-              />
+            <Route
+              path="/hotel/:hotelcode/:tourId"
+              element={<HotelDetails />}
+            />
 
-              <Route path="/hotel/:hotelcode" element={<HotelToursInfo />} />
+            <Route path="/hotel/:hotelcode" element={<HotelToursInfo />} />
 
-              <Route
-                path="/OurTours/hotel/:hotelcode/:tourId/booking"
-                element={<Booking />}
-              />
+            <Route
+              path="/OurTours/hotel/:hotelcode/:tourId/booking"
+              element={<Booking />}
+            />
 
-              <Route
-                path="/hotel/:hotelcode/:tourId/booking"
-                element={<Booking />}
-              />
-            </Routes>
-          </DataProvider>
-        </HeroUIProvider>
-      </QueryClientProvider>
-    </BrowserRouter>
-  </StrictMode>
+            <Route
+              path="/hotel/:hotelcode/:tourId/booking"
+              element={<Booking />}
+            />
+          </Routes>
+        </DataProvider>
+      </HeroUIProvider>
+    </QueryClientProvider>
+  </BrowserRouter>
+  // </StrictMode>
 );

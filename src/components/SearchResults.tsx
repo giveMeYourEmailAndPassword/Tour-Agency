@@ -7,8 +7,6 @@ import utensils from "../assets/utensils.svg";
 import { useContext } from "react";
 import { DataContext } from "./DataProvider";
 import { useNavigate } from "react-router-dom";
-// Импорты
-// Импорты
 
 interface Tour {
   hotelcode: string;

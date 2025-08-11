@@ -146,16 +146,20 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     return parsedParams;
   }, []);
 
-  // Модифицируем setData, чтобы он только обновлял состояние без изменения URL
+  // Оптимизация setData, чтобы избежать ненужных обновлений состояния
   const setData = useCallback((key: keyof Params, value: any) => {
-    setParams((prevParams) => ({
-      ...prevParams,
-      [key]: value,
-    }));
+    setParams((prevParams) => {
+      if (prevParams[key] === value) return prevParams; // Избегаем обновления, если значение не изменилось
+      return {
+        ...prevParams,
+        [key]: value,
+      };
+    });
   }, []);
 
   // Эффект только для загрузки параметров из URL
   useEffect(() => {
+    console.log("Loading parameters from URL");
     const urlParams = new URLSearchParams(window.location.search);
     if (
       urlParams.toString() &&
@@ -164,13 +168,18 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     ) {
       const urlParamsObj = parseUrlParams();
       if (Object.keys(urlParamsObj).length > 0) {
-        setParams(urlParamsObj);
+        setParams((prevParams) => {
+          if (JSON.stringify(prevParams) === JSON.stringify(urlParamsObj))
+            return prevParams; // Избегаем обновления, если параметры не изменились
+          return urlParamsObj;
+        });
       }
     }
   }, []);
 
   // Запрос списка городов
   useEffect(() => {
+    console.log("Fetching cities");
     async function fetchCities() {
       try {
         const response = await fetch(`${API_BASE_URL}/cities`);
@@ -190,6 +199,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
 
   // Запрос стран по выбранному городу
   useEffect(() => {
+    console.log("Fetching countries for param1:", params.param1);
     async function fetchCountries() {
       if (!params.param1) return;
       try {
@@ -242,6 +252,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   );
 
   const loadFromSession = useCallback(() => {
+    console.log("Loading data from session");
     const savedData = sessionStorage.getItem("searchData");
     if (savedData) {
       const {
@@ -422,11 +433,13 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
 
   // Загружаем сохраненные данные при монтировании компонента
   useEffect(() => {
+    console.log("Loading data from session");
     loadFromSession();
   }, [loadFromSession]);
 
   // Загрузка избранных туров при монтировании
   useEffect(() => {
+    console.log("Loading favorite tours from localStorage");
     const savedTours = localStorage.getItem("favoriteTours");
     if (savedTours) {
       const tours = JSON.parse(savedTours);

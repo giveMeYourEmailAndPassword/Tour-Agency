@@ -10,6 +10,7 @@ export default function App() {
   const [showResults, setShowResults] = useState(false);
   const { searchTours, tours, params } = useContext(DataContext);
   const [isFetching, setIsFetching] = useState(false);
+  const [isInitialSearch, setIsInitialSearch] = useState(true);
 
   // Функция для проверки готовности параметров
   const areParamsReady = (params) => {
@@ -22,8 +23,9 @@ export default function App() {
   };
 
   useEffect(() => {
-    if (areParamsReady(params) && !isFetching) {
-      setIsFetching(true); // Устанавливаем состояние, что запрос начался
+    if (isInitialSearch && areParamsReady(params)) {
+      setIsInitialSearch(false);
+      setIsFetching(true);
       searchTours()
         .then(() => {
           setShowResults(true);
@@ -32,10 +34,10 @@ export default function App() {
           console.error("Ошибка при выполнении поиска туров:", error);
         })
         .finally(() => {
-          setIsFetching(false); // Сбрасываем состояние после завершения запроса
+          setIsFetching(false);
         });
     }
-  }, [params, searchTours]); // Убедитесь, что isFetching не является зависимостью
+  }, [isInitialSearch, params, searchTours]); // Добавляем зависимости, но контролируем выполнение через isInitialSearch
 
   return (
     <div className="min-h-screen flex flex-col">

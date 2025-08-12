@@ -1,131 +1,72 @@
 import React, { useState, useContext } from "react";
-import {
-  Button,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  Checkbox,
-} from "@heroui/react";
-import { IoIosArrowDown } from "react-icons/io";
-import { IoClose } from "react-icons/io5"; // Значок "крестик" для сброса
 import { DataContext } from "../DataProvider";
+
+const NOURISHMENT_TYPES = [
+  { value: "2", label: "Любое" },
+  { value: "3", label: "Только завтрак (BB)" },
+  { value: "4", label: "Завтрак, ужин (HB)" },
+  { value: "5", label: "Полный пансион (FB)" },
+  { value: "7", label: "Все включено (AL)" },
+  { value: "9", label: "Ультра все включено (UAL)" },
+];
 
 export default function Nourishment() {
   const { setData, params } = useContext(DataContext);
-  const [isOpen, setIsOpen] = useState(false);
-
-  // Определяем список чекбоксов
-  const checkboxes = [
-    { value: "2", label: "Любое", span: "" },
-    { value: "3", label: "- Только завтрак", span: "BB" },
-    { value: "4", label: "- Завтрак, ужин", span: "HB" },
-    { value: "5", label: "- Полный пансион", span: "FB" },
-    { value: "7", label: "- Все включено", span: "AL" },
-    { value: "9", label: "- Ультра все включено", span: "UAL" },
-  ];
-
-  // Состояние для выбранного значения. По умолчанию выбран "Любой".
-  const [selectedValue, setSelectedValue] = useState(
-    () => params.param7?.[0] || "2"
+  const [selectedValues, setSelectedValues] = useState(
+    () => params.param7 || ["2"]
   );
 
   const handleChange = (value: string) => {
-    setSelectedValue(value);
-    setData("param7", [value]); // Передаем значение как массив
-  };
+    let newSelectedValues: string[];
 
-  // Функция для получения ярлыка (label) по значению чекбокса
-  const getLabelByValue = (value: string) => {
-    const checkbox = checkboxes.find((c) => c.value === value);
-    return checkbox ? checkbox.label : "";
-  };
-
-  // Функция для формирования текста, который показывается на кнопке
-  const getDisplayText = () => {
-    const selectedCheckbox = checkboxes.find((c) => c.value === selectedValue);
-
-    if (getLabelByValue(selectedValue) === "Любое") {
-      return (
-        <div>
-          <h1 className="text-base">Питание</h1>
-        </div>
-      );
-    } else {
-      return (
-        <div className="flex flex-col items-start">
-          <h1 className="sigma-sigma-boy">Питание</h1>
-          <div className="text-base">
-            <p className="">
-              <span className="font-medium">{selectedCheckbox?.span}</span> и
-              лучше
-            </p>
-          </div>
-        </div>
-      );
+    // Если кликаем на уже выбранное значение - ничего не делаем
+    if (selectedValues[0] === value) {
+      return;
     }
-  };
 
-  // Обработчик нажатия на крестик — сбрасываем выбор, возвращая "Любое"
-  const handleReset = () => {
-    setSelectedValue("2");
-    setData("param7", ["2"]); // Сбрасываем значение в DataContext
+    // Всегда устанавливаем только одно значение
+    newSelectedValues = [value];
+
+    setSelectedValues(newSelectedValues);
+    setData("param7", newSelectedValues);
   };
 
   return (
-    <Popover placement="bottom" onOpenChange={(open) => setIsOpen(open)}>
-      <PopoverTrigger className="!z-0 !scale-100 !opacity-100 w-[15%]">
-        <Button
-          className="px-4 bg-blue-600 rounded-lg border border-slate-300"
-          size="lg"
-        >
-          <div className="flex items-center justify-between w-full">
-            {/* Блок с текстом выбранного варианта */}
-            <div className="flex items-center gap-2">
-              <h1 className="text-sm text-white">{getDisplayText()}</h1>
+    <div className="flex flex-col gap-1.5">
+      <span className="text-[#2E2E32] text-base font-semibold">Питание</span>
+      <div className="flex flex-col gap-0.5">
+        {NOURISHMENT_TYPES.map(({ value, label }) => (
+          <label key={value} className="flex items-center gap-3 cursor-pointer">
+            <div
+              className={`w-4 h-4 rounded border flex items-center justify-center ${
+                selectedValues.includes(value)
+                  ? "bg-[#FF621F] border-[#FF621F]"
+                  : "border-[#7E8389]"
+              }`}
+              onClick={() => handleChange(value)}
+            >
+              {selectedValues.includes(value) && (
+                <svg
+                  width="11"
+                  height="8"
+                  viewBox="0 0 11 8"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M1.33301 4L3.99967 6.66667L9.33301 1.33334"
+                    stroke="white"
+                    strokeWidth="1.6"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              )}
             </div>
-            {/* Стрелка, указывающая на возможность открытия поповера */}
-            {selectedValue === "2" ? (
-              <IoIosArrowDown
-                className={`text-xl text-white transform transition-transform ${
-                  isOpen ? "rotate-180" : ""
-                }`}
-              />
-            ) : (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleReset();
-                }}
-                className="text-white"
-              >
-                <IoClose className="text-xl" />
-              </button>
-            )}
-          </div>
-        </Button>
-      </PopoverTrigger>
-
-      <PopoverContent className="rounded-md">
-        <div className="px-1 py-1">
-          <div className="flex flex-col gap-1">
-            <h1 className="text-base font-medium">Питание от:</h1>
-            {checkboxes.map(({ value, label, span }) => (
-              <Checkbox
-                color="default"
-                key={value}
-                value={value}
-                // Выбран ли чекбокс (если его значение равно выбранному значению)
-                isSelected={selectedValue === value}
-                // При изменении состояния чекбокса вызывается handleChange
-                onValueChange={() => handleChange(value)}
-              >
-                <span className="font-medium">{span} </span>
-                {label}
-              </Checkbox>
-            ))}
-          </div>
-        </div>
-      </PopoverContent>
-    </Popover>
+            <span className="text-base text-[#2E2E32]">{label}</span>
+          </label>
+        ))}
+      </div>
+    </div>
   );
 }

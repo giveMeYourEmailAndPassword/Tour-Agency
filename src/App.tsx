@@ -5,12 +5,15 @@ import FiltersMobile from "./components/FiltersMobile";
 import SearchResults from "./components/SearchResults";
 import { DataContext } from "./components/DataProvider";
 import { Skeleton } from "@heroui/react";
+import { useSearchParams } from "./Hooks/useSearchParams";
 
 export default function App() {
   const [showResults, setShowResults] = useState(false);
   const { searchTours, tours, params } = useContext(DataContext);
   const [isFetching, setIsFetching] = useState(false);
   const [isInitialSearch, setIsInitialSearch] = useState(true);
+
+  useSearchParams();
 
   // Функция для проверки готовности параметров
   const areParamsReady = (params) => {
@@ -90,9 +93,9 @@ export default function App() {
               )}
             </div>
           </div>
-          <div className="block md:hidden">
+          {/* <div className="block md:hidden">
             <FiltersMobile />
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

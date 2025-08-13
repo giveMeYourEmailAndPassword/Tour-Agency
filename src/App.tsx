@@ -43,7 +43,7 @@ export default function App() {
   }, [isInitialSearch, params, searchTours]); // Добавляем зависимости, но контролируем выполнение через isInitialSearch
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col md:bg-white bg-gray-100">
       <Header onSearch={() => setShowResults(true)} />
 
       {/* Секция с белым фоном */}
@@ -93,9 +93,9 @@ export default function App() {
               )}
             </div>
           </div>
-          {/* <div className="block md:hidden">
+          <div className="block md:hidden">
             <FiltersMobile />
-          </div> */}
+          </div>
         </div>
       </div>
     </div>

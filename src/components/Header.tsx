@@ -16,7 +16,7 @@ export default function Header({ onSearch }: HeaderProps) {
       <div className="max-w-[1332px] mx-auto">
         {/* Мобильная версия */}
         <div className="md:hidden px-4 py-3">
-          <h1 className="text-2xl font-semibold">Привет</h1>
+          <h1 className="text-2xl font-semibold">Кругосвет</h1>
         </div>
 
         {/* Десктопная версия */}

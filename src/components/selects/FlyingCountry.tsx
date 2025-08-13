@@ -29,7 +29,7 @@ export default function FlyingCountry() {
           value: "text-lg font-medium",
           selectorIcon: "text-black",
           trigger: "bg-white shadow-none data-[hover=true]:bg-slate-100",
-          listbox: "max-h-52 overflow-y-auto scrollbar-custom", // Ограничиваем высоту списка и включаем прокрутку
+          listbox: "max-h-52 overflow-y-auto scrollbar-custom",
           popoverContent: "asdasd",
         }}
         selectedKeys={[selectedCountry]}

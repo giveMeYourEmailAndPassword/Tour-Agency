@@ -1,83 +1,48 @@
-import React, { useContext, useState, useEffect } from "react";
-import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  Button,
-} from "@heroui/react";
+import { useContext, useState, useEffect } from "react";
 import { DataContext } from "../../DataProvider";
-import { FaSearch } from "react-icons/fa";
+import plane_departure from "../../../assets/plane_departure.svg";
+import { departures, Departure } from "../../data/destinations";
+import { Modal, ModalContent } from "@heroui/react";
 import { RxCross2 } from "react-icons/rx";
-import { IoIosArrowDown } from "react-icons/io";
-
-const cityDeclensions = {
-  Бишкек: "Бишкека",
-  Алматы: "Алматы",
-  Ташкент: "Ташкента",
-};
 
 export default function MobileDepartureCity() {
-  const { setData, cities } = useContext(DataContext);
-  const [selectedCity, setSelectedCity] = useState(80);
+  const { setData } = useContext(DataContext);
+  const [selectedCity, setSelectedCity] = useState("80"); // Бишкек по умолчанию
   const [isOpen, setIsOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-
-  useEffect(() => {
-    if (cities.length > 0 && !cities.find((city) => city.id === selectedCity)) {
-      setSelectedCity(cities[1].id);
-    }
-  }, [cities]);
 
   useEffect(() => {
     setData("param1", selectedCity);
   }, [selectedCity, setData]);
 
-  const handleCitySelect = (city) => {
-    setSelectedCity(city.id);
+  const handleCitySelect = (city: Departure) => {
+    setSelectedCity(String(city.id));
     setIsOpen(false);
-    setSearchQuery("");
   };
 
-  const selectedCityData = cities.find((city) => city.id === selectedCity);
-
-  const filteredCities = cities
-    .filter((city, index) => index !== 2)
-    .filter((city) =>
-      city.label.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-
-  const getDeclension = (cityName) => {
-    return cityDeclensions[cityName] || cityName;
-  };
+  const selectedCityData = departures.find(
+    (city) => String(city.id) === selectedCity
+  );
 
   return (
     <>
       <div
         onClick={() => setIsOpen(true)}
-        className="h-12 md:h-full cursor-pointer flex items-center justify-between"
+        className="flex items-center gap-2 bg-white p-2 rounded-lg border border-[#DBE0E5]"
       >
-        <div className="flex flex-col items-start justify-between w-full">
-          <div className="flex items-end gap-1">
-            <span className="text-white text-lg">из</span>
-            <span
-              className={`text-lg ${
-                selectedCityData ? "text-white" : "text-white"
-              }`}
-            >
-              {selectedCityData ? getDeclension(selectedCityData.label) : ""}
-            </span>
-            <IoIosArrowDown className="text-white text-2xl" />
-          </div>
+        <img src={plane_departure} alt="plane" className="w-5 h-5" />
+        <div className="flex flex-col">
+          <span className="text-xs font-light text-[#7E8389]">
+            Город вылета
+          </span>
+          <span className="text-base font-medium text-[#2E2E32]">
+            {selectedCityData?.name}
+          </span>
         </div>
       </div>
 
       <Modal
         isOpen={isOpen}
-        onClose={() => {
-          setIsOpen(false);
-          setSearchQuery("");
-        }}
+        onClose={() => setIsOpen(false)}
         placement="bottom"
         backdrop="opaque"
         radius="sm"
@@ -89,42 +54,60 @@ export default function MobileDepartureCity() {
         shadow="none"
       >
         <ModalContent>
-          <ModalHeader className="flex justify-between items-center border-b py-2 px-3">
-            <h2 className="text-lg font-medium">Выберите город вылета</h2>
-            <button
-              onClick={() => {
-                setIsOpen(false);
-                setSearchQuery("");
-              }}
-              className="p-2 hover:bg-gray-100 rounded-full"
-            >
-              <RxCross2 className="text-2xl" />
-            </button>
-          </ModalHeader>
+          <div className="absolute bottom-0 w-full">
+            <div className="bg-white w-full rounded-t-[10px]">
+              {/* Header */}
+              <div className="flex justify-center items-center border-b border-[#DBE0E5] h-14 relative">
+                <h2 className="text-[20px] font-medium text-[#2E2E32]">
+                  Город вылета
+                </h2>
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="absolute right-5"
+                >
+                  <RxCross2 className="w-6 h-6" />
+                </button>
+              </div>
 
-          <ModalBody className="p-3">
-            <div className="flex flex-col gap-2">
-              {filteredCities && filteredCities.length > 0 ? (
-                filteredCities.map((city) => (
+              {/* Cities */}
+              <div className="flex flex-col">
+                {departures.map((city) => (
                   <button
                     key={city.id}
                     onClick={() => handleCitySelect(city)}
-                    className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded-xl text-start"
+                    className="flex items-center gap-4 px-4 py-[14px]"
                   >
-                    <span
-                      className={selectedCity === city.id ? "font-medium" : ""}
+                    <div
+                      className={`w-5 h-5 rounded-[20px] border border-[#DBE0E5] relative
+                        ${
+                          selectedCity === String(city.id)
+                            ? "border-[#FF621F]"
+                            : ""
+                        }
+                      `}
                     >
-                      {city.label}
+                      {selectedCity === String(city.id) && (
+                        <div className="absolute top-1 left-1 w-3 h-3 rounded-[20px] bg-[#FF621F]" />
+                      )}
+                    </div>
+                    <span className="text-base text-[#2E2E32]">
+                      {city.name}
                     </span>
                   </button>
-                ))
-              ) : (
-                <div className="text-black text-lg text-start py-1 pl-4">
-                  Загрузка...
-                </div>
-              )}
+                ))}
+              </div>
+
+              {/* Button */}
+              <div className="p-5">
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="w-full py-3 px-6 border border-[#FF621F] bg-[#FF621F] rounded-[10px] text-lg text-white"
+                >
+                  Выбрать
+                </button>
+              </div>
             </div>
-          </ModalBody>
+          </div>
         </ModalContent>
       </Modal>
     </>

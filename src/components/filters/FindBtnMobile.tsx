@@ -50,10 +50,10 @@ export default function FindBtnMobile() {
         duration-500 cursor-pointer`}
       onClick={handleSearchClick}
     >
-      <FaSearch className="text-white mr-2 text-lg" />
       <p className="text-white font-medium text-lg">
-        {loading ? "Поиск..." : "Найти тур"}
+        {loading ? "Поиск..." : "Найти туры"}
       </p>
+      <FaSearch className="text-white ml-2 text-lg" />
     </div>
   );
 }

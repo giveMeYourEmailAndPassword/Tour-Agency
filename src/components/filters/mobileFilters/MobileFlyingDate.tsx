@@ -1,98 +1,84 @@
 import { useContext, useState, useEffect } from "react";
-import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  Button,
-} from "@heroui/react";
+import { Modal, ModalContent } from "@heroui/react";
 import { DataContext } from "../../DataProvider";
 import { RxCross2 } from "react-icons/rx";
-import { RangeCalendar } from "@heroui/react";
-import { I18nProvider } from "@react-aria/i18n";
-import { format } from "date-fns";
-import { today, getLocalTimeZone } from "@internationalized/date";
+import { format, addMonths } from "date-fns";
 import { ru } from "date-fns/locale";
+import calendar from "../../../assets/calendar.svg";
+import CalendarMobile from "../../Calendar/CalendarMobile";
+import arrow from "../../../assets/arrow.svg";
 
 export default function MobileFlyingDate() {
   const { setData } = useContext(DataContext);
   const [isOpen, setIsOpen] = useState(false);
 
-  // Инициализируем состояние с дефолтными значениями
-  const [range, setRange] = useState({
-    start: today(getLocalTimeZone()).add({ days: 1 }),
-    end: today(getLocalTimeZone()).add({ weeks: 1 }),
+  // Изменяем формат состояния на Date вместо CalendarDate
+  const [dateRange, setDateRange] = useState<{
+    start: Date | null;
+    end: Date | null;
+  }>({
+    start: new Date(new Date().setDate(new Date().getDate() + 1)), // завтра
+    end: new Date(new Date().setDate(new Date().getDate() + 7)), // через неделю
   });
 
-  // Обработчик изменения диапазона
-  const handleRangeChange = (value: { start: any; end: any }) => {
-    if (value.start && value.end) {
-      const startDate = new Date(
-        value.start.year,
-        value.start.month - 1,
-        value.start.day
-      );
-      const endDate = new Date(
-        value.end.year,
-        value.end.month - 1,
-        value.end.day
-      );
+  // Добавить состояние для текущего месяца
+  const [currentMonth, setCurrentMonth] = useState(new Date());
 
-      setRange({ start: value.start, end: value.end });
+  const handleDateChange = (start: Date | null, end: Date | null) => {
+    setDateRange({ start, end });
 
-      const formattedStartDate = format(startDate, "dd.MM.yyyy");
-      const formattedEndDate = format(endDate, "dd.MM.yyyy");
+    if (start && end) {
+      const formattedStartDate = format(start, "dd.MM.yyyy");
+      const formattedEndDate = format(end, "dd.MM.yyyy");
 
       setData("param4", {
         startDate: formattedStartDate,
         endDate: formattedEndDate,
       });
-      setIsOpen(false);
     }
   };
 
   useEffect(() => {
-    const startDate = new Date(
-      range.start.year,
-      range.start.month - 1,
-      range.start.day
-    );
-    const endDate = new Date(
-      range.end.year,
-      range.end.month - 1,
-      range.end.day
-    );
+    if (dateRange.start && dateRange.end) {
+      const formattedStartDate = format(dateRange.start, "dd.MM.yyyy");
+      const formattedEndDate = format(dateRange.end, "dd.MM.yyyy");
 
-    const formattedStartDate = format(startDate, "dd.MM.yyyy");
-    const formattedEndDate = format(endDate, "dd.MM.yyyy");
-
-    setData("param4", {
-      startDate: formattedStartDate,
-      endDate: formattedEndDate,
-    });
+      setData("param4", {
+        startDate: formattedStartDate,
+        endDate: formattedEndDate,
+      });
+    }
   }, []);
 
-  const formatDisplayDate = (date: any) => {
-    const jsDate = new Date(date.year, date.month - 1, date.day);
-    return format(jsDate, "d MMM", { locale: ru });
+  // Изменим функцию форматирования даты
+  const formatDisplayDate = (date: Date | null) => {
+    if (!date) return "";
+    // Если конечная дата не выбрана, показываем полное название месяца
+    if (!dateRange.end || dateRange.start === dateRange.end) {
+      return format(date, "d MMMM", { locale: ru });
+    }
+    // Если выбран диапазон, показываем сокращенное название месяца
+    return format(date, "d MMM", { locale: ru });
   };
 
   return (
     <>
-      <Button
-        onPress={() => setIsOpen(true)}
-        radius="none"
-        className="px-2 w-full md:w-64 h-12 md:h-full bg-white hover:bg-slate-100 !z-0 !scale-100 !opacity-100 py-1"
+      <div
+        onClick={() => setIsOpen(true)}
+        className="flex items-center gap-2 bg-white p-2 rounded-lg border border-[#DBE0E5]"
       >
-        <div className="flex flex-col items-start justify-between w-full">
-          <span className="text-slate-600 mb-[1px] text-xs md:text-sm">
-            Даты вылета
+        <img src={calendar} alt="calendar" className="w-5 h-5" />
+        <div className="flex flex-col">
+          <span className="text-xs font-light text-[#7E8389]">Даты вылета</span>
+          <span className="text-base font-medium text-[#2E2E32]">
+            {formatDisplayDate(dateRange.start)}
+            {dateRange.end &&
+              dateRange.start?.getTime() !== dateRange.end?.getTime() && (
+                <> - {formatDisplayDate(dateRange.end)}</>
+              )}
           </span>
-          <p className="text-black text-base md:text-lg font-medium">
-            {formatDisplayDate(range.start)} - {formatDisplayDate(range.end)}
-          </p>
         </div>
-      </Button>
+      </div>
 
       <Modal
         isOpen={isOpen}
@@ -103,45 +89,57 @@ export default function MobileFlyingDate() {
         scrollBehavior="inside"
         isDismissable={true}
         shouldBlockScroll={true}
-        className="h-[390px] !p-0 !m-0 !max-w-full"
+        className="!p-0 !m-0 !max-w-full"
         hideCloseButton={true}
         shadow="none"
       >
         <ModalContent>
-          <ModalHeader className="flex justify-between items-center border-b py-2 px-3">
-            <h2 className="text-lg font-medium">Выберите даты</h2>
-            <button
-              onClick={() => setIsOpen(false)}
-              className="p-2 hover:bg-gray-100 rounded-full"
-            >
-              <RxCross2 className="text-2xl" />
-            </button>
-          </ModalHeader>
+          <div className="absolute bottom-0 w-full">
+            <div className="bg-white w-full rounded-t-[10px]">
+              {/* Header */}
+              <div className="flex justify-center items-center border-b border-[#DBE0E5] h-14 relative">
+                <h2 className="text-[20px] font-medium text-[#2E2E32]">
+                  Даты вылета
+                </h2>
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="absolute right-5"
+                >
+                  <RxCross2 className="w-6 h-6 text-[#FF621F]" />
+                </button>
+              </div>
 
-          <ModalBody className="p-3 flex flex-col items-center justify-start">
-            <I18nProvider locale="ru">
-              <RangeCalendar
-                onChange={handleRangeChange}
-                classNames={{
-                  gridWrapper: "border-none rounded-none",
-                  gridBody: "border-none rounded-none",
-                  base: "rounded-none shadow-none bg-white",
-                  gridHeader: "shadow-none",
-                  gridHeaderCell: "w-10",
-                  cell: "w-10",
-                  cellButton: ["w-10 h-10"],
-                  title: "text-lg",
-                  prevButton: "text-xl",
-                  nextButton: "text-xl",
-                }}
-                visibleMonths={1}
-                calendarWidth="100%"
-                showShadow={false}
-                value={range}
-                minValue={today(getLocalTimeZone())}
-              />
-            </I18nProvider>
-          </ModalBody>
+              <div className="flex justify-start items-center px-5 py-2">
+                <span className="text-base font-medium text-[#2E2E32]">
+                  {formatDisplayDate(dateRange.start)}
+                  {dateRange.end &&
+                    dateRange.start?.getTime() !== dateRange.end?.getTime() && (
+                      <> - {formatDisplayDate(dateRange.end)}</>
+                    )}
+                </span>
+              </div>
+
+              {/* Calendar */}
+              <div className="pt-5 px-3">
+                <CalendarMobile
+                  selectedStartDate={dateRange.start}
+                  selectedEndDate={dateRange.end}
+                  onDateSelect={handleDateChange}
+                  minDate={new Date()}
+                />
+              </div>
+
+              {/* Button */}
+              <div className="px-3 pb-5 pt-3">
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="w-full py-3 px-6 border border-[#FF621F] bg-[#FF621F] rounded-[10px] text-lg text-white"
+                >
+                  Выбрать
+                </button>
+              </div>
+            </div>
+          </div>
         </ModalContent>
       </Modal>
     </>

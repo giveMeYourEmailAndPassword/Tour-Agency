@@ -112,11 +112,8 @@ function SingleCalendar({
   };
 
   return (
-    <div className="bg-white w-[320px]">
-      <h2 className="text-lg font-medium text-[#2E2E32] capitalize mb-6 text-center">
-        {format(currentMonth, "LLLL yyyy", { locale: ru })}
-      </h2>
-      <div className="grid grid-cols-7 gap-[2px]">
+    <div className="w-full">
+      <div className="grid grid-cols-7 gap-[2px] max-w-[320px] mx-auto">
         {weekDays.map((day) => (
           <div
             key={day}

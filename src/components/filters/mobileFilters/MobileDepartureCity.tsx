@@ -16,7 +16,7 @@ export default function MobileDepartureCity() {
 
   const handleCitySelect = (city: Departure) => {
     setSelectedCity(String(city.id));
-    setIsOpen(false);
+    // Убираем setIsOpen(false) чтобы окно не закрывалось при выборе города
   };
 
   const selectedCityData = departures.find(
@@ -65,7 +65,7 @@ export default function MobileDepartureCity() {
                   onClick={() => setIsOpen(false)}
                   className="absolute right-5"
                 >
-                  <RxCross2 className="w-6 h-6" />
+                  <RxCross2 className="w-6 h-6 text-[#FF621F]" />
                 </button>
               </div>
 
@@ -78,7 +78,7 @@ export default function MobileDepartureCity() {
                     className="flex items-center gap-4 px-4 py-[14px]"
                   >
                     <div
-                      className={`w-5 h-5 rounded-[20px] border border-[#DBE0E5] relative
+                      className={`w-6 h-6 rounded-[20px] border border-[#DBE0E5] relative
                         ${
                           selectedCity === String(city.id)
                             ? "border-[#FF621F]"
@@ -87,7 +87,7 @@ export default function MobileDepartureCity() {
                       `}
                     >
                       {selectedCity === String(city.id) && (
-                        <div className="absolute top-1 left-1 w-3 h-3 rounded-[20px] bg-[#FF621F]" />
+                        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-[20px] bg-[#FF621F]" />
                       )}
                     </div>
                     <span className="text-base text-[#2E2E32]">
@@ -98,7 +98,7 @@ export default function MobileDepartureCity() {
               </div>
 
               {/* Button */}
-              <div className="p-5">
+              <div className="px-3 py-5">
                 <button
                   onClick={() => setIsOpen(false)}
                   className="w-full py-3 px-6 border border-[#FF621F] bg-[#FF621F] rounded-[10px] text-lg text-white"

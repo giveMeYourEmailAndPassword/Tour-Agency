@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { FiSearch } from "react-icons/fi";
 import MobileDepartureCity from "./filters/mobileFilters/MobileDepartureCity";
+import MobileFlyingDate from "./filters/mobileFilters/MobileFlyingDate";
 
 export default function FiltersMobile() {
   const [isOtherFiltersOpen, setIsOtherFiltersOpen] = useState(false);
@@ -25,21 +26,7 @@ export default function FiltersMobile() {
         </div>
 
         {/* Даты вылета */}
-        <div className="flex items-center gap-2 bg-white p-2 rounded-lg border border-[#DBE0E5]">
-          <img
-            src="/src/assets/calendar.svg"
-            alt="calendar"
-            className="w-5 h-5"
-          />
-          <div className="flex flex-col">
-            <span className="text-xs font-light text-[#7E8389]">
-              Даты вылета
-            </span>
-            <span className="text-base font-medium text-[#2E2E32]">
-              7 - 12 августа
-            </span>
-          </div>
-        </div>
+        <MobileFlyingDate />
 
         {/* Туристы */}
         <div className="flex items-center gap-2 bg-white p-2 rounded-lg border border-[#DBE0E5]">

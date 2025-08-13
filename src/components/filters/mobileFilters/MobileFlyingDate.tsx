@@ -2,15 +2,38 @@ import { useContext, useState, useEffect } from "react";
 import { Modal, ModalContent } from "@heroui/react";
 import { DataContext } from "../../DataProvider";
 import { RxCross2 } from "react-icons/rx";
-import { format, addMonths } from "date-fns";
+import { format } from "date-fns";
 import { ru } from "date-fns/locale";
 import calendar from "../../../assets/calendar.svg";
 import CalendarMobile from "../../Calendar/CalendarMobile";
-import arrow from "../../../assets/arrow.svg";
+
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL || "http://localhost:8000/api";
+
+interface CalendarPriceDay {
+  date: string;
+  price: number;
+  operator: string;
+}
+
+interface CalendarPriceData {
+  data: {
+    regular: number;
+    calendar: {
+      month: {
+        [key: string]: {
+          days: CalendarPriceDay[];
+        };
+      };
+    };
+  };
+}
 
 export default function MobileFlyingDate() {
-  const { setData } = useContext(DataContext);
+  const { setData, params } = useContext(DataContext);
   const [isOpen, setIsOpen] = useState(false);
+  const [calendarPrices, setCalendarPrices] =
+    useState<CalendarPriceData | null>(null);
 
   // Изменяем формат состояния на Date вместо CalendarDate
   const [dateRange, setDateRange] = useState<{
@@ -61,10 +84,44 @@ export default function MobileFlyingDate() {
     return format(date, "d MMM", { locale: ru });
   };
 
+  // Функция для получения цен календаря
+  const fetchCalendarPrices = async (months: string) => {
+    if (!params.param1 || !params.param2) return;
+
+    try {
+      const queryParams = new URLSearchParams({
+        country: params.param2,
+        departure: params.param1,
+        month: months,
+        formmode: "1",
+        regular: "1",
+      });
+
+      const response = await fetch(
+        `${API_BASE_URL}/calendar-price?${queryParams}`
+      );
+      const data: CalendarPriceData = await response.json();
+      setCalendarPrices(data);
+    } catch (error) {
+      console.error("Error fetching calendar prices:", error);
+    }
+  };
+
+  // Обработчик открытия модального окна
+  const handleOpen = async () => {
+    setIsOpen(true);
+    const currentDate = new Date();
+    const currentMonth = currentDate.getMonth() + 1;
+    const nextMonth = currentMonth === 12 ? 1 : currentMonth + 1;
+
+    // Запрашиваем цены для текущего и следующего месяца
+    await fetchCalendarPrices(`${currentMonth},${nextMonth}`);
+  };
+
   return (
     <>
       <div
-        onClick={() => setIsOpen(true)}
+        onClick={handleOpen}
         className="flex items-center gap-2 bg-white p-2 rounded-lg border border-[#DBE0E5]"
       >
         <img src={calendar} alt="calendar" className="w-5 h-5" />
@@ -126,6 +183,7 @@ export default function MobileFlyingDate() {
                   selectedEndDate={dateRange.end}
                   onDateSelect={handleDateChange}
                   minDate={new Date()}
+                  prices={calendarPrices?.data.calendar.month}
                 />
               </div>
 

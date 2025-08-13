@@ -1,95 +1,66 @@
 import { useContext, useState, useEffect } from "react";
-import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  Button,
-} from "@heroui/react";
+import { Modal, ModalContent } from "@heroui/react";
 import { DataContext } from "../../DataProvider";
 import { RxCross2 } from "react-icons/rx";
+import person_luggage from "../../../assets/person_luggage.svg";
+import Vector from "../../../assets/Vector.svg";
+
+const AGES = Array.from({ length: 14 }, (_, i) => i + 1); // [1, 2, ..., 14]
 
 export default function MobileTourist() {
   const { setData } = useContext(DataContext);
   const [isOpen, setIsOpen] = useState(false);
-  const [adults, setAdults] = useState<number>(2);
-  const [btnStatus, setBtnStatus] = useState<boolean>(true);
-  const [childrenList, setChildrenList] = useState<
-    { id: string; age: number; text: string; key: number }[]
-  >([]);
-
-  const children = [
-    { id: "до 2", age: 1, text: "лет" },
-    { id: "2", age: 2, text: "года" },
-    { id: "3", age: 3, text: "года" },
-    { id: "4", age: 4, text: "года" },
-    { id: "5", age: 5, text: "лет" },
-    { id: "6", age: 6, text: "лет" },
-    { id: "7", age: 7, text: "лет" },
-    { id: "8", age: 8, text: "лет" },
-    { id: "9", age: 9, text: "лет" },
-    { id: "10", age: 10, text: "лет" },
-    { id: "11", age: 11, text: "лет" },
-    { id: "12", age: 12, text: "лет" },
-    { id: "13", age: 13, text: "лет" },
-    { id: "14", age: 14, text: "лет" },
-    { id: "15", age: 15, text: "лет" },
-  ];
-
-  const counterPlus = () => {
-    if (adults < 6) {
-      setAdults((count) => count + 1);
-    }
-  };
-
-  const counterMinus = () => {
-    if (adults > 1) {
-      setAdults((count) => count - 1);
-    }
-  };
-
-  const checkBtn = (
-    childrenList: { id: string; age: number; text: string; key: number }[]
-  ) => {
-    return childrenList.length < 3;
-  };
-
-  const handleAddChild = (child: { id: string; age: number; text: string }) => {
-    setChildrenList((prev) => [...prev, { ...child, key: Date.now() }]);
-    setBtnStatus(true);
-  };
-
-  const minusChild = (key: number) => {
-    setChildrenList((prev) => prev.filter((child) => child.key !== key));
-  };
-
-  const handleConfirm = () => {
-    setIsOpen(false);
-    setData("param5", { childrenList, adults });
-  };
+  const [adults, setAdults] = useState(2);
+  const [childrenList, setChildrenList] = useState<number[]>([]);
+  const [isSelectingAge, setIsSelectingAge] = useState(false);
 
   useEffect(() => {
-    setData("param5", { childrenList, adults });
+    setData("param5", { adults, childrenList });
   }, [adults, childrenList, setData]);
+
+  const handleAdultsChange = (increment: boolean) => {
+    setAdults((prev) => {
+      const newValue = increment ? prev + 1 : prev - 1;
+      return Math.min(Math.max(newValue, 1), 6); // Минимум 1, максимум 6
+    });
+  };
+
+  const handleAddChild = (age: number) => {
+    if (childrenList.length < 3) {
+      setChildrenList((prev) => [...prev, age]);
+    }
+    setIsSelectingAge(false);
+  };
+
+  const handleRemoveChild = (index: number) => {
+    setChildrenList((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const getChildrenText = (age: number) => {
+    if (age === 1) return "1 год";
+    if (age >= 2 && age <= 4) return `${age} года`;
+    return `${age} лет`;
+  };
+
+  const displayText =
+    childrenList.length > 0
+      ? `${adults} взр ${childrenList.length} реб`
+      : `${adults} взрослых`;
 
   return (
     <>
-      <Button
-        onPress={() => setIsOpen(true)}
-        radius="none"
-        className="px-2 w-full md:w-64 h-12 md:h-full bg-white hover:bg-slate-100 rounded-bl-md !z-0 !scale-100 !opacity-100 py-1"
+      <div
+        onClick={() => setIsOpen(true)}
+        className="flex items-center gap-2 bg-white p-2 rounded-lg border border-[#DBE0E5]"
       >
-        <div className="flex flex-col items-start justify-between w-full">
-          <span className="text-slate-600 mb-[1px] text-xs md:text-sm">
-            Туристы
+        <img src={person_luggage} alt="tourists" className="w-5 h-5" />
+        <div className="flex flex-col">
+          <span className="text-xs font-light text-[#7E8389]">Туристы</span>
+          <span className="text-base font-medium text-[#2E2E32]">
+            {displayText}
           </span>
-          <p className="text-black text-base md:text-lg font-medium">
-            {childrenList.length === 0
-              ? `${adults} взрослых`
-              : `${adults} взр ${childrenList.length} реб`}
-          </p>
         </div>
-      </Button>
+      </div>
 
       <Modal
         isOpen={isOpen}
@@ -100,119 +71,139 @@ export default function MobileTourist() {
         scrollBehavior="inside"
         isDismissable={true}
         shouldBlockScroll={true}
-        className="h-[590px] !p-0 !m-0 !max-w-full flex flex-col"
+        className="!p-0 !m-0 !max-w-full"
         hideCloseButton={true}
         shadow="none"
       >
-        <ModalContent className="flex flex-col">
-          <ModalHeader className="flex justify-between items-center border-b py-2 px-3">
-            <h2 className="text-lg font-medium">Выберите туристов</h2>
-            <button
-              onClick={() => setIsOpen(false)}
-              className="p-2 hover:bg-gray-100 rounded-full"
-            >
-              <RxCross2 className="text-2xl" />
-            </button>
-          </ModalHeader>
+        <ModalContent>
+          <div className="absolute bottom-0 w-full">
+            <div className="bg-white w-full rounded-t-[10px]">
+              {/* Header */}
+              <div className="flex justify-center items-center border-b border-[#DBE0E5] h-14 relative">
+                <h2 className="text-[20px] font-medium text-[#2E2E32]">
+                  Туристы
+                </h2>
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="absolute right-5"
+                >
+                  <RxCross2 className="w-6 h-6 text-[#FF621F]" />
+                </button>
+              </div>
 
-          <ModalBody className="px-3 py-4 flex-1">
-            <div className="flex flex-col items-center gap-2 h-full">
-              {/* Управление взрослыми */}
-              <div className="flex flex-col items-center w-full">
-                <div className="flex items-center justify-between w-full bg-slate-100 rounded-full">
-                  <Button
-                    className="rounded-full min-w-16"
-                    onPress={counterMinus}
-                  >
-                    -
-                  </Button>
-                  <p className="text-black text-base">
-                    <span className="font-medium">{adults}</span> взрослых
-                  </p>
-                  <Button
-                    className="rounded-full min-w-16"
-                    onPress={counterPlus}
-                  >
-                    +
-                  </Button>
+              {/* Content */}
+              <div className="flex items-center justify-center w-full py-4">
+                <span className="text-[#2E2E32] text-xl font-medium">
+                  {adults} взрослых{childrenList.length > 0 && ", "}
+                  {childrenList.length > 0 && `${childrenList.length} детей`}
+                </span>
+              </div>
+              <div className="px-3 pb-5 pt-0 gap-4 flex flex-col">
+                {/* Взрослые */}
+                <div className="flex items-center justify-between">
+                  <span className="text-[#2E2E32] text-lg">Взрослые</span>
+                  <div className="flex items-center gap-4">
+                    <button
+                      onClick={() => handleAdultsChange(false)}
+                      disabled={adults <= 1}
+                      className={`w-8 h-8 rounded-full border border-[#DBE0E5] flex items-center justify-center
+                        ${
+                          adults > 1
+                            ? "hover:bg-gray-50"
+                            : "opacity-50 cursor-not-allowed"
+                        }
+                      `}
+                    >
+                      <span className="text-[#6B7280] text-xl mt-[-3px]">
+                        -
+                      </span>
+                    </button>
+                    <span className="text-lg min-w-[20px] text-center">
+                      {adults}
+                    </span>
+                    <button
+                      onClick={() => handleAdultsChange(true)}
+                      disabled={adults >= 6}
+                      className={`w-8 h-8 rounded-full border border-[#DBE0E5] flex items-center justify-center
+                        ${
+                          adults < 6
+                            ? "hover:bg-gray-50"
+                            : "opacity-50 cursor-not-allowed"
+                        }
+                      `}
+                    >
+                      <span className="text-[#6B7280] text-xl mt-[-3px]">
+                        +
+                      </span>
+                    </button>
+                  </div>
                 </div>
 
                 {/* Список детей */}
-                <div className="flex flex-col items-start gap-2 w-full mt-2">
-                  {childrenList.map((child, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center justify-between w-full bg-slate-100 rounded-full"
+                {childrenList.map((age, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between"
+                  >
+                    <span className="text-[#2E2E32] text-lg">
+                      Ребенок {getChildrenText(age)}
+                    </span>
+                    <button
+                      onClick={() => handleRemoveChild(index)}
+                      className="w-8 h-8 rounded-full border border-[#DBE0E5] flex items-center justify-center hover:bg-gray-50"
                     >
-                      <Button
-                        className="rounded-full min-w-16"
-                        onPress={() => minusChild(child.key)}
-                      >
+                      <span className="text-[#6B7280] text-xl mt-[-3px]">
                         -
-                      </Button>
-                      <div className="flex gap-2">
-                        <span className="text-base">Ребёнок:</span>
-                        <div>
-                          <p className="text-black text-base">
-                            <span className="font-medium text-black">
-                              {child.id}
-                            </span>
-                            {` ${child.text}`}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="min-w-16"></div>
-                    </div>
-                  ))}
-                </div>
+                      </span>
+                    </button>
+                  </div>
+                ))}
 
-                {/* Добавление детей */}
-                <div
-                  className={`w-full ${childrenList.length > 0 ? "mt-2" : ""}`}
-                >
-                  {btnStatus ? (
-                    <Button
-                      className="w-full rounded-full text-base"
-                      onPress={() => setBtnStatus(false)}
-                      isDisabled={!checkBtn(childrenList)}
-                    >
-                      Добавить ребёнка
-                    </Button>
-                  ) : (
-                    <div className="flex flex-col items-center">
-                      <p className="text-black text-base mb-4">
-                        Выберите возраст ребенка
-                      </p>
-                      <div className="grid grid-rows-5 grid-cols-3 gap-2">
-                        {children.map((child) => (
-                          <Button
-                            key={child.id}
-                            className="rounded-full"
-                            onPress={() => handleAddChild(child)}
-                          >
-                            <p className="text-black">
-                              <span className="font-medium text-black">
-                                {child.id}
-                              </span>
-                              {` ${child.text}`}
-                            </p>
-                          </Button>
-                        ))}
-                      </div>
+                {/* Добавить ребенка или выбор возраста */}
+                {!isSelectingAge && childrenList.length < 3 && (
+                  <button
+                    onClick={() => setIsSelectingAge(true)}
+                    className="w-full text-left flex items-center gap-4 py-2"
+                  >
+                    <img src={Vector} alt="Vector" className="w-5 h-5" />
+                    <span className="text-[#2E2E32] text-lg">
+                      Добавить ребенка
+                    </span>
+                  </button>
+                )}
+
+                {isSelectingAge && (
+                  <div>
+                    <div className="text-[#2E2E32] text-lg mb-4">
+                      Возраст ребенка
                     </div>
-                  )}
-                </div>
+                    <div className="grid grid-cols-3 gap-2">
+                      {AGES.map((age) => (
+                        <button
+                          key={age}
+                          onClick={() => handleAddChild(age)}
+                          className="h-8 rounded-full border border-[#DBE0E5] flex items-center justify-center hover:bg-gray-50"
+                        >
+                          <span className="text-[#2E2E32] text-base">
+                            {getChildrenText(age)}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Button */}
+              <div className="px-3 py-5">
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="w-full py-3 px-6 border border-[#FF621F] bg-[#FF621F] rounded-[10px] text-lg text-white"
+                >
+                  Выбрать
+                </button>
               </div>
             </div>
-          </ModalBody>
-
-          <div className="p-4 mt-auto">
-            <Button
-              className="w-full text-base rounded-full bg-blue-500 text-white hover:bg-blue-700"
-              onPress={handleConfirm}
-            >
-              Выбрать
-            </Button>
           </div>
         </ModalContent>
       </Modal>

@@ -13,11 +13,25 @@ import {
 import { ru } from "date-fns/locale";
 import arrow from "../../assets/arrow.svg";
 
+// Добавим интерфейсы для цен
+interface CalendarPriceDay {
+  date: string;
+  price: number;
+  operator: string;
+}
+
+interface CalendarMonth {
+  days: CalendarPriceDay[];
+}
+
 interface CalendarMobileProps {
   selectedStartDate: Date | null;
   selectedEndDate: Date | null;
   onDateSelect: (start: Date | null, end: Date | null) => void;
   minDate?: Date;
+  prices?: {
+    [key: string]: CalendarMonth;
+  };
 }
 
 export default function CalendarMobile({
@@ -25,6 +39,7 @@ export default function CalendarMobile({
   selectedEndDate,
   onDateSelect,
   minDate = new Date(),
+  prices,
 }: CalendarMobileProps) {
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
@@ -93,6 +108,18 @@ export default function CalendarMobile({
     return "text-[#2E2E32]"; // Будни текущего месяца
   };
 
+  // В компоненте добавим функцию получения цены
+  const getPrice = (date: Date) => {
+    if (!prices) return null;
+    const monthKey = (date.getMonth() + 1).toString();
+    const monthData = prices[monthKey];
+    if (!monthData) return null;
+
+    const dateStr = format(date, "dd.MM.yyyy");
+    const priceData = monthData.days.find((day) => day.date === dateStr);
+    return priceData?.price;
+  };
+
   return (
     <div className="w-full">
       {/* Month navigation */}
@@ -156,6 +183,19 @@ export default function CalendarMobile({
                 `}
               >
                 <span>{format(date, "d")}</span>
+                {isCurrentMonth && !isPastDate && (
+                  <span
+                    className={`text-xs h-[14px] ${
+                      isSelected
+                        ? "text-white"
+                        : isRangeDate
+                        ? "text-[#FF621F]"
+                        : "text-[#bfc1c5]"
+                    }`}
+                  >
+                    {getPrice(date) || ""}
+                  </span>
+                )}
               </button>
             </div>
           );

@@ -70,7 +70,7 @@ export default function SearchResults() {
 
   if (loading) {
     return (
-      <div className="ml-2 flex-grow pb-4">
+      <div className="flex-grow pb-4">
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-2">
           {[...Array(36)].map((_, index) => (
             <div
@@ -109,7 +109,7 @@ export default function SearchResults() {
 
   if (error) {
     return (
-      <div className="ml-2 flex-grow">
+      <div className="mx-2 flex-grow">
         <div className="text-center text-red-500">{error}</div>
       </div>
     );
@@ -117,14 +117,14 @@ export default function SearchResults() {
 
   if (!tours || tours.length === 0) {
     return (
-      <div className="ml-2 flex-grow">
+      <div className="mx-2 flex-grow">
         <div className="text-center text-gray-500">Нет результатов поиска.</div>
       </div>
     );
   }
 
   return (
-    <div className="ml-2 flex-grow pb-4">
+    <div className="mx-2 flex-grow pb-4">
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-2">
         {tours.map((tour: Tour, index: number) => (
           <div

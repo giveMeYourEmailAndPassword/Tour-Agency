@@ -8,7 +8,7 @@ export default function FiltersMobile() {
   const [isOtherFiltersOpen, setIsOtherFiltersOpen] = useState(false);
 
   return (
-    <div className="w-full h-[640px] bg-gray-100 p-3">
+    <div className="w-full bg-gray-100 p-3">
       <div className="flex flex-col gap-2">
         {/* Город вылета */}
         <MobileDepartureCity />

@@ -166,7 +166,7 @@ export default function MobileFlyingDate() {
                 </button>
               </div>
 
-              <div className="flex justify-start items-center px-5 py-2">
+              <div className="flex justify-start items-center px-5 pt-5">
                 <span className="text-base font-medium text-[#2E2E32]">
                   {formatDisplayDate(dateRange.start)}
                   {dateRange.end &&
@@ -188,7 +188,7 @@ export default function MobileFlyingDate() {
               </div>
 
               {/* Button */}
-              <div className="px-3 pb-5 pt-3">
+              <div className="px-3 p-5">
                 <button
                   onClick={() => setIsOpen(false)}
                   className="w-full py-3 px-6 border border-[#FF621F] bg-[#FF621F] rounded-[10px] text-lg text-white"

@@ -2,11 +2,13 @@ export const destinations = [
   {
     id: 1,
     name: "Египет",
+    code: "EG",
     regions: [{ id: 6, name: "Шарм-эль-Шейх" }],
   },
   {
     id: 2,
     name: "Тайланд",
+    code: "TH",
     regions: [
       { id: 62, name: "Бангкок" },
       { id: 8, name: "Пхукет" },
@@ -16,6 +18,7 @@ export const destinations = [
   {
     id: 4,
     name: "Турция",
+    code: "TR",
     regions: [
       { id: 20, name: "Анталья" },
       { id: 19, name: "Аланья" },
@@ -29,6 +32,7 @@ export const destinations = [
   {
     id: 16,
     name: "Вьетнам",
+    code: "VN",
     regions: [
       { id: 87, name: "Нячанг" },
       // { id: 104, name: "Фукуок" },
@@ -38,6 +42,7 @@ export const destinations = [
   {
     id: 9,
     name: "ОАЭ",
+    code: "AE",
     regions: [
       { id: 45, name: "Дубай" },
       { id: 43, name: "Абу-Даби" },
@@ -49,11 +54,13 @@ export const destinations = [
   {
     id: 7,
     name: "Индонезия",
+    code: "ID",
     regions: [{ id: 37, name: "Бали" }],
   },
   {
     id: 8,
     name: "Мальдивы",
+    code: "MV",
     regions: [{ id: 42, name: "Мальдивы" }],
   },
   // {
@@ -76,6 +83,7 @@ export const destinations = [
   {
     id: 36,
     name: "Малайзия",
+    code: "MY",
     regions: [
       { id: 327, name: "Куала Лумпур" },
       { id: 328, name: "Лангкави" },
@@ -84,6 +92,7 @@ export const destinations = [
   {
     id: 54,
     name: "Грузия",
+    code: "GE",
     regions: [
       { id: 480, name: "Батуми" },
       { id: 476, name: "Тбилиси" },
@@ -92,6 +101,7 @@ export const destinations = [
   {
     id: 79,
     name: "Катар",
+    code: "QA",
     regions: [{ id: 608, name: "Доха" }],
   },
 ];
@@ -104,6 +114,7 @@ export const departures = [
 export interface Destination {
   id: number;
   name: string;
+  code: string;
   regions: Region[];
 }
 

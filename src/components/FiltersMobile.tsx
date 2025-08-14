@@ -5,6 +5,7 @@ import MobileFlyingDate from "./filters/mobileFilters/MobileFlyingDate";
 import MobileTourist from "./filters/mobileFilters/MobileTourist";
 import MobileNightsFrom from "./filters/mobileFilters/MobileNightsFrom";
 import MobileStarsFilter from "./filters/mobileFilters/MobileStarsFilter";
+import MobileFlyingCountry from "./filters/mobileFilters/MobileFlyingCountry";
 
 export default function FiltersMobile() {
   const [isOtherFiltersOpen, setIsOtherFiltersOpen] = useState(false);
@@ -16,17 +17,7 @@ export default function FiltersMobile() {
         <MobileDepartureCity />
 
         {/* Страна, город */}
-        <div className="flex items-center gap-2 bg-white p-2 rounded-lg border border-[#DBE0E5]">
-          <img src="/src/assets/marker.svg" alt="marker" className="w-5 h-5" />
-          <div className="flex flex-col">
-            <span className="text-xs font-light text-[#7E8389]">
-              Страна, город
-            </span>
-            <span className="text-base font-medium text-[#2E2E32]">
-              Вьетнам, Нячанг
-            </span>
-          </div>
-        </div>
+        <MobileFlyingCountry />
 
         {/* Даты вылета */}
         <MobileFlyingDate />

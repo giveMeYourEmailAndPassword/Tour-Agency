@@ -57,12 +57,26 @@ export default function MobileFlyingCountry() {
     country.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const displayName =
-    selectedRegions.length > 0
-      ? selectedRegions.length === selectedCountryData?.regions.length
-        ? selectedCountryData.name
-        : `${selectedCountryData?.name} (${selectedRegions.length})`
-      : selectedCountryData?.name;
+  const displayName = (() => {
+    // Если нет выбранных регионов или выбраны все регионы страны
+    if (
+      selectedRegions.length === 0 ||
+      selectedRegions.length === selectedCountryData?.regions.length
+    ) {
+      return selectedCountryData?.name;
+    }
+
+    // Если выбран ровно один регион
+    if (selectedRegions.length === 1) {
+      const selectedRegion = selectedCountryData?.regions.find(
+        (region) => region.id === selectedRegions[0]
+      );
+      return `${selectedCountryData?.name}, ${selectedRegion?.name}`;
+    }
+
+    // Если выбрано больше одного региона, но не все
+    return `${selectedCountryData?.name} (${selectedRegions.length})`;
+  })();
 
   return (
     <>
@@ -145,7 +159,7 @@ export default function MobileFlyingCountry() {
                 <div className="py-3 pl-2">
                   <button
                     onClick={handleAllRegionsToggle}
-                    className="w-full text-left px-4 py-2 hover:bg-gray-50 duration-300 flex items-center gap-2 border-b border-[#DBE0E5]"
+                    className="w-full text-left px-4 py-2 duration-300 flex items-center gap-2 border-b border-[#DBE0E5]"
                   >
                     <div
                       className={`w-5 h-5 rounded border flex items-center justify-center
@@ -181,7 +195,7 @@ export default function MobileFlyingCountry() {
                     <button
                       key={region.id}
                       onClick={() => handleRegionToggle(region.id)}
-                      className="w-full text-left px-4 py-2 hover:bg-gray-50 duration-300 flex items-center gap-2 rounded-lg"
+                      className="w-full text-left px-4 py-2 duration-300 flex items-center gap-2 rounded-lg"
                     >
                       <div
                         className={`w-5 h-5 rounded border flex items-center justify-center

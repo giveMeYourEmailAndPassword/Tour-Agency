@@ -77,7 +77,7 @@ export default function MobileStarsFilter() {
         }}
       >
         <ModalContent>
-          <div className="w-full">
+          <div className="absolute bottom-0 w-full">
             <div className="bg-white w-full rounded-t-[10px]">
               {/* Header */}
               <div className="flex justify-center items-center border-b border-[#DBE0E5] h-14 relative">

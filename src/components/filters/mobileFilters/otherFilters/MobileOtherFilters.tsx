@@ -6,6 +6,7 @@ import MobileNourishment from "./MobileNourishment";
 import MobileRaiting from "./MobileRaiting";
 import MobileHotelService from "./MobileHotelService";
 import { DataContext } from "../../../DataProvider";
+import arrowIcon from "../../../../assets/arrow.svg"; // Добавляем импорт
 
 export default function MobileOtherFilters() {
   const { params } = useContext(DataContext);
@@ -38,11 +39,15 @@ export default function MobileOtherFilters() {
           Дополнительные фильтры
         </span>
         <img
-          src="/src/assets/arrow.svg"
+          src={arrowIcon}
           alt="expand"
           className={`w-6 h-6 transition-transform ${
             isOpen ? "-rotate-90" : "rotate-90"
           }`}
+          style={{
+            filter:
+              "invert(48%) sepia(85%) saturate(2727%) hue-rotate(346deg) brightness(101%) contrast(101%)",
+          }}
         />
       </button>
 
@@ -87,7 +92,7 @@ export default function MobileOtherFilters() {
                 </h2>
                 <button onClick={() => setIsOpen(false)}>
                   <img
-                    src="/src/assets/arrow.svg"
+                    src={arrowIcon}
                     alt="expand"
                     className={`w-6 h-6 transition-transform ${
                       isOpen ? "-rotate-90" : "rotate-90"

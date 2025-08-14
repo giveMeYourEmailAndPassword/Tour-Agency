@@ -3,6 +3,8 @@ import { FiSearch } from "react-icons/fi";
 import MobileDepartureCity from "./filters/mobileFilters/MobileDepartureCity";
 import MobileFlyingDate from "./filters/mobileFilters/MobileFlyingDate";
 import MobileTourist from "./filters/mobileFilters/MobileTourist";
+import MobileNightsFrom from "./filters/mobileFilters/MobileNightsFrom";
+import MobileStarsFilter from "./filters/mobileFilters/MobileStarsFilter";
 
 export default function FiltersMobile() {
   const [isOtherFiltersOpen, setIsOtherFiltersOpen] = useState(false);
@@ -34,28 +36,8 @@ export default function FiltersMobile() {
 
         {/* Ночей и Звезд */}
         <div className="flex gap-1">
-          <div className="flex-1 flex items-center gap-2 bg-white p-2 rounded-lg border border-[#DBE0E5]">
-            <img
-              src="/src/assets/moon_stars.svg"
-              alt="nights"
-              className="w-5 h-5"
-            />
-            <div className="flex flex-col">
-              <span className="text-xs font-light text-[#7E8389]">Ночей</span>
-              <span className="text-base font-medium text-[#2E2E32]">
-                от 7 до 10
-              </span>
-            </div>
-          </div>
-          <div className="flex-1 flex items-center gap-2 bg-white p-2 rounded-lg border border-[#DBE0E5]">
-            <img src="/src/assets/star.svg" alt="stars" className="w-5 h-5" />
-            <div className="flex flex-col">
-              <span className="text-xs font-light text-[#7E8389]">Звезд</span>
-              <span className="text-base font-medium text-[#2E2E32]">
-                1-5 звезд
-              </span>
-            </div>
-          </div>
+          <MobileNightsFrom />
+          <MobileStarsFilter />
         </div>
 
         {/* Дополнительные фильтры */}

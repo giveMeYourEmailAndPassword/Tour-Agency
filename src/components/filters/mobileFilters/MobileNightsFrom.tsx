@@ -1,59 +1,104 @@
-import { useContext, useState, useEffect } from "react";
-import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  Button,
-} from "@heroui/react";
+import React, { useContext, useState, useEffect, useRef } from "react";
 import { DataContext } from "../../DataProvider";
+import { Modal, ModalContent } from "@heroui/react";
 import { RxCross2 } from "react-icons/rx";
-import { RangeCalendar } from "@heroui/react";
-import { parseDate } from "@internationalized/date";
+import moon from "../../../assets/moon_stars.svg";
+
+const NIGHTS = [5, 7, 9, 11, 14, 16];
+const MIN_NIGHTS = 3;
+const MAX_NIGHTS = 16;
 
 export default function MobileNightsFrom() {
   const { setData } = useContext(DataContext);
   const [isOpen, setIsOpen] = useState(false);
-
-  // Используем объекты из @internationalized/date для начального состояния
-  const [range, setRange] = useState({
-    start: parseDate("2023-10-06"),
-    end: parseDate("2023-10-14"),
-  });
-
-  // Обработчик изменения диапазона
-  const handleRangeChange = (value: { start: any; end: any }) => {
-    if (value.start && value.end) {
-      setRange(value);
-
-      const startDay = value.start.day;
-      const endDay = value.end.day;
-
-      setData("param3", { startDay, endDay });
-      setIsOpen(false);
-    }
-  };
+  const [selectedNights, setSelectedNights] = useState(7);
+  const [sliderValue, setSliderValue] = useState([5, 7]);
+  const [isDragging, setIsDragging] = useState<null | "start" | "end">(null);
+  const sliderRef = useRef(null);
 
   useEffect(() => {
-    setData("param3", { startDay: range.start.day, endDay: range.end.day });
-  }, []);
+    setData("param3", { startDay: sliderValue[0], endDay: sliderValue[1] });
+  }, [sliderValue, setData]);
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isDragging || !sliderRef.current) return;
+
+      const rect = sliderRef.current.getBoundingClientRect();
+      const width = rect.width;
+      const left = rect.left;
+      const percentage = Math.max(
+        0,
+        Math.min(100, ((e.clientX - left) / width) * 100)
+      );
+      const nightValue = Math.round(
+        (percentage * (MAX_NIGHTS - MIN_NIGHTS)) / 100 + MIN_NIGHTS
+      );
+
+      setSliderValue((prev) => {
+        if (isDragging === "start") {
+          return [
+            Math.max(MIN_NIGHTS, Math.min(nightValue, prev[1] - 1)),
+            prev[1],
+          ];
+        } else {
+          return [
+            prev[0],
+            Math.min(MAX_NIGHTS, Math.max(nightValue, prev[0] + 1)),
+          ];
+        }
+      });
+    };
+
+    const handleMouseUp = () => {
+      setIsDragging(null);
+    };
+
+    if (isDragging) {
+      document.addEventListener("mousemove", handleMouseMove);
+      document.addEventListener("mouseup", handleMouseUp);
+    }
+
+    return () => {
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [isDragging]);
+
+  const handleNightSelect = (night) => {
+    setSelectedNights(night);
+    let start, end;
+
+    if (night === MIN_NIGHTS) {
+      start = MIN_NIGHTS;
+      end = 5;
+    } else if (night === MAX_NIGHTS) {
+      start = 14;
+      end = MAX_NIGHTS;
+    } else {
+      start = Math.max(MIN_NIGHTS, night - 2);
+      end = night;
+    }
+
+    setSliderValue([start, end]);
+  };
 
   return (
     <>
-      <Button
-        onPress={() => setIsOpen(true)}
-        radius="none"
-        className="px-2 w-full md:w-64 h-12 md:h-full bg-white hover:bg-slate-100 !z-0 !scale-100 !opacity-100 py-1"
+      <div
+        onClick={() => setIsOpen(true)}
+        className="flex-1 flex items-center gap-2 bg-white p-2 rounded-lg border border-[#DBE0E5]"
       >
-        <div className="flex flex-col items-start justify-between w-full">
-          <span className="text-slate-600 mb-[1px] text-xs md:text-sm">
-            Ночей
+        <img src={moon} alt="nights" className="w-5 h-5" />
+        <div className="flex flex-col">
+          <span className="text-xs font-light text-[#7E8389]">Ночей</span>
+          <span className="text-base font-medium text-[#2E2E32]">
+            {sliderValue[0] === sliderValue[1]
+              ? `${sliderValue[0]} ночей`
+              : `${sliderValue[0]}-${sliderValue[1]} ночей`}
           </span>
-          <p className="text-black text-base md:text-lg font-medium">
-            {range.start.day} - {range.end.day}
-          </p>
         </div>
-      </Button>
+      </div>
 
       <Modal
         isOpen={isOpen}
@@ -64,38 +109,116 @@ export default function MobileNightsFrom() {
         scrollBehavior="inside"
         isDismissable={true}
         shouldBlockScroll={true}
-        className="h-[318px] !p-0 !m-0 !max-w-full"
+        className="!p-0 !m-0 !max-w-full"
         hideCloseButton={true}
         shadow="none"
       >
         <ModalContent>
-          <ModalHeader className="flex justify-between items-center border-b py-2 px-3">
-            <h2 className="text-lg font-medium">Выберите количество ночей</h2>
-            <button
-              onClick={() => setIsOpen(false)}
-              className="p-2 hover:bg-gray-100 rounded-full"
-            >
-              <RxCross2 className="text-2xl" />
-            </button>
-          </ModalHeader>
+          <div className="absolute bottom-0 w-full">
+            <div className="bg-white w-full rounded-t-[10px]">
+              {/* Header */}
+              <div className="flex justify-center items-center border-b border-[#DBE0E5] h-14 relative">
+                <h2 className="text-[20px] font-medium text-[#2E2E32]">
+                  Ночей
+                </h2>
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="absolute right-5"
+                >
+                  <RxCross2 className="w-6 h-6 text-[#FF621F]" />
+                </button>
+              </div>
 
-          <ModalBody className="p-3 flex flex-col items-center justify-start h-full">
-            <RangeCalendar
-              onChange={handleRangeChange}
-              value={range}
-              classNames={{
-                headerWrapper: "hidden",
-                gridHeader: "hidden",
-                gridWrapper: "border-none rounded-none",
-                gridBody: "border-none rounded-none",
-                base: "rounded-none shadow-none bg-white",
-                cell: "w-10",
-                cellButton: ["w-10 h-10"],
-                title: "text-lg",
-              }}
-              calendarWidth="100%"
-            />
-          </ModalBody>
+              {/* Content */}
+              <div className="flex items-center justify-center w-full py-4">
+                <span className="text-[#2E2E32] text-xl font-medium">
+                  {sliderValue[0] === sliderValue[1]
+                    ? `${sliderValue[0]} ночей`
+                    : `${sliderValue[0]}-${sliderValue[1]} ночей`}
+                </span>
+              </div>
+
+              <div className="px-3 pb-5 pt-0">
+                {/* Слайдер */}
+                <div className="relative h-6 mb-6" ref={sliderRef}>
+                  <div className="absolute top-1/2 -translate-y-1/2 w-full h-3 bg-[#DBE0E5] rounded-lg">
+                    <div
+                      className="absolute h-full bg-[#FF621F] rounded-lg"
+                      style={{
+                        left: `${
+                          ((sliderValue[0] - MIN_NIGHTS) * 100) /
+                          (MAX_NIGHTS - MIN_NIGHTS)
+                        }%`,
+                        width: `${
+                          ((sliderValue[1] - sliderValue[0]) * 100) /
+                          (MAX_NIGHTS - MIN_NIGHTS)
+                        }%`,
+                      }}
+                    />
+                  </div>
+                  {/* Ползунки */}
+                  <button
+                    onMouseDown={() => setIsDragging("start")}
+                    className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-6 h-6 bg-white rounded-full shadow-[2px_2px_10px_0px_rgba(0,0,0,0.15)] cursor-pointer flex items-center justify-center border border-[#DBE0E5] hover:border-[#FF621F] transition-colors"
+                    style={{
+                      left: `${
+                        ((sliderValue[0] - MIN_NIGHTS) * 100) /
+                        (MAX_NIGHTS - MIN_NIGHTS)
+                      }%`,
+                    }}
+                  >
+                    <div className="flex flex-col gap-[2px]">
+                      <div className="w-[2px] h-[6px] bg-[#DBE0E5]" />
+                      <div className="w-[2px] h-[6px] bg-[#DBE0E5]" />
+                    </div>
+                  </button>
+                  <button
+                    onMouseDown={() => setIsDragging("end")}
+                    className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-6 h-6 bg-white rounded-full shadow-[2px_2px_10px_0px_rgba(0,0,0,0.15)] cursor-pointer flex items-center justify-center border border-[#DBE0E5] hover:border-[#FF621F] transition-colors"
+                    style={{
+                      left: `${
+                        ((sliderValue[1] - MIN_NIGHTS) * 100) /
+                        (MAX_NIGHTS - MIN_NIGHTS)
+                      }%`,
+                    }}
+                  >
+                    <div className="flex flex-col gap-[2px]">
+                      <div className="w-[2px] h-[6px] bg-[#DBE0E5]" />
+                      <div className="w-[2px] h-[6px] bg-[#DBE0E5]" />
+                    </div>
+                  </button>
+                </div>
+
+                {/* Кнопки выбора количества ночей */}
+                <div className="grid grid-cols-3 gap-2">
+                  {NIGHTS.map((night) => (
+                    <button
+                      key={night}
+                      onClick={() => handleNightSelect(night)}
+                      className={`h-10 rounded-full border transition-colors flex items-center justify-center
+                        ${
+                          night === selectedNights
+                            ? "border-[#FF621F] text-[#2E2E32]"
+                            : "border-[#DBE0E5] text-[#2E2E32] hover:border-[#FF621F]"
+                        }`}
+                    >
+                      <span className="text-base">{night} ночей</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Button */}
+              <div className="px-3 py-5">
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="w-full py-3 px-6 border border-[#FF621F] bg-[#FF621F] rounded-[10px] text-lg text-white"
+                >
+                  Выбрать
+                </button>
+              </div>
+            </div>
+          </div>
         </ModalContent>
       </Modal>
     </>

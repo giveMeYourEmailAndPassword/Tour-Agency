@@ -78,7 +78,7 @@ export default function SearchResults() {
               className="w-full flex items-center gap-2.5 p-4 bg-white border border-[#DBE0E5] rounded-[10px]"
             >
               <div className="w-full flex flex-col gap-2">
-                <Skeleton className="w-full h-36 rounded" />
+                <Skeleton className="w-full h-44 md:h-36 rounded" />
                 <div className="w-full flex flex-col gap-2">
                   <div className="w-full flex justify-between items-center gap-1">
                     <div className="flex items-center gap-0.5">
@@ -145,7 +145,7 @@ export default function SearchResults() {
           >
             <div className="w-full flex flex-col gap-2">
               {/* Изображение */}
-              <div className="w-full h-36 rounded">
+              <div className="w-full h-44 md:h-36 rounded">
                 <img
                   src={tour.picturelink}
                   alt={tour.hotelname}

@@ -6,6 +6,7 @@ import MobileTourist from "./filters/mobileFilters/MobileTourist";
 import MobileNightsFrom from "./filters/mobileFilters/MobileNightsFrom";
 import MobileStarsFilter from "./filters/mobileFilters/MobileStarsFilter";
 import MobileFlyingCountry from "./filters/mobileFilters/MobileFlyingCountry";
+import MobileOtherFilters from "./filters/mobileFilters/otherFilters/MobileOtherFilters";
 
 export default function FiltersMobile() {
   const [isOtherFiltersOpen, setIsOtherFiltersOpen] = useState(false);
@@ -32,21 +33,7 @@ export default function FiltersMobile() {
         </div>
 
         {/* Дополнительные фильтры */}
-        <button
-          className="w-full flex justify-between items-center py-3"
-          onClick={() => setIsOtherFiltersOpen(!isOtherFiltersOpen)}
-        >
-          <span className="text-lg font-medium text-[#6B7280]">
-            Дополнительные фильтры
-          </span>
-          <img
-            src="/src/assets/arrow.svg"
-            alt="expand"
-            className={`w-6 h-6 transition-transform ${
-              isOtherFiltersOpen ? "-rotate-90" : "rotate-90"
-            }`}
-          />
-        </button>
+        <MobileOtherFilters />
 
         {/* Кнопка поиска */}
         <button className="w-full flex justify-center items-center gap-2 py-3 px-6 bg-[#FF621F] rounded-lg">

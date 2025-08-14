@@ -52,6 +52,24 @@ export default function MobileDepartureCity() {
         className="h-[216px] !p-0 !m-0 !max-w-full"
         hideCloseButton={true}
         shadow="none"
+        motionProps={{
+          variants: {
+            enter: {
+              opacity: 1,
+              transition: {
+                duration: 0.2,
+                ease: "easeOut",
+              },
+            },
+            exit: {
+              opacity: 0,
+              transition: {
+                duration: 0.1,
+                ease: "easeIn",
+              },
+            },
+          },
+        }}
       >
         <ModalContent>
           <div className="absolute bottom-0 w-full">

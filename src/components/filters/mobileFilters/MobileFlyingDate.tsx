@@ -149,9 +149,27 @@ export default function MobileFlyingDate() {
         className="!p-0 !m-0 !max-w-full"
         hideCloseButton={true}
         shadow="none"
+        motionProps={{
+          variants: {
+            enter: {
+              opacity: 1,
+              transition: {
+                duration: 0.2,
+                ease: "easeOut",
+              },
+            },
+            exit: {
+              opacity: 0,
+              transition: {
+                duration: 0.1,
+                ease: "easeIn",
+              },
+            },
+          },
+        }}
       >
         <ModalContent>
-          <div className="absolute bottom-0 w-full">
+          <div className="w-full">
             <div className="bg-white w-full rounded-t-[10px]">
               {/* Header */}
               <div className="flex justify-center items-center border-b border-[#DBE0E5] h-14 relative">

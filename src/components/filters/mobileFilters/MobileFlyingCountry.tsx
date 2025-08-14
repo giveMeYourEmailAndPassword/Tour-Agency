@@ -110,103 +110,90 @@ export default function MobileFlyingCountry() {
         className="!p-0 !m-0 !max-w-full"
         hideCloseButton={true}
         shadow="none"
+        motionProps={{
+          variants: {
+            enter: {
+              opacity: 1,
+              transition: {
+                duration: 0.2,
+                ease: "easeOut",
+              },
+            },
+            exit: {
+              opacity: 0,
+              transition: {
+                duration: 0.1,
+                ease: "easeIn",
+              },
+            },
+          },
+        }}
       >
         <ModalContent>
-          <div className="bg-white w-full rounded-t-[10px]">
-            {/* Header */}
-            <div className="flex justify-center items-center border-b border-[#DBE0E5] h-14 relative">
-              <h2 className="text-[20px] font-medium text-[#2E2E32]">
-                Страна, город
-              </h2>
-              <button
-                onClick={() => setIsOpen(false)}
-                className="absolute right-5"
-              >
-                <RxCross2 className="w-6 h-6 text-[#FF621F]" />
-              </button>
-            </div>
-
-            <div className="flex px-3">
-              {/* Левая колонка - страны */}
-              <div className="w-1/2 relative">
-                <div className="absolute right-0 h-full w-[1px] bg-[#DBE0E5]" />
-                <div className="py-3 pr-2">
-                  {filteredCountries.map((country) => (
-                    <button
-                      key={country.id}
-                      onClick={() => handleCountrySelect(country)}
-                      className={`w-full text-left px-4 py-2 hover:bg-gray-50 duration-300 flex items-center justify-between rounded-lg
-                        ${selectedCountry === country.id ? "bg-[#FDDEC2]" : ""}
-                      `}
-                    >
-                      <div className="flex items-center gap-2">
-                        <img
-                          src={`https://flagcdn.com/${country.code.toLowerCase()}.svg`}
-                          alt={country.name}
-                          className="w-6 h-4"
-                        />
-                        <span className="text-[#2E2E32] text-base">
-                          {country.name}
-                        </span>
-                      </div>
-                    </button>
-                  ))}
-                </div>
+          <div className="w-full">
+            <div className="bg-white w-full rounded-t-[10px]">
+              {/* Header */}
+              <div className="flex justify-center items-center border-b border-[#DBE0E5] h-14 relative">
+                <h2 className="text-[20px] font-medium text-[#2E2E32]">
+                  Страна, город
+                </h2>
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="absolute right-5"
+                >
+                  <RxCross2 className="w-6 h-6 text-[#FF621F]" />
+                </button>
               </div>
 
-              {/* Правая колонка - регионы */}
-              <div className="w-1/2">
-                <div className="py-3 pl-2">
-                  <button
-                    onClick={handleAllRegionsToggle}
-                    className="w-full text-left px-4 py-2 duration-300 flex items-center gap-2 border-b border-[#DBE0E5]"
-                  >
-                    <div
-                      className={`w-5 h-5 rounded border flex items-center justify-center
-                        ${
-                          selectedRegions.length ===
-                          selectedCountryData?.regions.length
-                            ? "bg-[#FF621F] border-[#FF621F]"
-                            : "border-[#DBE0E5]"
-                        }
-                      `}
-                    >
-                      {selectedRegions.length ===
-                        selectedCountryData?.regions.length && (
-                        <svg
-                          width="11"
-                          height="8"
-                          viewBox="0 0 11 8"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M1 3.5L4 6.5L9.5 1"
-                            stroke="white"
-                            strokeWidth="1.6"
+              <div className="flex px-3">
+                {/* Левая колонка - страны */}
+                <div className="w-1/2 relative">
+                  <div className="absolute right-0 h-full w-[1px] bg-[#DBE0E5]" />
+                  <div className="py-3 pr-2">
+                    {filteredCountries.map((country) => (
+                      <button
+                        key={country.id}
+                        onClick={() => handleCountrySelect(country)}
+                        className={`w-full text-left px-4 py-2 hover:bg-gray-50 duration-300 flex items-center justify-between rounded-lg
+                          ${
+                            selectedCountry === country.id ? "bg-[#FDDEC2]" : ""
+                          }
+                        `}
+                      >
+                        <div className="flex items-center gap-2">
+                          <img
+                            src={`https://flagcdn.com/${country.code.toLowerCase()}.svg`}
+                            alt={country.name}
+                            className="w-6 h-4"
                           />
-                        </svg>
-                      )}
-                    </div>
-                    <span className="text-[#2E2E32] text-sm">Все курорты</span>
-                  </button>
+                          <span className="text-[#2E2E32] text-base">
+                            {country.name}
+                          </span>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
 
-                  {selectedCountryData?.regions.map((region) => (
+                {/* Правая колонка - регионы */}
+                <div className="w-1/2">
+                  <div className="py-3 pl-2">
                     <button
-                      key={region.id}
-                      onClick={() => handleRegionToggle(region.id)}
-                      className="w-full text-left px-4 py-2 duration-300 flex items-center gap-2 rounded-lg"
+                      onClick={handleAllRegionsToggle}
+                      className="w-full text-left px-4 py-2 duration-300 flex items-center gap-2 border-b border-[#DBE0E5]"
                     >
                       <div
                         className={`w-5 h-5 rounded border flex items-center justify-center
                           ${
-                            selectedRegions.includes(region.id)
+                            selectedRegions.length ===
+                            selectedCountryData?.regions.length
                               ? "bg-[#FF621F] border-[#FF621F]"
                               : "border-[#DBE0E5]"
                           }
                         `}
                       >
-                        {selectedRegions.includes(region.id) && (
+                        {selectedRegions.length ===
+                          selectedCountryData?.regions.length && (
                           <svg
                             width="11"
                             height="8"
@@ -223,10 +210,47 @@ export default function MobileFlyingCountry() {
                         )}
                       </div>
                       <span className="text-[#2E2E32] text-sm">
-                        {region.name}
+                        Все курорты
                       </span>
                     </button>
-                  ))}
+
+                    {selectedCountryData?.regions.map((region) => (
+                      <button
+                        key={region.id}
+                        onClick={() => handleRegionToggle(region.id)}
+                        className="w-full text-left px-4 py-2 duration-300 flex items-center gap-2 rounded-lg"
+                      >
+                        <div
+                          className={`w-5 h-5 rounded border flex items-center justify-center
+                            ${
+                              selectedRegions.includes(region.id)
+                                ? "bg-[#FF621F] border-[#FF621F]"
+                                : "border-[#DBE0E5]"
+                            }
+                          `}
+                        >
+                          {selectedRegions.includes(region.id) && (
+                            <svg
+                              width="11"
+                              height="8"
+                              viewBox="0 0 11 8"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                d="M1 3.5L4 6.5L9.5 1"
+                                stroke="white"
+                                strokeWidth="1.6"
+                              />
+                            </svg>
+                          )}
+                        </div>
+                        <span className="text-[#2E2E32] text-sm">
+                          {region.name}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>

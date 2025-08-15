@@ -4,8 +4,8 @@ import plane_departure from "../../assets/plane_departure.svg";
 import { departures } from "../data/destinations";
 
 export default function NewDepartureCity() {
-  const { setData } = useContext(DataContext);
-  const [selectedCity, setSelectedCity] = useState("80"); // Бишкек по умолчанию
+  const { setData, params } = useContext(DataContext);
+  const [selectedCity, setSelectedCity] = useState("80"); // Всегда Бишкек по умолчанию
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -14,7 +14,7 @@ export default function NewDepartureCity() {
   }, [selectedCity, setData]);
 
   useEffect(() => {
-    const handleClickOutside = (event) => {
+    const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsOpen(false);
       }
@@ -24,7 +24,7 @@ export default function NewDepartureCity() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleCitySelect = (city) => {
+  const handleCitySelect = (city: any) => {
     setSelectedCity(String(city.id));
     setIsOpen(false);
   };

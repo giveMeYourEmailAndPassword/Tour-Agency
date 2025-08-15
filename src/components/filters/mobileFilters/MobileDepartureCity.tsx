@@ -6,9 +6,11 @@ import { Modal, ModalContent } from "@heroui/react";
 import { RxCross2 } from "react-icons/rx";
 
 export default function MobileDepartureCity() {
-  const { setData } = useContext(DataContext);
-  const [selectedCity, setSelectedCity] = useState("80"); // Бишкек по умолчанию
+  const { setData, params } = useContext(DataContext);
+  const [selectedCity, setSelectedCity] = useState("80"); // Всегда Бишкек по умолчанию
   const [isOpen, setIsOpen] = useState(false);
+
+  // Убираем первый эффект синхронизации с params
 
   useEffect(() => {
     setData("param1", selectedCity);
@@ -49,7 +51,7 @@ export default function MobileDepartureCity() {
         scrollBehavior="inside"
         isDismissable={true}
         shouldBlockScroll={true}
-        className="h-[216px] !p-0 !m-0 !max-w-full"
+        className="!p-0 !m-0 !max-w-full"
         hideCloseButton={true}
         shadow="none"
         motionProps={{

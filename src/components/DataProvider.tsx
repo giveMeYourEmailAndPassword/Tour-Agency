@@ -157,27 +157,19 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     });
   }, []);
 
-  // Эффект только для загрузки параметров из URL
+  // Сначала загружаем параметры из URL
   useEffect(() => {
     console.log("Loading parameters from URL");
     const urlParams = new URLSearchParams(window.location.search);
-    if (
-      urlParams.toString() &&
-      (window.location.pathname === "/OurTours" ||
-        window.location.pathname === "/OurToursForManager")
-    ) {
+    if (urlParams.toString()) {
       const urlParamsObj = parseUrlParams();
       if (Object.keys(urlParamsObj).length > 0) {
-        setParams((prevParams) => {
-          if (JSON.stringify(prevParams) === JSON.stringify(urlParamsObj))
-            return prevParams; // Избегаем обновления, если параметры не изменились
-          return urlParamsObj;
-        });
+        setParams(urlParamsObj);
       }
     }
   }, []);
 
-  // Запрос списка городов
+  // Затем загружаем города
   useEffect(() => {
     console.log("Fetching cities");
     async function fetchCities() {
@@ -197,29 +189,29 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     fetchCities();
   }, []);
 
-  // Запрос стран по выбранному городу
-  useEffect(() => {
-    console.log("Fetching countries for param1:", params.param1);
-    async function fetchCountries() {
-      if (!params.param1) return;
-      try {
-        const response = await fetch(
-          `${API_BASE_URL}/countries/${params.param1}`
-        );
-        const data = await response.json();
-        const countriesData = data?.lists?.countries?.country || [];
-        setCountries(
-          countriesData.map((country: any) => ({
-            id: country.id,
-            label: country.name,
-          }))
-        );
-      } catch (error) {
-        console.error("Ошибка получения стран:", error);
-      }
-    }
-    fetchCountries();
-  }, [params.param1]);
+  // Закомментируем или удалим этот эффект
+  // useEffect(() => {
+  //   console.log("Fetching countries for param1:", params.param1);
+  //   async function fetchCountries() {
+  //     if (!params.param1) return;
+  //     try {
+  //       const response = await fetch(
+  //         `${API_BASE_URL}/countries/${params.param1}`
+  //       );
+  //       const data = await response.json();
+  //       const countriesData = data?.lists?.countries?.country || [];
+  //       setCountries(
+  //         countriesData.map((country: any) => ({
+  //           id: country.id,
+  //           label: country.name,
+  //         }))
+  //       );
+  //     } catch (error) {
+  //       console.error("Ошибка получения стран:", error);
+  //     }
+  //   }
+  //   fetchCountries();
+  // }, [params.param1]);
 
   // Добавим дебаунс для запросов
   const POLL_INTERVAL = 2500; // Увеличим интервал опроса

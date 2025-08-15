@@ -1,4 +1,5 @@
-import { useContext } from "react";
+import { useContext, useEffect, useRef } from "react";
+import { useLocation } from "react-router-dom";
 import { DataContext } from "../../components/DataProvider";
 import { Skeleton } from "@heroui/react";
 import HeaderMOT from "./HeaderMOT";
@@ -7,12 +8,13 @@ import starOutline from "../../assets/star_unfill.svg";
 import utensils from "../../assets/utensils.svg";
 import { parse, format, addDays } from "date-fns";
 import { ru } from "date-fns/locale";
+import { ProgressBar } from "../../components/Loading/ProgressBar";
 
 // Добавляем вспомогательные функции из SearchResults
 const truncateHotelName = (name: string) => {
   const words = name.split(" ");
   if (words.length > 3) {
-    return words.slice(0, 3).join(" ") + "...";
+    return words.slice(0, 4).join(" ") + "...";
   }
   return name;
 };
@@ -48,11 +50,76 @@ export default function MobileOurTours() {
     tourDataStatus,
     fetchNextPage,
     isFetchingNextPage,
+    searchTours,
+    setData,
   } = useContext(DataContext);
+
+  const location = useLocation();
+  const initialSearchDone = useRef(false);
+
+  // Эффект для установки параметров и запуска поиска
+  useEffect(() => {
+    if (initialSearchDone.current) return;
+
+    const searchParams = new URLSearchParams(location.search);
+
+    // Устанавливаем параметры из URL
+    if (searchParams.has("departure"))
+      setData("param1", searchParams.get("departure"));
+    if (searchParams.has("country"))
+      setData("param2", searchParams.get("country"));
+
+    if (searchParams.has("nightsFrom") || searchParams.has("nightsTo")) {
+      setData("param3", {
+        startDay: searchParams.get("nightsFrom")
+          ? parseInt(searchParams.get("nightsFrom")!)
+          : undefined,
+        endDay: searchParams.get("nightsTo")
+          ? parseInt(searchParams.get("nightsTo")!)
+          : undefined,
+      });
+    }
+
+    if (searchParams.has("dateFrom") || searchParams.has("dateTo")) {
+      setData("param4", {
+        startDate: searchParams.get("dateFrom") || undefined,
+        endDate: searchParams.get("dateTo") || undefined,
+      });
+    }
+
+    if (searchParams.has("adults") || searchParams.has("children")) {
+      setData("param5", {
+        adults: searchParams.get("adults")
+          ? parseInt(searchParams.get("adults")!)
+          : 2,
+        childrenList: searchParams.get("children")
+          ? searchParams.get("children")!.split(",").map(Number)
+          : [],
+      });
+    }
+
+    if (searchParams.has("hotelTypes"))
+      setData("param6", searchParams.get("hotelTypes")!.split(","));
+    if (searchParams.has("meal"))
+      setData("param7", [searchParams.get("meal")!]);
+    if (searchParams.has("rating"))
+      setData("param8", [searchParams.get("rating")!]);
+    if (searchParams.has("stars"))
+      setData("param9", parseInt(searchParams.get("stars")!));
+    if (searchParams.has("services"))
+      setData("param10", searchParams.get("services")!.split(","));
+
+    // Запускаем поиск только если есть необходимые параметры и поиск еще не был выполнен
+    if (searchParams.has("departure") && searchParams.has("country")) {
+      initialSearchDone.current = true;
+      searchTours();
+    }
+  }, [location.search, setData, searchTours]);
 
   if (loading) {
     return (
       <div className="w-full min-h-screen bg-gray-50">
+        <ProgressBar />
         <HeaderMOT />
         <div className="mx-2 flex-grow pb-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-2">
@@ -95,6 +162,7 @@ export default function MobileOurTours() {
   if (error) {
     return (
       <div className="w-full min-h-screen bg-gray-50">
+        <ProgressBar />
         <HeaderMOT />
         <div className="mx-2 flex-grow">
           <div className="text-center text-red-500">{error}</div>
@@ -109,6 +177,7 @@ export default function MobileOurTours() {
   ) {
     return (
       <div className="w-full min-h-screen bg-gray-50">
+        <ProgressBar />
         <HeaderMOT />
         <div className="mx-2 flex-grow">
           <div className="text-center text-gray-500">
@@ -121,6 +190,7 @@ export default function MobileOurTours() {
 
   return (
     <div className="w-full min-h-screen bg-gray-50">
+      <ProgressBar />
       <HeaderMOT />
       <div className="mx-2 flex-grow pb-4">
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-2">

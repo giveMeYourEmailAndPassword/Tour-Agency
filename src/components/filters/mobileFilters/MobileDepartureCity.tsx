@@ -7,10 +7,20 @@ import { RxCross2 } from "react-icons/rx";
 
 export default function MobileDepartureCity() {
   const { setData, params } = useContext(DataContext);
-  const [selectedCity, setSelectedCity] = useState("80"); // Всегда Бишкек по умолчанию
-  const [isOpen, setIsOpen] = useState(false);
+  const [selectedCity, setSelectedCity] = useState("80"); // Всегда начинаем с Бишкека
 
-  // Убираем первый эффект синхронизации с params
+  // При монтировании проверяем наличие города в URL
+  useEffect(() => {
+    if (params.param1) {
+      const cityExists = departures.some(
+        (city) => String(city.id) === params.param1
+      );
+      if (cityExists) {
+        setSelectedCity(params.param1);
+      }
+    }
+  }, []);
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     setData("param1", selectedCity);

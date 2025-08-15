@@ -6,6 +6,7 @@ import React, {
   useCallback,
 } from "react";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
+import { departures } from "./data/destinations";
 
 type Params = { [key: string]: any };
 type City = { id: string; label: string };
@@ -86,7 +87,13 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
 
     // Базовые параметры
     const departure = urlParams.get("departure");
-    if (departure) parsedParams.param1 = departure;
+    if (departure) {
+      // Проверяем, существует ли такой город в списке
+      const cityExists = departures.some(
+        (city) => String(city.id) === departure
+      );
+      parsedParams.param1 = cityExists ? departure : "80"; // Если город не найден, используем Бишкек
+    }
 
     const country = urlParams.get("country");
     if (country) parsedParams.param2 = country;
@@ -169,24 +176,13 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     }
   }, []);
 
-  // Затем загружаем города
+  // Инициализируем города из destinations.ts
   useEffect(() => {
-    console.log("Fetching cities");
-    async function fetchCities() {
-      try {
-        const response = await fetch(`${API_BASE_URL}/cities`);
-        const data = await response.json();
-        const departures = data?.lists?.departures?.departure || [];
-        const citiesData = departures.map((city: any) => ({
-          id: city.id,
-          label: city.name,
-        }));
-        setCities(citiesData);
-      } catch (error) {
-        console.error("Ошибка получения городов:", error);
-      }
-    }
-    fetchCities();
+    const citiesData = departures.map((city) => ({
+      id: String(city.id),
+      label: city.name,
+    }));
+    setCities(citiesData);
   }, []);
 
   // Закомментируем или удалим этот эффект

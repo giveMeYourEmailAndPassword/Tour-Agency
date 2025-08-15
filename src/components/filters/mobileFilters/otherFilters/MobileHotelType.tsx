@@ -64,14 +64,12 @@ export default function MobileHotelType() {
 
   const getDisplayText = () => {
     if (selectedValues.includes("any") || selectedValues.length === 0) {
-      return (
-        <span className="text-black text-base font-normal">Тип отеля</span>
-      );
+      return <span className="text-black text-lg font-normal">Тип отеля</span>;
     } else if (selectedValues.length === 1) {
       return (
         <div className="flex flex-col items-start">
-          <span className="text-slate-600 mb-[1px] text-xs">Тип отеля</span>
-          <span className="text-black text-base">
+          <span className="text-slate-600 text-sm">Тип отеля</span>
+          <span className="text-black text-lg">
             {getLabelByValue(selectedValues[0])}
           </span>
         </div>
@@ -79,8 +77,8 @@ export default function MobileHotelType() {
     } else {
       return (
         <div className="flex flex-col items-start">
-          <span className="text-slate-600 mb-[1px] text-xs">Тип отеля</span>
-          <span className="text-black text-base">
+          <span className="text-slate-600 text-sm">Тип отеля</span>
+          <span className="text-black text-lg">
             {`Выбрано (${selectedValues.length})`}
           </span>
         </div>

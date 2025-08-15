@@ -44,10 +44,6 @@ export default function MobileOtherFilters() {
           className={`w-6 h-6 transition-transform ${
             isOpen ? "-rotate-90" : "rotate-90"
           }`}
-          style={{
-            filter:
-              "invert(48%) sepia(85%) saturate(2727%) hue-rotate(346deg) brightness(101%) contrast(101%)",
-          }}
         />
       </button>
 
@@ -106,7 +102,7 @@ export default function MobileOtherFilters() {
               </div>
 
               {/* Content */}
-              <div className="px-3 py-2">
+              <div className="py-2">
                 <div className="flex flex-col items-start w-full">
                   <div className="w-full">
                     <MobileHotelType />

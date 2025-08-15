@@ -35,12 +35,12 @@ export default function MobileNourishment() {
     const selectedCheckbox = checkboxes.find((c) => c.value === selectedValue);
 
     if (selectedCheckbox?.value === "2") {
-      return <span className="text-black text-base font-normal">Питание</span>;
+      return <span className="text-black text-lg font-normal">Питание</span>;
     } else {
       return (
         <div className="flex flex-col items-start">
-          <span className="text-slate-600 mb-[1px] text-xs">Питание</span>
-          <span className="text-black text-base">
+          <span className="text-slate-600 text-sm">Питание</span>
+          <span className="text-black text-lg">
             <span className="font-medium">{selectedCheckbox?.span}</span> и
             лучше
           </span>

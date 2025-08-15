@@ -55,17 +55,16 @@ export default function MobileNourishment() {
 
   return (
     <>
-      <Button
-        onPress={() => setIsOpen(true)}
-        radius="none"
-        className="px-2 w-full h-12 md:h-full bg-white hover:bg-slate-100
-         !z-0 !scale-100 !opacity-100 py-1 flex items-center justify-between"
+      <div
+        onClick={() => setIsOpen(true)}
+        className="px-2 w-full h-12 md:h-full bg-white
+         !z-0 !scale-100 !opacity-100 py-1 flex items-center justify-between cursor-pointer"
       >
         <div className="flex flex-col items-start justify-between w-full px-2">
           {getDisplayText()}
         </div>
         <IoIosArrowDown className="text-xl -rotate-90" />
-      </Button>
+      </div>
 
       <Modal
         isOpen={isOpen}
@@ -76,46 +75,97 @@ export default function MobileNourishment() {
         scrollBehavior="inside"
         isDismissable={true}
         shouldBlockScroll={true}
-        className="h-[590px] !p-0 !m-0 !max-w-full flex flex-col"
+        className="!p-0 !m-0 !max-w-full"
         hideCloseButton={true}
         shadow="none"
+        motionProps={{
+          variants: {
+            enter: {
+              opacity: 1,
+              transition: {
+                duration: 0.2,
+                ease: "easeOut",
+              },
+            },
+            exit: {
+              opacity: 0,
+              transition: {
+                duration: 0.1,
+                ease: "easeIn",
+              },
+            },
+          },
+        }}
       >
-        <ModalContent className="flex flex-col">
-          <ModalHeader className="flex justify-between items-center border-b py-2 px-3">
-            <h2 className="text-lg font-medium">Выберите тип питания</h2>
-            <button
-              onClick={() => setIsOpen(false)}
-              className="p-2 hover:bg-gray-100 rounded-full"
-            >
-              <RxCross2 className="text-2xl" />
-            </button>
-          </ModalHeader>
-
-          <ModalBody className="px-3 py-4">
-            <div className="flex flex-col gap-4">
-              {checkboxes.map(({ value, label, span }) => (
-                <Checkbox
-                  key={value}
-                  color="default"
-                  value={value}
-                  isSelected={selectedValue === value}
-                  onValueChange={() => handleChange(value)}
-                  className="w-full"
+        <ModalContent>
+          <div className="absolute bottom-0 w-full">
+            <div className="bg-white w-full rounded-t-[10px]">
+              {/* Header */}
+              <div className="flex justify-center items-center border-b border-[#DBE0E5] h-14 relative">
+                <h2 className="text-[20px] font-medium text-[#2E2E32]">
+                  Выберите тип питания
+                </h2>
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="absolute right-5"
                 >
-                  {span && <span className="font-medium">{span} </span>}
-                  {label}
-                </Checkbox>
-              ))}
-            </div>
-          </ModalBody>
+                  <RxCross2 className="w-6 h-6 text-[#FF621F]" />
+                </button>
+              </div>
 
-          <div className="p-4 mt-auto">
-            <Button
-              className="w-full text-base rounded-full bg-blue-500 text-white hover:bg-blue-700"
-              onPress={handleConfirm}
-            >
-              Применить
-            </Button>
+              {/* Content */}
+              <div className="p-5 pb-0">
+                <div className="flex flex-col gap-4">
+                  {checkboxes.map(({ value, label, span }) => (
+                    <label
+                      key={value}
+                      className="flex items-center gap-3 cursor-pointer"
+                      onClick={() => handleChange(value)}
+                    >
+                      <div
+                        className={`w-5 h-5 rounded border flex items-center justify-center ${
+                          selectedValue === value
+                            ? "bg-[#FF621F] border-[#FF621F]"
+                            : "border-[#7E8389]"
+                        }`}
+                      >
+                        {selectedValue === value && (
+                          <svg
+                            width="16"
+                            height="16"
+                            viewBox="0 0 16 16"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M3 8L6.5 11.5L13 5"
+                              stroke="white"
+                              strokeWidth="1.6"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        )}
+                      </div>
+                      <span className="text-lg text-[#2E2E32]">
+                        {span && <span className="font-medium">{span} </span>}
+                        {label}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Button */}
+              <div className="px-3 p-5">
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="w-full py-3 px-6 border border-[#FF621F] bg-[#FF621F] rounded-[10px] text-lg text-white"
+                >
+                  Выбрать
+                </button>
+              </div>
+            </div>
           </div>
         </ModalContent>
       </Modal>

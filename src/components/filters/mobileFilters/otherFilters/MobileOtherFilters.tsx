@@ -14,20 +14,28 @@ export default function MobileOtherFilters() {
 
   const activeFilters = useMemo(
     () => ({
-      stars: params.param9 && params.param9 !== 1,
+      stars: params.param9 && params.param9 !== 1 ? 1 : 0,
       hotelType:
         params.param6 &&
         params.param6.length > 0 &&
-        !params.param6.includes("any"),
-      nourishment: params.param7 && params.param7.length > 0,
-      rating: params.param8 && params.param8 !== "0",
-      hotelService: params.param10 && params.param10.length > 0,
+        !params.param6.includes("any")
+          ? params.param6.length
+          : 0,
+      nourishment: params.param7 && params.param7.length > 0 ? 1 : 0,
+      rating: params.param8 && params.param8 !== "0" ? 1 : 0,
+      hotelService: params.param10 ? params.param10.length : 0,
     }),
     [params]
   );
 
-  const totalActiveFilters =
-    Object.values(activeFilters).filter(Boolean).length;
+  const totalActiveFilters = useMemo(
+    () =>
+      Object.values(activeFilters).reduce(
+        (sum, count) => sum + (typeof count === "number" ? count : 0),
+        0
+      ),
+    [activeFilters]
+  );
 
   return (
     <>
@@ -35,9 +43,16 @@ export default function MobileOtherFilters() {
         className="w-full flex justify-between items-center py-3"
         onClick={() => setIsOpen(true)}
       >
-        <span className="text-lg font-medium text-[#6B7280]">
-          Дополнительные фильтры
-        </span>
+        <div className="flex items-center gap-2">
+          <span className="text-lg font-medium text-[#6B7280]">
+            Дополнительные фильтры
+          </span>
+          {totalActiveFilters > 0 && (
+            <span className="inline-flex items-center justify-center min-w-[24px] h-[24px] px-1.5 bg-[#FF621F] text-white text-sm font-medium leading-none rounded-full">
+              {totalActiveFilters}
+            </span>
+          )}
+        </div>
         <img
           src={arrowIcon}
           alt="expand"
@@ -83,9 +98,16 @@ export default function MobileOtherFilters() {
             <div className="bg-white w-full rounded-t-[10px]">
               {/* Header */}
               <div className="flex justify-between px-3 py-2 items-center border-b border-[#DBE0E5] h-14 relative">
-                <h2 className="text-lg font-medium text-[#6B7280]">
-                  Дополнительные фильтры
-                </h2>
+                <div className="flex items-center gap-2">
+                  <h2 className="text-lg font-medium text-[#6B7280]">
+                    Дополнительные фильтры
+                  </h2>
+                  {totalActiveFilters > 0 && (
+                    <span className="inline-flex items-center justify-center min-w-[24px] h-[24px] px-1.5 bg-[#FF621F] text-white text-sm font-medium leading-none rounded-full">
+                      {totalActiveFilters}
+                    </span>
+                  )}
+                </div>
                 <button onClick={() => setIsOpen(false)}>
                   <img
                     src={arrowIcon}
@@ -102,7 +124,7 @@ export default function MobileOtherFilters() {
               </div>
 
               {/* Content */}
-              <div className="py-2">
+              <div className="pt-2">
                 <div className="flex flex-col items-start w-full">
                   <div className="w-full">
                     <MobileHotelType />

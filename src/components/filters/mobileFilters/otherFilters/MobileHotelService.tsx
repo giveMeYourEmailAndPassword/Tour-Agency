@@ -206,7 +206,7 @@ export default function MobileHotelService() {
               {/* Content */}
               <div className="p-5 pb-0">
                 {selectedCategory && CATEGORIES[selectedCategory] && (
-                  <div className="flex flex-col gap-0.5">
+                  <div className="flex flex-col gap-4">
                     {CATEGORIES[selectedCategory].map((service) => (
                       <label
                         key={service}

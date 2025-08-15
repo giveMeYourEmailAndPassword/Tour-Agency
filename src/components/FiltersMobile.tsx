@@ -36,7 +36,7 @@ export default function FiltersMobile() {
         <MobileOtherFilters />
 
         {/* Кнопка поиска */}
-        <button className="w-full flex justify-center items-center gap-2 py-3 px-6 bg-[#FF621F] rounded-lg">
+        <button className="w-full flex justify-center items-center gap-2 py-3 px-6 mb-2 bg-[#FF621F] rounded-lg">
           <span className="text-lg font-medium text-white">Найти туры</span>
           <FiSearch className="w-5 h-5 text-white" />
         </button>

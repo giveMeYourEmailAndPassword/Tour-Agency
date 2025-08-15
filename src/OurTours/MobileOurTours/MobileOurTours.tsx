@@ -1,12 +1,44 @@
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { DataContext } from "../../components/DataProvider";
-import { GoStarFill } from "react-icons/go";
 import { Skeleton } from "@heroui/react";
-import { HotelImage } from "../../components/HotelImage";
 import HeaderMOT from "./HeaderMOT";
-import { FaHeart, FaRegHeart } from "react-icons/fa";
-import { HotelToursButton } from "../../components/HotelToursButton";
-import MobileToursContent from "./MobileToursContent";
+import starFilled from "../../assets/star_fill.svg";
+import starOutline from "../../assets/star_unfill.svg";
+import utensils from "../../assets/utensils.svg";
+import { parse, format, addDays } from "date-fns";
+import { ru } from "date-fns/locale";
+
+// Добавляем вспомогательные функции из SearchResults
+const truncateHotelName = (name: string) => {
+  const words = name.split(" ");
+  if (words.length > 3) {
+    return words.slice(0, 3).join(" ") + "...";
+  }
+  return name;
+};
+
+const formatDate = (dateString: string) => {
+  const date = parse(dateString, "dd.MM.yyyy", new Date());
+  return format(date, "d MMMM", { locale: ru });
+};
+
+const getEndDate = (startDate: string, nights: number) => {
+  const date = parse(startDate, "dd.MM.yyyy", new Date());
+  return format(addDays(date, nights), "d MMMM", { locale: ru });
+};
+
+const getMealType = (meal: string) => {
+  const mealTypes: { [key: string]: string } = {
+    "": "Без питания",
+    BB: "Завтрак",
+    HB: "Полупансион",
+    FB: "Полный пансион",
+    AI: "Всё включено",
+    UAI: "Ультра всё включено",
+    RO: "Без питания",
+  };
+  return mealTypes[meal] || meal;
+};
 
 export default function MobileOurTours() {
   const {
@@ -16,55 +48,45 @@ export default function MobileOurTours() {
     tourDataStatus,
     fetchNextPage,
     isFetchingNextPage,
-    addToFavorite,
-    removeFromFavorite,
-    favoriteTours,
   } = useContext(DataContext);
-
-  const [activeTabs, setActiveTabs] = useState<{ [key: string]: boolean }>({});
-
-  const handleFavoriteClick = (hotelcode: string, tourId: string) => {
-    const tourData = {
-      hotelcode,
-      tourId,
-    };
-
-    const isFavorite = favoriteTours.some(
-      (tour) => tour.hotelcode === hotelcode && tour.tourId === tourId
-    );
-
-    if (isFavorite) {
-      removeFromFavorite(hotelcode, tourId);
-    } else {
-      addToFavorite(tourData);
-    }
-  };
-
-  const toggleTab = (hotelcode: string) => {
-    setActiveTabs((prev) => ({
-      ...prev,
-      [hotelcode]: !prev[hotelcode],
-    }));
-  };
 
   if (loading) {
     return (
       <div className="w-full min-h-screen bg-gray-50">
         <HeaderMOT />
-        <div className="flex flex-col gap-2 p-4">
-          {[...Array(4)].map((_, index) => (
-            <div key={index} className="bg-white rounded-lg p-4 shadow-sm">
-              <div className="flex gap-4">
-                <div className="w-24 h-24 flex-shrink-0">
-                  <Skeleton className="w-full h-full rounded-lg" />
-                </div>
-                <div className="flex-1">
-                  <Skeleton className="h-6 w-3/4 rounded-lg mb-2" />
-                  <Skeleton className="h-4 w-1/2 rounded-lg" />
+        <div className="mx-2 flex-grow pb-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-2">
+            {[...Array(36)].map((_, index) => (
+              <div
+                key={index}
+                className="w-full flex items-center gap-2.5 p-4 bg-white border border-[#DBE0E5] rounded-[10px]"
+              >
+                <div className="w-full flex flex-col gap-2">
+                  <Skeleton className="w-full h-44 md:h-36 rounded" />
+                  <div className="w-full flex flex-col gap-2">
+                    <div className="w-full flex justify-between items-center gap-1">
+                      <div className="flex items-center gap-0.5">
+                        <Skeleton className="w-24 h-4" />
+                      </div>
+                      <Skeleton className="w-24 h-4" />
+                    </div>
+                    <Skeleton className="w-full h-7" />
+                    <Skeleton className="w-3/4 h-5" />
+                  </div>
+                  <div className="w-full flex items-center gap-3 pb-1 border-b border-[#DBE0E5]">
+                    <Skeleton className="w-20 h-6" />
+                  </div>
+                  <div className="w-full flex justify-between items-center">
+                    <Skeleton className="w-20 h-7" />
+                    <div className="flex flex-col items-end gap-1">
+                      <Skeleton className="w-32 h-4" />
+                      <Skeleton className="w-24 h-4" />
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     );
@@ -74,7 +96,9 @@ export default function MobileOurTours() {
     return (
       <div className="w-full min-h-screen bg-gray-50">
         <HeaderMOT />
-        <div className="p-4 text-center text-red-500">{error}</div>
+        <div className="mx-2 flex-grow">
+          <div className="text-center text-red-500">{error}</div>
+        </div>
       </div>
     );
   }
@@ -86,8 +110,10 @@ export default function MobileOurTours() {
     return (
       <div className="w-full min-h-screen bg-gray-50">
         <HeaderMOT />
-        <div className="p-4 text-center text-gray-500">
-          По вашему запросу ничего не найдено
+        <div className="mx-2 flex-grow">
+          <div className="text-center text-gray-500">
+            По вашему запросу ничего не найдено
+          </div>
         </div>
       </div>
     );
@@ -96,110 +122,97 @@ export default function MobileOurTours() {
   return (
     <div className="w-full min-h-screen bg-gray-50">
       <HeaderMOT />
-      <div className="flex flex-col gap-2 p-4">
-        {tours.map((hotel, index) => (
-          <div
-            key={index}
-            className="bg-white rounded-lg p-2 shadow-sm cursor-pointer"
-            onClick={(e) => {
-              // Предотвращаем всплытие события от кнопок
-              if (!(e.target as HTMLElement).closest("button")) {
-                toggleTab(hotel.hotelcode);
-              }
-            }}
-          >
-            <div className="flex gap-5">
-              <div className="relative flex-shrink-0">
-                <HotelImage
-                  imageUrl={hotel.picturelink}
-                  hotelName={hotel.hotelname}
-                  hotelcode={hotel.hotelcode}
-                  isMobile={true}
-                />
-                {hotel.hotelrating !== "0" && (
-                  <span className="absolute -right-3.5 top-5 text-xs text-white border-2 border-white font-semibold bg-blue-500 py-0.5 px-1 rounded-lg">
-                    {hotel.hotelrating.length === 1
-                      ? `${hotel.hotelrating}.0`
-                      : hotel.hotelrating}
-                  </span>
-                )}
-              </div>
-              <div className="flex-1">
-                <div className="flex flex-col">
-                  <div className="flex mt-2 mb-1">
-                    {Array.from(
-                      { length: hotel.hotelstars === 0 ? 3 : hotel.hotelstars },
-                      (_, index) => (
-                        <GoStarFill
-                          key={index}
-                          className="w-4 h-4 text-yellow-500"
+      <div className="mx-2 flex-grow pb-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-2">
+          {tours.map((hotel, index) => (
+            <div
+              key={index}
+              className="w-full flex items-center gap-2.5 p-4 bg-white border border-[#DBE0E5] rounded-[10px]"
+            >
+              <div className="w-full flex flex-col gap-2">
+                {/* Изображение */}
+                <div className="w-full h-44 md:h-36 rounded">
+                  <img
+                    src={hotel.picturelink}
+                    alt={hotel.hotelname}
+                    className="w-full h-full object-cover rounded"
+                  />
+                </div>
+
+                {/* Информация об отеле */}
+                <div className="w-full flex flex-col gap-2">
+                  <div className="w-full flex justify-between items-center gap-1">
+                    <div className="flex items-center gap-0.5">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <img
+                          key={i}
+                          src={i < hotel.hotelstars ? starFilled : starOutline}
+                          alt={
+                            i < hotel.hotelstars
+                              ? "filled star"
+                              : "outline star"
+                          }
+                          className="w-4 h-4"
                         />
-                      )
-                    )}
+                      ))}
+                      {hotel.hotelrating !== "0" && (
+                        <div className="bg-[#FF621F] text-white text-xs font-medium px-1 rounded-[20px] ml-0.5">
+                          {hotel.hotelrating.length === 1
+                            ? `${hotel.hotelrating}.0`
+                            : hotel.hotelrating}
+                        </div>
+                      )}
+                    </div>
                   </div>
-                  <h2 className="text-lg font-semibold leading-tight">
-                    {hotel.hotelname}
-                  </h2>
-                  <p className="text-gray-600 text-sm leading-tight">
+
+                  <h3 className="text-[#2E2E32] text-lg font-bold leading-[1.22]">
+                    {truncateHotelName(hotel.hotelname)}
+                  </h3>
+                  <p className="text-[#6B7280] text-base leading-[1.29]">
                     {hotel.regionname}
                     {hotel.subregionname == 0 ? "" : `, ${hotel.subregionname}`}
                   </p>
                 </div>
 
-                <div className="flex items-center justify-between mt-4">
-                  <p className="text-black text-lg font-semibold">
-                    <span className="text-black text-base">Туры от</span>{" "}
+                {/* Теги */}
+                <div className="w-full flex items-center gap-3 pb-1 border-b border-[#DBE0E5]">
+                  <div className="flex items-center gap-1">
+                    <span className="text-sm text-[#2E2E32]">
+                      {getMealType(hotel.tours.tour[0].meal)}
+                    </span>
+                    <img src={utensils} alt="meal" className="w-3.5 h-3.5" />
+                  </div>
+                </div>
+
+                {/* Цена и даты */}
+                <div className="w-full flex justify-between items-center">
+                  <span className="text-xl font-bold text-[#2E2E32]">
                     {hotel.price}
                     {hotel.currency === "EUR"
                       ? "€"
                       : hotel.currency === "USD"
                       ? "$"
                       : hotel.currency}
-                  </p>
-
-                  <div className="flex items-center gap-1">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation(); // Предотвращаем всплытие события
-                        handleFavoriteClick(
-                          hotel.hotelcode,
-                          hotel.tours.tour[0].tourid
-                        );
-                      }}
-                      className="flex items-center justify-center w-8 h-8 border-2 rounded-full transition-colors"
-                    >
-                      {favoriteTours.some(
-                        (tour) =>
-                          tour.hotelcode === hotel.hotelcode &&
-                          tour.tourId === hotel.tours.tour[0].tourid
-                      ) ? (
-                        <FaHeart className="text-red-500 text-lg" />
-                      ) : (
-                        <FaRegHeart className="text-blue-600 text-lg" />
+                  </span>
+                  <div className="flex flex-col items-end">
+                    <span className="text-xs font-bold text-[#2E2E32]">
+                      {formatDate(hotel.tours.tour[0].flydate)} -{" "}
+                      {getEndDate(
+                        hotel.tours.tour[0].flydate,
+                        hotel.tours.tour[0].nights
                       )}
-                    </button>
-
-                    <HotelToursButton
-                      onClick={(e) => {
-                        e.stopPropagation(); // Предотвращаем всплытие события
-                        toggleTab(hotel.hotelcode);
-                      }}
-                      isActive={activeTabs[hotel.hotelcode]}
-                      isMobile={true}
-                    />
+                    </span>
+                    <span className="text-sm text-[#6B7280]">
+                      кол-во ночей: {hotel.tours.tour[0].nights}
+                    </span>
                   </div>
                 </div>
               </div>
             </div>
-            {activeTabs[hotel.hotelcode] && (
-              <MobileToursContent
-                tours={hotel.tours.tour}
-                hotelcode={hotel.hotelcode}
-              />
-            )}
-          </div>
-        ))}
+          ))}
+        </div>
 
+        {/* Кнопка "Показать еще" */}
         {tourDataStatus?.state === "finished" &&
           tours.length < tourDataStatus?.hotelsfound && (
             <button

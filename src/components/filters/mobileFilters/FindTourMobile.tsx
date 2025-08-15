@@ -1,12 +1,15 @@
 import { useContext } from "react";
 import { FiSearch } from "react-icons/fi";
 import { DataContext } from "../../DataProvider";
+import { useNavigate } from "react-router-dom";
 
 export default function FindTourMobile() {
   const { searchTours, loading } = useContext(DataContext);
+  const navigate = useNavigate();
 
   const handleSearchClick = async () => {
     await searchTours();
+    navigate("/OurTours");
   };
 
   return (

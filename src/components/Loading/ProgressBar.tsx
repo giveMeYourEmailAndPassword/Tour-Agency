@@ -43,6 +43,7 @@ export const ProgressBar = () => {
         color="warning"
         size="sm"
         className="rounded-none"
+        aria-label={isCompleted ? "Поиск завершен" : "Прогресс поиска отелей"}
       />
     </div>
   );

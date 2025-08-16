@@ -120,10 +120,9 @@ export default function MobileOurTours() {
     return (
       <div className="w-full min-h-screen bg-gray-50">
         <ProgressBar />
-        <HeaderMOT />
         <div className="mx-2 flex-grow pb-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-2">
-            {[...Array(36)].map((_, index) => (
+            {[...Array(12)].map((_, index) => (
               <div
                 key={index}
                 className="w-full flex items-center gap-2.5 p-4 bg-white border border-[#DBE0E5] rounded-[10px]"
@@ -163,7 +162,6 @@ export default function MobileOurTours() {
     return (
       <div className="w-full min-h-screen bg-gray-50">
         <ProgressBar />
-        <HeaderMOT />
         <div className="mx-2 flex-grow">
           <div className="text-center text-red-500">{error}</div>
         </div>
@@ -178,7 +176,6 @@ export default function MobileOurTours() {
     return (
       <div className="w-full min-h-screen bg-gray-50">
         <ProgressBar />
-        <HeaderMOT />
         <div className="mx-2 flex-grow">
           <div className="text-center text-gray-500">
             По вашему запросу ничего не найдено
@@ -191,7 +188,6 @@ export default function MobileOurTours() {
   return (
     <div className="w-full min-h-screen bg-gray-50">
       <ProgressBar />
-      <HeaderMOT />
       <div className="mx-2 flex-grow pb-4">
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-2">
           {tours.map((hotel, index) => (

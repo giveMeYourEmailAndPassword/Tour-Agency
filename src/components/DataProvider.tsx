@@ -226,48 +226,8 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     );
   };
 
-  const saveToSession = useCallback(
-    (tours: any[], requestId: string | null, params: Params) => {
-      sessionStorage.setItem(
-        "searchData",
-        JSON.stringify({
-          tours,
-          requestId,
-          params,
-          timestamp: Date.now(),
-          currentPage: currentPage,
-          tourDataStatus,
-        })
-      );
-    },
-    [currentPage, tourDataStatus]
-  );
-
-  const loadFromSession = useCallback(() => {
-    console.log("Loading data from session");
-    const savedData = sessionStorage.getItem("searchData");
-    if (savedData) {
-      const {
-        tours,
-        requestId,
-        params,
-        currentPage: savedPage,
-        tourDataStatus: savedStatus,
-      } = JSON.parse(savedData);
-      setTours(tours);
-      setAllTours(tours);
-      setRequestId(requestId);
-      setParams(params);
-      setCurrentPage(savedPage || 1);
-      if (savedStatus) setTourDataStatus(savedStatus);
-
-      // Предварительно заполняем кэш React Query
-      queryClient.setQueryData(["tours", requestId], {
-        pages: [{ result: { hotel: tours } }],
-        pageParams: [1],
-      });
-    }
-  }, [queryClient]);
+  // Удаляем функцию saveToSession
+  // Удаляем функцию loadFromSession
 
   // Модифицируем pollSearchResults
   const pollSearchResults = useCallback(
@@ -301,7 +261,8 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
             setLoading(false); // Убираем общий лоадер, чтобы показать контент
             setTours(tourData.data.result.hotel);
             setAllTours(tourData.data.result.hotel);
-            saveToSession(tourData.data.result.hotel, reqId, params);
+            // Удаляем эту строку:
+            // saveToSession(tourData.data.result.hotel, reqId, params);
 
             queryClient.setQueryData(["tours", reqId], {
               pages: [{ result: { hotel: tourData.data.result.hotel } }],
@@ -333,7 +294,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         clearInterval(intervalId);
       };
     },
-    [params, saveToSession, queryClient]
+    [params, queryClient]
   );
 
   // Модифицируем searchTours
@@ -399,7 +360,8 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
       if (tourData.data?.result?.hotel) {
         const newTours = [...allTours, ...tourData.data.result.hotel];
         setAllTours(newTours);
-        saveToSession(newTours, requestId, params);
+        // Удаляем эту строку:
+        // saveToSession(newTours, requestId, params);
       }
 
       return tourData.data;
@@ -419,17 +381,18 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
       const totalPages = Math.ceil(tourDataStatus?.toursfound / 10);
       return nextPage <= totalPages ? nextPage : undefined;
     },
-    initialData: () => {
-      const savedData = sessionStorage.getItem("searchData");
-      if (savedData) {
-        const { tours } = JSON.parse(savedData);
-        return {
-          pages: [{ result: { hotel: tours } }],
-          pageParams: [1],
-        };
-      }
-      return undefined;
-    },
+    // Удаляем этот блок:
+    // initialData: () => {
+    //   const savedData = sessionStorage.getItem("searchData");
+    //   if (savedData) {
+    //     const { tours } = JSON.parse(savedData);
+    //     return {
+    //       pages: [{ result: { hotel: tours } }],
+    //       pageParams: [1],
+    //     };
+    //   }
+    //   return undefined;
+    // },
     refetchOnWindowFocus: false,
     refetchOnMount: false,
     refetchOnReconnect: false,
@@ -454,7 +417,8 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
           if (tourData.data?.result?.hotel) {
             setTours(tourData.data.result.hotel);
             setAllTours(tourData.data.result.hotel);
-            saveToSession(tourData.data.result.hotel, reqId, params);
+            // Удаляем эту строку:
+            // saveToSession(tourData.data.result.hotel, reqId, params);
 
             // Обновляем кэш React Query
             queryClient.setQueryData(["tours", reqId], {
@@ -481,7 +445,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         }
       }, POLL_INTERVAL);
     },
-    [params, saveToSession, queryClient]
+    [params, queryClient]
   );
 
   // Добавляем функцию для загрузки следующей страницы
@@ -492,10 +456,11 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   }, [fetchNextPage, isFetchingNextPage]);
 
   // Загружаем сохраненные данные при монтировании компонента
-  useEffect(() => {
-    console.log("Loading data from session");
-    loadFromSession();
-  }, [loadFromSession]);
+  // Удаляем эффект загрузки данных из сессии
+  // useEffect(() => {
+  //   console.log("Loading data from session");
+  //   loadFromSession();
+  // }, [loadFromSession]);
 
   // Загрузка избранных туров при монтировании
   useEffect(() => {

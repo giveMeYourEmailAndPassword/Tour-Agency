@@ -236,11 +236,12 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
       const MAX_ATTEMPTS = 20;
       let isPolling = true;
 
-      setSearchInProgress(true); // Устанавливаем состояние поиска в начале
+      setSearchInProgress(true); // Устанавливаем в начале поиска
 
       const intervalId = setInterval(async () => {
         if (!isPolling) {
           clearInterval(intervalId);
+          setSearchInProgress(false); // Сбрасываем при остановке поллинга
           return;
         }
 
@@ -251,18 +252,14 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
           );
           const tourData = await tourResponse.json();
 
-          // Обновляем статус для прогресс-бара
           if (tourData.data?.status) {
             setTourDataStatus(tourData.data.status);
           }
 
-          // Показываем отели сразу при получении
           if (tourData.data?.result?.hotel) {
-            setLoading(false); // Убираем общий лоадер, чтобы показать контент
+            setLoading(false);
             setTours(tourData.data.result.hotel);
             setAllTours(tourData.data.result.hotel);
-            // Удаляем эту строку:
-            // saveToSession(tourData.data.result.hotel, reqId, params);
 
             queryClient.setQueryData(["tours", reqId], {
               pages: [{ result: { hotel: tourData.data.result.hotel } }],
@@ -270,21 +267,20 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
             });
           }
 
-          // Завершаем поллинг только при finished или превышении попыток
           if (
             tourData.data?.status?.state === "finished" ||
             attempts >= MAX_ATTEMPTS
           ) {
             isPolling = false;
             clearInterval(intervalId);
-            setSearchInProgress(false); // Завершаем состояние поиска
+            setSearchInProgress(false); // Сбрасываем при завершении
           }
         } catch (error) {
           console.error("Ошибка при запросе:", error);
           isPolling = false;
           clearInterval(intervalId);
           setLoading(false);
-          setSearchInProgress(false);
+          setSearchInProgress(false); // Сбрасываем при ошибке
           setError("Ошибка при получении туров");
         }
       }, POLL_INTERVAL);
@@ -292,6 +288,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
       return () => {
         isPolling = false;
         clearInterval(intervalId);
+        setSearchInProgress(false); // Сбрасываем при очистке
       };
     },
     [params, queryClient]
@@ -645,6 +642,18 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
       setLoading(false);
     }
   }, [params, areParamsReady, loading, countryRequests]);
+
+  // Очищаем кэш при обновлении страницы
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      queryClient.clear(); // очищаем кэш React Query
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [queryClient]);
 
   return (
     <DataContext.Provider

@@ -1,4 +1,5 @@
 import { useState, useEffect, useContext } from "react";
+import { useLocation, useNavigationType } from "react-router-dom";
 import Header from "./components/Header";
 import Filters from "./components/Filters";
 import FiltersMobile from "./components/FiltersMobile";
@@ -9,9 +10,12 @@ import { useSearchParams } from "./Hooks/useSearchParams";
 
 export default function App() {
   const [showResults, setShowResults] = useState(false);
-  const { searchTours, tours, params } = useContext(DataContext);
+  const { searchTours, tours, params, searchInProgress } =
+    useContext(DataContext); // добавляем searchInProgress
   const [isFetching, setIsFetching] = useState(false);
   const [isInitialSearch, setIsInitialSearch] = useState(true);
+  const navigationType = useNavigationType();
+  const location = useLocation();
 
   useSearchParams();
 
@@ -26,7 +30,18 @@ export default function App() {
   };
 
   useEffect(() => {
-    if (isInitialSearch && areParamsReady(params)) {
+    // Если мы вернулись назад и у нас есть туры или поиск в процессе
+    if (navigationType === "POP" && (tours.length > 0 || searchInProgress)) {
+      setShowResults(true);
+      return; // Прерываем выполнение, чтобы не начинать новый поиск
+    }
+
+    // Если это первая загрузка страницы или прямой переход
+    if (
+      isInitialSearch &&
+      areParamsReady(params) &&
+      location.pathname === "/" // Проверяем, что мы на главной странице
+    ) {
       setIsInitialSearch(false);
       setIsFetching(true);
       searchTours()
@@ -40,7 +55,15 @@ export default function App() {
           setIsFetching(false);
         });
     }
-  }, [isInitialSearch, params, searchTours]); // Добавляем зависимости, но контролируем выполнение через isInitialSearch
+  }, [
+    isInitialSearch,
+    params,
+    searchTours,
+    navigationType,
+    location.pathname,
+    tours.length,
+    searchInProgress,
+  ]);
 
   return (
     <div className="min-h-screen flex flex-col md:bg-white bg-gray-100">

@@ -3,7 +3,7 @@ import { DataContext } from "../DataProvider";
 import { Progress } from "@heroui/react";
 
 export const ProgressBar = () => {
-  const { tourDataStatus, loading } = useContext(DataContext);
+  const { tourDataStatus, isSearching } = useContext(DataContext);
   const [isCompleted, setIsCompleted] = useState(false);
   const [dots, setDots] = useState(".");
   const progress = tourDataStatus?.progress || 0;

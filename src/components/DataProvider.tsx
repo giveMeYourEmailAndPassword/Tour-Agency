@@ -41,6 +41,8 @@ type DataContextType = {
   countryResults: any;
   searchMultyTours: () => Promise<void>;
   searchInProgress: boolean; // добавляем новое поле
+  loading: boolean;
+  isSearching: boolean; // добавляем новое поле
 };
 
 const API_BASE_URL =
@@ -83,6 +85,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
 
   // Добавляем новое состояние в начало компонента DataProvider
   const [searchInProgress, setSearchInProgress] = useState<boolean>(false);
+  const [isSearching, setIsSearching] = useState(false); // новое состояние для прогресс-бара
 
   // Функция для преобразования параметров URL в объект params
   const parseUrlParams = useCallback(() => {
@@ -236,12 +239,12 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
       const MAX_ATTEMPTS = 20;
       let isPolling = true;
 
-      setSearchInProgress(true); // Устанавливаем в начале поиска
+      setSearchInProgress(true);
+      setIsSearching(true); // устанавливаем состояние поиска
 
       const intervalId = setInterval(async () => {
         if (!isPolling) {
           clearInterval(intervalId);
-          setSearchInProgress(false); // Сбрасываем при остановке поллинга
           return;
         }
 
@@ -257,7 +260,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
           }
 
           if (tourData.data?.result?.hotel) {
-            setLoading(false);
+            setLoading(false); // убираем общий лоадер, чтобы показать отели
             setTours(tourData.data.result.hotel);
             setAllTours(tourData.data.result.hotel);
 
@@ -267,20 +270,25 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
             });
           }
 
-          if (
-            tourData.data?.status?.state === "finished" ||
-            attempts >= MAX_ATTEMPTS
-          ) {
+          if (tourData.data?.status?.state === "finished") {
             isPolling = false;
             clearInterval(intervalId);
-            setSearchInProgress(false); // Сбрасываем при завершении
+            setSearchInProgress(false);
+            setIsSearching(false); // завершаем состояние поиска
+          } else if (attempts >= MAX_ATTEMPTS) {
+            isPolling = false;
+            clearInterval(intervalId);
+            setSearchInProgress(false);
+            setIsSearching(false);
+            setError("Превышено время ожидания");
           }
         } catch (error) {
           console.error("Ошибка при запросе:", error);
           isPolling = false;
           clearInterval(intervalId);
+          setSearchInProgress(false);
+          setIsSearching(false);
           setLoading(false);
-          setSearchInProgress(false); // Сбрасываем при ошибке
           setError("Ошибка при получении туров");
         }
       }, POLL_INTERVAL);
@@ -288,7 +296,6 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
       return () => {
         isPolling = false;
         clearInterval(intervalId);
-        setSearchInProgress(false); // Сбрасываем при очистке
       };
     },
     [params, queryClient]
@@ -678,6 +685,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         countryResults,
         searchMultyTours,
         searchInProgress, // добавляем новое поле
+        isSearching, // добавляем новое поле
       }}
     >
       {children}

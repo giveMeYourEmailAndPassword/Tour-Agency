@@ -40,6 +40,7 @@ type DataContextType = {
   // Добавляем новые поля из DataProviderManager
   countryResults: any;
   searchMultyTours: () => Promise<void>;
+  searchInProgress: boolean; // добавляем новое поле
 };
 
 const API_BASE_URL =
@@ -79,6 +80,9 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   const [countryPages, setCountryPages] = useState<{ [key: string]: number }>(
     {}
   );
+
+  // Добавляем новое состояние в начало компонента DataProvider
+  const [searchInProgress, setSearchInProgress] = useState<boolean>(false);
 
   // Функция для преобразования параметров URL в объект params
   const parseUrlParams = useCallback(() => {
@@ -265,13 +269,81 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [queryClient]);
 
-  // Модифицируем функцию searchTours
+  // Модифицируем pollSearchResults
+  const pollSearchResults = useCallback(
+    (reqId: string) => {
+      let attempts = 0;
+      const MAX_ATTEMPTS = 20;
+      let isPolling = true;
+
+      setSearchInProgress(true); // Устанавливаем состояние поиска в начале
+
+      const intervalId = setInterval(async () => {
+        if (!isPolling) {
+          clearInterval(intervalId);
+          return;
+        }
+
+        try {
+          attempts++;
+          const tourResponse = await fetch(
+            `${API_BASE_URL}/results/${reqId}?page=1`
+          );
+          const tourData = await tourResponse.json();
+
+          // Обновляем статус для прогресс-бара
+          if (tourData.data?.status) {
+            setTourDataStatus(tourData.data.status);
+          }
+
+          // Показываем отели сразу при получении
+          if (tourData.data?.result?.hotel) {
+            setLoading(false); // Убираем общий лоадер, чтобы показать контент
+            setTours(tourData.data.result.hotel);
+            setAllTours(tourData.data.result.hotel);
+            saveToSession(tourData.data.result.hotel, reqId, params);
+
+            queryClient.setQueryData(["tours", reqId], {
+              pages: [{ result: { hotel: tourData.data.result.hotel } }],
+              pageParams: [1],
+            });
+          }
+
+          // Завершаем поллинг только при finished или превышении попыток
+          if (
+            tourData.data?.status?.state === "finished" ||
+            attempts >= MAX_ATTEMPTS
+          ) {
+            isPolling = false;
+            clearInterval(intervalId);
+            setSearchInProgress(false); // Завершаем состояние поиска
+          }
+        } catch (error) {
+          console.error("Ошибка при запросе:", error);
+          isPolling = false;
+          clearInterval(intervalId);
+          setLoading(false);
+          setSearchInProgress(false);
+          setError("Ошибка при получении туров");
+        }
+      }, POLL_INTERVAL);
+
+      return () => {
+        isPolling = false;
+        clearInterval(intervalId);
+      };
+    },
+    [params, saveToSession, queryClient]
+  );
+
+  // Модифицируем searchTours
   const searchTours = useCallback(async () => {
     if (!areParamsReady(params)) {
       return;
     }
 
     setLoading(true);
+    setSearchInProgress(true); // Устанавливаем состояние поиска
     setError(null);
     setTours([]);
     setAllTours([]);
@@ -305,14 +377,14 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
 
       if (responseData.result?.requestid) {
         setRequestId(responseData.result.requestid);
-        startPolling(responseData.result.requestid);
+        pollSearchResults(responseData.result.requestid); // Используем новую функцию
       }
     } catch (error) {
       console.error("Ошибка:", error);
       setError("Ошибка при загрузке данных");
       setLoading(false);
     }
-  }, [params]);
+  }, [params, pollSearchResults]);
 
   // Модифицируем fetchToursPage
   const fetchToursPage = async ({ pageParam = 1 }) => {
@@ -631,6 +703,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         isFavorite,
         countryResults,
         searchMultyTours,
+        searchInProgress, // добавляем новое поле
       }}
     >
       {children}

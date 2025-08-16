@@ -124,7 +124,7 @@ export default function SearchResults() {
   }
 
   return (
-    <div className="ml-2 flex-grow pb-4">
+    <div className="mx-2 md:mx-0 md:ml-2 flex-grow pb-4">
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-2">
         {tours.map((tour: Tour, index: number) => (
           <div

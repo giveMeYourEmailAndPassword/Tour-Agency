@@ -2,13 +2,13 @@ import { useContext, useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { DataContext } from "../../components/DataProvider";
 import { Skeleton } from "@heroui/react";
-import HeaderMOT from "./HeaderMOT";
 import starFilled from "../../assets/star_fill.svg";
 import starOutline from "../../assets/star_unfill.svg";
 import utensils from "../../assets/utensils.svg";
 import { parse, format, addDays } from "date-fns";
 import { ru } from "date-fns/locale";
 import { ProgressBar } from "../../components/Loading/ProgressBar";
+import FiltersMobile from "../../components/FiltersMobile";
 
 // Добавляем вспомогательные функции из SearchResults
 const truncateHotelName = (name: string) => {
@@ -120,6 +120,7 @@ export default function MobileOurTours() {
     return (
       <div className="w-full min-h-screen bg-gray-50">
         <ProgressBar />
+        <FiltersMobile />
         <div className="mx-2 flex-grow pb-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-2">
             {[...Array(12)].map((_, index) => (
@@ -162,6 +163,7 @@ export default function MobileOurTours() {
     return (
       <div className="w-full min-h-screen bg-gray-50">
         <ProgressBar />
+        <FiltersMobile />
         <div className="mx-2 flex-grow">
           <div className="text-center text-red-500">{error}</div>
         </div>
@@ -176,6 +178,7 @@ export default function MobileOurTours() {
     return (
       <div className="w-full min-h-screen bg-gray-50">
         <ProgressBar />
+        <FiltersMobile />
         <div className="mx-2 flex-grow">
           <div className="text-center text-gray-500">
             По вашему запросу ничего не найдено
@@ -188,6 +191,7 @@ export default function MobileOurTours() {
   return (
     <div className="w-full min-h-screen bg-gray-50">
       <ProgressBar />
+      <FiltersMobile />
       <div className="mx-2 flex-grow pb-4">
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-2">
           {tours.map((hotel, index) => (

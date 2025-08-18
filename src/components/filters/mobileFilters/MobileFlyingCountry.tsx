@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { Modal, ModalContent } from "@heroui/react";
 import { DataContext } from "../../DataProvider";
 import { RxCross2 } from "react-icons/rx";
@@ -6,21 +6,43 @@ import { destinations } from "../../data/destinations";
 import marker from "../../../assets/marker.svg";
 
 export default function MobileFlyingCountry() {
-  const { setData } = useContext(DataContext);
-  const [selectedCountry, setSelectedCountry] = useState(4); // По умолчанию Турция
+  const { setData, params } = useContext(DataContext); // Добавляем params из контекста
+  const [selectedCountry, setSelectedCountry] = useState(
+    Number(params.param2) || 4
+  ); // Используем значение из URL или Турцию по умолчанию
   const [selectedRegions, setSelectedRegions] = useState<number[]>(() => {
-    // Находим Турцию и получаем все её регионы
-    const turkey = destinations.find((country) => country.id === 4);
-    return turkey ? turkey.regions.map((region) => region.id) : [];
+    // Находим выбранную страну и получаем все её регионы
+    const country = destinations.find(
+      (country) => country.id === (Number(params.param2) || 4)
+    );
+    return country ? country.regions.map((region) => region.id) : [];
   });
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+
+  // Добавляем эффект для отслеживания изменений params.param2
+  useEffect(() => {
+    if (params.param2) {
+      const countryExists = destinations.some(
+        (country) => country.id === Number(params.param2)
+      );
+      if (countryExists) {
+        setSelectedCountry(Number(params.param2));
+        // Обновляем регионы для новой страны
+        const country = destinations.find(
+          (c) => c.id === Number(params.param2)
+        );
+        if (country) {
+          setSelectedRegions(country.regions.map((region) => region.id));
+        }
+      }
+    }
+  }, [params.param2]);
 
   const handleCountrySelect = (country) => {
     setSelectedCountry(country.id);
     setSelectedRegions([]); // Сбрасываем выбранные регионы при смене страны
     setData("param2", country.id);
-    setIsOpen(false);
     setSearchQuery("");
   };
 

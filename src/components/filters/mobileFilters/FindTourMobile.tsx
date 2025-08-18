@@ -1,11 +1,13 @@
 import { useContext } from "react";
 import { FiSearch } from "react-icons/fi";
 import { DataContext } from "../../DataProvider";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 export default function FindTourMobile() {
-  const { loading, params } = useContext(DataContext);
+  const { loading, params, searchTours } = useContext(DataContext);
   const navigate = useNavigate();
+  const location = useLocation();
+  const isOurToursPage = location.pathname === "/OurTours";
 
   const handleSearchClick = async () => {
     // Создаем URLSearchParams для формирования строки запроса
@@ -34,7 +36,17 @@ export default function FindTourMobile() {
     if (params.param10?.length)
       searchParams.set("services", params.param10.join(","));
 
-    navigate(`/OurTours?${searchParams.toString()}`);
+    const newUrl = `${location.pathname}?${searchParams.toString()}`;
+
+    if (isOurToursPage) {
+      // На странице OurTours обновляем URL без перенаправления
+      window.history.pushState({}, "", newUrl);
+      // Запускаем поиск
+      await searchTours();
+    } else {
+      // На других страницах перенаправляем на OurTours
+      navigate(`/OurTours?${searchParams.toString()}`);
+    }
   };
 
   return (

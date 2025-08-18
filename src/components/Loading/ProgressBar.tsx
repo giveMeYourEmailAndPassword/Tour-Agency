@@ -30,7 +30,7 @@ export const ProgressBar = () => {
   }, [isCompleted]);
 
   return (
-    <div className="w-full rounded-xl z-50 px-4 py-6">
+    <div className="w-full rounded-xl z-50 px-4 pb-6 bg-gray-100">
       <div className="text-base font-medium text-gray-500 text-center w-full mb-2">
         {isCompleted ? (
           "Мы нашли для вас лучшие варианты"

@@ -9,6 +9,7 @@ import { parse, format, addDays } from "date-fns";
 import { ru } from "date-fns/locale";
 import { ProgressBar } from "../../components/Loading/ProgressBar";
 import FiltersMobile from "../../components/FiltersMobile";
+import Header from "../../components/Header";
 
 // Добавляем вспомогательные функции из SearchResults
 const truncateHotelName = (name: string) => {
@@ -52,6 +53,7 @@ export default function MobileOurTours() {
     isFetchingNextPage,
     searchTours,
     setData,
+    setShowResults,
   } = useContext(DataContext);
 
   const location = useLocation();
@@ -118,9 +120,10 @@ export default function MobileOurTours() {
 
   if (loading) {
     return (
-      <div className="w-full min-h-screen bg-gray-50">
-        <ProgressBar />
+      <div className="w-full min-h-screen bg-gray-100">
+        <Header onSearch={() => setShowResults(true)} />
         <FiltersMobile />
+        <ProgressBar />
         <div className="mx-2 flex-grow pb-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-2">
             {[...Array(12)].map((_, index) => (
@@ -161,9 +164,10 @@ export default function MobileOurTours() {
 
   if (error) {
     return (
-      <div className="w-full min-h-screen bg-gray-50">
-        <ProgressBar />
+      <div className="w-full min-h-screen bg-gray-100">
+        <Header onSearch={() => setShowResults(true)} />
         <FiltersMobile />
+        <ProgressBar />
         <div className="mx-2 flex-grow">
           <div className="text-center text-red-500">{error}</div>
         </div>
@@ -176,9 +180,10 @@ export default function MobileOurTours() {
     tourDataStatus?.toursfound === 0
   ) {
     return (
-      <div className="w-full min-h-screen bg-gray-50">
-        <ProgressBar />
+      <div className="w-full min-h-screen bg-gray-100">
+        <Header onSearch={() => setShowResults(true)} />
         <FiltersMobile />
+        <ProgressBar />
         <div className="mx-2 flex-grow">
           <div className="text-center text-gray-500">
             По вашему запросу ничего не найдено
@@ -189,9 +194,10 @@ export default function MobileOurTours() {
   }
 
   return (
-    <div className="w-full min-h-screen bg-gray-50">
-      <ProgressBar />
+    <div className="w-full min-h-screen bg-gray-100">
+      <Header onSearch={() => setShowResults(true)} />
       <FiltersMobile />
+      <ProgressBar />
       <div className="mx-2 flex-grow pb-4">
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-2">
           {tours.map((hotel, index) => (

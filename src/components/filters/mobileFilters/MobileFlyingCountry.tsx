@@ -176,9 +176,11 @@ export default function MobileFlyingCountry() {
                       <button
                         key={country.id}
                         onClick={() => handleCountrySelect(country)}
-                        className={`w-full text-left px-4 py-2 hover:bg-gray-50 duration-300 flex items-center justify-between rounded-lg
+                        className={`w-full text-left px-4 py-2 duration-300 flex items-center justify-between rounded-lg
                           ${
-                            selectedCountry === country.id ? "bg-[#FDDEC2]" : ""
+                            selectedCountry === country.id
+                              ? "bg-[#FDDEC2] hover:!bg-[#FDDEC2]"
+                              : "hover:bg-gray-50"
                           }
                         `}
                       >

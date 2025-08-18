@@ -1,53 +1,18 @@
-import React, { useState, useContext } from "react";
-import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  Button,
-} from "@heroui/react";
+import React, { useState, useContext, useMemo } from "react";
+import { Modal, ModalContent } from "@heroui/react";
 import { RxCross2 } from "react-icons/rx";
 import { DataContext } from "../../../DataProvider";
 import { IoIosArrowDown } from "react-icons/io";
+import service from "../../../data/HotelServiceData";
 
-// Те же категории, что и в HotelService
-const CATEGORIES = {
-  "Услуги отеля": [], // Пустой массив, так как это заголовок для выбранных услуг
-  "Для детей": [
-    "Водные горки",
-    "Детское меню",
-    "Мини-клуб",
-    "Детская анимация",
-    "Детская площадка",
-  ],
-  Номер: [
-    "Кухня в номере",
-    "Балкон в номере",
-    "Wi-Fi в номере",
-    "Кондиционер",
-    "Размещение с животными",
-  ],
-  Пляж: ["Первая линия", "Собственный пляж", "Песчаный пляж", "Галечный пляж"],
-  Территория: [
-    "Бассейн",
-    "Бассейн с подогревом",
-    "Водные горки",
-    "СПА-центр",
-    "Ресторан/кафе",
-    "Спортзал",
-    "Теннис",
-    "Футбол",
-    "Новый отель",
-  ],
-  Услуги: [
-    "Анимация",
-    "Дискотека",
-    "Wi-Fi",
-    "Размещение одиноких мужчин",
-    "Только для взрослых",
-  ],
-  "Тип отеля": ["Активный", "Городской", "Семейный", "VIP"],
-};
+// Группируем услуги по категориям
+const GROUPED_SERVICES = service.reduce((acc, item) => {
+  if (!acc[item.group]) {
+    acc[item.group] = [];
+  }
+  acc[item.group].push(item);
+  return acc;
+}, {} as Record<string, typeof service>);
 
 interface TagProps {
   label: string;
@@ -83,14 +48,13 @@ export default function MobileHotelService() {
   const [selectedServices, setSelectedServices] = useState<string[]>(
     () => params.param10 || []
   );
-  const [expandedSections, setExpandedSections] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("");
 
-  const toggleService = (service: string) => {
+  const toggleService = (serviceId: string) => {
     setSelectedServices((prev) => {
-      const newServices = prev.includes(service)
-        ? prev.filter((s) => s !== service)
-        : [...prev, service];
+      const newServices = prev.includes(serviceId)
+        ? prev.filter((s) => s !== serviceId)
+        : [...prev, serviceId];
 
       setData("param10", newServices);
       return newServices;
@@ -99,23 +63,22 @@ export default function MobileHotelService() {
 
   const handleCategoryClick = (category: string) => {
     setSelectedCategory(category);
-    setExpandedSections([category]);
     setIsOpen(true);
   };
 
-  // Добавим функцию для отображения текста
+  // Обновленная функция для отображения текста
   const getDisplayText = (category: string, selectedCount: number) => {
     if (selectedCount === 0) {
       return <span className="text-black text-lg font-normal">{category}</span>;
     } else if (selectedCount === 1) {
       // Находим единственную выбранную услугу
-      const selectedService = CATEGORIES[category].find((service) =>
-        selectedServices.includes(service)
+      const selectedService = GROUPED_SERVICES[category].find((service) =>
+        selectedServices.includes(service.id)
       );
       return (
         <div className="flex flex-col items-start">
           <span className="text-slate-600 text-sm">{category}</span>
-          <span className="text-black text-lg">{selectedService}</span>
+          <span className="text-black text-lg">{selectedService?.name}</span>
         </div>
       );
     } else {
@@ -132,19 +95,16 @@ export default function MobileHotelService() {
     <>
       {/* Кнопки категорий */}
       <div className="flex flex-col">
-        {Object.entries(CATEGORIES).map(([category, services]) => {
-          if (category === "Услуги отеля") return null;
-
+        {Object.entries(GROUPED_SERVICES).map(([category, services]) => {
           const selectedCount = services.filter((service) =>
-            selectedServices.includes(service)
+            selectedServices.includes(service.id)
           ).length;
 
           return (
             <div
               key={category}
               onClick={() => handleCategoryClick(category)}
-              className="px-2 w-full h-12 bg-white
-               !z-0 !scale-100 !opacity-100 py-1 flex items-center justify-between cursor-pointer"
+              className="px-2 w-full h-12 bg-white !z-0 !scale-100 !opacity-100 py-1 flex items-center justify-between cursor-pointer"
             >
               <div className="flex flex-col items-start justify-between w-full px-2">
                 {getDisplayText(category, selectedCount)}
@@ -205,22 +165,22 @@ export default function MobileHotelService() {
 
               {/* Content */}
               <div className="p-5 pb-0">
-                {selectedCategory && CATEGORIES[selectedCategory] && (
+                {selectedCategory && GROUPED_SERVICES[selectedCategory] && (
                   <div className="flex flex-col gap-4">
-                    {CATEGORIES[selectedCategory].map((service) => (
+                    {GROUPED_SERVICES[selectedCategory].map((service) => (
                       <label
-                        key={service}
+                        key={service.id}
                         className="flex items-center gap-3 cursor-pointer"
-                        onClick={() => toggleService(service)}
+                        onClick={() => toggleService(service.id)}
                       >
                         <div
                           className={`w-5 h-5 rounded border flex items-center justify-center ${
-                            selectedServices.includes(service)
+                            selectedServices.includes(service.id)
                               ? "bg-[#FF621F] border-[#FF621F]"
                               : "border-[#7E8389]"
                           }`}
                         >
-                          {selectedServices.includes(service) && (
+                          {selectedServices.includes(service.id) && (
                             <svg
                               width="16"
                               height="16"
@@ -239,7 +199,7 @@ export default function MobileHotelService() {
                           )}
                         </div>
                         <span className="text-lg text-[#2E2E32]">
-                          {service}
+                          {service.name}
                         </span>
                       </label>
                     ))}

@@ -9,10 +9,30 @@ const MIN_NIGHTS = 3;
 const MAX_NIGHTS = 16;
 
 export default function MobileNightsFrom() {
-  const { setData } = useContext(DataContext);
+  const { setData, params } = useContext(DataContext); // Добавляем params
   const [isOpen, setIsOpen] = useState(false);
   const [selectedNights, setSelectedNights] = useState(7);
-  const [sliderValue, setSliderValue] = useState([5, 7]);
+
+  // Инициализируем слайдер с учетом параметров URL
+  const [sliderValue, setSliderValue] = useState(() => {
+    if (params.param3?.startDay && params.param3?.endDay) {
+      return [Number(params.param3.startDay), Number(params.param3.endDay)];
+    }
+    return [5, 7]; // значения по умолчанию
+  });
+
+  // Добавляем эффект для отслеживания изменений из URL
+  useEffect(() => {
+    if (params.param3?.startDay && params.param3?.endDay) {
+      const start = Number(params.param3.startDay);
+      const end = Number(params.param3.endDay);
+      if (start !== sliderValue[0] || end !== sliderValue[1]) {
+        setSliderValue([start, end]);
+        setSelectedNights(end);
+      }
+    }
+  }, [params.param3]);
+
   const [isDragging, setIsDragging] = useState<null | "start" | "end">(null);
   const sliderRef = useRef(null);
 

@@ -1,6 +1,5 @@
 import { useState, useContext, useMemo } from "react";
 import { Modal, ModalContent } from "@heroui/react";
-import { RxCross2 } from "react-icons/rx";
 import MobileHotelType from "./MobileHotelType";
 import MobileNourishment from "./MobileNourishment";
 import MobileRaiting from "./MobileRaiting";

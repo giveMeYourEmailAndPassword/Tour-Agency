@@ -27,21 +27,38 @@ export default function MobileFlyingCountry() {
         (country) => country.id === Number(params.param2)
       );
       if (countryExists) {
-        setSelectedCountry(Number(params.param2));
-        // Обновляем регионы для новой страны
-        const country = destinations.find(
-          (c) => c.id === Number(params.param2)
-        );
-        if (country) {
-          setSelectedRegions(country.regions.map((region) => region.id));
+        const newCountryId = Number(params.param2);
+        if (newCountryId !== selectedCountry) {
+          // Проверяем, изменилась ли страна
+          setSelectedCountry(newCountryId);
+          // Обновляем регионы для новой страны
+          const country = destinations.find((c) => c.id === newCountryId);
+          if (country) {
+            setSelectedRegions(country.regions.map((region) => region.id));
+          }
         }
       }
     }
-  }, [params.param2]);
+  }, [params.param2, selectedCountry]); // Добавляем selectedCountry в зависимости
+
+  // Добавляем эффект для обновления параметров при изменении регионов
+  useEffect(() => {
+    if (selectedCountry) {
+      setData("param2", selectedCountry);
+    }
+  }, [selectedCountry, selectedRegions, setData]);
 
   const handleCountrySelect = (country) => {
     setSelectedCountry(country.id);
-    setSelectedRegions([]); // Сбрасываем выбранные регионы при смене страны
+    // Сначала обновляем регионы для новой страны
+    const newCountry = destinations.find((c) => c.id === country.id);
+    if (newCountry) {
+      const allRegions = newCountry.regions.map((region) => region.id);
+      setSelectedRegions(allRegions);
+    } else {
+      setSelectedRegions([]);
+    }
+    // Затем обновляем параметр в контексте
     setData("param2", country.id);
     setSearchQuery("");
   };

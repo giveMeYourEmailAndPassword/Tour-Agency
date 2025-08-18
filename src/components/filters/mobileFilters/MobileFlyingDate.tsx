@@ -35,14 +35,49 @@ export default function MobileFlyingDate() {
   const [calendarPrices, setCalendarPrices] =
     useState<CalendarPriceData | null>(null);
 
-  // Изменяем формат состояния на Date вместо CalendarDate
+  // Изменяем инициализацию dateRange с учетом параметров URL
   const [dateRange, setDateRange] = useState<{
     start: Date | null;
     end: Date | null;
-  }>({
-    start: new Date(new Date().setDate(new Date().getDate() + 1)), // завтра
-    end: new Date(new Date().setDate(new Date().getDate() + 7)), // через неделю
+  }>(() => {
+    // Если есть параметры в URL, используем их
+    if (params.param4?.startDate && params.param4?.endDate) {
+      const [startDay, startMonth, startYear] =
+        params.param4.startDate.split(".");
+      const [endDay, endMonth, endYear] = params.param4.endDate.split(".");
+      return {
+        start: new Date(
+          Number(startYear),
+          Number(startMonth) - 1,
+          Number(startDay)
+        ),
+        end: new Date(Number(endYear), Number(endMonth) - 1, Number(endDay)),
+      };
+    }
+    // Иначе используем значения по умолчанию
+    return {
+      start: new Date(new Date().setDate(new Date().getDate() + 1)),
+      end: new Date(new Date().setDate(new Date().getDate() + 7)),
+    };
   });
+
+  // Добавляем эффект для обновления дат при изменении params
+  useEffect(() => {
+    if (params.param4?.startDate && params.param4?.endDate) {
+      const [startDay, startMonth, startYear] =
+        params.param4.startDate.split(".");
+      const [endDay, endMonth, endYear] = params.param4.endDate.split(".");
+
+      setDateRange({
+        start: new Date(
+          Number(startYear),
+          Number(startMonth) - 1,
+          Number(startDay)
+        ),
+        end: new Date(Number(endYear), Number(endMonth) - 1, Number(endDay)),
+      });
+    }
+  }, [params.param4]);
 
   // Добавить состояние для текущего месяца
   const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -60,18 +95,6 @@ export default function MobileFlyingDate() {
       });
     }
   };
-
-  useEffect(() => {
-    if (dateRange.start && dateRange.end) {
-      const formattedStartDate = format(dateRange.start, "dd.MM.yyyy");
-      const formattedEndDate = format(dateRange.end, "dd.MM.yyyy");
-
-      setData("param4", {
-        startDate: formattedStartDate,
-        endDate: formattedEndDate,
-      });
-    }
-  }, []);
 
   // Изменим функцию форматирования даты
   const formatDisplayDate = (date: Date | null) => {

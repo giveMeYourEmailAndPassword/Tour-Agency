@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { Modal, ModalContent } from "@heroui/react";
 import { RxCross2 } from "react-icons/rx";
 import { DataContext } from "../../DataProvider";
@@ -14,9 +14,28 @@ const STARS = [
 ];
 
 export default function MobileStarsFilter() {
-  const { setData } = useContext(DataContext);
+  const { setData, params } = useContext(DataContext); // Добавляем params
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedStars, setSelectedStars] = useState<number[]>([1, 2, 3, 4, 5]);
+
+  // Инициализируем звезды с учетом параметров URL
+  const [selectedStars, setSelectedStars] = useState<number[]>(() => {
+    if (params.param9) {
+      return Array.isArray(params.param9) ? params.param9 : [params.param9];
+    }
+    return [1, 2, 3, 4, 5]; // значения по умолчанию
+  });
+
+  // Добавляем эффект для отслеживания изменений из URL
+  useEffect(() => {
+    if (params.param9) {
+      const newStars = Array.isArray(params.param9)
+        ? params.param9
+        : [params.param9];
+      if (JSON.stringify(newStars) !== JSON.stringify(selectedStars)) {
+        setSelectedStars(newStars);
+      }
+    }
+  }, [params.param9]);
 
   const handleStarSelect = (stars: number[]) => {
     setSelectedStars(stars);

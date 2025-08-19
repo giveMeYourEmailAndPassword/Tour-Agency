@@ -102,10 +102,10 @@ export default function App() {
                             <Skeleton className="w-20 h-6" />
                           </div>
                           <div className="w-full flex justify-between items-center">
-                            <Skeleton className="w-20 h-7" />
+                            <Skeleton className="w-20 h-3" />
                             <div className="flex flex-col items-end gap-1">
-                              <Skeleton className="w-32 h-4" />
-                              <Skeleton className="w-24 h-4" />
+                              <Skeleton className="w-32 h-[11px]" />
+                              <Skeleton className="w-24 h-3" />
                             </div>
                           </div>
                         </div>

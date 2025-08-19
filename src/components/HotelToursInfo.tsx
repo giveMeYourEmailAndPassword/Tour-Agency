@@ -8,11 +8,12 @@ import { ru } from "date-fns/locale";
 import { IoAirplane } from "react-icons/io5";
 import { FaUtensils } from "react-icons/fa";
 import { FaUmbrellaBeach } from "react-icons/fa";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Lightbox from "yet-another-react-lightbox";
 import Thumbnails from "yet-another-react-lightbox/plugins/thumbnails";
 import "yet-another-react-lightbox/styles.css";
 import "yet-another-react-lightbox/plugins/thumbnails.css";
+import { IoChevronBackOutline, IoChevronForwardOutline } from "react-icons/io5";
 
 interface Tour {
   tours: {
@@ -34,6 +35,28 @@ export default function HotelToursInfo() {
   const { hotel, isLoading, error } = useHotelToursInfo();
   const [isOpen, setIsOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [mainImageIndex, setMainImageIndex] = useState(0);
+  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+
+  // Авто-прокрутка
+  useEffect(() => {
+    if (!isAutoPlaying || !hotel?.images?.image) return;
+
+    const interval = setInterval(() => {
+      setMainImageIndex((prev) =>
+        prev === hotel.images.image.length - 1 ? 0 : prev + 1
+      );
+    }, 3000); // Переключение каждые 3 секунды
+
+    return () => clearInterval(interval);
+  }, [isAutoPlaying, hotel?.images?.image?.length]);
+
+  // Остановка авто-прокрутки при взаимодействии
+  const handleUserInteraction = () => {
+    setIsAutoPlaying(false);
+    // Возобновление авто-прокрутки через 5 секунд после взаимодействия
+    setTimeout(() => setIsAutoPlaying(true), 5000);
+  };
 
   const formatDate = (dateString: string) => {
     const date = parse(dateString, "dd.MM.yyyy", new Date());
@@ -66,6 +89,19 @@ export default function HotelToursInfo() {
   const handleImageClick = (index: number) => {
     setCurrentIndex(index);
     setIsOpen(true);
+  };
+
+  // Функции для навигации
+  const goToPrevious = () => {
+    setMainImageIndex((prev) =>
+      prev === 0 ? hotel.images.image.length - 1 : prev - 1
+    );
+  };
+
+  const goToNext = () => {
+    setMainImageIndex((prev) =>
+      prev === hotel.images.image.length - 1 ? 0 : prev + 1
+    );
   };
 
   if (isLoading) {
@@ -148,23 +184,66 @@ export default function HotelToursInfo() {
         <div className="flex justify-between gap-4">
           <div className="flex flex-col gap-1 h-[560px]">
             {/* Основное фото */}
-            <div className="w-full rounded-sm overflow-hidden">
+            <div className="w-full rounded-xl overflow-hidden relative group">
               <img
-                src={`https:${hotel.images.image[0]}`}
+                src={`https:${hotel.images.image[mainImageIndex]}`}
                 alt={hotel.name}
-                className="w-full h-full object-cover"
-                onClick={() => handleImageClick(0)}
+                className="w-full h-full object-cover transition-transform duration-500"
+                onClick={() => handleImageClick(mainImageIndex)}
               />
+              {/* Кнопки навигации */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleUserInteraction();
+                  goToPrevious();
+                }}
+                className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black/50 p-2 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+              >
+                <IoChevronBackOutline size={24} />
+              </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleUserInteraction();
+                  goToNext();
+                }}
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black/50 p-2 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+              >
+                <IoChevronForwardOutline size={24} />
+              </button>
+              {/* Индикатор слайдов */}
+              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
+                {hotel.images.image.map((_, index) => (
+                  <div
+                    key={index}
+                    className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                      index === mainImageIndex ? "bg-white w-4" : "bg-gray-300"
+                    }`}
+                  />
+                ))}
+              </div>
             </div>
+
             {/* Дополнительные фото */}
             <div className="grid grid-cols-4 gap-1">
               {hotel.images.image.slice(1, 5).map((image, index) => (
-                <div key={index} className="w-full rounded-sm overflow-hidden">
+                <div
+                  key={index}
+                  className="w-full overflow-hidden cursor-pointer"
+                  onClick={() => {
+                    setMainImageIndex(index + 1);
+                    handleUserInteraction();
+                  }}
+                >
                   <img
                     src={`https:${image}`}
                     alt={`${hotel.name} ${index + 1}`}
-                    className="w-full h-[80%] object-cover"
-                    onClick={() => handleImageClick(index + 1)}
+                    className={`w-full h-[80%] object-cover rounded-xl transition-opacity duration-300 ${
+                      mainImageIndex === index + 1
+                        ? "opacity-70"
+                        : "opacity-100"
+                    }`}
                   />
                 </div>
               ))}

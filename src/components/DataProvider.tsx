@@ -313,6 +313,9 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     setTours([]);
     setAllTours([]);
     setCurrentPage(1);
+    // Сбрасываем состояние для ProgressBar
+    setTourDataStatus(null);
+    setIsSearching(false);
 
     try {
       const requestData = {
@@ -348,6 +351,8 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
       console.error("Ошибка:", error);
       setError("Ошибка при загрузке данных");
       setLoading(false);
+      setSearchInProgress(false);
+      setIsSearching(false);
     }
   }, [params, pollSearchResults]);
 

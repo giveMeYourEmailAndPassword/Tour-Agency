@@ -9,6 +9,14 @@ export const ProgressBar = () => {
   const progress = tourDataStatus?.progress || 0;
   const state = tourDataStatus?.state || "";
 
+  // Сбрасываем состояние при начале нового поиска
+  useEffect(() => {
+    if (isSearching) {
+      setIsCompleted(false);
+      setDots(".");
+    }
+  }, [isSearching]);
+
   useEffect(() => {
     if (state === "finished") {
       setIsCompleted(true);

@@ -1,5 +1,6 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { DataContext } from "../DataProvider";
+import service from "../data/HotelServiceData";
 
 interface TagProps {
   label: string;
@@ -29,47 +30,19 @@ const Tag: React.FC<TagProps> = ({ label, onRemove }) => (
   </div>
 );
 
-// Группируем сервисы по категориям
-const CATEGORIES = {
-  "Услуги отеля": [], // Пустой массив, так как это заголовок для выбранных услуг
-  "Для детей": [
-    "Водные горки",
-    "Детское меню",
-    "Мини-клуб",
-    "Детская анимация",
-    "Детская площадка",
-  ],
-  Номер: [
-    "Кухня в номере",
-    "Балкон в номере",
-    "Wi-Fi в номере",
-    "Кондиционер",
-    "Размещение с животными",
-  ],
-  Пляж: ["Первая линия", "Собственный пляж", "Песчаный пляж", "Галечный пляж"],
-  Территория: [
-    "Бассейн",
-    "Бассейн с подогревом",
-    "Водные горки",
-    "СПА-центр",
-    "Ресторан/кафе",
-    "Спортзал",
-    "Теннис",
-    "Футбол",
-    "Новый отель",
-  ],
-  Услуги: [
-    "Анимация",
-    "Дискотека",
-    "Wi-Fi",
-    "Размещение одиноких мужчин",
-    "Только для взрослых",
-  ],
-  "Тип отеля": ["Активный", "Городской", "Семейный", "VIP"],
-};
+// Группируем сервисы по категориям из данных
+const GROUPED_SERVICES = service.reduce((acc, item) => {
+  if (!acc[item.group]) {
+    acc[item.group] = [];
+  }
+  acc[item.group].push(item);
+  return acc;
+}, {} as Record<string, typeof service>);
 
 export default function HotelService() {
   const { setData, params } = useContext(DataContext);
+
+  // Инициализируем состояния с учетом параметров URL
   const [selectedServices, setSelectedServices] = useState<string[]>(
     () => params.param10 || []
   );
@@ -77,11 +50,21 @@ export default function HotelService() {
     "Для детей",
   ]); // По умолчанию открыта секция "Для детей"
 
-  const toggleService = (service: string) => {
+  // Добавляем эффект для отслеживания изменений из URL
+  useEffect(() => {
+    if (params.param10) {
+      const newServices = params.param10;
+      if (JSON.stringify(newServices) !== JSON.stringify(selectedServices)) {
+        setSelectedServices(newServices);
+      }
+    }
+  }, [params.param10]);
+
+  const toggleService = (serviceId: string) => {
     setSelectedServices((prev) => {
-      const newServices = prev.includes(service)
-        ? prev.filter((s) => s !== service)
-        : [...prev, service];
+      const newServices = prev.includes(serviceId)
+        ? prev.filter((s) => s !== serviceId)
+        : [...prev, serviceId];
 
       // Обновляем контекст данных
       setData("param10", newServices);
@@ -90,7 +73,7 @@ export default function HotelService() {
   };
 
   const toggleSection = (section: string) => {
-    if (section === "Услуги отеля") return; // Не сворачиваем секцию с тегами
+    if (section === "Доп.фильтры") return; // Пропускаем дополнительные фильтры
     setExpandedSections((prev) =>
       prev.includes(section)
         ? prev.filter((s) => s !== section)
@@ -98,8 +81,14 @@ export default function HotelService() {
     );
   };
 
-  const removeService = (service: string) => {
-    toggleService(service);
+  const removeService = (serviceId: string) => {
+    toggleService(serviceId);
+  };
+
+  // Функция для получения названия услуги по ID
+  const getServiceNameById = (serviceId: string) => {
+    const serviceItem = service.find((s) => s.id === serviceId);
+    return serviceItem ? serviceItem.name : serviceId;
   };
 
   return (
@@ -111,11 +100,11 @@ export default function HotelService() {
         </span>
         {selectedServices.length > 0 && (
           <div className="flex flex-wrap gap-1">
-            {selectedServices.map((service) => (
+            {selectedServices.map((serviceId) => (
               <Tag
-                key={service}
-                label={service}
-                onRemove={() => removeService(service)}
+                key={serviceId}
+                label={getServiceNameById(serviceId)}
+                onRemove={() => removeService(serviceId)}
               />
             ))}
           </div>
@@ -123,8 +112,8 @@ export default function HotelService() {
       </div>
 
       {/* Секции с услугами */}
-      {Object.entries(CATEGORIES).map(([category, services]) => {
-        if (category === "Услуги отеля") return null; // Пропускаем, так как уже отобразили выше
+      {Object.entries(GROUPED_SERVICES).map(([category, services]) => {
+        if (category === "Доп.фильтры") return null; // Пропускаем дополнительные фильтры
         return (
           <div key={category} className="flex flex-col gap-1.5">
             <button
@@ -152,20 +141,20 @@ export default function HotelService() {
 
             {expandedSections.includes(category) && (
               <div className="flex flex-col gap-0.5">
-                {services.map((service) => (
+                {services.map((serviceItem) => (
                   <label
-                    key={service}
+                    key={serviceItem.id}
                     className="flex items-center gap-3 cursor-pointer"
                   >
                     <div
                       className={`w-4 h-4 rounded border flex items-center justify-center ${
-                        selectedServices.includes(service)
+                        selectedServices.includes(serviceItem.id)
                           ? "bg-[#FF621F] border-[#FF621F]"
                           : "border-[#7E8389]"
                       }`}
-                      onClick={() => toggleService(service)}
+                      onClick={() => toggleService(serviceItem.id)}
                     >
-                      {selectedServices.includes(service) && (
+                      {selectedServices.includes(serviceItem.id) && (
                         <svg
                           width="11"
                           height="8"
@@ -183,7 +172,9 @@ export default function HotelService() {
                         </svg>
                       )}
                     </div>
-                    <span className="text-base text-[#2E2E32]">{service}</span>
+                    <span className="text-base text-[#2E2E32]">
+                      {serviceItem.name}
+                    </span>
                   </label>
                 ))}
               </div>

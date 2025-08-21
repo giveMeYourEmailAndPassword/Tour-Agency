@@ -1,4 +1,5 @@
-import { useContext, useState, useEffect } from "react";
+import { useContext, useState, useEffect, useRef } from "react";
+import { useLocation } from "react-router-dom";
 import { DataContext } from "../../components/DataProvider";
 import { Skeleton } from "@heroui/react";
 import Header from "../../components/Header";
@@ -21,7 +22,74 @@ export default function OurTours() {
     fetchNextPage,
     isFetchingNextPage,
     searchTours,
+    setData,
   } = useContext(DataContext);
+
+  const location = useLocation();
+  const isInitialMount = useRef(true);
+
+  // Эффект для установки параметров и запуска поиска при изменении URL
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+
+    // Устанавливаем параметры из URL
+    if (searchParams.has("departure"))
+      setData("param1", searchParams.get("departure"));
+    if (searchParams.has("country"))
+      setData("param2", searchParams.get("country"));
+
+    if (searchParams.has("nightsFrom") || searchParams.has("nightsTo")) {
+      setData("param3", {
+        startDay: searchParams.get("nightsFrom")
+          ? parseInt(searchParams.get("nightsFrom")!)
+          : undefined,
+        endDay: searchParams.get("nightsTo")
+          ? parseInt(searchParams.get("nightsTo")!)
+          : undefined,
+      });
+    }
+
+    if (searchParams.has("dateFrom") || searchParams.has("dateTo")) {
+      setData("param4", {
+        startDate: searchParams.get("dateFrom") || undefined,
+        endDate: searchParams.get("dateTo") || undefined,
+      });
+    }
+
+    if (searchParams.has("adults") || searchParams.has("children")) {
+      setData("param5", {
+        adults: searchParams.get("adults")
+          ? parseInt(searchParams.get("adults")!)
+          : 2,
+        childrenList: searchParams.get("children")
+          ? searchParams.get("children")!.split(",").map(Number)
+          : [],
+      });
+    }
+
+    if (searchParams.has("hotelTypes"))
+      setData("param6", searchParams.get("hotelTypes")!.split(","));
+    if (searchParams.has("meal"))
+      setData("param7", [searchParams.get("meal")!]);
+    if (searchParams.has("rating"))
+      setData("param8", [searchParams.get("rating")!]);
+    if (searchParams.has("stars")) {
+      // Правильно парсим параметр stars как массив чисел
+      const starsParam = searchParams.get("stars")!;
+      const starsArray = starsParam.split(",").map(Number);
+      setData("param9", starsArray);
+    }
+    if (searchParams.has("services"))
+      setData("param10", searchParams.get("services")!.split(","));
+
+    // Запускаем поиск только при первом монтировании или если параметры изменились
+    if (searchParams.has("departure") && searchParams.has("country")) {
+      if (isInitialMount.current) {
+        isInitialMount.current = false;
+        searchTours();
+      }
+    }
+  }, [location.search, setData]);
 
   // Получаем выбранный город и страну
   const selectedCity =
@@ -68,13 +136,9 @@ export default function OurTours() {
     return (
       <div className="w-full min-h-screen">
         <Header />
-        <div className="w-full bg-blue-500 mt-4">
-          <div className="max-w-[1560px] mx-auto mb-8">
-            <div className="flex flex-col gap-12 h-96 pt-12">
-              <h1 className="text-2xl md:text-4xl lg:text-5xl text-white font-semibold md:font-bold max-w-[80rem] px-4 md:px-36">
-                {title}
-              </h1>
-            </div>
+        <div className="max-w-[1560px] mx-auto mt-4">
+          <div className="flex items-start">
+            <Filters />
           </div>
         </div>
         <div className="max-w-[1560px] min-h-[40vh] flex flex-wrap gap-4 p-12 justify-center items-center mx-auto">
@@ -96,39 +160,37 @@ export default function OurTours() {
             <SearchResults />
           ) : (
             <div className="ml-2 flex-grow pb-4">
-              <div className="ml-2 flex-grow pb-4">
-                <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-2">
-                  {[...Array(36)].map((_, index) => (
-                    <div
-                      key={index}
-                      className="w-full flex items-center gap-2.5 p-4 bg-white border border-[#DBE0E5] rounded-[10px]"
-                    >
+              <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-2">
+                {[...Array(36)].map((_, index) => (
+                  <div
+                    key={index}
+                    className="w-full flex items-center gap-2.5 p-4 bg-white border border-[#DBE0E5] rounded-[10px]"
+                  >
+                    <div className="w-full flex flex-col gap-2">
+                      <Skeleton className="w-full h-36 rounded" />
                       <div className="w-full flex flex-col gap-2">
-                        <Skeleton className="w-full h-36 rounded" />
-                        <div className="w-full flex flex-col gap-2">
-                          <div className="w-full flex justify-between items-center gap-1">
-                            <div className="flex items-center gap-0.5">
-                              <Skeleton className="w-24 h-4" />
-                            </div>
+                        <div className="w-full flex justify-between items-center gap-1">
+                          <div className="flex items-center gap-0.5">
                             <Skeleton className="w-24 h-4" />
                           </div>
-                          <Skeleton className="w-full h-7" />
-                          <Skeleton className="w-3/4 h-5" />
+                          <Skeleton className="w-24 h-4" />
                         </div>
-                        <div className="w-full flex items-center gap-3 pb-1 border-b border-[#DBE0E5]">
-                          <Skeleton className="w-20 h-6" />
-                        </div>
-                        <div className="w-full flex justify-between items-center">
-                          <Skeleton className="w-20 h-3" />
-                          <div className="flex flex-col items-end gap-1">
-                            <Skeleton className="w-32 h-[11px]" />
-                            <Skeleton className="w-24 h-3" />
-                          </div>
+                        <Skeleton className="w-full h-7" />
+                        <Skeleton className="w-3/4 h-5" />
+                      </div>
+                      <div className="w-full flex items-center gap-3 pb-1 border-b border-[#DBE0E5]">
+                        <Skeleton className="w-20 h-6" />
+                      </div>
+                      <div className="w-full flex justify-between items-center">
+                        <Skeleton className="w-20 h-3" />
+                        <div className="flex flex-col items-end gap-1">
+                          <Skeleton className="w-32 h-[11px]" />
+                          <Skeleton className="w-24 h-3" />
                         </div>
                       </div>
                     </div>
-                  ))}
-                </div>
+                  </div>
+                ))}
               </div>
             </div>
           )}

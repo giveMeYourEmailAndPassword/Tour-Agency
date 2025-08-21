@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { DataContext } from "../DataProvider";
 
 const NOURISHMENT_TYPES = [
@@ -12,10 +12,22 @@ const NOURISHMENT_TYPES = [
 
 export default function Nourishment() {
   const { setData, params } = useContext(DataContext);
+
+  // Инициализируем состояния с учетом параметров URL
   const [selectedValues, setSelectedValues] = useState(
     () => params.param7 || ["2"]
   );
   const [isExpanded, setIsExpanded] = useState(true);
+
+  // Добавляем эффект для отслеживания изменений из URL
+  useEffect(() => {
+    if (params.param7) {
+      const newValues = params.param7;
+      if (JSON.stringify(newValues) !== JSON.stringify(selectedValues)) {
+        setSelectedValues(newValues);
+      }
+    }
+  }, [params.param7]);
 
   const handleChange = (value: string) => {
     let newSelectedValues: string[];

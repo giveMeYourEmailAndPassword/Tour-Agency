@@ -3,8 +3,7 @@ import { DataContext } from "../DataProvider";
 import star from "../../assets/star.svg";
 
 const STARS = [
-  { id: 0, name: "1-5 звезд", value: [1, 2, 3, 4, 5] },
-  { id: 1, name: "1 звезда", value: [1] },
+  { id: 1, name: "1-5 звезд", value: [1, 2, 3, 4, 5] },
   { id: 2, name: "2 звезды", value: [2] },
   { id: 3, name: "3 звезды", value: [3] },
   { id: 4, name: "4 звезды", value: [4] },
@@ -17,7 +16,16 @@ export default function StarsFilter() {
   // Инициализируем звезды с учетом параметров URL
   const [selectedStars, setSelectedStars] = useState<number[]>(() => {
     if (params.param9) {
-      return Array.isArray(params.param9) ? params.param9 : [params.param9];
+      // Если param9 равен 1, это означает "1-5 звезд"
+      if (params.param9 === 1 || params.param9 === "1") {
+        return [1, 2, 3, 4, 5];
+      }
+      // Если это массив, используем его
+      if (Array.isArray(params.param9)) {
+        return params.param9;
+      }
+      // Если это одно число, создаем массив с одним элементом
+      return [Number(params.param9)];
     }
     return [1, 2, 3, 4, 5]; // значения по умолчанию
   });
@@ -28,9 +36,17 @@ export default function StarsFilter() {
   // Добавляем эффект для отслеживания изменений из URL
   useEffect(() => {
     if (params.param9) {
-      const newStars = Array.isArray(params.param9)
-        ? params.param9
-        : [params.param9];
+      let newStars: number[];
+
+      // Если param9 равен 1, это означает "1-5 звезд"
+      if (params.param9 === 1 || params.param9 === "1") {
+        newStars = [1, 2, 3, 4, 5];
+      } else if (Array.isArray(params.param9)) {
+        newStars = params.param9;
+      } else {
+        newStars = [Number(params.param9)];
+      }
+
       if (JSON.stringify(newStars) !== JSON.stringify(selectedStars)) {
         setSelectedStars(newStars);
       }
@@ -50,6 +66,7 @@ export default function StarsFilter() {
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleStarsSelect = (stars: any) => {

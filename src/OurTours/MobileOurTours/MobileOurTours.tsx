@@ -106,8 +106,12 @@ export default function MobileOurTours() {
       setData("param7", [searchParams.get("meal")!]);
     if (searchParams.has("rating"))
       setData("param8", [searchParams.get("rating")!]);
-    if (searchParams.has("stars"))
-      setData("param9", parseInt(searchParams.get("stars")!));
+    if (searchParams.has("stars")) {
+      // Правильно парсим параметр stars как массив чисел
+      const starsParam = searchParams.get("stars")!;
+      const starsArray = starsParam.split(",").map(Number);
+      setData("param9", starsArray);
+    }
     if (searchParams.has("services"))
       setData("param10", searchParams.get("services")!.split(","));
 
@@ -294,7 +298,7 @@ export default function MobileOurTours() {
             <button
               onClick={() => fetchNextPage()}
               disabled={isFetchingNextPage}
-              className="w-full py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors disabled:bg-gray-400 mt-2"
+              className="w-full py-2 bg-[#FF621F] text-white rounded-lg hover:bg-blue-600 transition-colors disabled:bg-gray-400 mt-2"
             >
               {isFetchingNextPage ? "Загрузка..." : "Показать еще туры"}
             </button>

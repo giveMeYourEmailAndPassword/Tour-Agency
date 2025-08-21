@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { DataContext } from "../DataProvider";
 
 const HOTEL_TYPES = [
@@ -11,10 +11,22 @@ const HOTEL_TYPES = [
 
 export default function HotelType() {
   const { setData, params } = useContext(DataContext);
+
+  // Инициализируем состояния с учетом параметров URL
   const [selectedValues, setSelectedValues] = useState(
     () => params.param6 || ["any"]
   );
   const [isExpanded, setIsExpanded] = useState(true);
+
+  // Добавляем эффект для отслеживания изменений из URL
+  useEffect(() => {
+    if (params.param6) {
+      const newValues = params.param6;
+      if (JSON.stringify(newValues) !== JSON.stringify(selectedValues)) {
+        setSelectedValues(newValues);
+      }
+    }
+  }, [params.param6]);
 
   const handleChange = (value: string) => {
     let newSelectedValues = [...selectedValues];

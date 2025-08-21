@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { DataContext } from "../DataProvider";
 
 const RATINGS = [
@@ -11,10 +11,22 @@ const RATINGS = [
 
 export default function Raiting() {
   const { setData, params } = useContext(DataContext);
+
+  // Инициализируем состояния с учетом параметров URL
   const [selectedValue, setSelectedValue] = useState(
     () => params.param8?.[0] || "0"
   );
   const [isExpanded, setIsExpanded] = useState(true);
+
+  // Добавляем эффект для отслеживания изменений из URL
+  useEffect(() => {
+    if (params.param8?.[0]) {
+      const newValue = params.param8[0];
+      if (newValue !== selectedValue) {
+        setSelectedValue(newValue);
+      }
+    }
+  }, [params.param8]);
 
   const handleChange = (value: string) => {
     // Если выбрано текущее значение, не делаем ничего

@@ -17,6 +17,7 @@ interface HotelData {
   services: string[];
   meal: string;
   beach: string;
+  // ... другие поля
 }
 
 export default function useHotelToursInfo() {
@@ -32,6 +33,12 @@ export default function useHotelToursInfo() {
       return response.json();
     },
     enabled: !!hotelcode,
+    // Добавляем кэширование
+    staleTime: 1000 * 60 * 60, // 1 час - данные считаются свежими
+    gcTime: 1000 * 60 * 60 * 24, // 24 часа - храним в памяти
+    refetchOnWindowFocus: false, // Не перезапрашиваем при фокусе окна
+    refetchOnMount: false, // Не перезапрашиваем при монтировании
+    refetchOnReconnect: false, // Не перезапрашиваем при переподключении
   });
 
   return {

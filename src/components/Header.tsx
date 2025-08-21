@@ -28,7 +28,6 @@ export default function Header({ onSearch }: HeaderProps) {
           <StarsFilter />
           <Tourists />
           <FindTourBtn onSearch={onSearch} />
-          иконка для поборок
         </div>
       </div>
     </div>

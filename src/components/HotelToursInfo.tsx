@@ -1,4 +1,4 @@
-import { useLocation } from "react-router-dom";
+import { useLocation, useSearchParams } from "react-router-dom";
 import useHotelToursInfo from "../Hooks/useHotelToursInfo";
 import { Skeleton } from "@heroui/react";
 import starFilled from "../assets/star_fill.svg";
@@ -9,12 +9,13 @@ import { ru } from "date-fns/locale";
 import { IoAirplane } from "react-icons/io5";
 import { FaUtensils } from "react-icons/fa";
 import { FaUmbrellaBeach } from "react-icons/fa";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import Lightbox from "yet-another-react-lightbox";
 import Thumbnails from "yet-another-react-lightbox/plugins/thumbnails";
 import "yet-another-react-lightbox/styles.css";
 import "yet-another-react-lightbox/plugins/thumbnails.css";
 import { IoChevronBackOutline, IoChevronForwardOutline } from "react-icons/io5";
+import { DataContext } from "./DataProvider";
 
 interface Tour {
   tours: {
@@ -32,8 +33,105 @@ interface Tour {
 
 export default function HotelToursInfo() {
   const location = useLocation();
-  const selectedTours = location.state?.hotelTours || [];
-  const hotelDescription = location.state?.hotelDescription || "";
+  const [searchParams] = useSearchParams();
+  const { searchTours, tours } = useContext(DataContext);
+
+  // Используем useState вместо let для правильного отслеживания изменений
+  const [selectedTours, setSelectedTours] = useState(
+    location.state?.hotelTours || []
+  );
+  const [hotelDescription, setHotelDescription] = useState(
+    location.state?.hotelDescription || ""
+  );
+  const [isRestoringSearch, setIsRestoringSearch] = useState(false);
+
+  // Добавляем логи для отладки
+  console.log("🔍 Debug info:");
+  console.log("📍 location.state:", location.state);
+  console.log("🔗 searchParams:", searchParams.toString());
+  console.log(" tours from context:", tours);
+  console.log("🎯 selectedTours:", selectedTours);
+  console.log("🔄 isRestoringSearch:", isRestoringSearch);
+
+  useEffect(() => {
+    // Если нет данных в state, но есть параметры в URL - восстанавливаем поиск
+    if (selectedTours.length === 0 && searchParams.toString()) {
+      console.log("🚀 Starting search restoration...");
+      setIsRestoringSearch(true);
+
+      // Восстанавливаем параметры поиска из URL
+      const restoredParams = {
+        param1: searchParams.get("departure"),
+        param2: searchParams.get("country"),
+        param3: {
+          startDay: searchParams.get("nightsFrom")
+            ? parseInt(searchParams.get("nightsFrom")!)
+            : undefined,
+          endDay: searchParams.get("nightsTo")
+            ? parseInt(searchParams.get("nightsTo")!)
+            : undefined,
+        },
+        param4: {
+          startDate: searchParams.get("dateFrom") || undefined,
+          endDate: searchParams.get("dateTo") || undefined,
+        },
+        param5: {
+          adults: searchParams.get("adults")
+            ? parseInt(searchParams.get("adults")!)
+            : 2,
+          childrenList: searchParams.get("children")
+            ? searchParams.get("children")!.split(",").map(Number)
+            : [],
+        },
+        param6: searchParams.get("hotelTypes")
+          ? searchParams.get("hotelTypes")!.split(",")
+          : [],
+        param7: searchParams.get("meal") ? [searchParams.get("meal")!] : [],
+        param8: searchParams.get("rating") ? [searchParams.get("rating")!] : [],
+        param9: searchParams.get("stars")
+          ? parseInt(searchParams.get("stars")!)
+          : undefined,
+        param10: searchParams.get("services")
+          ? searchParams.get("services")!.split(",")
+          : [],
+      };
+
+      console.log("📋 Restored params:", restoredParams);
+
+      // Запускаем поиск с восстановленными параметрами
+      searchTours(restoredParams);
+    }
+  }, [searchParams, selectedTours.length, searchTours]);
+
+  // Если восстанавливаем поиск, используем результаты из контекста
+  useEffect(() => {
+    console.log(
+      "🔄 useEffect triggered - isRestoringSearch:",
+      isRestoringSearch,
+      "tours.length:",
+      tours.length
+    );
+
+    if (isRestoringSearch && tours.length > 0) {
+      // Фильтруем туры только для текущего отеля
+      const hotelCode = location.pathname.split("/")[2]; // Получаем hotelcode из URL
+      console.log("🏨 Hotel code from URL:", hotelCode);
+      console.log("📊 All tours before filtering:", tours);
+
+      const filteredTours = tours.filter(
+        (tour) => tour.hotelcode === parseInt(hotelCode) // Преобразуем в число для сравнения
+      );
+
+      console.log("🎯 Filtered tours:", filteredTours);
+
+      // Обновляем состояние через setState
+      setSelectedTours(filteredTours);
+      setIsRestoringSearch(false);
+
+      console.log("✅ State updated, isRestoringSearch set to false");
+    }
+  }, [tours, isRestoringSearch, location.pathname]);
+
   const { hotel, isLoading, error } = useHotelToursInfo();
   const [isOpen, setIsOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -117,7 +215,7 @@ export default function HotelToursInfo() {
     );
   };
 
-  if (isLoading) {
+  if (isLoading || isRestoringSearch) {
     return (
       <div className="max-w-[1440px] mx-auto p-6 bg-white">
         <div className="flex flex-col gap-3">
@@ -132,6 +230,18 @@ export default function HotelToursInfo() {
       <div className="max-w-[1440px] mx-auto p-6 bg-white">
         <div className="text-red-600 text-center">
           Не удалось загрузить информацию об отеле
+        </div>
+      </div>
+    );
+  }
+
+  // Проверяем, есть ли туры для отображения
+  if (!selectedTours || selectedTours.length === 0) {
+    return (
+      <div className="max-w-[1440px] mx-auto p-6 bg-white">
+        <div className="text-center text-gray-500">
+          <h2 className="text-xl font-semibold mb-2">Информация об отеле</h2>
+          <p>Туры для данного отеля не найдены или загружаются...</p>
         </div>
       </div>
     );
@@ -346,12 +456,15 @@ export default function HotelToursInfo() {
                   {hotel.country}, {hotel.region}
                 </p>
                 <div className="flex gap-3">
-                  <div className="flex items-center gap-1">
-                    <span className="text-sm text-[#2E2E32]">
-                      {getMealType(selectedTours[0].tours.tour[0].meal)}
-                    </span>
-                    <FaUtensils className="w-3.5 h-3.5 text-[#2E2E32]" />
-                  </div>
+                  {/* Добавляем проверку безопасности */}
+                  {selectedTours[0]?.tours?.tour?.[0]?.meal && (
+                    <div className="flex items-center gap-1">
+                      <span className="text-sm text-[#2E2E32]">
+                        {getMealType(selectedTours[0].tours.tour[0].meal)}
+                      </span>
+                      <FaUtensils className="w-3.5 h-3.5 text-[#2E2E32]" />
+                    </div>
+                  )}
                   {hotel.beach && (
                     <div className="flex items-center gap-1">
                       <span className="text-sm text-[#2E2E32]">

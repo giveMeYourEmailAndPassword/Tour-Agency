@@ -96,31 +96,30 @@ export default function OurTours() {
             <SearchResults />
           ) : (
             <div className="ml-2 flex-grow pb-4">
-              <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-2">
-                {[...Array(36)].map((_, index) => (
-                  <div
-                    key={index}
-                    className="w-full flex items-center gap-2.5 p-4 bg-white border border-[#DBE0E5] rounded-[10px]"
-                  >
-                    <div className="w-full flex flex-col gap-2">
-                      <Skeleton className="w-full h-36 rounded" />
+              <div className="ml-2 flex-grow pb-4">
+                <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-2">
+                  {[...Array(36)].map((_, index) => (
+                    <div
+                      key={index}
+                      className="w-full flex items-center gap-2.5 p-4 bg-white border border-[#DBE0E5] rounded-[10px]"
+                    >
                       <div className="w-full flex flex-col gap-2">
-                        <div className="w-full flex justify-between items-center gap-1">
-                          <div className="flex items-center gap-0.5">
+                        <Skeleton className="w-full h-36 rounded" />
+                        <div className="w-full flex flex-col gap-2">
+                          <div className="w-full flex justify-between items-center gap-1">
+                            <div className="flex items-center gap-0.5">
+                              <Skeleton className="w-24 h-4" />
+                            </div>
                             <Skeleton className="w-24 h-4" />
                           </div>
-                          <Skeleton className="w-24 h-4" />
+                          <Skeleton className="w-full h-7" />
+                          <Skeleton className="w-3/4 h-5" />
                         </div>
-                        <Skeleton className="w-full h-7" />
-                        <Skeleton className="w-3/4 h-5" />
-                      </div>
-                      <div className="w-full flex items-center gap-3 pb-1 border-b border-[#DBE0E5]">
-                        <Skeleton className="w-20 h-6" />
-                      </div>
-                      <div className="w-full flex justify-between items-center">
-                        <Skeleton className="w-20 h-3" />
-                        <div className="flex flex-col items-end gap-1">
-                          <Skeleton className="w-32 h-[11px]" />
+                        <div className="w-full flex items-center gap-3 pb-1 border-b border-[#DBE0E5]">
+                          <Skeleton className="w-20 h-6" />
+                        </div>
+                        <div className="w-full flex justify-between items-center">
+                          <Skeleton className="w-20 h-3" />
                           <div className="flex flex-col items-end gap-1">
                             <Skeleton className="w-32 h-[11px]" />
                             <Skeleton className="w-24 h-3" />
@@ -128,8 +127,8 @@ export default function OurTours() {
                         </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             </div>
           )}

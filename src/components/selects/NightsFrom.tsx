@@ -7,13 +7,33 @@ const MIN_NIGHTS = 3;
 const MAX_NIGHTS = 16;
 
 export default function NightsFrom() {
-  const { setData } = useContext(DataContext);
+  const { setData, params } = useContext(DataContext);
   const [selectedNights, setSelectedNights] = useState(7);
   const [isOpen, setIsOpen] = useState(false);
-  const [sliderValue, setSliderValue] = useState([5, 7]);
+
+  // Инициализируем слайдер с учетом параметров URL
+  const [sliderValue, setSliderValue] = useState(() => {
+    if (params.param3?.startDay && params.param3?.endDay) {
+      return [Number(params.param3.startDay), Number(params.param3.endDay)];
+    }
+    return [5, 7]; // значения по умолчанию
+  });
+
   const [isDragging, setIsDragging] = useState<null | "start" | "end">(null);
   const dropdownRef = useRef(null);
   const sliderRef = useRef(null);
+
+  // Добавляем эффект для отслеживания изменений из URL
+  useEffect(() => {
+    if (params.param3?.startDay && params.param3?.endDay) {
+      const start = Number(params.param3.startDay);
+      const end = Number(params.param3.endDay);
+      if (start !== sliderValue[0] || end !== sliderValue[1]) {
+        setSliderValue([start, end]);
+        setSelectedNights(end);
+      }
+    }
+  }, [params.param3]);
 
   useEffect(() => {
     setData("param3", { startDay: sliderValue[0], endDay: sliderValue[1] });
@@ -65,7 +85,7 @@ export default function NightsFrom() {
   }, [isDragging]);
 
   useEffect(() => {
-    const handleClickOutside = (event) => {
+    const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsOpen(false);
       }
@@ -75,7 +95,7 @@ export default function NightsFrom() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleNightSelect = (night) => {
+  const handleNightSelect = (night: number) => {
     setSelectedNights(night);
     // Находим ближайшую пару для выбранного количества ночей
     let start, end;

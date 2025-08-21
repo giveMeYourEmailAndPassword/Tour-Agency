@@ -4,22 +4,50 @@ import marker from "../../assets/marker.svg";
 import { destinations } from "../data/destinations";
 
 export default function NewFlyingCountry() {
-  const { setData } = useContext(DataContext);
-  const [selectedCountry, setSelectedCountry] = useState(4); // По умолчанию Турция
+  const { setData, params } = useContext(DataContext);
+  const [selectedCountry, setSelectedCountry] = useState(
+    Number(params.param2) || 4
+  ); // Используем значение из URL или Турцию по умолчанию
   const [selectedRegions, setSelectedRegions] = useState<number[]>(() => {
-    // Находим Турцию и получаем все её регионы
-    const turkey = destinations.find((country) => country.id === 4);
-    return turkey ? turkey.regions.map((region) => region.id) : [];
-  }); // По умолчанию все регионы Турции
+    // Находим выбранную страну и получаем все её регионы
+    const country = destinations.find(
+      (country) => country.id === (Number(params.param2) || 4)
+    );
+    return country ? country.regions.map((region) => region.id) : [];
+  });
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
 
+  // Добавляем эффект для отслеживания изменений params.param2
   useEffect(() => {
-    setData("param2", selectedCountry);
-  }, [selectedCountry, setData]);
+    if (params.param2) {
+      const countryExists = destinations.some(
+        (country) => country.id === Number(params.param2)
+      );
+      if (countryExists) {
+        const newCountryId = Number(params.param2);
+        if (newCountryId !== selectedCountry) {
+          // Проверяем, изменилась ли страна
+          setSelectedCountry(newCountryId);
+          // Обновляем регионы для новой страны
+          const country = destinations.find((c) => c.id === newCountryId);
+          if (country) {
+            setSelectedRegions(country.regions.map((region) => region.id));
+          }
+        }
+      }
+    }
+  }, [params.param2, selectedCountry]); // Добавляем selectedCountry в зависимости
+
+  // Добавляем эффект для обновления параметров при изменении регионов
+  useEffect(() => {
+    if (selectedCountry) {
+      setData("param2", selectedCountry);
+    }
+  }, [selectedCountry, selectedRegions, setData]);
 
   useEffect(() => {
-    const handleClickOutside = (event) => {
+    const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsOpen(false);
       }
@@ -29,9 +57,18 @@ export default function NewFlyingCountry() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleCountrySelect = (country) => {
+  const handleCountrySelect = (country: any) => {
     setSelectedCountry(country.id);
-    setSelectedRegions([]); // Сбрасываем выбранные регионы при смене страны
+    // Сначала обновляем регионы для новой страны
+    const newCountry = destinations.find((c) => c.id === country.id);
+    if (newCountry) {
+      const allRegions = newCountry.regions.map((region) => region.id);
+      setSelectedRegions(allRegions);
+    } else {
+      setSelectedRegions([]);
+    }
+    // Затем обновляем параметр в контексте
+    setData("param2", country.id);
   };
 
   const handleRegionToggle = (regionId: number) => {
@@ -63,12 +100,26 @@ export default function NewFlyingCountry() {
     (country) => country.id === selectedCountry
   );
 
-  const displayName =
-    selectedRegions.length > 0
-      ? selectedRegions.length === selectedCountryData?.regions.length
-        ? selectedCountryData.name
-        : `${selectedCountryData?.name} (${selectedRegions.length})`
-      : selectedCountryData?.name;
+  const displayName = (() => {
+    // Если нет выбранных регионов или выбраны все регионы страны
+    if (
+      selectedRegions.length === 0 ||
+      selectedRegions.length === selectedCountryData?.regions.length
+    ) {
+      return selectedCountryData?.name;
+    }
+
+    // Если выбран ровно один регион
+    if (selectedRegions.length === 1) {
+      const selectedRegion = selectedCountryData?.regions.find(
+        (region) => region.id === selectedRegions[0]
+      );
+      return `${selectedCountryData?.name}, ${selectedRegion?.name}`;
+    }
+
+    // Если выбрано больше одного региона, но не все
+    return `${selectedCountryData?.name} (${selectedRegions.length})`;
+  })();
 
   return (
     <div className="relative" ref={dropdownRef}>

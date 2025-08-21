@@ -5,9 +5,21 @@ import { departures } from "../data/destinations";
 
 export default function NewDepartureCity() {
   const { setData, params } = useContext(DataContext);
-  const [selectedCity, setSelectedCity] = useState("80"); // Всегда Бишкек по умолчанию
+  const [selectedCity, setSelectedCity] = useState(params.param1 || "80"); // Изменение здесь
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
+
+  // При монтировании проверяем наличие города в URL
+  useEffect(() => {
+    if (params.param1) {
+      const cityExists = departures.some(
+        (city) => String(city.id) === params.param1
+      );
+      if (cityExists) {
+        setSelectedCity(params.param1);
+      }
+    }
+  }, [params.param1]); // Добавляем зависимость
 
   useEffect(() => {
     setData("param1", selectedCity);

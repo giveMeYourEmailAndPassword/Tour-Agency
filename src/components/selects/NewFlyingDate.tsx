@@ -41,14 +41,49 @@ export default function NewFlyingDate() {
   const [calendarPrices, setCalendarPrices] =
     useState<CalendarPriceData | null>(null);
 
-  // Инициализируем состояние с дефолтными значениями
+  // Изменяем инициализацию dateRange с учетом параметров URL
   const [dateRange, setDateRange] = useState<{
     start: Date | null;
     end: Date | null;
-  }>({
-    start: addDays(new Date(), 1),
-    end: addWeeks(new Date(), 1),
+  }>(() => {
+    // Если есть параметры в URL, используем их
+    if (params.param4?.startDate && params.param4?.endDate) {
+      const [startDay, startMonth, startYear] =
+        params.param4.startDate.split(".");
+      const [endDay, endMonth, endYear] = params.param4.endDate.split(".");
+      return {
+        start: new Date(
+          Number(startYear),
+          Number(startMonth) - 1,
+          Number(startDay)
+        ),
+        end: new Date(Number(endYear), Number(endMonth) - 1, Number(endDay)),
+      };
+    }
+    // Иначе используем значения по умолчанию
+    return {
+      start: addDays(new Date(), 1),
+      end: addWeeks(new Date(), 1),
+    };
   });
+
+  // Добавляем эффект для обновления дат при изменении params
+  useEffect(() => {
+    if (params.param4?.startDate && params.param4?.endDate) {
+      const [startDay, startMonth, startYear] =
+        params.param4.startDate.split(".");
+      const [endDay, endMonth, endYear] = params.param4.endDate.split(".");
+
+      setDateRange({
+        start: new Date(
+          Number(startYear),
+          Number(startMonth) - 1,
+          Number(startDay)
+        ),
+        end: new Date(Number(endYear), Number(endMonth) - 1, Number(endDay)),
+      });
+    }
+  }, [params.param4]);
 
   // Функция для получения цен календаря
   const fetchCalendarPrices = async (months: string) => {

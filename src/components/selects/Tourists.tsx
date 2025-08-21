@@ -6,16 +6,46 @@ import Vector from "../../assets/Vector.svg";
 const AGES = Array.from({ length: 14 }, (_, i) => i + 1); // [1, 2, ..., 14]
 
 export default function Tourists() {
-  const { setData } = useContext(DataContext);
-  const [adults, setAdults] = useState(2);
-  const [childrenList, setChildrenList] = useState<number[]>([]);
+  const { setData, params } = useContext(DataContext);
+
+  // Инициализируем состояния с учетом параметров URL
+  const [adults, setAdults] = useState(() => {
+    if (params.param5?.adults) {
+      return Number(params.param5.adults);
+    }
+    return 2; // значение по умолчанию
+  });
+
+  const [childrenList, setChildrenList] = useState<number[]>(() => {
+    if (params.param5?.childrenList) {
+      return params.param5.childrenList;
+    }
+    return []; // значение по умолчанию
+  });
+
   const [isOpen, setIsOpen] = useState(false);
   const [isSelectingAge, setIsSelectingAge] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
+  // Эффект для отслеживания изменений из URL
+  useEffect(() => {
+    if (params.param5) {
+      const newAdults = Number(params.param5.adults);
+      const newChildrenList = params.param5.childrenList;
+
+      if (newAdults !== adults) {
+        setAdults(newAdults);
+      }
+      if (JSON.stringify(newChildrenList) !== JSON.stringify(childrenList)) {
+        setChildrenList(newChildrenList);
+      }
+    }
+  }, [params.param5]); // Убираем adults и childrenList из зависимостей
+
+  // Эффект для обновления параметров при изменении состояния
   useEffect(() => {
     setData("param5", { adults, childrenList });
-  }, [adults, childrenList, setData]);
+  }, [adults, childrenList, setData]); // Убираем params.param5 из зависимостей
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

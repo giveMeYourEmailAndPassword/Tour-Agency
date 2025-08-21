@@ -46,7 +46,6 @@ export default function StarsFilter() {
       } else {
         newStars = [Number(params.param9)];
       }
-
       if (JSON.stringify(newStars) !== JSON.stringify(selectedStars)) {
         setSelectedStars(newStars);
       }
@@ -66,7 +65,7 @@ export default function StarsFilter() {
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps фыв
   }, []);
 
   const handleStarsSelect = (stars: any) => {

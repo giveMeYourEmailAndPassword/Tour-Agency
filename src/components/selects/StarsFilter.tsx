@@ -54,7 +54,17 @@ export default function StarsFilter() {
   }, [params.param9]);
 
   useEffect(() => {
-    setData("param9", selectedStars);
+    // Изменяем логику: для "1-5 звезд" передаем только 1
+    if (
+      selectedStars.length === 5 &&
+      selectedStars.every((star, index) => star === index + 1)
+    ) {
+      // Если выбраны все звезды от 1 до 5, передаем только 1
+      setData("param9", 1);
+    } else {
+      // Для остальных случаев передаем массив как есть
+      setData("param9", selectedStars);
+    }
   }, [selectedStars, setData]);
 
   useEffect(() => {

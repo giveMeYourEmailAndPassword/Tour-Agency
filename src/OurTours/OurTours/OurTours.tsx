@@ -1,5 +1,5 @@
 import { useContext, useState, useEffect, useRef } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { DataContext } from "../../components/DataProvider";
 import { Skeleton } from "@heroui/react";
 import Header from "../../components/Header";
@@ -26,7 +26,22 @@ export default function OurTours() {
   } = useContext(DataContext);
 
   const location = useLocation();
+  const navigate = useNavigate();
   const isInitialMount = useRef(true);
+
+  // Обработка кнопки "назад" - перенаправление в главное меню
+  useEffect(() => {
+    const handlePopState = () => {
+      // Перенаправляем в главное меню при нажатии "назад"
+      navigate("/", { replace: true });
+    };
+
+    window.addEventListener("popstate", handlePopState);
+
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, [navigate]);
 
   // Эффект для установки параметров и запуска поиска при изменении URL
   useEffect(() => {

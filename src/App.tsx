@@ -69,7 +69,9 @@ export default function App() {
   return (
     <div className="min-h-screen flex flex-col md:bg-white bg-gray-100">
       <Header />
-      <HeaderFilters onSearch={() => setShowResults(true)} />
+      <div className="hidden md:block">
+        <HeaderFilters onSearch={() => setShowResults(true)} />
+      </div>
 
       {/* Секция с белым фоном */}
       <div className="w-full mt-1 md:mt-0 md:bg-white bg-gray-100">

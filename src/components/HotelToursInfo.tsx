@@ -311,8 +311,10 @@ export default function HotelToursInfo() {
               <img
                 src={`https:${hotel.images.image[mainImageIndex]}`}
                 alt={hotel.name}
-                className="w-full h-full object-cover transition-transform duration-500 select-none pointer-events-none"
+                className="w-full h-full object-cover transition-transform duration-500 select-none"
                 onClick={() => handleImageClick(mainImageIndex)}
+                draggable={false}
+                onDragStart={(e) => e.preventDefault()}
               />
               {/* Кнопки навигации */}
               <button
@@ -362,11 +364,13 @@ export default function HotelToursInfo() {
                   <img
                     src={`https:${image}`}
                     alt={`${hotel.name} ${index + 1}`}
-                    className={`w-full h-full object-cover rounded-xl transition-opacity duration-300 select-none pointer-events-none ${
+                    className={`w-full h-full object-cover rounded-xl transition-opacity duration-300 select-none ${
                       mainImageIndex === index + 1
                         ? "opacity-70"
                         : "opacity-100"
                     }`}
+                    draggable={false}
+                    onDragStart={(e) => e.preventDefault()}
                   />
                 </div>
               ))}

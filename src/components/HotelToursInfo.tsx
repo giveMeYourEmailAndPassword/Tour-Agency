@@ -16,6 +16,7 @@ import "yet-another-react-lightbox/styles.css";
 import "yet-another-react-lightbox/plugins/thumbnails.css";
 import { IoChevronBackOutline, IoChevronForwardOutline } from "react-icons/io5";
 import { DataContext } from "./DataProvider";
+import { FaHeart, FaRegHeart } from "react-icons/fa";
 
 interface Tour {
   tours: {
@@ -25,6 +26,10 @@ interface Tour {
       flydate: string;
       room: string;
       adults: number;
+      tourid: string; // Добавляем tourid
+      price?: string; // Добавляем опциональную цену для варианта
+      currency?: string; // Добавляем опциональную валюту для варианта
+      operatorname?: string; // Добавляем название оператора
     }>;
   };
   price: string;
@@ -34,7 +39,13 @@ interface Tour {
 export default function HotelToursInfo() {
   const location = useLocation();
   const [searchParams] = useSearchParams();
-  const { searchTours, tours } = useContext(DataContext);
+  const {
+    searchTours,
+    tours,
+    addToFavorite,
+    removeFromFavorite,
+    favoriteTours,
+  } = useContext(DataContext);
 
   // Используем useState вместо let для правильного отслеживания изменений
   const [selectedTours, setSelectedTours] = useState(
@@ -44,6 +55,7 @@ export default function HotelToursInfo() {
     location.state?.hotelDescription || ""
   );
   const [isRestoringSearch, setIsRestoringSearch] = useState(false);
+  const [showAllVariants, setShowAllVariants] = useState(false);
 
   useEffect(() => {
     // Если нет данных в state, но есть параметры в URL - восстанавливаем поиск
@@ -205,6 +217,42 @@ export default function HotelToursInfo() {
     setMainImageIndex((prev) =>
       prev === hotel.images.image.length - 1 ? 0 : prev + 1
     );
+  };
+
+  // Функция для проверки, находится ли тур в избранном
+  const isTourFavorite = (
+    tour: Tour,
+    tourIndex: number,
+    variantIndex: number
+  ) => {
+    const tourVariant = tour.tours.tour[variantIndex];
+    const tourId = tourVariant.tourid; // Используем tourid из данных
+    const hotelCode = location.pathname.split("/")[2];
+    return favoriteTours.some(
+      (favTour) => favTour.hotelcode === hotelCode && favTour.tourId === tourId
+    );
+  };
+
+  // Функция для добавления/удаления из избранного
+  const handleFavoriteClick = (
+    tour: Tour,
+    tourIndex: number,
+    variantIndex: number
+  ) => {
+    const tourVariant = tour.tours.tour[variantIndex];
+    const tourId = tourVariant.tourid; // Используем tourid из данных
+    const hotelCode = location.pathname.split("/")[2];
+
+    const tourData = {
+      hotelcode: hotelCode,
+      tourId: tourId,
+    };
+
+    if (isTourFavorite(tour, tourIndex, variantIndex)) {
+      removeFromFavorite(hotelCode, tourId);
+    } else {
+      addToFavorite(tourData);
+    }
   };
 
   if (isLoading || isRestoringSearch) {
@@ -537,60 +585,156 @@ export default function HotelToursInfo() {
                 Варианты туров
               </h3>
               <div className="space-y-4">
-                {selectedTours.map((tour: Tour, tourIndex: number) =>
-                  tour.tours.tour.map((tourVariant, variantIndex: number) => (
-                    <div
-                      key={`${tourIndex}-${variantIndex}`}
-                      className="space-y-2"
-                    >
-                      <h4 className="text-base font-semibold text-[#2E2E32]">
-                        Вариант {variantIndex + 1}
-                      </h4>
-                      <div className="flex justify-between items-start">
-                        <div className="w-[330px] space-y-2">
-                          <p className="text-xs font-medium text-[#2E2E32]">
-                            {getMealType(tourVariant.meal)},{" "}
-                            {tourVariant.nights} ночей
-                          </p>
-                          <p className="text-xs font-semibold text-[#2E2E32]">
-                            {`Номер ${tourVariant.room}, ${tourVariant.adults} взрослых`}
-                          </p>
+                {(() => {
+                  // Подсчитываем общее количество вариантов
+                  const totalVariants = selectedTours.reduce(
+                    (total, tour) => total + tour.tours.tour.length,
+                    0
+                  );
+
+                  // Определяем, какие варианты показывать
+                  const variantsToShow = showAllVariants
+                    ? selectedTours
+                    : selectedTours.map((tour) => ({
+                        ...tour,
+                        tours: {
+                          ...tour.tours,
+                          tour: tour.tours.tour.slice(0, 7),
+                        },
+                      }));
+
+                  // Подсчитываем количество показанных вариантов
+                  const shownVariants = variantsToShow.reduce(
+                    (total, tour) => total + tour.tours.tour.length,
+                    0
+                  );
+
+                  return (
+                    <>
+                      {variantsToShow.map((tour: Tour, tourIndex: number) =>
+                        tour.tours.tour.map(
+                          (tourVariant, variantIndex: number) => (
+                            <div
+                              key={`${tourIndex}-${variantIndex}`}
+                              className="space-y-2"
+                            >
+                              <h4 className="text-base font-semibold text-[#2E2E32]">
+                                Вариант {variantIndex + 1}
+                              </h4>
+                              <div className="flex justify-between items-start">
+                                <div className="w-[330px] space-y-2">
+                                  <p className="text-xs font-medium text-[#2E2E32]">
+                                    {getMealType(tourVariant.meal)},{" "}
+                                    {tourVariant.nights} ночей
+                                  </p>
+                                  <p className="text-xs font-semibold text-[#2E2E32]">
+                                    {`Номер ${tourVariant.room}, ${tourVariant.adults} взрослых`}
+                                  </p>
+                                </div>
+                                <div className="w-[330px] space-y-2">
+                                  <div className="flex items-center gap-1">
+                                    <p className="text-xs font-semibold text-[#6B7280]">
+                                      {formatDate(tourVariant.flydate)} –{" "}
+                                      {getEndDate(
+                                        tourVariant.flydate,
+                                        tourVariant.nights
+                                      )}
+                                    </p>
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    <IoAirplane className="w-3.5 h-3.5 text-[#2E2E32]" />
+                                    <span className="text-xs font-medium text-[#2E2E32]">
+                                      {tourVariant.operatorname ||
+                                        "Pegasus Airlines"}
+                                    </span>
+                                    <span className="text-xs text-[#B3B9C0]">
+                                      {tourVariant.operatorname
+                                        ? tourVariant.operatorname.split(" ")[0]
+                                        : "Kompas (KZ)"}
+                                    </span>
+                                  </div>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  {/* Кнопка избранного */}
+                                  <button
+                                    onClick={() =>
+                                      handleFavoriteClick(
+                                        tour,
+                                        tourIndex,
+                                        variantIndex
+                                      )
+                                    }
+                                    className={`p-1.5 rounded-lg border-2 transition-colors ${
+                                      isTourFavorite(
+                                        tour,
+                                        tourIndex,
+                                        variantIndex
+                                      )
+                                        ? "border-[#FF621F] text-[#FF621F] hover:bg-orange-50"
+                                        : "border-gray-300 text-gray-400 hover:border-[#FF621F] hover:text-[#FF621F]"
+                                    }`}
+                                    title={
+                                      isTourFavorite(
+                                        tour,
+                                        tourIndex,
+                                        variantIndex
+                                      )
+                                        ? "Убрать из избранного"
+                                        : "Добавить в избранное"
+                                    }
+                                  >
+                                    {isTourFavorite(
+                                      tour,
+                                      tourIndex,
+                                      variantIndex
+                                    ) ? (
+                                      <FaHeart size={16} />
+                                    ) : (
+                                      <FaRegHeart size={16} />
+                                    )}
+                                  </button>
+                                  {/* Кнопка цены */}
+                                  <button className="bg-[#FF621F] text-white px-2 py-1 rounded-lg flex items-center gap-2">
+                                    <span className="text-base font-semibold">
+                                      {tourVariant.price || tour.price}
+                                      {tourVariant.currency === "EUR"
+                                        ? "€"
+                                        : tourVariant.currency === "USD"
+                                        ? "$"
+                                        : tourVariant.currency ||
+                                          tour.currency === "EUR"
+                                        ? "€"
+                                        : tour.currency === "USD"
+                                        ? "$"
+                                        : tour.currency}
+                                    </span>
+                                    <IoAirplane className="w-6 h-6" />
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          )
+                        )
+                      )}
+
+                      {/* Кнопка "Показать все варианты" или "Скрыть" */}
+                      {totalVariants > 7 && (
+                        <div className="flex justify-center pt-4">
+                          <button
+                            onClick={() => setShowAllVariants(!showAllVariants)}
+                            className="px-6 py-2 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-lg transition-colors font-medium"
+                          >
+                            {showAllVariants
+                              ? `Скрыть варианты (показано ${totalVariants})`
+                              : `Показать еще ${
+                                  totalVariants - shownVariants
+                                } вариантов (показано ${shownVariants} из ${totalVariants})`}
+                          </button>
                         </div>
-                        <div className="w-[330px] space-y-2">
-                          <div className="flex items-center gap-1">
-                            <p className="text-xs font-semibold text-[#6B7280]">
-                              {formatDate(tourVariant.flydate)} –{" "}
-                              {getEndDate(
-                                tourVariant.flydate,
-                                tourVariant.nights
-                              )}
-                            </p>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <IoAirplane className="w-3.5 h-3.5 text-[#2E2E32]" />
-                            <span className="text-xs font-medium text-[#2E2E32]">
-                              Pegasus Airlines
-                            </span>
-                            <span className="text-xs text-[#B3B9C0]">
-                              Kompas (KZ)
-                            </span>
-                          </div>
-                        </div>
-                        <button className="bg-[#FF621F] text-white px-2 py-1 rounded-lg flex items-center gap-2">
-                          <span className="text-base font-semibold">
-                            {tour.price}
-                            {tour.currency === "EUR"
-                              ? "€"
-                              : tour.currency === "USD"
-                              ? "$"
-                              : tour.currency}
-                          </span>
-                          <IoAirplane className="w-6 h-6" />
-                        </button>
-                      </div>
-                    </div>
-                  ))
-                )}
+                      )}
+                    </>
+                  );
+                })()}
               </div>
             </div>
           </div>

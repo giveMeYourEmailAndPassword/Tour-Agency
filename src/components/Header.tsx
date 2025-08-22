@@ -15,7 +15,7 @@ export default function Header() {
   const [isFavoriteModalOpen, setIsFavoriteModalOpen] = useState(false);
 
   return (
-    <div className="w-full bg-white pt-4">
+    <div className="w-full bg-gray-100 md:bg-white pt-4 px-3 md:px-0">
       <div className="max-w-[1560px] mx-auto">
         <div className="flex items-center justify-between">
           <div className="flex items-center">Втепло</div>

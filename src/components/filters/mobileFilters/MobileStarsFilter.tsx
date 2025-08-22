@@ -28,9 +28,17 @@ export default function MobileStarsFilter() {
   // Добавляем эффект для отслеживания изменений из URL
   useEffect(() => {
     if (params.param9) {
-      const newStars = Array.isArray(params.param9)
-        ? params.param9
-        : [params.param9];
+      let newStars: number[];
+
+      // Если param9 равен 1, это означает "1-5 звезд"
+      if (params.param9 === 1 || params.param9 === "1") {
+        newStars = [1, 2, 3, 4, 5];
+      } else if (Array.isArray(params.param9)) {
+        newStars = params.param9;
+      } else {
+        newStars = [Number(params.param9)];
+      }
+
       if (JSON.stringify(newStars) !== JSON.stringify(selectedStars)) {
         setSelectedStars(newStars);
       }
@@ -39,7 +47,15 @@ export default function MobileStarsFilter() {
 
   const handleStarSelect = (stars: number[]) => {
     setSelectedStars(stars);
-    setData("param9", stars);
+    // Изменяем логику: для "1-5 звезд" передаем только 1
+    if (
+      stars.length === 5 &&
+      stars.every((star, index) => star === index + 1)
+    ) {
+      setData("param9", 1);
+    } else {
+      setData("param9", stars);
+    }
   };
 
   const getDisplayText = () => {

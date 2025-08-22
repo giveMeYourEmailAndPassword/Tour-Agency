@@ -13,7 +13,7 @@ export default function MobileOtherFilters() {
 
   const activeFilters = useMemo(
     () => ({
-      stars: params.param9 && params.param9 !== 1 ? 1 : 0,
+      // Убираем stars из подсчета
       hotelType:
         params.param6 &&
         params.param6.length > 0 &&

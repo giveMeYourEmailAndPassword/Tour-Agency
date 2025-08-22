@@ -9,6 +9,7 @@ import {
   getCityDeclension,
   getCountryDeclension,
 } from "../PronounsOfTheCountry/PronounsOfTheCountry";
+import Header from "../../components/Header";
 
 export default function OurTours() {
   const {
@@ -150,6 +151,9 @@ export default function OurTours() {
   ) {
     return (
       <div className="w-full min-h-screen">
+        <div className="hidden md:block">
+          <Header />
+        </div>
         <HeaderFilters />
         <div className="max-w-[1560px] mx-auto mt-4">
           <div className="flex items-start">
@@ -167,6 +171,9 @@ export default function OurTours() {
 
   return (
     <div className="w-full min-h-screen">
+      <div className="hidden md:block">
+        <Header />
+      </div>
       <HeaderFilters />
       <div className="max-w-[1560px] mx-auto mt-4">
         <div className="flex items-start">

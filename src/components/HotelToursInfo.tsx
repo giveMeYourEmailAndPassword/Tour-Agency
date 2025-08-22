@@ -255,6 +255,19 @@ export default function HotelToursInfo() {
     }
   };
 
+  // Функция для определения города вылета
+  const getDepartureCity = () => {
+    const departure = searchParams.get("departure");
+    switch (departure) {
+      case "80":
+        return "Бишкека";
+      case "60":
+        return "Алматы";
+      default:
+        return "Бишкека"; // значение по умолчанию
+    }
+  };
+
   if (isLoading || isRestoringSearch) {
     return (
       <div className="max-w-[1440px] mx-auto p-6 bg-white">
@@ -551,7 +564,7 @@ export default function HotelToursInfo() {
               </div>
               <div className="flex items-center gap-2 text-base text-[#6B7280]">
                 <span className="text-[#FF621F] text-base">
-                  вылет из Бишкека
+                  вылет из {getDepartureCity()}
                 </span>
                 <img
                   src={planeDeparture}

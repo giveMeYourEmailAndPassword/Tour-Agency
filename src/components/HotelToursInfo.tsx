@@ -299,7 +299,7 @@ export default function HotelToursInfo() {
             <div className="mt-6">
               <Skeleton className="w-32 h-6 mb-4" />
               <div className="space-y-4">
-                {Array.from({ length: 8 }).map((_, index) => (
+                {Array.from({ length: 7 }).map((_, index) => (
                   <div key={index} className="space-y-2">
                     <Skeleton className="w-24 h-4" />
                     <div className="flex justify-between items-start">
@@ -311,10 +311,20 @@ export default function HotelToursInfo() {
                         <Skeleton className="w-36 h-3" />
                         <Skeleton className="w-32 h-3" />
                       </div>
-                      <Skeleton className="w-24 h-8 rounded-lg" />
+                      <div className="flex items-center gap-2">
+                        {/* Скелетон кнопки избранного */}
+                        <Skeleton className="w-8 h-8 rounded-lg" />
+                        {/* Скелетон кнопки цены */}
+                        <Skeleton className="w-24 h-8 rounded-lg" />
+                      </div>
                     </div>
                   </div>
                 ))}
+
+                {/* Скелетон кнопки "Показать еще" если вариантов много */}
+                <div className="flex justify-center pt-4">
+                  <Skeleton className="w-48 h-10 rounded-lg" />
+                </div>
               </div>
             </div>
           </div>

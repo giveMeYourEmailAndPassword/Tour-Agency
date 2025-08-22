@@ -45,14 +45,6 @@ export default function HotelToursInfo() {
   );
   const [isRestoringSearch, setIsRestoringSearch] = useState(false);
 
-  // Добавляем логи для отладки
-  console.log("🔍 Debug info:");
-  console.log("📍 location.state:", location.state);
-  console.log("🔗 searchParams:", searchParams.toString());
-  console.log(" tours from context:", tours);
-  console.log("🎯 selectedTours:", selectedTours);
-  console.log("🔄 isRestoringSearch:", isRestoringSearch);
-
   useEffect(() => {
     // Если нет данных в state, но есть параметры в URL - восстанавливаем поиск
     if (selectedTours.length === 0 && searchParams.toString()) {
@@ -218,8 +210,66 @@ export default function HotelToursInfo() {
   if (isLoading || isRestoringSearch) {
     return (
       <div className="max-w-[1440px] mx-auto p-6 bg-white">
-        <div className="flex flex-col gap-3">
-          <Skeleton className="w-full h-[600px]" />
+        <div className="flex justify-between gap-4">
+          {/* Левая колонка с галереей */}
+          <div className="flex flex-col gap-1 flex-[0.9]">
+            {/* Основное фото */}
+            <Skeleton className="w-full h-[400px] rounded-xl" />
+            {/* Дополнительные фото */}
+            <div className="grid grid-cols-4 gap-1 h-[100px]">
+              {Array.from({ length: 4 }).map((_, index) => (
+                <Skeleton key={index} className="w-full h-full rounded-xl" />
+              ))}
+            </div>
+            {/* Информация об отеле */}
+            <div className="mt-4 space-y-3">
+              <Skeleton className="w-full h-4" />
+              <Skeleton className="w-3/4 h-4" />
+              <Skeleton className="w-full h-4" />
+              <Skeleton className="w-2/3 h-4" />
+              <Skeleton className="w-full h-4" />
+              <Skeleton className="w-4/5 h-4" />
+            </div>
+          </div>
+
+          {/* Правая колонка с информацией */}
+          <div className="w-full flex-1">
+            {/* Заголовок и рейтинг */}
+            <div className="flex justify-between items-center mb-4">
+              <div className="flex items-center gap-2">
+                <Skeleton className="w-20 h-4" />
+                <Skeleton className="w-12 h-4 rounded-full" />
+              </div>
+              <Skeleton className="w-32 h-4" />
+            </div>
+
+            {/* Название отеля */}
+            <Skeleton className="w-3/4 h-6 mb-2" />
+            <Skeleton className="w-1/2 h-4 mb-4" />
+
+            {/* Варианты туров */}
+            <div className="mt-6">
+              <Skeleton className="w-32 h-6 mb-4" />
+              <div className="space-y-4">
+                {Array.from({ length: 8 }).map((_, index) => (
+                  <div key={index} className="space-y-2">
+                    <Skeleton className="w-24 h-4" />
+                    <div className="flex justify-between items-start">
+                      <div className="w-[330px] space-y-2">
+                        <Skeleton className="w-48 h-3" />
+                        <Skeleton className="w-40 h-3" />
+                      </div>
+                      <div className="w-[330px] space-y-2">
+                        <Skeleton className="w-36 h-3" />
+                        <Skeleton className="w-32 h-3" />
+                      </div>
+                      <Skeleton className="w-24 h-8 rounded-lg" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -261,7 +311,7 @@ export default function HotelToursInfo() {
               <img
                 src={`https:${hotel.images.image[mainImageIndex]}`}
                 alt={hotel.name}
-                className="w-full h-full object-cover transition-transform duration-500"
+                className="w-full h-full object-cover transition-transform duration-500 select-none pointer-events-none"
                 onClick={() => handleImageClick(mainImageIndex)}
               />
               {/* Кнопки навигации */}
@@ -271,7 +321,7 @@ export default function HotelToursInfo() {
                   handleUserInteraction();
                   goToPrevious();
                 }}
-                className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black/50 p-1.5 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black/50 p-1.5 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"
               >
                 <IoChevronBackOutline size={21} />
               </button>
@@ -281,12 +331,12 @@ export default function HotelToursInfo() {
                   handleUserInteraction();
                   goToNext();
                 }}
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black/50 p-1.5 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black/50 p-1.5 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"
               >
                 <IoChevronForwardOutline size={21} />
               </button>
               {/* Индикатор слайдов */}
-              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
+              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2 z-10">
                 {hotel.images.image.map((_, index) => (
                   <div
                     key={index}
@@ -312,7 +362,7 @@ export default function HotelToursInfo() {
                   <img
                     src={`https:${image}`}
                     alt={`${hotel.name} ${index + 1}`}
-                    className={`w-full h-full object-cover rounded-xl transition-opacity duration-300 ${
+                    className={`w-full h-full object-cover rounded-xl transition-opacity duration-300 select-none pointer-events-none ${
                       mainImageIndex === index + 1
                         ? "opacity-70"
                         : "opacity-100"

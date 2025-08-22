@@ -2,7 +2,7 @@ import { useContext, useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { DataContext } from "../../components/DataProvider";
 import { Skeleton } from "@heroui/react";
-import Header from "../../components/Header";
+import HeaderFilters from "../../components/HeaderFilters";
 import Filters from "../../components/Filters";
 import SearchResults from "../../components/SearchResults";
 import {
@@ -150,7 +150,7 @@ export default function OurTours() {
   ) {
     return (
       <div className="w-full min-h-screen">
-        <Header />
+        <HeaderFilters />
         <div className="max-w-[1560px] mx-auto mt-4">
           <div className="flex items-start">
             <Filters />
@@ -167,7 +167,7 @@ export default function OurTours() {
 
   return (
     <div className="w-full min-h-screen">
-      <Header />
+      <HeaderFilters />
       <div className="max-w-[1560px] mx-auto mt-4">
         <div className="flex items-start">
           <Filters />

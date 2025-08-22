@@ -1,12 +1,5 @@
-import NewDepartureCity from "./selects/NewDepartureCity";
-import NewFlyingCountry from "./selects/NewFlyingCountry";
-import NightsFrom from "./selects/NightsFrom";
-import StarsFilter from "./selects/StarsFilter";
-import Tourists from "./selects/Tourists";
-import FindTourBtn from "./selects/FindTour";
-import NewFlyingDate from "./selects/NewFlyingDate";
-import { FaHeart, FaRegHeart } from "react-icons/fa";
 import { useState, useContext } from "react";
+import { FaHeart, FaRegHeart } from "react-icons/fa";
 import {
   Modal,
   ModalContent,
@@ -17,30 +10,15 @@ import {
 import FavoriteModal from "./Favorite/FavoriteModal";
 import { DataContext } from "./DataProvider";
 
-interface HeaderProps {
-  onSearch: () => void;
-}
-
-export default function Header({ onSearch }: HeaderProps) {
+export default function Header() {
   const { favoriteTours, isFavorite } = useContext(DataContext);
   const [isFavoriteModalOpen, setIsFavoriteModalOpen] = useState(false);
 
   return (
-    <div className="w-full bg-white">
-      <div className="max-w-[1332px] mx-auto">
-        {/* Мобильная версия */}
-        <div className="md:hidden px-4 py-3">
-          <h1 className="text-2xl font-semibold">Кругосвет</h1>
-        </div>
-
-        {/* Десктопная версия */}
-        <div className="hidden md:flex items-center justify-between gap-2 px-6 py-4 w-full">
-          <NewDepartureCity />
-          <NewFlyingCountry />
-          <NewFlyingDate />
-          <NightsFrom />
-          <StarsFilter />
-          <Tourists />
+    <div className="w-full bg-white pt-4">
+      <div className="max-w-[1560px] mx-auto">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center">Втепло</div>
 
           {/* Кнопка избранного */}
           <div className="flex items-center">
@@ -61,42 +39,40 @@ export default function Header({ onSearch }: HeaderProps) {
               )}
             </button>
           </div>
-
-          <FindTourBtn onSearch={onSearch} />
         </div>
-      </div>
 
-      {/* Модальное окно избранного */}
-      <Modal
-        isOpen={isFavoriteModalOpen}
-        onOpenChange={() => setIsFavoriteModalOpen(false)}
-        shouldBlockScroll={false}
-        backdrop="opaque"
-        classNames={{
-          closeButton: "text-xl",
-        }}
-      >
-        <ModalContent className="max-w-5xl max-h-[66vh] py-2 pr-2">
-          <>
-            <ModalHeader className="flex gap-1 py-2">
-              <div className="flex items-baseline gap-2">
-                <span className="text-2xl font-medium">Избранные туры</span>
-                {favoriteTours.length > 0 && (
-                  <div className="flex items-center gap-1 bg-[#FF621F] py-0.5 px-4 rounded-full whitespace-nowrap">
-                    <span className="font-semibold text-base text-white">
-                      {favoriteTours.length}
-                    </span>
-                  </div>
-                )}
-              </div>
-            </ModalHeader>
-            <ModalBody className="h-[60vh] overflow-y-auto scrollbar-custom">
-              <FavoriteModal tours={favoriteTours} />
-            </ModalBody>
-            <ModalFooter />
-          </>
-        </ModalContent>
-      </Modal>
+        {/* Модальное окно избранного */}
+        <Modal
+          isOpen={isFavoriteModalOpen}
+          onOpenChange={() => setIsFavoriteModalOpen(false)}
+          shouldBlockScroll={false}
+          backdrop="opaque"
+          classNames={{
+            closeButton: "text-xl",
+          }}
+        >
+          <ModalContent className="max-w-5xl max-h-[66vh] py-2 pr-2">
+            <>
+              <ModalHeader className="flex gap-1 py-2">
+                <div className="flex items-baseline gap-2">
+                  <span className="text-2xl font-medium">Избранные туры</span>
+                  {favoriteTours.length > 0 && (
+                    <div className="flex items-center gap-1 bg-[#FF621F] py-0.5 px-4 rounded-full whitespace-nowrap">
+                      <span className="font-semibold text-base text-white">
+                        {favoriteTours.length}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </ModalHeader>
+              <ModalBody className="h-[60vh] overflow-y-auto scrollbar-custom">
+                <FavoriteModal tours={favoriteTours} />
+              </ModalBody>
+              <ModalFooter />
+            </>
+          </ModalContent>
+        </Modal>
+      </div>
     </div>
   );
 }

@@ -9,7 +9,7 @@ import { parse, format, addDays } from "date-fns";
 import { ru } from "date-fns/locale";
 import { ProgressBar } from "../../components/Loading/ProgressBar";
 import FiltersMobile from "../../components/FiltersMobile";
-import Header from "../../components/Header";
+import Header from "../../components/HeaderFilters";
 
 // Добавляем вспомогательные функции из SearchResults
 const truncateHotelName = (name: string) => {

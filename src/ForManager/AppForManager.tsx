@@ -1,4 +1,4 @@
-import Header from "../components/Header";
+import Header from "../components/HeaderFilters";
 import { TbPointFilled } from "react-icons/tb";
 import HotTours from "../components/HotTours";
 import { useState, useRef } from "react";

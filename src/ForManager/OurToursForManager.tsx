@@ -11,7 +11,7 @@ import { HotelMapContent } from "../components/HotelMapContent";
 import { HotelMapButton } from "../components/HotelMapButton";
 import { HotelToursButton } from "../components/HotelToursButton";
 import { HotelToursContent } from "../components/HotelToursContent";
-import Header from "../components/Header";
+import Header from "../components/HeaderFilters";
 import OurToursFilters from "../OurTours/FiltersForOurTours/OurToursFilter";
 import FloatingControls from "../components/FloatingControls";
 

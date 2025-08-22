@@ -1,5 +1,5 @@
 import { Skeleton } from "@heroui/react";
-import Header from "../components/Header";
+import Header from "../components/HeaderFilters";
 import FloatingControls from "../components/FloatingControls";
 import BookingPanel from "../components/BookingPanel";
 

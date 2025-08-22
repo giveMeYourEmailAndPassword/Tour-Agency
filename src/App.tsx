@@ -1,12 +1,13 @@
 import { useState, useEffect, useContext } from "react";
 import { useLocation, useNavigationType } from "react-router-dom";
-import Header from "./components/Header";
+import HeaderFilters from "./components/HeaderFilters";
 import Filters from "./components/Filters";
 import FiltersMobile from "./components/FiltersMobile";
 import SearchResults from "./components/SearchResults";
 import { DataContext } from "./components/DataProvider";
 import { Skeleton } from "@heroui/react";
 import { useSearchParams } from "./Hooks/useSearchParams";
+import Header from "./components/Header";
 
 export default function App() {
   const [showResults, setShowResults] = useState(false);
@@ -67,7 +68,8 @@ export default function App() {
 
   return (
     <div className="min-h-screen flex flex-col md:bg-white bg-gray-100">
-      <Header onSearch={() => setShowResults(true)} />
+      <Header />
+      <HeaderFilters onSearch={() => setShowResults(true)} />
 
       {/* Секция с белым фоном */}
       <div className="w-full mt-1 md:mt-0 md:bg-white bg-gray-100">

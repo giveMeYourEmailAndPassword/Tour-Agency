@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import Header from "./Header";
+import Header from "./HeaderFilters";
 
 const API_BASE_URL =
   import.meta.env.VITE_API_URL || "http://localhost:8000/api";

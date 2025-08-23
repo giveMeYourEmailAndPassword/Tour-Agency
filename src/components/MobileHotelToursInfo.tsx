@@ -153,12 +153,12 @@ export default function MobileHotelToursInfo() {
 
   const formatDate = (dateString: string) => {
     const date = parse(dateString, "dd.MM.yyyy", new Date());
-    return format(date, "d MMMM", { locale: ru });
+    return format(date, "d MMM", { locale: ru });
   };
 
   const getEndDate = (startDate: string, nights: number) => {
     const date = parse(startDate, "dd.MM.yyyy", new Date());
-    return format(addDays(date, nights), "d MMMM", { locale: ru });
+    return format(addDays(date, nights), "d MMM", { locale: ru });
   };
 
   const getMealType = (meal: string) => {
@@ -391,7 +391,7 @@ export default function MobileHotelToursInfo() {
                           ? "filled star"
                           : "outline star"
                       }
-                      className="w-3.5 h-3.5"
+                      className="w-4 h-4"
                     />
                   ))}
                 </div>
@@ -403,7 +403,7 @@ export default function MobileHotelToursInfo() {
                   </div>
                 )}
               </div>
-              <div className="flex items-center gap-1 text-xs text-[#FF621F]">
+              <div className="flex items-center gap-1 text-sm text-[#FF621F]">
                 <span>вылет из {getDepartureCity()}</span>
                 <img
                   src={planeDeparture}
@@ -414,15 +414,15 @@ export default function MobileHotelToursInfo() {
             </div>
 
             {/* Название отеля */}
-            <h1 className="text-base font-bold text-[#2E2E32]">{hotel.name}</h1>
+            <h1 className="text-lg font-bold text-[#2E2E32]">{hotel.name}</h1>
 
             {/* Местоположение */}
-            <p className="text-xs text-[#6B7280]">
+            <p className="text-sm text-[#6B7280]">
               {hotel.country}, {hotel.region}
             </p>
 
             {/* Теги */}
-            <div className="flex gap-3 pt-1">
+            <div className="flex gap-3 pt-1.5">
               {firstTour?.meal && (
                 <div className="flex items-center gap-1 bg-white border border-gray-200 px-2 py-1 rounded-lg">
                   <FaUtensils className="w-3 h-3 text-[#2E2E32]" />
@@ -447,7 +447,7 @@ export default function MobileHotelToursInfo() {
             <div className="bg-white rounded-t-xl px-1 pt-2 flex gap-2">
               <button
                 onClick={() => setActiveTab("about")}
-                className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-medium transition-colors ${
+                className={`flex-1 py-1.5 px-3 rounded-lg text-sm font-medium transition-colors ${
                   activeTab === "about"
                     ? "bg-[#FF621F] text-white"
                     : "text-[#7E8389]"
@@ -457,7 +457,7 @@ export default function MobileHotelToursInfo() {
               </button>
               <button
                 onClick={() => setActiveTab("amenities")}
-                className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-medium transition-colors ${
+                className={`flex-1 py-1.5 px-3 rounded-lg text-sm font-medium transition-colors ${
                   activeTab === "amenities"
                     ? "bg-[#FF621F] text-white"
                     : "text-[#7E8389]"
@@ -471,10 +471,10 @@ export default function MobileHotelToursInfo() {
             {activeTab === "about" && (
               <div className="pb-4">
                 <div className="bg-white rounded-b-xl px-3 pt-2 pb-4 space-y-1">
-                  <h3 className="text-base font-semibold text-[#2E2E32]">
+                  <h3 className="text-lg font-semibold text-[#2E2E32]">
                     Об отеле:
                   </h3>
-                  <p className="text-sm text-[#6B7280] leading-relaxed">
+                  <p className="text-base text-[#6B7280] leading-relaxed">
                     {hotelDescription} {hotel.description}
                   </p>
                 </div>
@@ -486,40 +486,40 @@ export default function MobileHotelToursInfo() {
                 <div className="bg-white rounded-b-xl px-3 pt-2 pb-4 space-y-4">
                   {hotel.placement && (
                     <div>
-                      <h3 className="text-base font-semibold text-[#2E2E32] mb-1">
+                      <h3 className="text-lg font-semibold text-[#2E2E32] mb-1">
                         Расположение:
                       </h3>
-                      <p className="text-sm text-[#6B7280]">
+                      <p className="text-base text-[#6B7280]">
                         {hotel.placement}
                       </p>
                     </div>
                   )}
                   {hotel.territory && (
                     <div>
-                      <h3 className="text-base font-semibold text-[#2E2E32] mb-1">
+                      <h3 className="text-lg font-semibold text-[#2E2E32] mb-1">
                         Территория отеля:
                       </h3>
-                      <p className="text-sm text-[#6B7280]">
+                      <p className="text-base text-[#6B7280]">
                         {formatList(hotel.territory)}
                       </p>
                     </div>
                   )}
                   {hotel.inroom && (
                     <div>
-                      <h3 className="text-base font-semibold text-[#2E2E32] mb-1">
+                      <h3 className="text-lg font-semibold text-[#2E2E32] mb-1">
                         В номере:
                       </h3>
-                      <p className="text-sm text-[#6B7280]">
+                      <p className="text-base text-[#6B7280]">
                         {formatList(hotel.inroom)}
                       </p>
                     </div>
                   )}
                   {hotel.services && (
                     <div>
-                      <h3 className="text-base font-semibold text-[#2E2E32] mb-1">
+                      <h3 className="text-lg font-semibold text-[#2E2E32] mb-1">
                         Услуги отеля:
                       </h3>
-                      <p className="text-sm text-[#6B7280]">
+                      <p className="text-base text-[#6B7280]">
                         {formatList(hotel.services)}
                       </p>
                     </div>
@@ -532,7 +532,7 @@ export default function MobileHotelToursInfo() {
           {/* Варианты туров */}
           <div className="">
             <div className="bg-white rounded-xl px-3 py-2">
-              <h3 className="text-lg font-semibold text-[#2E2E32] mb-4">
+              <h3 className="text-lg font-semibold text-[#2E2E32] mb-2">
                 Варианты туров
               </h3>
               <div className="space-y-4">
@@ -548,17 +548,17 @@ export default function MobileHotelToursInfo() {
                       <div className="space-y-2">
                         <div className="flex justify-between items-center">
                           <div className="space-y-1">
-                            <p className="text-xs font-medium text-[#2E2E32]">
+                            <p className="text-sm font-medium text-[#2E2E32]">
                               {getMealType(tourVariant.meal)},{" "}
                               {tourVariant.nights} ночей
                             </p>
-                            <p className="text-xs font-semibold text-[#2E2E32]">
+                            <p className="text-sm font-semibold text-[#2E2E32]">
                               Номер {tourVariant.room}, {tourVariant.adults}{" "}
-                              взрослых
+                              взр.
                             </p>
                           </div>
                           <div className="text-right">
-                            <p className="text-xs font-semibold text-[#6B7280]">
+                            <p className="text-sm font-semibold text-[#6B7280]">
                               {formatDate(tourVariant.flydate)} –{" "}
                               {getEndDate(
                                 tourVariant.flydate,
@@ -569,7 +569,7 @@ export default function MobileHotelToursInfo() {
                         </div>
                         <div className="flex justify-between items-center">
                           <div className="flex items-center gap-2">
-                            <span className="text-xs text-[#B3B9C0]">
+                            <span className="text-sm text-[#B3B9C0]">
                               {tourVariant.operatorname || "Pegasus Airlines"}
                             </span>
                           </div>
@@ -583,7 +583,7 @@ export default function MobileHotelToursInfo() {
                                   variantIndex
                                 )
                               }
-                              className={`p-1 rounded-lg border-2 transition-colors ${
+                              className={`p-1.5 rounded-lg border-2 transition-colors ${
                                 isTourFavorite(tour, tourIndex, variantIndex)
                                   ? "border-[#FF621F] text-[#FF621F] hover:bg-orange-50"
                                   : "border-gray-300 text-gray-400 hover:border-[#FF621F] hover:text-[#FF621F]"
@@ -601,7 +601,7 @@ export default function MobileHotelToursInfo() {
                               )}
                             </button>
                             {/* Кнопка цены */}
-                            <button className="bg-[#FF621F] text-white px-7 py-1 rounded-lg text-sm font-semibold">
+                            <button className="bg-[#FF621F] text-white px-8 py-1.5 rounded-lg text-sm font-semibold">
                               {tourVariant.price || tour.price}
                               {tourVariant.currency === "EUR"
                                 ? "€"

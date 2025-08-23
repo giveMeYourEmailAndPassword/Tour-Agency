@@ -1,4 +1,4 @@
-import { useLocation, useSearchParams } from "react-router";
+import { useLocation, useSearchParams } from "react-router-dom";
 import useHotelToursInfo from "../Hooks/useHotelToursInfo";
 import { Skeleton } from "@heroui/react";
 import starFilled from "../assets/star_fill.svg";
@@ -6,7 +6,6 @@ import starOutline from "../assets/star_unfill.svg";
 import planeDeparture from "../assets/plane_departure.svg";
 import { format, parse, addDays } from "date-fns";
 import { ru } from "date-fns/locale";
-import { IoAirplane } from "react-icons/io5";
 import { FaUtensils } from "react-icons/fa";
 import { FaUmbrellaBeach } from "react-icons/fa";
 import { useState, useEffect, useContext } from "react";
@@ -16,7 +15,6 @@ import "yet-another-react-lightbox/styles.css";
 import "yet-another-react-lightbox/plugins/thumbnails.css";
 import { IoChevronBackOutline, IoChevronForwardOutline } from "react-icons/io5";
 import { DataContext } from "./DataProvider";
-import { FaHeart, FaRegHeart } from "react-icons/fa";
 import { FaCalendar, FaUser, FaBed, FaMoon } from "react-icons/fa";
 import { FaEdit, FaBookmark } from "react-icons/fa";
 
@@ -57,6 +55,7 @@ export default function MobileHotelToursInfo() {
   );
   const [isRestoringSearch, setIsRestoringSearch] = useState(false);
   const [activeTab, setActiveTab] = useState("about");
+  const [showAllVariants, setShowAllVariants] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [mainImageIndex, setMainImageIndex] = useState(0);
@@ -254,7 +253,7 @@ export default function MobileHotelToursInfo() {
 
   if (isLoading || isRestoringSearch) {
     return (
-      <div className=" p-4 bg-[#EFF2F6]">
+      <div className="p-4 bg-[#EFF2F6]">
         <div className="bg-white rounded-xl p-4 space-y-3">
           <Skeleton className="w-full h-[180px] rounded-xl" />
           <div className="space-y-2">
@@ -272,7 +271,7 @@ export default function MobileHotelToursInfo() {
 
   if (error || !hotel) {
     return (
-      <div className=" p-4 bg-[#EFF2F6]">
+      <div className="p-4 bg-[#EFF2F6]">
         <div className="bg-white rounded-xl p-4 text-center text-red-600">
           Не удалось загрузить информацию об отеле
         </div>
@@ -282,7 +281,7 @@ export default function MobileHotelToursInfo() {
 
   if (!selectedTours || selectedTours.length === 0) {
     return (
-      <div className=" p-4 bg-[#EFF2F6]">
+      <div className="p-4 bg-[#EFF2F6]">
         <div className="bg-white rounded-xl p-4 text-center text-gray-500">
           <h2 className="text-lg font-semibold mb-2">Информация об отеле</h2>
           <p>Туры для данного отеля не найдены или загружаются...</p>
@@ -291,10 +290,33 @@ export default function MobileHotelToursInfo() {
     );
   }
 
+  // Подсчитываем общее количество вариантов
+  const totalVariants = selectedTours.reduce(
+    (total, tour) => total + tour.tours.tour.length,
+    0
+  );
+
+  // Определяем, какие варианты показывать
+  const variantsToShow = showAllVariants
+    ? selectedTours
+    : selectedTours.map((tour) => ({
+        ...tour,
+        tours: {
+          ...tour.tours,
+          tour: tour.tours.tour.slice(0, 5), // Показываем только первые 5 вариантов
+        },
+      }));
+
+  // Подсчитываем количество показанных вариантов
+  const shownVariants = variantsToShow.reduce(
+    (total, tour) => total + tour.tours.tour.length,
+    0
+  );
+
   const firstTour = selectedTours[0]?.tours?.tour?.[0];
 
   return (
-    <div className="p-4 bg-[#EFF2F6] h-full">
+    <div className="px-3 py-2 bg-[#EFF2F6]">
       <div className="bg-white rounded-xl overflow-hidden">
         {/* Галерея */}
         <div className="relative">
@@ -576,6 +598,87 @@ export default function MobileHotelToursInfo() {
                   ? "$"
                   : selectedTours[0]?.currency}
               </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Варианты туров */}
+        <div className="px-4 pb-4">
+          <div className="bg-white rounded-xl p-4">
+            <h3 className="text-lg font-semibold text-[#2E2E32] mb-4">
+              Варианты туров
+            </h3>
+            <div className="space-y-4">
+              {variantsToShow.map((tour: Tour, tourIndex: number) =>
+                tour.tours.tour.map((tourVariant, variantIndex: number) => (
+                  <div
+                    key={`${tourIndex}-${variantIndex}`}
+                    className="space-y-2 p-3 border border-gray-100 rounded-lg"
+                  >
+                    <h4 className="text-base font-semibold text-[#2E2E32]">
+                      Вариант {variantIndex + 1}
+                    </h4>
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <div className="space-y-1">
+                          <p className="text-xs font-medium text-[#2E2E32]">
+                            {getMealType(tourVariant.meal)},{" "}
+                            {tourVariant.nights} ночей
+                          </p>
+                          <p className="text-xs font-semibold text-[#2E2E32]">
+                            Номер {tourVariant.room}, {tourVariant.adults}{" "}
+                            взрослых
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-xs font-semibold text-[#6B7280]">
+                            {formatDate(tourVariant.flydate)} –{" "}
+                            {getEndDate(
+                              tourVariant.flydate,
+                              tourVariant.nights
+                            )}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs text-[#B3B9C0]">
+                            {tourVariant.operatorname || "Pegasus Airlines"}
+                          </span>
+                        </div>
+                        <button className="bg-[#FF621F] text-white px-3 py-2 rounded-lg text-sm font-semibold">
+                          {tourVariant.price || tour.price}
+                          {tourVariant.currency === "EUR"
+                            ? "€"
+                            : tourVariant.currency === "USD"
+                            ? "$"
+                            : tour.currency === "EUR"
+                            ? "€"
+                            : tour.currency === "USD"
+                            ? "$"
+                            : tour.currency}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
+
+              {/* Кнопка "Показать все варианты" или "Скрыть" */}
+              {totalVariants > 5 && (
+                <div className="flex justify-center pt-4">
+                  <button
+                    onClick={() => setShowAllVariants(!showAllVariants)}
+                    className="px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-lg transition-colors font-medium text-sm"
+                  >
+                    {showAllVariants
+                      ? `Скрыть варианты (показано ${totalVariants})`
+                      : `Показать еще ${
+                          totalVariants - shownVariants
+                        } вариантов (показано ${shownVariants} из ${totalVariants})`}
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>

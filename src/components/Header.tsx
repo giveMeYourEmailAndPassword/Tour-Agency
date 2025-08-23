@@ -1,5 +1,6 @@
 import { useState, useContext } from "react";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
+import { RxCross2 } from "react-icons/rx";
 import {
   Modal,
   ModalContent,
@@ -48,14 +49,16 @@ export default function Header() {
           shouldBlockScroll={false}
           backdrop="opaque"
           classNames={{
-            closeButton: "text-xl",
+            closeButton: "md:block hidden", // Скрываем на мобильных, показываем на десктопе
           }}
         >
           <ModalContent className="max-w-5xl max-h-[66vh] py-2 pr-2">
             <>
-              <ModalHeader className="flex gap-1 py-2">
+              <ModalHeader className="flex gap-1 py-2 px-3 md:px-6">
                 <div className="flex items-baseline gap-2">
-                  <span className="text-2xl font-medium">Избранные туры</span>
+                  <span className="text-xl md:text-2xl font-medium">
+                    Избранные туры
+                  </span>
                   {favoriteTours.length > 0 && (
                     <div className="flex items-center gap-1 bg-[#FF621F] py-0.5 px-4 rounded-full whitespace-nowrap">
                       <span className="font-semibold text-base text-white">
@@ -64,8 +67,16 @@ export default function Header() {
                     </div>
                   )}
                 </div>
+
+                {/* Крестик для мобильных устройств */}
+                <button
+                  onClick={() => setIsFavoriteModalOpen(false)}
+                  className="md:hidden ml-auto"
+                >
+                  <RxCross2 className="w-6 h-6 text-[#FF621F]" />
+                </button>
               </ModalHeader>
-              <ModalBody className="h-[60vh] overflow-y-auto scrollbar-custom">
+              <ModalBody className="h-[60vh] overflow-y-auto scrollbar-custom px-3 md:px-6">
                 <FavoriteModal tours={favoriteTours} />
               </ModalBody>
               <ModalFooter />

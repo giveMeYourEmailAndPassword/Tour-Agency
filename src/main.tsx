@@ -4,7 +4,7 @@ import "../css/index.css";
 import { BrowserRouter, Routes, Route } from "react-router";
 import App from "./App.tsx";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
-import HotelDetails from "./Hotel/HotelDetails.tsx";
+import HotelDetails from "./Hotel/HotelDetailsMobile.tsx";
 import { HeroUIProvider } from "@heroui/react";
 import { DataProvider } from "./components/DataProvider.tsx";
 import Booking from "./components/Booking.tsx";
@@ -12,6 +12,7 @@ import ResponsiveOurTours from "./OurTours/ResponsiveOurTours.tsx";
 import AppForManager from "./ForManager/AppForManager.tsx";
 import OurToursForManager from "./ForManager/OurToursForManager.tsx";
 import ResponsiveHotelInfo from "./components/ResponsiveHotelInfo.tsx";
+import ResponsiveHotelDetails from "./components/ResponsiveHotelDetails.tsx";
 
 const queryClient = new QueryClient();
 
@@ -42,7 +43,7 @@ createRoot(document.getElementById("root")!).render(
 
               <Route
                 path="/hotel/:hotelcode/:tourId"
-                element={<HotelDetails />}
+                element={<ResponsiveHotelDetails />}
               />
 
               <Route

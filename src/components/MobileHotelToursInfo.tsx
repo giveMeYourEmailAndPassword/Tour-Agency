@@ -15,8 +15,8 @@ import "yet-another-react-lightbox/styles.css";
 import "yet-another-react-lightbox/plugins/thumbnails.css";
 import { IoChevronBackOutline, IoChevronForwardOutline } from "react-icons/io5";
 import { DataContext } from "./DataProvider";
-import { FaCalendar, FaUser, FaBed, FaMoon } from "react-icons/fa";
-import { FaEdit, FaBookmark } from "react-icons/fa";
+import { FaHeart, FaRegHeart } from "react-icons/fa";
+import Header from "./Header";
 
 interface Tour {
   tours: {
@@ -254,6 +254,7 @@ export default function MobileHotelToursInfo() {
   if (isLoading || isRestoringSearch) {
     return (
       <div className="p-4 bg-[#EFF2F6]">
+        <Header />
         <div className="bg-white rounded-xl p-4 space-y-3">
           <Skeleton className="w-full h-[180px] rounded-xl" />
           <div className="space-y-2">
@@ -272,6 +273,7 @@ export default function MobileHotelToursInfo() {
   if (error || !hotel) {
     return (
       <div className="p-4 bg-[#EFF2F6]">
+        <Header />
         <div className="bg-white rounded-xl p-4 text-center text-red-600">
           Не удалось загрузить информацию об отеле
         </div>
@@ -282,6 +284,7 @@ export default function MobileHotelToursInfo() {
   if (!selectedTours || selectedTours.length === 0) {
     return (
       <div className="p-4 bg-[#EFF2F6]">
+        <Header />
         <div className="bg-white rounded-xl p-4 text-center text-gray-500">
           <h2 className="text-lg font-semibold mb-2">Информация об отеле</h2>
           <p>Туры для данного отеля не найдены или загружаются...</p>
@@ -316,382 +319,336 @@ export default function MobileHotelToursInfo() {
   const firstTour = selectedTours[0]?.tours?.tour?.[0];
 
   return (
-    <div className="px-3 py-2 bg-gray-100">
-      <div className="bg-gray-100 rounded-xl overflow-hidden">
-        {/* Галерея */}
-        <div className="relative">
-          <div className="w-full h-[180px] overflow-hidden">
-            <img
-              src={`https:${hotel.images.image[mainImageIndex]}`}
-              alt={hotel.name}
-              className="w-full h-full object-cover"
-              onClick={() => handleImageClick(mainImageIndex)}
-            />
-          </div>
-
-          {/* Кнопки навигации */}
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              handleUserInteraction();
-              goToPrevious();
-            }}
-            className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black/50 p-1 rounded-lg text-white opacity-70"
-          >
-            <IoChevronBackOutline size={16} />
-          </button>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              handleUserInteraction();
-              goToNext();
-            }}
-            className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black/50 p-1 rounded-lg text-white opacity-70"
-          >
-            <IoChevronForwardOutline size={16} />
-          </button>
-
-          {/* Индикатор слайдов */}
-          <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-1">
-            {hotel.images.image.map((_, index) => (
-              <div
-                key={index}
-                className={`w-1 h-1 rounded-full transition-all duration-300 ${
-                  index === mainImageIndex
-                    ? "bg-white w-2"
-                    : "bg-gray-300 opacity-80"
-                }`}
-              />
-            ))}
-          </div>
-
-          {/* Счетчик изображений */}
-          <div className="absolute top-2 left-2 bg-black/50 text-white text-[10px] px-1 py-0.5 rounded-lg opacity-70">
-            {mainImageIndex + 1}/{hotel.images.image.length}
-          </div>
-        </div>
-
-        {/* Заголовок и информация */}
-        <div className="py-2 space-y-1">
-          {/* Звезды, рейтинг и город вылета */}
-          <div className="flex justify-between items-center">
-            <div className="flex items-center gap-2">
-              <div className="flex items-center gap-0.5">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <img
-                    key={i}
-                    src={i < parseInt(hotel.stars) ? starFilled : starOutline}
-                    alt={
-                      i < parseInt(hotel.stars) ? "filled star" : "outline star"
-                    }
-                    className="w-3.5 h-3.5"
-                  />
-                ))}
-              </div>
-              {hotel.rating !== "0" && (
-                <div className="bg-[#FF621F] text-white text-xs font-medium px-1 py-0.5 rounded-[20px]">
-                  {hotel.rating.length === 1
-                    ? `${hotel.rating}.0`
-                    : hotel.rating}
-                </div>
-              )}
-            </div>
-            <div className="flex items-center gap-1 text-xs text-[#FF621F]">
-              <span>вылет из {getDepartureCity()}</span>
+    <>
+      <Header />
+      <div className="px-3 py-2 bg-gray-100">
+        <div className="bg-gray-100 rounded-xl overflow-hidden">
+          {/* Галерея */}
+          <div className="relative">
+            <div className="w-full h-[180px] overflow-hidden">
               <img
-                src={planeDeparture}
-                alt="Plane Departure"
-                className="w-3 h-3"
+                src={`https:${hotel.images.image[mainImageIndex]}`}
+                alt={hotel.name}
+                className="w-full h-full object-cover"
+                onClick={() => handleImageClick(mainImageIndex)}
               />
             </div>
-          </div>
 
-          {/* Название отеля */}
-          <h1 className="text-base font-bold text-[#2E2E32]">{hotel.name}</h1>
-
-          {/* Местоположение */}
-          <p className="text-xs text-[#6B7280]">
-            {hotel.country}, {hotel.region}
-          </p>
-
-          {/* Теги */}
-          <div className="flex gap-3 pt-1">
-            {firstTour?.meal && (
-              <div className="flex items-center gap-1 bg-white border border-gray-200 px-2 py-1 rounded-lg">
-                <FaUtensils className="w-3 h-3 text-[#2E2E32]" />
-                <span className="text-xs text-[#2E2E32]">
-                  {getMealType(firstTour.meal)}
-                </span>
-              </div>
-            )}
-            {hotel.beach && (
-              <div className="flex items-center gap-1 bg-white border border-gray-200 px-2 py-1 rounded-lg">
-                <FaUmbrellaBeach className="w-3 h-3 text-[#2E2E32]" />
-                <span className="text-xs text-[#2E2E32]">Береговая линия</span>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Табы */}
-        <div className="pb-1">
-          <div className="bg-white rounded-xl p-1 flex gap-2">
+            {/* Кнопки навигации */}
             <button
-              onClick={() => setActiveTab("about")}
-              className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-medium transition-colors ${
-                activeTab === "about"
-                  ? "bg-[#FF621F] text-white"
-                  : "text-[#7E8389]"
-              }`}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleUserInteraction();
+                goToPrevious();
+              }}
+              className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black/50 p-1 rounded-lg text-white opacity-70"
             >
-              Об отеле
+              <IoChevronBackOutline size={16} />
             </button>
             <button
-              onClick={() => setActiveTab("amenities")}
-              className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-medium transition-colors ${
-                activeTab === "amenities"
-                  ? "bg-[#FF621F] text-white"
-                  : "text-[#7E8389]"
-              }`}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleUserInteraction();
+                goToNext();
+              }}
+              className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black/50 p-1 rounded-lg text-white opacity-70"
             >
-              Удобства отеля
+              <IoChevronForwardOutline size={16} />
             </button>
-          </div>
-        </div>
 
-        {/* Контент табов */}
-        {activeTab === "about" && (
-          <div className="pb-4">
-            <div className="bg-white rounded-xl p-4">
-              <h3 className="text-base font-semibold text-[#2E2E32] mb-2">
-                Об отеле:
-              </h3>
-              <p className="text-sm text-[#6B7280] leading-relaxed">
-                {hotelDescription} {hotel.description}
-              </p>
+            {/* Индикатор слайдов */}
+            <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-1">
+              {hotel.images.image.map((_, index) => (
+                <div
+                  key={index}
+                  className={`w-1 h-1 rounded-full transition-all duration-300 ${
+                    index === mainImageIndex
+                      ? "bg-white w-2"
+                      : "bg-gray-300 opacity-80"
+                  }`}
+                />
+              ))}
+            </div>
+
+            {/* Счетчик изображений */}
+            <div className="absolute top-2 left-2 bg-black/50 text-white text-[10px] px-1 py-0.5 rounded-lg opacity-70">
+              {mainImageIndex + 1}/{hotel.images.image.length}
             </div>
           </div>
-        )}
 
-        {activeTab === "amenities" && (
-          <div className="pb-4">
-            <div className="bg-white rounded-xl p-4 space-y-4">
-              {hotel.placement && (
-                <div>
-                  <h3 className="text-base font-semibold text-[#2E2E32] mb-1">
-                    Расположение:
-                  </h3>
-                  <p className="text-sm text-[#6B7280]">{hotel.placement}</p>
+          {/* Заголовок и информация */}
+          <div className="py-2 space-y-1">
+            {/* Звезды, рейтинг и город вылета */}
+            <div className="flex justify-between items-center">
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-0.5">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <img
+                      key={i}
+                      src={i < parseInt(hotel.stars) ? starFilled : starOutline}
+                      alt={
+                        i < parseInt(hotel.stars)
+                          ? "filled star"
+                          : "outline star"
+                      }
+                      className="w-3.5 h-3.5"
+                    />
+                  ))}
                 </div>
-              )}
-              {hotel.territory && (
-                <div>
-                  <h3 className="text-base font-semibold text-[#2E2E32] mb-1">
-                    Территория отеля:
-                  </h3>
-                  <p className="text-sm text-[#6B7280]">
-                    {formatList(hotel.territory)}
-                  </p>
-                </div>
-              )}
-              {hotel.inroom && (
-                <div>
-                  <h3 className="text-base font-semibold text-[#2E2E32] mb-1">
-                    В номере:
-                  </h3>
-                  <p className="text-sm text-[#6B7280]">
-                    {formatList(hotel.inroom)}
-                  </p>
-                </div>
-              )}
-              {hotel.services && (
-                <div>
-                  <h3 className="text-base font-semibold text-[#2E2E32] mb-1">
-                    Услуги отеля:
-                  </h3>
-                  <p className="text-sm text-[#6B7280]">
-                    {formatList(hotel.services)}
-                  </p>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        <div className="pb-4">
-          <div className="bg-white rounded-xl p-3 space-y-3">
-            <h3 className="text-base font-semibold text-[#2E2E32]">
-              Бронь тура:
-            </h3>
-
-            <div className="grid grid-cols-2 gap-2">
-              {/* Даты */}
-              <div className="flex gap-2">
-                <div className="w-4 h-4 bg-[#FF621F] rounded flex items-center justify-center">
-                  <FaCalendar className="w-3 h-3 text-white" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-[#2E2E32]">
-                    Даты поездки
-                  </p>
-                  <p className="text-xs text-[#6B7280]">
-                    {firstTour?.flydate && formatDate(firstTour.flydate)} —{" "}
-                    {firstTour?.flydate &&
-                      firstTour?.nights &&
-                      getEndDate(firstTour.flydate, firstTour.nights)}
-                  </p>
-                </div>
+                {hotel.rating !== "0" && (
+                  <div className="bg-[#FF621F] text-white text-xs font-medium px-1 py-0.5 rounded-[20px]">
+                    {hotel.rating.length === 1
+                      ? `${hotel.rating}.0`
+                      : hotel.rating}
+                  </div>
+                )}
               </div>
-
-              {/* Туристы */}
-              <div className="flex gap-2">
-                <div className="w-4 h-4 bg-[#FF621F] rounded flex items-center justify-center">
-                  <FaUser className="w-3 h-3 text-white" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-[#2E2E32]">Туристы</p>
-                  <p className="text-xs text-[#6B7280]">
-                    {firstTour?.adults} взрослых
-                  </p>
-                </div>
-              </div>
-
-              {/* Номер */}
-              <div className="flex gap-2">
-                <div className="w-4 h-4 bg-[#FF621F] rounded flex items-center justify-center">
-                  <FaBed className="w-3 h-3 text-white" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-[#2E2E32]">Номер</p>
-                  <p className="text-xs text-[#6B7280]">{firstTour?.room}</p>
-                </div>
-              </div>
-
-              {/* Длительность */}
-              <div className="flex gap-2">
-                <div className="w-4 h-4 bg-[#FF621F] rounded flex items-center justify-center">
-                  <FaMoon className="w-3 h-3 text-white" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-[#2E2E32]">
-                    Длительность
-                  </p>
-                  <p className="text-xs text-[#6B7280]">
-                    {firstTour?.nights} ночей
-                  </p>
-                </div>
+              <div className="flex items-center gap-1 text-xs text-[#FF621F]">
+                <span>вылет из {getDepartureCity()}</span>
+                <img
+                  src={planeDeparture}
+                  alt="Plane Departure"
+                  className="w-3 h-3"
+                />
               </div>
             </div>
 
-            {/* Кнопки */}
-            <div className="flex gap-2 pt-2">
-              <button className="flex-1 flex items-center justify-center gap-4 py-2.5 px-4 bg-[#FF621F] rounded-lg text-base font-bold text-white">
-                <FaBookmark className="w-4 h-4" />
-                {firstTour?.price || selectedTours[0]?.price}
-                {firstTour?.currency === "EUR"
-                  ? "€"
-                  : firstTour?.currency === "USD"
-                  ? "$"
-                  : selectedTours[0]?.currency === "EUR"
-                  ? "€"
-                  : selectedTours[0]?.currency === "USD"
-                  ? "$"
-                  : selectedTours[0]?.currency}
+            {/* Название отеля */}
+            <h1 className="text-base font-bold text-[#2E2E32]">{hotel.name}</h1>
+
+            {/* Местоположение */}
+            <p className="text-xs text-[#6B7280]">
+              {hotel.country}, {hotel.region}
+            </p>
+
+            {/* Теги */}
+            <div className="flex gap-3 pt-1">
+              {firstTour?.meal && (
+                <div className="flex items-center gap-1 bg-white border border-gray-200 px-2 py-1 rounded-lg">
+                  <FaUtensils className="w-3 h-3 text-[#2E2E32]" />
+                  <span className="text-xs text-[#2E2E32]">
+                    {getMealType(firstTour.meal)}
+                  </span>
+                </div>
+              )}
+              {hotel.beach && (
+                <div className="flex items-center gap-1 bg-white border border-gray-200 px-2 py-1 rounded-lg">
+                  <FaUmbrellaBeach className="w-3 h-3 text-[#2E2E32]" />
+                  <span className="text-xs text-[#2E2E32]">
+                    Береговая линия
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Табы */}
+          <div className="">
+            <div className="bg-white rounded-t-xl px-1 pt-2 flex gap-2">
+              <button
+                onClick={() => setActiveTab("about")}
+                className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-medium transition-colors ${
+                  activeTab === "about"
+                    ? "bg-[#FF621F] text-white"
+                    : "text-[#7E8389]"
+                }`}
+              >
+                Об отеле
+              </button>
+              <button
+                onClick={() => setActiveTab("amenities")}
+                className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-medium transition-colors ${
+                  activeTab === "amenities"
+                    ? "bg-[#FF621F] text-white"
+                    : "text-[#7E8389]"
+                }`}
+              >
+                Удобства отеля
               </button>
             </div>
-          </div>
-        </div>
 
-        {/* Варианты туров */}
-        <div className="pb-4">
-          <div className="bg-white rounded-xl p-4">
-            <h3 className="text-lg font-semibold text-[#2E2E32] mb-4">
-              Варианты туров
-            </h3>
-            <div className="space-y-4">
-              {variantsToShow.map((tour: Tour, tourIndex: number) =>
-                tour.tours.tour.map((tourVariant, variantIndex: number) => (
-                  <div
-                    key={`${tourIndex}-${variantIndex}`}
-                    className="space-y-2 p-3 border border-gray-100 rounded-lg"
-                  >
-                    <h4 className="text-base font-semibold text-[#2E2E32]">
-                      Вариант {variantIndex + 1}
-                    </h4>
-                    <div className="space-y-2">
-                      <div className="flex justify-between items-center">
-                        <div className="space-y-1">
-                          <p className="text-xs font-medium text-[#2E2E32]">
-                            {getMealType(tourVariant.meal)},{" "}
-                            {tourVariant.nights} ночей
-                          </p>
-                          <p className="text-xs font-semibold text-[#2E2E32]">
-                            Номер {tourVariant.room}, {tourVariant.adults}{" "}
-                            взрослых
-                          </p>
+            {/* Контент табов */}
+            {activeTab === "about" && (
+              <div className="pb-4">
+                <div className="bg-white rounded-b-xl px-3 pt-2 pb-4 space-y-1">
+                  <h3 className="text-base font-semibold text-[#2E2E32]">
+                    Об отеле:
+                  </h3>
+                  <p className="text-sm text-[#6B7280] leading-relaxed">
+                    {hotelDescription} {hotel.description}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {activeTab === "amenities" && (
+              <div className="pb-4">
+                <div className="bg-white rounded-b-xl px-3 pt-2 pb-4 space-y-4">
+                  {hotel.placement && (
+                    <div>
+                      <h3 className="text-base font-semibold text-[#2E2E32] mb-1">
+                        Расположение:
+                      </h3>
+                      <p className="text-sm text-[#6B7280]">
+                        {hotel.placement}
+                      </p>
+                    </div>
+                  )}
+                  {hotel.territory && (
+                    <div>
+                      <h3 className="text-base font-semibold text-[#2E2E32] mb-1">
+                        Территория отеля:
+                      </h3>
+                      <p className="text-sm text-[#6B7280]">
+                        {formatList(hotel.territory)}
+                      </p>
+                    </div>
+                  )}
+                  {hotel.inroom && (
+                    <div>
+                      <h3 className="text-base font-semibold text-[#2E2E32] mb-1">
+                        В номере:
+                      </h3>
+                      <p className="text-sm text-[#6B7280]">
+                        {formatList(hotel.inroom)}
+                      </p>
+                    </div>
+                  )}
+                  {hotel.services && (
+                    <div>
+                      <h3 className="text-base font-semibold text-[#2E2E32] mb-1">
+                        Услуги отеля:
+                      </h3>
+                      <p className="text-sm text-[#6B7280]">
+                        {formatList(hotel.services)}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Варианты туров */}
+          <div className="">
+            <div className="bg-white rounded-xl px-3 py-2">
+              <h3 className="text-lg font-semibold text-[#2E2E32] mb-4">
+                Варианты туров
+              </h3>
+              <div className="space-y-4">
+                {variantsToShow.map((tour: Tour, tourIndex: number) =>
+                  tour.tours.tour.map((tourVariant, variantIndex: number) => (
+                    <div
+                      key={`${tourIndex}-${variantIndex}`}
+                      className="space-y-2 p-3 border border-gray-100 rounded-lg"
+                    >
+                      <h4 className="text-base font-semibold text-[#2E2E32]">
+                        Вариант {variantIndex + 1}
+                      </h4>
+                      <div className="space-y-2">
+                        <div className="flex justify-between items-center">
+                          <div className="space-y-1">
+                            <p className="text-xs font-medium text-[#2E2E32]">
+                              {getMealType(tourVariant.meal)},{" "}
+                              {tourVariant.nights} ночей
+                            </p>
+                            <p className="text-xs font-semibold text-[#2E2E32]">
+                              Номер {tourVariant.room}, {tourVariant.adults}{" "}
+                              взрослых
+                            </p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-xs font-semibold text-[#6B7280]">
+                              {formatDate(tourVariant.flydate)} –{" "}
+                              {getEndDate(
+                                tourVariant.flydate,
+                                tourVariant.nights
+                              )}
+                            </p>
+                          </div>
                         </div>
-                        <div className="text-right">
-                          <p className="text-xs font-semibold text-[#6B7280]">
-                            {formatDate(tourVariant.flydate)} –{" "}
-                            {getEndDate(
-                              tourVariant.flydate,
-                              tourVariant.nights
-                            )}
-                          </p>
+                        <div className="flex justify-between items-center">
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs text-[#B3B9C0]">
+                              {tourVariant.operatorname || "Pegasus Airlines"}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            {/* Кнопка избранного */}
+                            <button
+                              onClick={() =>
+                                handleFavoriteClick(
+                                  tour,
+                                  tourIndex,
+                                  variantIndex
+                                )
+                              }
+                              className={`p-1 rounded-lg border-2 transition-colors ${
+                                isTourFavorite(tour, tourIndex, variantIndex)
+                                  ? "border-[#FF621F] text-[#FF621F] hover:bg-orange-50"
+                                  : "border-gray-300 text-gray-400 hover:border-[#FF621F] hover:text-[#FF621F]"
+                              }`}
+                              title={
+                                isTourFavorite(tour, tourIndex, variantIndex)
+                                  ? "Убрать из избранного"
+                                  : "Добавить в избранное"
+                              }
+                            >
+                              {isTourFavorite(tour, tourIndex, variantIndex) ? (
+                                <FaHeart size={16} />
+                              ) : (
+                                <FaRegHeart size={16} />
+                              )}
+                            </button>
+                            {/* Кнопка цены */}
+                            <button className="bg-[#FF621F] text-white px-7 py-1 rounded-lg text-sm font-semibold">
+                              {tourVariant.price || tour.price}
+                              {tourVariant.currency === "EUR"
+                                ? "€"
+                                : tourVariant.currency === "USD"
+                                ? "$"
+                                : tour.currency === "EUR"
+                                ? "€"
+                                : tour.currency === "USD"
+                                ? "$"
+                                : tour.currency}
+                            </button>
+                          </div>
                         </div>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs text-[#B3B9C0]">
-                            {tourVariant.operatorname || "Pegasus Airlines"}
-                          </span>
-                        </div>
-                        <button className="bg-[#FF621F] text-white px-3 py-2 rounded-lg text-sm font-semibold">
-                          {tourVariant.price || tour.price}
-                          {tourVariant.currency === "EUR"
-                            ? "€"
-                            : tourVariant.currency === "USD"
-                            ? "$"
-                            : tour.currency === "EUR"
-                            ? "€"
-                            : tour.currency === "USD"
-                            ? "$"
-                            : tour.currency}
-                        </button>
                       </div>
                     </div>
-                  </div>
-                ))
-              )}
+                  ))
+                )}
 
-              {/* Кнопка "Показать все варианты" или "Скрыть" */}
-              {totalVariants > 5 && (
-                <div className="flex justify-center pt-4">
-                  <button
-                    onClick={() => setShowAllVariants(!showAllVariants)}
-                    className="px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-lg transition-colors font-medium text-sm"
-                  >
-                    {showAllVariants
-                      ? `Скрыть варианты (показано ${totalVariants})`
-                      : `Показать еще ${
-                          totalVariants - shownVariants
-                        } вариантов (показано ${shownVariants} из ${totalVariants})`}
-                  </button>
-                </div>
-              )}
+                {/* Кнопка "Показать все варианты" или "Скрыть" */}
+                {totalVariants > 5 && (
+                  <div className="flex justify-center pb-2">
+                    <button
+                      onClick={() => setShowAllVariants(!showAllVariants)}
+                      className="px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-lg transition-colors font-medium text-sm"
+                    >
+                      {showAllVariants
+                        ? `Скрыть доп. варианты (показано ${shownVariants} из ${totalVariants})`
+                        : `Показать еще ${
+                            totalVariants - shownVariants
+                          } вариантов`}
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Lightbox для галереи */}
-      <Lightbox
-        open={isOpen}
-        close={() => setIsOpen(false)}
-        slides={slides}
-        plugins={[Thumbnails]}
-        index={currentIndex}
-      />
-    </div>
+        {/* Lightbox для галереи */}
+        <Lightbox
+          open={isOpen}
+          close={() => setIsOpen(false)}
+          slides={slides}
+          plugins={[Thumbnails]}
+          index={currentIndex}
+        />
+      </div>
+    </>
   );
 }

@@ -19,6 +19,10 @@ export default function MobileStarsFilter() {
   // Инициализируем звезды с учетом параметров URL
   const [selectedStars, setSelectedStars] = useState<number[]>(() => {
     if (params.param9) {
+      // Если param9 равен 1, это означает "1-5 звезд"
+      if (params.param9 === 1 || params.param9 === "1") {
+        return [1, 2, 3, 4, 5];
+      }
       return Array.isArray(params.param9) ? params.param9 : [params.param9];
     }
     return [1, 2, 3, 4, 5]; // значения по умолчанию
@@ -53,14 +57,24 @@ export default function MobileStarsFilter() {
     ) {
       setData("param9", 1);
     } else {
-      setData("param9", stars);
+      // Убеждаемся, что не передаем значение 1
+      const filteredStars = stars.filter((star) => star !== 1);
+      setData(
+        "param9",
+        filteredStars.length > 0 ? filteredStars : [2, 3, 4, 5]
+      );
     }
   };
 
   const getDisplayText = () => {
     if (selectedStars.length === 5) return "1-5 звезд";
-    if (selectedStars.length === 1)
+    if (selectedStars.length === 1) {
+      // Проверяем, что это не 1 звезда (которая больше не доступна)
+      if (selectedStars[0] === 1) {
+        return "1-5 звезд"; // Показываем "1-5 звезд" вместо "1 звезда"
+      }
       return `${selectedStars[0]} звезд${selectedStars[0] === 1 ? "а" : "ы"}`;
+    }
     return `${selectedStars.join(", ")} звезды`;
   };
 

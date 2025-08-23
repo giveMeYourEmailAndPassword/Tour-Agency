@@ -316,8 +316,8 @@ export default function MobileHotelToursInfo() {
   const firstTour = selectedTours[0]?.tours?.tour?.[0];
 
   return (
-    <div className="px-3 py-2 bg-[#EFF2F6]">
-      <div className="bg-white rounded-xl overflow-hidden">
+    <div className="px-3 py-2 bg-gray-100">
+      <div className="bg-gray-100 rounded-xl overflow-hidden">
         {/* Галерея */}
         <div className="relative">
           <div className="w-full h-[180px] overflow-hidden">
@@ -336,9 +336,9 @@ export default function MobileHotelToursInfo() {
               handleUserInteraction();
               goToPrevious();
             }}
-            className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black/50 p-1.5 rounded-lg text-white opacity-70"
+            className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black/50 p-1 rounded-lg text-white opacity-70"
           >
-            <IoChevronBackOutline size={24} />
+            <IoChevronBackOutline size={16} />
           </button>
           <button
             onClick={(e) => {
@@ -346,19 +346,19 @@ export default function MobileHotelToursInfo() {
               handleUserInteraction();
               goToNext();
             }}
-            className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black/50 p-1.5 rounded-lg text-white opacity-70"
+            className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black/50 p-1 rounded-lg text-white opacity-70"
           >
-            <IoChevronForwardOutline size={24} />
+            <IoChevronForwardOutline size={16} />
           </button>
 
           {/* Индикатор слайдов */}
-          <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-2">
+          <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-1">
             {hotel.images.image.map((_, index) => (
               <div
                 key={index}
-                className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                className={`w-1 h-1 rounded-full transition-all duration-300 ${
                   index === mainImageIndex
-                    ? "bg-white w-4"
+                    ? "bg-white w-2"
                     : "bg-gray-300 opacity-80"
                 }`}
               />
@@ -366,13 +366,13 @@ export default function MobileHotelToursInfo() {
           </div>
 
           {/* Счетчик изображений */}
-          <div className="absolute top-2 left-2 bg-black/50 text-white text-xs px-2 py-1 rounded-lg opacity-70">
+          <div className="absolute top-2 left-2 bg-black/50 text-white text-[10px] px-1 py-0.5 rounded-lg opacity-70">
             {mainImageIndex + 1}/{hotel.images.image.length}
           </div>
         </div>
 
         {/* Заголовок и информация */}
-        <div className="p-4 space-y-1">
+        <div className="py-2 space-y-1">
           {/* Звезды, рейтинг и город вылета */}
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-2">
@@ -434,7 +434,7 @@ export default function MobileHotelToursInfo() {
         </div>
 
         {/* Табы */}
-        <div className="px-4 pb-1">
+        <div className="pb-1">
           <div className="bg-white rounded-xl p-1 flex gap-2">
             <button
               onClick={() => setActiveTab("about")}
@@ -461,7 +461,7 @@ export default function MobileHotelToursInfo() {
 
         {/* Контент табов */}
         {activeTab === "about" && (
-          <div className="px-4 pb-4">
+          <div className="pb-4">
             <div className="bg-white rounded-xl p-4">
               <h3 className="text-base font-semibold text-[#2E2E32] mb-2">
                 Об отеле:
@@ -474,7 +474,7 @@ export default function MobileHotelToursInfo() {
         )}
 
         {activeTab === "amenities" && (
-          <div className="px-4 pb-4">
+          <div className="pb-4">
             <div className="bg-white rounded-xl p-4 space-y-4">
               {hotel.placement && (
                 <div>
@@ -518,7 +518,7 @@ export default function MobileHotelToursInfo() {
           </div>
         )}
 
-        <div className="px-4 pb-4">
+        <div className="pb-4">
           <div className="bg-white rounded-xl p-3 space-y-3">
             <h3 className="text-base font-semibold text-[#2E2E32]">
               Бронь тура:
@@ -603,7 +603,7 @@ export default function MobileHotelToursInfo() {
         </div>
 
         {/* Варианты туров */}
-        <div className="px-4 pb-4">
+        <div className="pb-4">
           <div className="bg-white rounded-xl p-4">
             <h3 className="text-lg font-semibold text-[#2E2E32] mb-4">
               Варианты туров

@@ -296,7 +296,7 @@ export default function MobileOurTours() {
                   },
                 });
               }}
-              className="w-full flex items-center gap-2.5 p-4 bg-white border border-[#DBE0E5] rounded-[10px] cursor-pointer transition-all duration-300 hover:shadow-md"
+              className="w-full flex items-center gap-2.5 p-4 bg-white border border-[#DBE0E5] rounded-[10px] cursor-pointer transition-all duration-300"
             >
               <div className="w-full flex flex-col gap-2">
                 {/* Изображение */}

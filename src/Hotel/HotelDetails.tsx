@@ -1,49 +1,37 @@
 import { useParams, useLocation } from "react-router";
 import useHotelDetails from "../Hooks/UseHotelDetails";
-import { Swiper, SwiperSlide } from "swiper/react";
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
-import { Navigation, Pagination, Autoplay } from "swiper/modules";
-import { useState, useEffect } from "react";
-import AccordionSection from "./HotelAccordion";
-import ReviewsModal from "../components/ReviewsModal";
-import HotelMap from "../components/HotelMap";
-import { PiMapPinFill } from "react-icons/pi";
-import { ImCalendar } from "react-icons/im";
-import { IoMoonOutline } from "react-icons/io5";
-import { TbMap2 } from "react-icons/tb";
-import { FaHome } from "react-icons/fa";
-import { FaBed } from "react-icons/fa6";
-import { IoAirplane } from "react-icons/io5";
-import { FaYoutube } from "react-icons/fa";
-import { FaUtensils } from "react-icons/fa";
-import { parse, format, addDays } from "date-fns";
+import { Skeleton } from "@heroui/react";
+import starFilled from "../assets/star_fill.svg";
+import starOutline from "../assets/star_unfill.svg";
+import planeDeparture from "../assets/plane_departure.svg";
+import { format, parse, addDays } from "date-fns";
 import { ru } from "date-fns/locale";
-import BookingPanel from "../components/BookingPanel";
-import SimilarHotTours from "../components/SimilarHotTours";
-import FloatingControls from "../components/FloatingControls";
-import SkeletonHotelDetails from "./SkeletonHotelDetails";
+import { FaUtensils } from "react-icons/fa";
+import { FaUmbrellaBeach } from "react-icons/fa";
+import { useState, useEffect } from "react";
+import Lightbox from "yet-another-react-lightbox";
+import Thumbnails from "yet-another-react-lightbox/plugins/thumbnails";
+import "yet-another-react-lightbox/styles.css";
+import "yet-another-react-lightbox/plugins/thumbnails.css";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Pagination, Autoplay } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/pagination";
+import Header from "../components/Header";
+// import SimilarHotTours from "../components/SimilarHotTours";
 
 export default function HotelDetails() {
   const { hotelcode, tourId } = useParams();
   const location = useLocation();
   const isHotTourPath = !location.pathname.includes("/OurTours");
   const { data, isLoading, isError } = useHotelDetails(hotelcode!, tourId!);
-  const [openSections, setOpenSections] = useState<string[]>([]);
-  const [activeTab, setActiveTab] = useState<"map" | "reviews">("map");
-
-  const toggleSection = (section: string) => {
-    setOpenSections((prev) =>
-      prev.includes(section)
-        ? prev.filter((s) => s !== section)
-        : [...prev, section]
-    );
-  };
+  const [activeTab, setActiveTab] = useState("about");
+  const [isOpen, setIsOpen] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
     if (data?.hotel?.data?.hotel) {
-      ("Данные об отеле успешно загружены");
+      console.log("Данные об отеле успешно загружены");
     }
     if (isError) {
       console.error("Ошибка при загрузке данных об отеле:", isError);
@@ -51,14 +39,83 @@ export default function HotelDetails() {
   }, [data?.hotel?.data?.hotel, isError]);
 
   if (isLoading) {
-    return <SkeletonHotelDetails />;
+    return (
+      <>
+        <Header />
+        <div className="px-3 pb-2 pt-3 bg-gray-100">
+          <div className="bg-gray-100 rounded-xl overflow-hidden">
+            {/* Skeleton для галереи */}
+            <div className="relative">
+              <Skeleton className="w-full h-[180px] rounded-none" />
+
+              {/* Skeleton для счетчика изображений */}
+              <div className="absolute top-2 left-2">
+                <Skeleton className="w-12 h-5 rounded-lg" />
+              </div>
+            </div>
+
+            {/* Skeleton для заголовка и информации */}
+            <div className="py-2 space-y-1">
+              {/* Skeleton для звезд, рейтинга и города вылета */}
+              <div className="flex justify-between items-center">
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-0.5">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <Skeleton key={i} className="w-4 h-4 rounded" />
+                    ))}
+                  </div>
+                  <Skeleton className="w-8 h-5 rounded-[20px]" />
+                </div>
+                <div className="flex items-center gap-1">
+                  <Skeleton className="w-24 h-4" />
+                  <Skeleton className="w-3 h-3 rounded" />
+                </div>
+              </div>
+
+              {/* Skeleton для названия отеля */}
+              <Skeleton className="w-3/4 h-5" />
+
+              {/* Skeleton для местоположения */}
+              <Skeleton className="w-1/2 h-4" />
+
+              {/* Skeleton для тегов */}
+              <div className="flex gap-3 pt-1.5">
+                <Skeleton className="w-20 h-6 rounded-lg" />
+                <Skeleton className="w-28 h-6 rounded-lg" />
+              </div>
+            </div>
+
+            {/* Skeleton для табов */}
+            <div className="">
+              <div className="bg-white rounded-t-xl px-1 pt-2 flex gap-2">
+                <Skeleton className="flex-1 h-8 rounded-lg" />
+                <Skeleton className="flex-1 h-8 rounded-lg" />
+              </div>
+
+              {/* Skeleton для контента таба */}
+              <div className="pb-4">
+                <div className="bg-white rounded-b-xl px-3 pt-2 pb-4 space-y-3">
+                  <Skeleton className="w-32 h-5" />
+                  <div className="space-y-2">
+                    <Skeleton className="w-full h-4" />
+                    <Skeleton className="w-5/6 h-4" />
+                    <Skeleton className="w-4/6 h-4" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </>
+    );
   }
 
   if (isError || !data?.hotel?.data?.hotel) {
     return (
-      <div className="flex items-center justify-center h-screen bg-gradient-to-br from-red-50 to-pink-50">
-        <div className="text-3xl font-medium text-red-600">
-          Не удалось загрузить информацию об отеле.
+      <div className="p-4 bg-[#EFF2F6]">
+        <Header />
+        <div className="bg-white rounded-xl p-4 text-center text-red-600">
+          Не удалось загрузить информацию об отеле
         </div>
       </div>
     );
@@ -69,438 +126,312 @@ export default function HotelDetails() {
 
   if (!hotel || !tour) {
     return (
-      <div className="flex items-center justify-center h-screen bg-gradient-to-br from-gray-50 to-slate-50">
-        <div className="text-3xl font-medium text-gray-600">
-          Данные об отеле отсутствуют
+      <div className="p-4 bg-[#EFF2F6]">
+        <Header />
+        <div className="bg-white rounded-xl p-4 text-center text-gray-500">
+          <h2 className="text-lg font-semibold mb-2">Информация об отеле</h2>
+          <p>Данные об отеле отсутствуют</p>
         </div>
       </div>
     );
   }
 
-  const formatText = (text: string) => {
+  const formatDate = (dateString: string) => {
+    const date = parse(dateString, "dd.MM.yyyy", new Date());
+    return format(date, "d MMM", { locale: ru });
+  };
+
+  const getEndDate = (startDate: string, nights: number) => {
+    const date = parse(startDate, "dd.MM.yyyy", new Date());
+    return format(addDays(date, nights), "d MMM", { locale: ru });
+  };
+
+  const getMealType = (meal: string) => {
+    const mealTypes: { [key: string]: string } = {
+      "": "Без питания",
+      BB: "Завтрак",
+      HB: "Полупансион",
+      FB: "Полный пансион",
+      AI: "Всё включено",
+      UAI: "Ультра всё включено",
+      RO: "Без питания",
+    };
+    return mealTypes[meal] || meal;
+  };
+
+  const formatList = (text: string) => {
     return text
       .split(";")
-      .map((item) => `· ${item.trim()}`)
-      .join("\n");
+      .map((item) => item.trim())
+      .join(", ");
   };
 
-  const formatDate = (dateString: string, nights?: number) => {
-    const date = parse(dateString, "dd.MM.yyyy", new Date());
-    if (nights) {
-      const returnDate = addDays(date, parseInt(nights.toString()));
-      return format(returnDate, "d MMMM", { locale: ru });
-    }
-    return format(date, "d MMMM", { locale: ru });
+  const slides =
+    hotel?.images?.image?.map((img: string) => ({
+      src: `https:${img}`,
+    })) || [];
+
+  const handleImageClick = (index: number) => {
+    setCurrentIndex(index);
+    setIsOpen(true);
   };
 
-  const getMealType = () => {
-    const mealTypes = {
-      RO: "Без питания",
-      BB: "Только завтрак",
-      HB: "Завтрак, ужин",
-      FB: "Полный пансион",
-      AI: "Все включено",
-      UAI: "Ультра все включено",
-      "AI+": "Ультра все включено",
-    };
-    return mealTypes[tour.meal as keyof typeof mealTypes] || tour.meal;
+  const getDepartureCity = () => {
+    // Здесь можно добавить логику для определения города вылета
+    return tour.departurename || "Бишкека";
   };
 
   return (
-    <div className="w-full bg-gradient-to-br from-blue-50 via-white to-indigo-50">
-      <div className="flex flex-col py-4 md:py-8 max-w-[1560px] mx-auto px-4 md:px-8 lg:px-12 xl:px-36 min-h-screen">
-        {/* Desktop версия */}
-        <div className="hidden md:block">
-          <div className="flex gap-2 h-[420px]">
-            {/* Галерея изображений */}
-            {hotel.images?.image.length > 0 && (
-              <div className="relative group w-[60%] h-full">
-                <Swiper
-                  modules={[Navigation, Pagination, Autoplay]}
-                  spaceBetween={10}
-                  slidesPerView={1}
-                  navigation={{
-                    nextEl: ".swiper-button-next",
-                    prevEl: ".swiper-button-prev",
-                  }}
-                  pagination={{
-                    clickable: true,
-                    bulletActiveClass: "!bg-white !scale-110",
-                    bulletClass: "swiper-pagination-bullet !mx-1",
-                  }}
-                  autoplay={{ delay: 2500, disableOnInteraction: false }}
-                  loop={true}
-                  className="h-full rounded-2xl"
-                >
-                  {hotel.images.image.map((img: string, index: number) => (
-                    <SwiperSlide key={index} className="relative">
-                      <img
-                        src={`https:${img}`}
-                        alt={`Фото отеля ${hotel.name}`}
-                        className="w-full h-full object-cover rounded-2xl"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-b from-black/5 via-transparent to-black/60 rounded-2xl" />
-                    </SwiperSlide>
+    <>
+      <Header />
+      <div className="px-3 pb-2 pt-3 bg-gray-100">
+        <div className="bg-gray-100 rounded-xl overflow-hidden">
+          {/* Галерея */}
+          <div className="relative">
+            <Swiper
+              modules={[Pagination, Autoplay]}
+              spaceBetween={0}
+              slidesPerView={1}
+              pagination={{
+                clickable: true,
+                bulletClass: "swiper-pagination-bullet !mx-1 !w-2 !h-2",
+                bulletActiveClass: "!bg-white !w-2",
+              }}
+              autoplay={{
+                delay: 3000,
+                disableOnInteraction: false,
+                pauseOnMouseEnter: true,
+              }}
+              loop={true}
+              className="w-full h-[180px]"
+            >
+              {hotel.images.image.map((img: string, index: number) => (
+                <SwiperSlide key={index}>
+                  <div className="w-full h-[180px] overflow-hidden">
+                    <img
+                      src={`https:${img}`}
+                      alt={`${hotel.name} - фото ${index + 1}`}
+                      className="w-full h-full object-cover"
+                      onClick={() => handleImageClick(index)}
+                    />
+                  </div>
+                </SwiperSlide>
+              ))}
+            </Swiper>
+
+            {/* Счетчик изображений */}
+            <div className="absolute top-2 left-2 bg-black/50 text-white text-[10px] px-2 py-1 rounded-lg opacity-70">
+              {currentIndex + 1}/{hotel.images.image.length}
+            </div>
+          </div>
+
+          {/* Заголовок и информация */}
+          <div className="py-2 space-y-1">
+            {/* Звезды, рейтинг и город вылета */}
+            <div className="flex justify-between items-center">
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-0.5">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <img
+                      key={i}
+                      src={i < parseInt(hotel.stars) ? starFilled : starOutline}
+                      alt={
+                        i < parseInt(hotel.stars)
+                          ? "filled star"
+                          : "outline star"
+                      }
+                      className="w-4 h-4"
+                    />
                   ))}
-
-                  <div
-                    className="swiper-button-prev !text-white !opacity-0 group-hover:!opacity-100 transition-all duration-300 
-                  !w-10 !h-10 !bg-black/30 !backdrop-blur-md !rounded-full after:!text-lg hover:!bg-black/35"
-                  />
-                  <div
-                    className="swiper-button-next !text-white !opacity-0 group-hover:!opacity-100 transition-all duration-300 
-                  !w-10 !h-10 !bg-black/30 !backdrop-blur-md !rounded-full after:!text-lg hover:!bg-black/35"
-                  />
-                </Swiper>
-              </div>
-            )}
-
-            {/* Блок с информацией справа */}
-            <div className="w-[40%] bg-white rounded-2xl shadow-[0_0_15px_rgba(0,0,0,0.05)] h-full">
-              <div className="flex justify-center gap-3 my-2">
-                <button
-                  onClick={() => setActiveTab("map")}
-                  className={`px-4 py-2 font-medium transition-all
-                  border-b-2 duration-300 flex items-center gap-2
-                  ${
-                    activeTab === "map"
-                      ? "text-blue-600 border-blue-600"
-                      : "text-gray-600 border-transparent hover:border-gray-400"
-                  }`}
-                >
-                  <TbMap2 className="text-blue-600 text-xl" />
-                  На карте
-                </button>
-
-                <button
-                  onClick={() => setActiveTab("reviews")}
-                  className={`px-4 py-2 font-medium transition-all
-                  border-b-2 duration-300 flex items-center gap-2
-                  ${
-                    activeTab === "reviews"
-                      ? "text-blue-600 border-blue-600"
-                      : "text-gray-600 border-transparent hover:border-gray-400"
-                  }`}
-                >
-                  Отзывы ({hotel.reviewscount})
-                </button>
-
-                <button
-                  onClick={() =>
-                    window.open(
-                      `https://www.youtube.com/results?search_query=${encodeURIComponent(
-                        hotel.name
-                      )}`,
-                      "_blank"
-                    )
-                  }
-                  className="px-4 py-2 text-white font-medium transition-all duration-300 bg-red-600 hover:bg-red-500 rounded-lg flex items-center gap-2"
-                >
-                  <FaYoutube className="text-white" />
-                  Обзоры
-                </button>
-              </div>
-              <div className="h-[calc(100%-60px)] px-2 pb-2">
-                {activeTab === "map" ? (
-                  <HotelMap
-                    hotelName={hotel.name}
-                    coordinates={[Number(hotel.coord1), Number(hotel.coord2)]}
-                    hotelRating={hotel.rating}
-                    hotelStars={hotel.stars}
-                  />
-                ) : (
-                  <ReviewsModal
-                    hotelName={hotel.name}
-                    hotelRating={hotel.rating}
-                    hotelStars={hotel.stars}
-                    reviews={hotel.reviews?.review || []}
-                  />
+                </div>
+                {hotel.rating !== "0" && (
+                  <div className="bg-[#FF621F] text-white text-xs font-medium px-1 py-0.5 rounded-[20px]">
+                    {hotel.rating.length === 1
+                      ? `${hotel.rating}.0`
+                      : hotel.rating}
+                  </div>
                 )}
               </div>
+              <div className="flex items-center gap-1 text-sm text-[#FF621F]">
+                <span>вылет из {getDepartureCity()}</span>
+                <img
+                  src={planeDeparture}
+                  alt="Plane Departure"
+                  className="w-3 h-3"
+                />
+              </div>
+            </div>
+
+            {/* Название отеля */}
+            <h1 className="text-lg font-bold text-[#2E2E32]">{hotel.name}</h1>
+
+            {/* Местоположение */}
+            <p className="text-sm text-[#6B7280]">
+              {hotel.country}, {hotel.region}
+            </p>
+
+            {/* Теги */}
+            <div className="flex gap-3 pt-1.5">
+              {tour.meal && (
+                <div className="flex items-center gap-1 bg-white border border-gray-200 px-2 py-1 rounded-lg">
+                  <FaUtensils className="w-3 h-3 text-[#2E2E32]" />
+                  <span className="text-xs text-[#2E2E32]">
+                    {getMealType(tour.meal)}
+                  </span>
+                </div>
+              )}
+              {hotel.beach && (
+                <div className="flex items-center gap-1 bg-white border border-gray-200 px-2 py-1 rounded-lg">
+                  <FaUmbrellaBeach className="w-3 h-3 text-[#2E2E32]" />
+                  <span className="text-xs text-[#2E2E32]">
+                    Береговая линия
+                  </span>
+                </div>
+              )}
             </div>
           </div>
-        </div>
 
-        {/* Mobile версия */}
-        <div className="block md:hidden">
-          <div className="flex gap-2">
-            {/* Галерея изображений */}
-            {hotel.images?.image.length > 0 && (
-              <div className="relative group w-full h-52">
-                <Swiper
-                  modules={[Navigation, Pagination, Autoplay]}
-                  spaceBetween={0}
-                  slidesPerView={1}
-                  pagination={{
-                    clickable: true,
-                    bulletActiveClass: "!bg-white !scale-110",
-                    bulletClass: "swiper-pagination-bullet !mx-1 !w-2 !h-2",
-                  }}
-                  autoplay={{ delay: 2500, disableOnInteraction: false }}
-                  loop={true}
-                  className="h-full rounded-lg"
-                >
-                  {hotel.images.image.map((img: string, index: number) => (
-                    <SwiperSlide key={index} className="relative">
-                      <img
-                        src={`https:${img}`}
-                        alt={`Фото отеля ${hotel.name}`}
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-b from-black/5 via-transparent to-black/60" />
-                    </SwiperSlide>
-                  ))}
-                </Swiper>
+          {/* Табы */}
+          <div className="">
+            <div className="bg-white rounded-t-xl px-1 pt-2 flex gap-2">
+              <button
+                onClick={() => setActiveTab("about")}
+                className={`flex-1 py-1.5 px-3 rounded-lg text-sm font-medium transition-colors ${
+                  activeTab === "about"
+                    ? "bg-[#FF621F] text-white"
+                    : "text-[#7E8389]"
+                }`}
+              >
+                Об отеле
+              </button>
+              <button
+                onClick={() => setActiveTab("amenities")}
+                className={`flex-1 py-1.5 px-3 rounded-lg text-sm font-medium transition-colors ${
+                  activeTab === "amenities"
+                    ? "bg-[#FF621F] text-white"
+                    : "text-[#7E8389]"
+                }`}
+              >
+                Удобства отеля
+              </button>
+            </div>
+
+            {/* Контент табов */}
+            {activeTab === "about" && (
+              <div className="pb-4">
+                <div className="bg-white rounded-b-xl px-3 pt-2 pb-4 space-y-1">
+                  <h3 className="text-lg font-semibold text-[#2E2E32]">
+                    Об отеле:
+                  </h3>
+                  <p className="text-base text-[#6B7280] leading-relaxed">
+                    {hotel.description}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {activeTab === "amenities" && (
+              <div className="pb-4">
+                <div className="bg-white rounded-b-xl px-3 pt-2 pb-4 space-y-4">
+                  {hotel.placement && (
+                    <div>
+                      <h3 className="text-lg font-semibold text-[#2E2E32] mb-1">
+                        Расположение:
+                      </h3>
+                      <p className="text-base text-[#6B7280]">
+                        {hotel.placement}
+                      </p>
+                    </div>
+                  )}
+                  {hotel.territory && (
+                    <div>
+                      <h3 className="text-lg font-semibold text-[#2E2E32] mb-1">
+                        Территория отеля:
+                      </h3>
+                      <p className="text-base text-[#6B7280]">
+                        {formatList(hotel.territory)}
+                      </p>
+                    </div>
+                  )}
+                  {hotel.inroom && (
+                    <div>
+                      <h3 className="text-lg font-semibold text-[#2E2E32] mb-1">
+                        В номере:
+                      </h3>
+                      <p className="text-base text-[#6B7280]">
+                        {formatList(hotel.inroom)}
+                      </p>
+                    </div>
+                  )}
+                  {hotel.services && (
+                    <div>
+                      <h3 className="text-lg font-semibold text-[#2E2E32] mb-1">
+                        Услуги отеля:
+                      </h3>
+                      <p className="text-base text-[#6B7280]">
+                        {formatList(hotel.services)}
+                      </p>
+                    </div>
+                  )}
+                </div>
               </div>
             )}
           </div>
-        </div>
 
-        <div className="flex flex-col py-4">
-          <div className="flex items-baseline gap-3">
-            <h1 className="text-2xl md:text-3xl font-bold bg-clip-text text-gray-800 md:truncate md:max-w-[70%]">
-              {hotel.name}
-            </h1>
-            <div className="flex-shrink-0 gap-2 hidden md:flex">
-              <div className="flex items-center gap-1 bg-yellow-100 px-2 md:px-3 py-1 rounded-full shadow-sm whitespace-nowrap">
-                <span className="text-yellow-500 text-xl md:text-2xl">★</span>
-                <span className="font-semibold text-base md:text-lg">
-                  {hotel.rating}
-                </span>
-              </div>
-              <div className="bg-blue-100 px-2 md:px-3 py-1 rounded-full shadow-sm flex items-center whitespace-nowrap">
-                <span className="text-blue-600 font-semibold text-base md:text-lg">
-                  {hotel.stars} / 5
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <p className="text-gray-600 text-base md:text-xl flex items-center gap-1">
-              <PiMapPinFill className="text-blue-600" />
-              {hotel.country}, {hotel.region}
-            </p>
-            <div className="flex-shrink-0 flex gap-1 md:hidden">
-              <div className="flex items-center gap-1 bg-yellow-100 px-2 md:px-3 py-0.5 rounded-full shadow-sm whitespace-nowrap">
-                <span className="text-yellow-500 text-base md:text-2xl">★</span>
-                <span className="font-semibold text-sm md:text-lg">
-                  {hotel.rating}
-                </span>
-              </div>
-              <div className="bg-blue-100 px-2 md:px-3 py-0.5 rounded-full shadow-sm flex items-center whitespace-nowrap">
-                <span className="text-blue-600 font-semibold text-sm md:text-lg">
-                  {hotel.stars} / 5
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="container mx-auto pb-4 mt-4 md:mt-8">
-          <div className="bg-white rounded-lg md:rounded-2xl shadow-sm p-2 md:p-6 space-y-3">
-            <div className="space-y-1 md:space-y-4">
-              <h2 className="text-lg md:text-2xl font-semibold text-gray-800">
+          {/* Информация о туре */}
+          <div className="">
+            <div className="bg-white rounded-xl px-3 py-2">
+              <h3 className="text-lg font-semibold text-[#2E2E32] mb-2">
                 Информация о туре
-              </h2>
-              <div className="flex gap-1 md:gap-6">
-                <div className="flex items-center gap-2 bg-blue-50 px-4 py-2 rounded-xl">
-                  <ImCalendar className="text-blue-600 text-lg" />
-                  <p className="text-gray-700 font-medium">
-                    {formatDate(tour.flydate)}
-                  </p>
-                </div>
-                <div className="flex items-center gap-2 bg-indigo-50 px-4 py-2 rounded-xl">
-                  <IoMoonOutline className="text-indigo-600 text-lg" />
-                  <p className="text-gray-700 font-medium">
-                    {tour.nights} ночей
-                  </p>
-                </div>
-                <div className="hidden md:flex items-center gap-2 bg-purple-50 px-4 py-2 rounded-xl">
-                  <FaUtensils className="text-purple-600 text-lg" />
-                  <p className="text-gray-700 font-medium">{getMealType()}</p>
-                </div>
-              </div>
-              <div className="flex md:hidden items-center gap-2 bg-purple-50 px-4 py-2 rounded-xl w-fit">
-                <FaUtensils className="text-purple-600 text-lg" />
-                <p className="text-gray-700 font-medium">{getMealType()}</p>
-              </div>
-            </div>
-
-            <div className="space-y-1 md:space-y-4">
-              <h3 className="text-lg md:text-xl font-semibold text-gray-800">
-                Размещение
               </h3>
-              <div className="flex flex-col md:flex-row gap-1 md:gap-6">
-                <div className="flex w-fit items-center gap-2 bg-green-50 px-4 py-2 rounded-xl">
-                  <FaHome className="text-green-600 text-lg" />
-                  <p className="text-gray-700 font-medium">{tour.room}</p>
-                </div>
-                <div className="flex w-fit items-center gap-2 bg-teal-50 px-4 py-2 rounded-xl">
-                  <FaBed className="text-teal-600 text-lg" />
-                  <p className="text-gray-700 font-medium">
-                    {tour.placement === "2 взрослых"
-                      ? "Два взрослых"
-                      : tour.placement}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-1 md:space-y-4 w-full md:w-[50%]">
-              <h3 className="text-lg md:text-xl font-semibold text-gray-800">
-                Перелет
-              </h3>
-              <div className="bg-amber-50 p-4 rounded-xl space-y-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <IoAirplane className="-rotate-45 text-amber-600 text-lg" />
-                    <p className="text-gray-700 font-medium">{`${tour.departurename} - ${tour.hotelregionname}`}</p>
+              <div className="space-y-4">
+                <div className="space-y-2 p-3 border border-gray-100 rounded-lg">
+                  <h4 className="text-base font-semibold text-[#2E2E32]">
+                    Выбранный тур
+                  </h4>
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center">
+                      <div className="space-y-1">
+                        <p className="text-sm font-medium text-[#2E2E32]">
+                          {getMealType(tour.meal)}, {tour.nights} ночей
+                        </p>
+                        <p className="text-sm font-semibold text-[#2E2E32]">
+                          Номер {tour.room}, {tour.placement}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm font-semibold text-[#6B7280]">
+                          {formatDate(tour.flydate)} –{" "}
+                          {getEndDate(tour.flydate, tour.nights)}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm text-[#B3B9C0]">
+                          {tour.operatorname || "Pegasus Airlines"}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <button className="bg-[#FF621F] text-white px-8 py-1.5 rounded-lg text-sm font-semibold">
+                          {tour.price}
+                          {tour.currency === "EUR"
+                            ? "€"
+                            : tour.currency === "USD"
+                            ? "$"
+                            : tour.currency}
+                        </button>
+                      </div>
+                    </div>
                   </div>
-                  <p className="text-black">{formatDate(tour.flydate)}</p>
                 </div>
-
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <IoAirplane className="rotate-[135deg] text-amber-600 text-lg" />
-                    <p className="text-gray-700 font-medium">{`${tour.hotelregionname} - ${tour.departurename}`}</p>
-                  </div>
-                  <p className="text-black">
-                    {formatDate(tour.flydate, tour.nights)}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="hidden md:flex justify-end md:pt-4">
-              <div className="bg-gradient-to-r from-orange-500 to-orange-400 px-6 py-2 md:py-3 rounded-xl shadow-lg">
-                <p className="text-white flex items-baseline gap-2">
-                  <span className="text-2xl font-semibold md:text-3xl md:font-bold">
-                    {tour.price}
-                    {tour.currency === "EUR"
-                      ? "€"
-                      : tour.currency === "USD"
-                      ? "$"
-                      : tour.currency}
-                  </span>
-                </p>
               </div>
             </div>
           </div>
-        </div>
 
-        <div className="container mx-auto pb-14">
-          {hotel.description && (
-            <div className="flex flex-col py-2">
-              <h2 className="text-xl md:text-2xl font-semibold">
-                Информация об отеле
-              </h2>
-              <p className="text-black text-lg md:text-lg">
-                {hotel.description}
-              </p>
-            </div>
-          )}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 auto-rows-auto">
-            {(() => {
-              // Собираем все существующие секции в один массив
-              const sections = [
-                hotel.placement && {
-                  id: "placement",
-                  title: "Расположение",
-                  content: hotel.placement,
-                  useFormatText: false,
-                },
-                hotel.territory && {
-                  id: "territory",
-                  title: "Территория и услуги",
-                  content: hotel.territory,
-                  useFormatText: true,
-                },
-                hotel.inroom && {
-                  id: "inroom",
-                  title: "В номере",
-                  content: hotel.inroom,
-                  useFormatText: true,
-                },
-                hotel.beach && {
-                  id: "beach",
-                  title: "Пляж",
-                  content: hotel.beach,
-                  useFormatText: true,
-                },
-                hotel.roomtypes && {
-                  id: "roomtypes",
-                  title: "Типы номеров",
-                  content: hotel.roomtypes,
-                  useFormatText: true,
-                },
-                hotel.servicefree && {
-                  id: "servicefree",
-                  title: "Бесплатные услуги",
-                  content: hotel.servicefree,
-                  useFormatText: true,
-                },
-                hotel.servicepay && {
-                  id: "servicepay",
-                  title: "Платные услуги",
-                  content: hotel.servicepay,
-                  useFormatText: true,
-                },
-                hotel.child && {
-                  id: "child",
-                  title: "Для детей",
-                  content: hotel.child,
-                  useFormatText: true,
-                },
-                hotel.mealtypes && {
-                  id: "mealtypes",
-                  title: "Питание",
-                  content: hotel.mealtypes,
-                  useFormatText: true,
-                },
-              ].filter(Boolean);
-
-              // Делим на две колонки
-              const midPoint = Math.ceil(sections.length / 2);
-              const firstColumn = sections.slice(0, midPoint);
-              const secondColumn = sections.slice(midPoint);
-
-              return [
-                <div key="col1" className="space-y-2">
-                  {firstColumn.map((section) => (
-                    <AccordionSection
-                      key={section.id}
-                      title={section.title}
-                      content={section.content}
-                      isOpen={openSections.includes(section.id)}
-                      onToggle={() => toggleSection(section.id)}
-                      formatText={
-                        section.useFormatText ? formatText : undefined
-                      }
-                    />
-                  ))}
-                </div>,
-                <div key="col2" className="space-y-2">
-                  {secondColumn.map((section) => (
-                    <AccordionSection
-                      key={section.id}
-                      title={section.title}
-                      content={section.content}
-                      isOpen={openSections.includes(section.id)}
-                      onToggle={() => toggleSection(section.id)}
-                      formatText={
-                        section.useFormatText ? formatText : undefined
-                      }
-                    />
-                  ))}
-                </div>,
-              ];
-            })()}
-          </div>
-
-          {/* Показываем SimilarHotTours только если это путь горящих туров */}
-          {isHotTourPath && (
-            <div className="mt-8">
+          {/* SimilarHotTours */}
+          {/* {isHotTourPath && (
+            <div className="mt-4">
               <SimilarHotTours
                 countrycode={hotel.countrycode}
                 departurecode={tour.departurecode}
@@ -508,28 +439,18 @@ export default function HotelDetails() {
                 currentHotelName={hotel.name}
               />
             </div>
-          )}
+          )} */}
         </div>
-      </div>
 
-      {/* Добавляем фиксированную панель бронирования */}
-      <BookingPanel
-        price={tour.price}
-        currency={tour.currency}
-        nights={tour.nights}
-        meal={getMealType()}
-        hotelcode={hotelcode}
-        tourId={tourId}
-        hotelName={hotel.name}
-        country={hotel.country}
-        region={hotel.region}
-        departure={tour.departurename}
-        flyDate={tour.flydate}
-        adults={tour.placement}
-        operatorLink={tour.operatorlink}
-        roomType={tour.room}
-      />
-      <FloatingControls />
-    </div>
+        {/* Lightbox для галереи */}
+        <Lightbox
+          open={isOpen}
+          close={() => setIsOpen(false)}
+          slides={slides}
+          plugins={[Thumbnails]}
+          index={currentIndex}
+        />
+      </div>
+    </>
   );
 }

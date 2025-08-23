@@ -4,10 +4,18 @@ import { DataContext } from "../../DataProvider";
 import { useNavigate, useLocation } from "react-router-dom";
 
 export default function FindTourMobile() {
-  const { loading, params, searchTours } = useContext(DataContext);
+  const { loading, params, searchTours, tourDataStatus } =
+    useContext(DataContext);
   const navigate = useNavigate();
   const location = useLocation();
   const isOurToursPage = location.pathname === "/OurTours";
+
+  // Проверяем, идет ли поиск
+  const isSearching =
+    loading ||
+    tourDataStatus?.state === "searching" ||
+    tourDataStatus?.state === "loading" ||
+    (tourDataStatus && tourDataStatus.state !== "finished");
 
   const handleSearchClick = async () => {
     // Создаем URLSearchParams для формирования строки запроса
@@ -52,10 +60,16 @@ export default function FindTourMobile() {
   return (
     <button
       onClick={handleSearchClick}
-      disabled={loading}
-      className="w-full flex justify-center items-center gap-2 py-3 px-6 mb-2 bg-[#FF621F] rounded-lg disabled:bg-gray-400"
+      disabled={isSearching}
+      className={`w-full flex justify-center items-center gap-2 py-3 px-6 mb-2 rounded-lg transition-colors ${
+        isSearching
+          ? "bg-gray-400 cursor-not-allowed"
+          : "bg-[#FF621F] hover:bg-[#E55A1A]"
+      }`}
     >
-      <span className="text-lg font-medium text-white">Найти туры</span>
+      <span className="text-lg font-medium text-white">
+        {isSearching ? "Поиск..." : "Найти туры"}
+      </span>
       <FiSearch className="w-5 h-5 text-white" />
     </button>
   );

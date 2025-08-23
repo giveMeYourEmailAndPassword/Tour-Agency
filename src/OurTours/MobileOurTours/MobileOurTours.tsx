@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { DataContext } from "../../components/DataProvider";
 import { Skeleton } from "@heroui/react";
@@ -60,6 +60,9 @@ export default function MobileOurTours() {
   const location = useLocation();
   const navigate = useNavigate();
   const initialSearchDone = useRef(false);
+
+  // Добавляем состояние для отслеживания попыток поиска
+  const [searchAttempts, setSearchAttempts] = useState(0);
 
   // Эффект для установки параметров и запуска поиска
   useEffect(() => {
@@ -123,6 +126,37 @@ export default function MobileOurTours() {
       searchTours();
     }
   }, [location.search, setData, searchTours]);
+
+  // Добавляем улучшенный эффект для автоматического перезапуска поиска
+  useEffect(() => {
+    // Перезапускаем поиск только если:
+    // - нет туров
+    // - не загружается
+    // - не загружается следующая страница
+    // - статус не "searching" или "loading"
+    // - не превышено количество попыток
+    if (
+      tours.length === 0 &&
+      !loading &&
+      !isFetchingNextPage &&
+      searchAttempts < 3 &&
+      tourDataStatus?.state !== "searching" &&
+      tourDataStatus?.state !== "loading"
+    ) {
+      const timer = setTimeout(() => {
+        setSearchAttempts((prev) => prev + 1);
+        searchTours();
+      }, 2000); // Даем время на завершение поиска
+
+      return () => clearTimeout(timer);
+    }
+  }, [
+    tours.length,
+    loading,
+    isFetchingNextPage,
+    searchAttempts,
+    tourDataStatus?.state,
+  ]);
 
   if (loading) {
     return (

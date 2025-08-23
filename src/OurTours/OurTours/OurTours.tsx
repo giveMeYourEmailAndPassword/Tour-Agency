@@ -125,17 +125,36 @@ export default function OurTours() {
   // Добавляем состояние для отслеживания попыток поиска
   const [searchAttempts, setSearchAttempts] = useState(0);
 
-  // Добавляем эффект для автоматического перезапуска поиска
+  // Улучшенный эффект для автоматического перезапуска поиска
   useEffect(() => {
-    if (tours.length === 0 && !loading && searchAttempts < 3) {
+    // Перезапускаем поиск только если:
+    // - нет туров
+    // - не загружается
+    // - не загружается следующая страница
+    // - статус не "searching" или "loading"
+    // - не превышено количество попыток
+    if (
+      tours.length === 0 &&
+      !loading &&
+      !isFetchingNextPage &&
+      searchAttempts < 3 &&
+      tourDataStatus?.state !== "searching" &&
+      tourDataStatus?.state !== "loading"
+    ) {
       const timer = setTimeout(() => {
         setSearchAttempts((prev) => prev + 1);
         searchTours();
-      }, 0);
+      }, 0); // Еще больше времени на завершение
 
       return () => clearTimeout(timer);
     }
-  }, [tours.length, loading, searchAttempts]);
+  }, [
+    tours.length,
+    loading,
+    isFetchingNextPage,
+    searchAttempts,
+    tourDataStatus?.state,
+  ]);
 
   if (error) {
     return (

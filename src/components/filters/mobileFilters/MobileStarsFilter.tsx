@@ -6,7 +6,6 @@ import star from "../../../assets/star.svg";
 
 const STARS = [
   { id: 0, name: "1-5 звезд", value: [1, 2, 3, 4, 5] },
-  { id: 1, name: "1 звезда", value: [1] },
   { id: 2, name: "2 звезды", value: [2] },
   { id: 3, name: "3 звезды", value: [3] },
   { id: 4, name: "4 звезды", value: [4] },

@@ -43,7 +43,7 @@ export default function Raiting() {
         className="flex items-center justify-between text-[#2E2E32] text-base font-semibold"
         onClick={() => setIsExpanded(!isExpanded)}
       >
-        <span>Рейтинг</span>
+        <span>Какой уровень отеля?</span>
         <svg
           className={`w-5 h-5 transform transition-transform ${
             isExpanded ? "rotate-180" : ""

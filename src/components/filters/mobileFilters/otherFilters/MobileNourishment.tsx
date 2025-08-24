@@ -18,11 +18,19 @@ export default function MobileNourishment() {
   // Определяем список чекбоксов
   const checkboxes = [
     { value: "2", label: "Любое", span: "" },
-    { value: "3", label: "Только завтрак", span: "BB" },
-    { value: "4", label: "Завтрак, ужин", span: "HB" },
-    { value: "5", label: "Полный пансион", span: "FB" },
-    { value: "7", label: "Все включено", span: "AL" },
-    { value: "9", label: "Ультра все включено", span: "UAL" },
+    { value: "3", label: "Только завтраки", span: "BB" },
+    { value: "4", label: "Завтрак + ужин — без забот", span: "HB" },
+    { value: "5", label: "Полный пансион — всё включено в день", span: "FB" },
+    {
+      value: "7",
+      label: "All Inclusive – ешь и пей без ограничений",
+      span: "AL",
+    },
+    {
+      value: "9",
+      label: "Ultra All Inclusive – максимум удовольствия",
+      span: "UAL",
+    },
   ];
 
   const selectedValue = params.param7?.[0] || "2";
@@ -35,11 +43,15 @@ export default function MobileNourishment() {
     const selectedCheckbox = checkboxes.find((c) => c.value === selectedValue);
 
     if (selectedCheckbox?.value === "2") {
-      return <span className="text-black text-lg font-normal">Питание</span>;
+      return (
+        <span className="text-black text-lg font-normal">
+          Как будем кушать?
+        </span>
+      );
     } else {
       return (
         <div className="flex flex-col items-start">
-          <span className="text-slate-600 text-sm">Питание</span>
+          <span className="text-slate-600 text-sm">Как будем кушать?</span>
           <span className="text-black text-lg">
             <span className="font-medium">{selectedCheckbox?.span}</span> и
             лучше

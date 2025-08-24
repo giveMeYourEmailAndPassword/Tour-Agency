@@ -26,11 +26,15 @@ export default function MobileRaiting() {
     const selectedCheckbox = checkboxes.find((c) => c.value === selectedValue);
 
     if (selectedCheckbox?.value === "0") {
-      return <span className="text-black text-lg font-normal">Рейтинг</span>;
+      return (
+        <span className="text-black text-lg font-normal">
+          Какой уровень отеля?
+        </span>
+      );
     } else {
       return (
         <div className="flex flex-col items-start">
-          <span className="text-slate-600 text-sm">Рейтинг</span>
+          <span className="text-slate-600 text-sm">Какой уровень отеля?</span>
           <span className="text-black text-lg">
             <span className="font-medium">{selectedCheckbox?.span}</span> и
             более

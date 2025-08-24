@@ -105,6 +105,11 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     const country = urlParams.get("country");
     if (country) parsedParams.param2 = country;
 
+    // Добавляем обработку регионов
+    const regions = urlParams.get("regions");
+    if (regions)
+      parsedParams.param2Regions = regions.split(",").map((id) => parseInt(id));
+
     // Ночи
     const nightsFrom = urlParams.get("nightsFrom");
     const nightsTo = urlParams.get("nightsTo");

@@ -13,6 +13,12 @@ export default function NewFlyingCountry() {
     const country = destinations.find(
       (country) => country.id === (Number(params.param2) || 4)
     );
+
+    // Если есть регионы в URL, используем их, иначе все регионы страны
+    if (params.param2Regions?.length) {
+      return params.param2Regions;
+    }
+
     return country ? country.regions.map((region) => region.id) : [];
   });
   const [isOpen, setIsOpen] = useState(false);
@@ -39,10 +45,19 @@ export default function NewFlyingCountry() {
     }
   }, [params.param2, selectedCountry]); // Добавляем selectedCountry в зависимости
 
+  // Добавляем эффект для отслеживания изменений params.param2Regions
+  useEffect(() => {
+    if (params.param2Regions) {
+      setSelectedRegions(params.param2Regions);
+    }
+  }, [params.param2Regions]);
+
   // Добавляем эффект для обновления параметров при изменении регионов
   useEffect(() => {
     if (selectedCountry) {
       setData("param2", selectedCountry);
+      // Добавляем параметр для регионов
+      setData("param2Regions", selectedRegions);
     }
   }, [selectedCountry, selectedRegions, setData]);
 

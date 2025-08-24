@@ -29,6 +29,12 @@ export default function FindTourBtn({ onSearch }: FindTourBtnProps) {
     // Добавляем параметры в URL
     if (params.param1) searchParams.set("departure", params.param1);
     if (params.param2) searchParams.set("country", params.param2);
+
+    // Добавляем параметр для регионов
+    if (params.param2Regions?.length) {
+      searchParams.set("regions", params.param2Regions.join(","));
+    }
+
     if (params.param3?.startDay)
       searchParams.set("nightsFrom", params.param3.startDay.toString());
     if (params.param3?.endDay)

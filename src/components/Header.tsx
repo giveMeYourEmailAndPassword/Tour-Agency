@@ -42,15 +42,16 @@ export default function Header() {
           </div>
         </div>
 
-        {/* Модальное окно избранного */}
+        {/* Модальное окно избранного для десктопа */}
         <Modal
           isOpen={isFavoriteModalOpen}
           onOpenChange={() => setIsFavoriteModalOpen(false)}
           shouldBlockScroll={false}
           backdrop="opaque"
           classNames={{
-            closeButton: "md:block hidden", // Скрываем на мобильных, показываем на десктопе
+            closeButton: "md:block hidden",
           }}
+          className="hidden md:block" // Скрываем на мобильных
         >
           <ModalContent className="max-w-5xl max-h-[66vh] py-2 pr-2">
             <>
@@ -67,20 +68,72 @@ export default function Header() {
                     </div>
                   )}
                 </div>
-
-                {/* Крестик для мобильных устройств */}
-                <button
-                  onClick={() => setIsFavoriteModalOpen(false)}
-                  className="md:hidden ml-auto"
-                >
-                  <RxCross2 className="w-6 h-6 text-[#FF621F]" />
-                </button>
               </ModalHeader>
               <ModalBody className="h-[60vh] overflow-y-auto scrollbar-custom px-3 md:px-6">
                 <FavoriteModal tours={favoriteTours} />
               </ModalBody>
               <ModalFooter />
             </>
+          </ModalContent>
+        </Modal>
+
+        {/* Мобильное модальное окно избранного в стиле стран */}
+        <Modal
+          isOpen={isFavoriteModalOpen}
+          onClose={() => setIsFavoriteModalOpen(false)}
+          placement="bottom"
+          backdrop="opaque"
+          radius="sm"
+          scrollBehavior="inside"
+          isDismissable={true}
+          shouldBlockScroll={true}
+          className="!p-0 !m-0 !max-w-full md:hidden"
+          hideCloseButton={true}
+          shadow="none"
+          classNames={{
+            backdrop: "bg-black/30", // Устанавливаем прозрачность 30% как в странах
+          }}
+          motionProps={{
+            variants: {
+              enter: {
+                opacity: 1,
+                transition: {
+                  duration: 0.2,
+                  ease: "easeOut",
+                },
+              },
+              exit: {
+                opacity: 0,
+                transition: {
+                  duration: 0.1,
+                  ease: "easeIn",
+                },
+              },
+            },
+          }}
+        >
+          <ModalContent>
+            <div className="w-full">
+              <div className="bg-white w-full rounded-t-[10px]">
+                {/* Header */}
+                <div className="flex justify-center items-center border-b border-[#DBE0E5] h-14 relative">
+                  <h2 className="text-[20px] font-medium text-[#2E2E32]">
+                    Избранные туры
+                  </h2>
+                  <button
+                    onClick={() => setIsFavoriteModalOpen(false)}
+                    className="absolute right-5"
+                  >
+                    <RxCross2 className="w-6 h-6 text-[#FF621F]" />
+                  </button>
+                </div>
+
+                {/* Content */}
+                <div className="p-3">
+                  <FavoriteModal tours={favoriteTours} />
+                </div>
+              </div>
+            </div>
           </ModalContent>
         </Modal>
       </div>

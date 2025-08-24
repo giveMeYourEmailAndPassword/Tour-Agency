@@ -76,6 +76,13 @@ export default function MobileOurTours() {
     if (searchParams.has("country"))
       setData("param2", searchParams.get("country"));
 
+    // Добавляем обработку регионов
+    if (searchParams.has("regions")) {
+      const regionsParam = searchParams.get("regions")!;
+      const regionsArray = regionsParam.split(",").map(Number);
+      setData("param2Regions", regionsArray);
+    }
+
     if (searchParams.has("nightsFrom") || searchParams.has("nightsTo")) {
       setData("param3", {
         startDay: searchParams.get("nightsFrom")
@@ -255,6 +262,12 @@ export default function MobileOurTours() {
                 // Добавляем все текущие параметры фильтров
                 if (params.param1) searchParams.set("departure", params.param1);
                 if (params.param2) searchParams.set("country", params.param2);
+
+                // Добавляем параметр для регионов
+                if (params.param2Regions?.length) {
+                  searchParams.set("regions", params.param2Regions.join(","));
+                }
+
                 if (params.param3?.startDay)
                   searchParams.set(
                     "nightsFrom",

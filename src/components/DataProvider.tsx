@@ -326,6 +326,8 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
       const requestData = {
         departure: params.param1,
         country: params.param2,
+        // Добавляем параметр для регионов
+        regions: params.param2Regions?.join(",") || "",
         datefrom: params.param4.startDate,
         dateto: params.param4.endDate,
         nightsfrom: params.param3?.startDay?.toString() || "",

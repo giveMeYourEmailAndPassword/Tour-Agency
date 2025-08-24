@@ -143,6 +143,12 @@ export default function SearchResults() {
                 searchParams.set("departure", params.param1.toString());
               if (params.param2)
                 searchParams.set("country", params.param2.toString());
+
+              // Добавляем параметр для регионов
+              if (params.param2Regions?.length) {
+                searchParams.set("regions", params.param2Regions.join(","));
+              }
+
               if (params.param3?.startDay)
                 searchParams.set(
                   "nightsFrom",

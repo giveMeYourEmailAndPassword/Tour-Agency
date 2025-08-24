@@ -1,4 +1,4 @@
-import { useParams, useLocation } from "react-router";
+import { useParams, useLocation, useNavigate } from "react-router";
 import useHotelDetails from "../Hooks/UseHotelDetails";
 import { Skeleton } from "@heroui/react";
 import starFilled from "../assets/star_fill.svg";
@@ -21,6 +21,7 @@ import Header from "../components/Header";
 export default function HotelDetails() {
   const { hotelcode, tourId } = useParams();
   const location = useLocation();
+  const navigate = useNavigate(); // Добавляем useNavigate
   const isHotTourPath = !location.pathname.includes("/OurTours");
   const { data, isLoading, isError } = useHotelDetails(hotelcode!, tourId!);
   const [isOpen, setIsOpen] = useState(false);
@@ -224,6 +225,36 @@ export default function HotelDetails() {
   // Функция для определения города вылета
   const getDepartureCity = () => {
     return tour.departurename || "Бишкека";
+  };
+
+  // Добавляем функцию для перехода в Booking
+  const handleBookingClick = () => {
+    if (!hotel || !tour) return;
+
+    // Сохраняем данные о туре в localStorage для страницы бронирования
+    const bookingData = {
+      hotelName: hotel.name,
+      departure: getDepartureCity(),
+      flyDate: tour.flydate,
+      nights: tour.nights,
+      adults: tour.adults?.toString() || "2",
+      price: tour.price,
+      currency: tour.currency,
+      country: hotel.country,
+      region: hotel.region,
+      mealType: getMealType(tour.meal),
+      roomType: tour.room,
+      hotelcode: hotelcode,
+      operatorLink: tour.operatorname || "Pegasus Airlines",
+    };
+
+    localStorage.setItem(
+      `booking_${hotelcode}_${tourId}`,
+      JSON.stringify(bookingData)
+    );
+
+    // Переходим на страницу бронирования
+    navigate(`/hotel/${hotelcode}/${tourId}/booking`);
   };
 
   return (
@@ -507,7 +538,10 @@ export default function HotelDetails() {
                         </div>
                         <div className="flex items-center gap-2">
                           {/* Кнопка цены */}
-                          <button className="bg-[#FF621F] text-white px-2 py-1 rounded-lg flex items-center gap-2">
+                          <button
+                            onClick={handleBookingClick}
+                            className="bg-[#FF621F] text-white px-2 py-1 rounded-lg flex items-center gap-2 hover:bg-[#E55A1A] transition-colors cursor-pointer"
+                          >
                             <span className="text-base font-semibold">
                               {tour.price}
                               {tour.currency === "EUR"

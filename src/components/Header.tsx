@@ -10,6 +10,7 @@ import {
 } from "@heroui/react";
 import FavoriteModal from "./Favorite/FavoriteModal";
 import { DataContext } from "./DataProvider";
+import LOGO from "../assets/logo2.png";
 
 export default function Header() {
   const { favoriteTours, isFavorite } = useContext(DataContext);
@@ -19,7 +20,9 @@ export default function Header() {
     <div className="w-full bg-gray-100 md:bg-white pt-4 px-3 md:px-0">
       <div className="max-w-[1560px] mx-auto">
         <div className="flex items-center justify-between">
-          <div className="flex items-center">Втепло</div>
+          <div className="flex items-center">
+            <img src={LOGO} alt="logo" className="w-30 h-16 ml-[-10px]" />
+          </div>
 
           {/* Кнопка избранного */}
           <div className="flex items-center">

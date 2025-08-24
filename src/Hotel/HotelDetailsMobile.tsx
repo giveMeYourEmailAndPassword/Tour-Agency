@@ -1,4 +1,4 @@
-import { useParams, useLocation } from "react-router";
+import { useParams, useLocation, useNavigate } from "react-router";
 import useHotelDetails from "../Hooks/UseHotelDetails";
 import { Skeleton } from "@heroui/react";
 import starFilled from "../assets/star_fill.svg";
@@ -23,6 +23,7 @@ import Header from "../components/Header";
 export default function HotelDetailsMobile() {
   const { hotelcode, tourId } = useParams();
   const location = useLocation();
+  const navigate = useNavigate(); // Добавляем useNavigate
   const isHotTourPath = !location.pathname.includes("/OurTours");
   const { data, isLoading, isError } = useHotelDetails(hotelcode!, tourId!);
   const [activeTab, setActiveTab] = useState("about");
@@ -179,6 +180,33 @@ export default function HotelDetailsMobile() {
   const getDepartureCity = () => {
     // Здесь можно добавить логику для определения города вылета
     return tour.departurename || "Бишкека";
+  };
+
+  const handleBookingClick = () => {
+    // Сохраняем данные о туре в localStorage для страницы бронирования
+    const bookingData = {
+      hotelName: hotel.name,
+      departure: getDepartureCity(),
+      flyDate: tour.flydate,
+      nights: tour.nights,
+      adults: tour.adults.toString(),
+      price: tour.price,
+      currency: tour.currency,
+      country: hotel.country,
+      region: hotel.region,
+      mealType: getMealType(tour.meal),
+      roomType: tour.room,
+      hotelcode: hotelcode,
+      operatorLink: tour.operatorname || "Pegasus Airlines",
+    };
+
+    localStorage.setItem(
+      `booking_${hotelcode}_${tourId}`,
+      JSON.stringify(bookingData)
+    );
+
+    // Переходим на страницу бронирования
+    navigate(`/hotel/${hotelcode}/${tourId}/booking`);
   };
 
   return (
@@ -413,7 +441,10 @@ export default function HotelDetailsMobile() {
                         </span>
                       </div>
                       <div className="flex items-center gap-1">
-                        <button className="bg-[#FF621F] text-white px-8 py-1.5 rounded-lg text-sm font-semibold">
+                        <button
+                          onClick={handleBookingClick}
+                          className="bg-[#FF621F] text-white px-8 py-1.5 rounded-lg text-sm font-semibold hover:bg-[#E55A1A] transition-colors cursor-pointer"
+                        >
                           {tour.price}
                           {tour.currency === "EUR"
                             ? "€"

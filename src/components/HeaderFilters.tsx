@@ -13,14 +13,14 @@ interface HeaderProps {
 export default function HeaderFilters({ onSearch }: HeaderProps) {
   return (
     <div className="w-full bg-white">
-      <div className="max-w-[1332px] mx-auto">
+      <div className="max-w-[1560px] mx-auto">
         {/* Мобильная версия */}
         <div className="md:hidden px-4 py-3">
           <h1 className="text-2xl font-semibold">Кругосвет</h1>
         </div>
 
         {/* Десктопная версия */}
-        <div className="hidden md:flex items-center justify-between gap-2 px-6 py-4 w-full">
+        <div className="hidden md:flex items-center justify-between gap-2 pt-2 mb-[-8px] w-full">
           <NewDepartureCity />
           <NewFlyingCountry />
           <NewFlyingDate />

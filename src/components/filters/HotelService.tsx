@@ -47,7 +47,7 @@ export default function HotelService() {
     () => params.param10 || []
   );
   const [expandedSections, setExpandedSections] = useState<string[]>([
-    "Для детей",
+    "Подходит ли для детей?",
   ]); // По умолчанию открыта секция "Для детей"
 
   // Добавляем эффект для отслеживания изменений из URL

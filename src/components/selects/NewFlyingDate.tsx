@@ -174,7 +174,7 @@ export default function NewFlyingDate() {
     <Popover placement="bottom" open={isOpen} onOpenChange={handleCalendarOpen}>
       <PopoverTrigger className="!z-0 !scale-100 !opacity-100">
         <Button
-          className="p-7 bg-white hover:bg-slate-100 border border-[#DBE0E5] rounded-lg w-[220px]"
+          className="p-7 bg-white hover:bg-slate-100 border border-[#DBE0E5] rounded-lg w-[260px]"
           size="lg"
         >
           <img src={calendar} alt="calendar" className="w-6 h-6" />

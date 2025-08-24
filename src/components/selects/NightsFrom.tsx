@@ -120,10 +120,10 @@ export default function NightsFrom() {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-4 px-6 py-1 border border-[#DBE0E5] rounded-lg bg-white hover:bg-gray-50 duration-300 w-[200px]"
+        className="flex items-center px-7 py-1 border border-[#DBE0E5] rounded-lg bg-white hover:bg-gray-50 duration-300 w-[220px]"
       >
         <img src={moon} alt="moon" className="w-6 h-6 flex-shrink-0" />
-        <div className="flex flex-col items-start">
+        <div className="flex flex-col justify-between flex-1">
           <span className="text-sm font-normal text-[#7E8389]">Ночей</span>
           <span className="text-lg font-medium text-[#2E2E32]">
             {sliderValue[0] === sliderValue[1]

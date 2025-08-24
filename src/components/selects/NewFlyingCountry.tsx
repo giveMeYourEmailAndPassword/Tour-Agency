@@ -140,10 +140,10 @@ export default function NewFlyingCountry() {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-4 px-6 py-1 border border-[#DBE0E5] rounded-lg bg-white hover:bg-gray-50 duration-300 w-[220px]"
+        className="flex items-center px-7 py-1 border border-[#DBE0E5] rounded-lg bg-white hover:bg-gray-50 duration-300 w-[260px]"
       >
         <img src={marker} alt="marker" className="w-6 h-6 flex-shrink-0" />
-        <div className="flex flex-col items-start">
+        <div className="flex flex-col justify-between flex-1">
           <span className="text-sm font-normal text-[#7E8389]">
             Страна, город
           </span>

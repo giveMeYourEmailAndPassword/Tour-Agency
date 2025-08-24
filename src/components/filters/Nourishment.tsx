@@ -3,11 +3,11 @@ import { DataContext } from "../DataProvider";
 
 const NOURISHMENT_TYPES = [
   { value: "2", label: "Любое" },
-  { value: "3", label: "Только завтрак (BB)" },
-  { value: "4", label: "Завтрак, ужин (HB)" },
-  { value: "5", label: "Полный пансион (FB)" },
-  { value: "7", label: "Все включено (AL)" },
-  { value: "9", label: "Ультра все включено (UAL)" },
+  { value: "3", label: "Только завтраки" },
+  { value: "4", label: "Завтрак + ужин — без забот" },
+  { value: "5", label: "Полный пансион — всё включено в день" },
+  { value: "7", label: "All Inclusive – ешь и пей без ограничений" },
+  { value: "9", label: "Ultra All Inclusive – максимум удовольствия" },
 ];
 
 export default function Nourishment() {
@@ -50,7 +50,7 @@ export default function Nourishment() {
         className="flex items-center justify-between text-[#2E2E32] text-base font-semibold"
         onClick={() => setIsExpanded(!isExpanded)}
       >
-        <span>Питание</span>
+        <span>Как будем кушать?</span>
         <svg
           className={`w-5 h-5 transform transition-transform ${
             isExpanded ? "rotate-180" : ""

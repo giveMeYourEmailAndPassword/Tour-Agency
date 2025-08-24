@@ -3,10 +3,9 @@ import { DataContext } from "../DataProvider";
 
 const RATINGS = [
   { value: "0", label: "Любой" },
-  { value: "2", label: "3,0 и более" },
-  { value: "3", label: "3,5 и более" },
-  { value: "4", label: "4,0 и более" },
-  { value: "5", label: "4,5 и более" },
+  { value: "2", label: "Только проверенные (3★+)" },
+  { value: "3", label: "Хорошие варианты (4★ и выше)" },
+  { value: "4", label: "Топовые (4.5★ и выше)" },
 ];
 
 export default function Raiting() {

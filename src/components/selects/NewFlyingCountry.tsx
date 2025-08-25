@@ -7,14 +7,12 @@ export default function NewFlyingCountry() {
   const { setData, params } = useContext(DataContext);
   const [selectedCountry, setSelectedCountry] = useState(
     Number(params.param2) || 4
-  ); // Используем значение из URL или Турцию по умолчанию
+  );
   const [selectedRegions, setSelectedRegions] = useState<number[]>(() => {
-    // Находим выбранную страну и получаем все её регионы
     const country = destinations.find(
       (country) => country.id === (Number(params.param2) || 4)
     );
 
-    // Если есть регионы в URL, используем их, иначе все регионы страны
     if (params.param2Regions?.length) {
       return params.param2Regions;
     }
@@ -24,40 +22,56 @@ export default function NewFlyingCountry() {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  // Добавляем эффект для отслеживания изменений params.param2
+  // Инициализация при загрузке компонента
   useEffect(() => {
-    if (params.param2) {
-      const countryExists = destinations.some(
-        (country) => country.id === Number(params.param2)
-      );
-      if (countryExists) {
-        const newCountryId = Number(params.param2);
-        if (newCountryId !== selectedCountry) {
-          // Проверяем, изменилась ли страна
-          setSelectedCountry(newCountryId);
-          // Обновляем регионы для новой страны
-          const country = destinations.find((c) => c.id === newCountryId);
-          if (country) {
-            setSelectedRegions(country.regions.map((region) => region.id));
-          }
+    if (params.param2 && !selectedCountry) {
+      const newCountryId = Number(params.param2);
+      const country = destinations.find((c) => c.id === newCountryId);
+      if (country) {
+        setSelectedCountry(newCountryId);
+        if (params.param2Regions?.length) {
+          setSelectedRegions(params.param2Regions);
+        } else {
+          setSelectedRegions(country.regions.map((region) => region.id));
         }
       }
     }
-  }, [params.param2, selectedCountry]); // Добавляем selectedCountry в зависимости
+  }, []); // Только при монтировании
 
-  // Добавляем эффект для отслеживания изменений params.param2Regions
+  // Синхронизация с URL параметрами (только для внешних изменений)
   useEffect(() => {
-    if (params.param2Regions) {
-      setSelectedRegions(params.param2Regions);
-    }
-  }, [params.param2Regions]);
+    const urlCountryId = Number(params.param2);
+    const urlRegions = params.param2Regions || [];
 
-  // Добавляем эффект для обновления параметров при изменении регионов
+    // Проверяем, изменились ли параметры извне (не от нашего компонента)
+    if (urlCountryId !== selectedCountry) {
+      const country = destinations.find((c) => c.id === urlCountryId);
+      if (country) {
+        setSelectedCountry(urlCountryId);
+        setSelectedRegions(
+          urlRegions.length > 0
+            ? urlRegions
+            : country.regions.map((region) => region.id)
+        );
+      }
+    } else if (
+      JSON.stringify(urlRegions.sort()) !==
+      JSON.stringify(selectedRegions.sort())
+    ) {
+      // Если страна та же, но регионы изменились извне
+      setSelectedRegions(urlRegions);
+    }
+  }, [params.param2, params.param2Regions]);
+
+  // Обновление URL при изменении выбора (с задержкой)
   useEffect(() => {
     if (selectedCountry) {
-      setData("param2", selectedCountry);
-      // Добавляем параметр для регионов
-      setData("param2Regions", selectedRegions);
+      const timeoutId = setTimeout(() => {
+        setData("param2", selectedCountry);
+        setData("param2Regions", selectedRegions);
+      }, 100);
+
+      return () => clearTimeout(timeoutId);
     }
   }, [selectedCountry, selectedRegions, setData]);
 
@@ -72,23 +86,13 @@ export default function NewFlyingCountry() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleCountrySelect = (country: any) => {
-    setSelectedCountry(country.id);
-    // Сначала обновляем регионы для новой страны
-    const newCountry = destinations.find((c) => c.id === country.id);
-    if (newCountry) {
-      const allRegions = newCountry.regions.map((region) => region.id);
-      setSelectedRegions(allRegions);
-    } else {
-      setSelectedRegions([]);
-    }
-    // Затем обновляем параметр в контексте
-    setData("param2", country.id);
-  };
-
   const handleRegionToggle = (regionId: number) => {
     setSelectedRegions((prev) => {
       if (prev.includes(regionId)) {
+        // Если пытаемся снять выбор с региона, но он последний выбранный
+        if (prev.length === 1) {
+          return prev; // Не позволяем снять выбор с последнего региона
+        }
         return prev.filter((id) => id !== regionId);
       } else {
         return [...prev, regionId];
@@ -102,12 +106,25 @@ export default function NewFlyingCountry() {
     );
     if (selectedCountryData) {
       if (selectedRegions.length === selectedCountryData.regions.length) {
-        setSelectedRegions([]); // Если все регионы выбраны, снимаем выбор со всех
+        // Если все регионы выбраны, выбираем только первый
+        setSelectedRegions([selectedCountryData.regions[0].id]);
       } else {
+        // Иначе выбираем все регионы
         setSelectedRegions(
           selectedCountryData.regions.map((region) => region.id)
-        ); // Выбираем все регионы
+        );
       }
+    }
+  };
+
+  const handleCountrySelect = (country: any) => {
+    setSelectedCountry(country.id);
+    const newCountry = destinations.find((c) => c.id === country.id);
+    if (newCountry) {
+      // При смене страны всегда выбираем первый регион по умолчанию
+      setSelectedRegions([newCountry.regions[0].id]);
+    } else {
+      setSelectedRegions([]);
     }
   };
 
@@ -116,7 +133,6 @@ export default function NewFlyingCountry() {
   );
 
   const displayName = (() => {
-    // Если нет выбранных регионов или выбраны все регионы страны
     if (
       selectedRegions.length === 0 ||
       selectedRegions.length === selectedCountryData?.regions.length
@@ -124,7 +140,6 @@ export default function NewFlyingCountry() {
       return selectedCountryData?.name;
     }
 
-    // Если выбран ровно один регион
     if (selectedRegions.length === 1) {
       const selectedRegion = selectedCountryData?.regions.find(
         (region) => region.id === selectedRegions[0]
@@ -132,7 +147,6 @@ export default function NewFlyingCountry() {
       return `${selectedCountryData?.name}, ${selectedRegion?.name}`;
     }
 
-    // Если выбрано больше одного региона, но не все
     return `${selectedCountryData?.name} (${selectedRegions.length})`;
   })();
 
@@ -155,7 +169,6 @@ export default function NewFlyingCountry() {
 
       {isOpen && (
         <div className="absolute top-full left-0 mt-1 bg-white rounded-lg shadow-lg border border-[#DBE0E5] z-10 flex">
-          {/* Левая колонка - страны */}
           <div className="w-[220px] border-r border-[#DBE0E5]">
             {destinations.map((country) => (
               <button
@@ -171,7 +184,6 @@ export default function NewFlyingCountry() {
             ))}
           </div>
 
-          {/* Правая колонка - регионы */}
           <div className="w-[220px]">
             <button
               onClick={handleAllRegionsToggle}

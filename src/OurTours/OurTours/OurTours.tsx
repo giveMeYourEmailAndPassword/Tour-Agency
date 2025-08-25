@@ -196,7 +196,9 @@ export default function OurTours() {
       <HeaderFilters />
       <div className="max-w-[1560px] mx-auto mt-4">
         <div className="flex items-start">
-          <Filters />
+          <div className="w-[400px] flex-shrink-0">
+            <Filters />
+          </div>
           {tours.length > 0 ? (
             <SearchResults />
           ) : (

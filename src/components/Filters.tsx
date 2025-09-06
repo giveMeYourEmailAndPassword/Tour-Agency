@@ -10,7 +10,7 @@ export default function Filters() {
   }, []);
 
   return (
-    <div className="w-[400px] border border-[#DBE0E5] rounded-lg p-4 flex flex-col gap-3">
+    <div className="w-[400px] flex-shrink-0 border border-[#DBE0E5] rounded-lg p-4 flex flex-col gap-3">
       {/* Питание */}
       <Nourishment />
 

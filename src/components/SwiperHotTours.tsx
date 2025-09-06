@@ -264,7 +264,7 @@ export default function SwiperHotTours() {
         <div className="swiper-pagination-hot flex justify-center mt-4"></div>
       </div>
 
-      <style jsx>{`
+      <style>{`
         .hot-tours-swiper .swiper-pagination-bullet {
           background: rgba(255, 255, 255, 0.5);
           opacity: 1;

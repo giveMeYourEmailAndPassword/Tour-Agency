@@ -8,6 +8,7 @@ import { useContext } from "react";
 import { DataContext } from "./DataProvider";
 import { useNavigate, useLocation } from "react-router-dom";
 import SwiperHotTours from "./SwiperHotTours";
+import React from "react";
 
 interface Tour {
   hotelcode: string;
@@ -269,14 +270,16 @@ export default function SearchResults() {
           const shouldShowSwiper = (index + 1) % 8 === 0 && index > 0;
 
           return (
-            <>
+            <React.Fragment key={index}>
               {renderTour(tour, index)}
               {shouldShowSwiper && (
-                <div key={`swiper-${index}`} className="col-span-full">
-                  <SwiperHotTours />
+                <div key={`swiper-${index}`} className="col-span-full w-full">
+                  <div className="w-full">
+                    <SwiperHotTours />
+                  </div>
                 </div>
               )}
-            </>
+            </React.Fragment>
           );
         })}
       </div>

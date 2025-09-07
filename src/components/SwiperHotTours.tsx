@@ -74,23 +74,78 @@ export default function SwiperHotTours() {
 
   if (isLoading) {
     return (
-      <div className="w-full my-6">
-        <div className="bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl p-6 text-white">
-          <div className="flex items-center gap-3 mb-4">
-            <BsFire className="text-3xl" />
+      <div className="w-full">
+        <div className="bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl p-4 text-white">
+          <div className="flex items-center gap-2 mb-4">
+            <BsFire className="text-2xl animate-pulse" />
             <h2 className="text-2xl font-bold">Горящие туры</h2>
           </div>
-          <div className="flex gap-4">
-            {[...Array(3)].map((_, index) => (
-              <div
-                key={index}
-                className="flex-1 bg-white/20 rounded-xl p-4 animate-pulse"
-              >
-                <div className="h-32 bg-white/30 rounded-lg mb-3"></div>
-                <div className="h-4 bg-white/30 rounded mb-2"></div>
-                <div className="h-4 bg-white/30 rounded w-3/4"></div>
-              </div>
-            ))}
+
+          <div className="relative">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {[...Array(6)].map((_, index) => (
+                <div
+                  key={index}
+                  className="bg-white/20 backdrop-blur-sm rounded-xl p-4 animate-pulse"
+                >
+                  {/* Изображение */}
+                  <div className="w-full h-44 rounded-lg mb-3 bg-white/30"></div>
+
+                  {/* Информация об отеле */}
+                  <div className="space-y-2">
+                    {/* Звезды и рейтинг */}
+                    <div className="flex items-center gap-1">
+                      {[...Array(5)].map((_, i) => (
+                        <div
+                          key={i}
+                          className="w-4 h-4 bg-white/30 rounded"
+                        ></div>
+                      ))}
+                      <div className="bg-white/30 h-5 w-8 rounded-full ml-1"></div>
+                    </div>
+
+                    {/* Название отеля */}
+                    <div className="h-4 bg-white/30 rounded w-3/4"></div>
+
+                    {/* Страна и регион */}
+                    <div className="h-3 bg-white/30 rounded w-1/2"></div>
+
+                    {/* Питание */}
+                    <div className="flex items-center gap-1">
+                      <div className="w-3 h-3 bg-white/30 rounded"></div>
+                      <div className="h-3 bg-white/30 rounded w-20"></div>
+                    </div>
+
+                    {/* Цена и даты */}
+                    <div className="flex justify-between items-end">
+                      <div className="h-5 bg-white/30 rounded w-16"></div>
+                      <div className="text-right space-y-1">
+                        <div className="h-3 bg-white/30 rounded w-24"></div>
+                        <div className="h-3 bg-white/30 rounded w-16"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Кнопки навигации - скелетон */}
+            <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 bg-white/20 p-3 rounded-full z-10 hidden lg:block animate-pulse">
+              <div className="w-6 h-6"></div>
+            </div>
+            <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 bg-white/20 p-3 rounded-full z-10 hidden lg:block animate-pulse">
+              <div className="w-6 h-6"></div>
+            </div>
+          </div>
+
+          {/* Кнопки навигации внизу - скелетон для мобильных */}
+          <div className="flex justify-center gap-4 mt-4 lg:hidden">
+            <div className="bg-white/20 p-2 rounded-full animate-pulse">
+              <div className="w-5 h-5"></div>
+            </div>
+            <div className="bg-white/20 p-2 rounded-full animate-pulse">
+              <div className="w-5 h-5"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -101,133 +156,178 @@ export default function SwiperHotTours() {
     return null; // Не показываем компонент если нет данных
   }
 
-  const hotTours = data.hottours.tour.slice(0, 6); // Берем только первые 6 туров
+  const hotTours = data.hottours.tour.slice(0, 8); // Берем только первые 8 туров
 
   return (
-    <div className="w-full my-6">
-      <div className="bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl p-6 text-white">
-        <div className="flex items-center gap-3 mb-6">
-          <BsFire className="text-3xl" />
+    <div className="w-full">
+      <div className="bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl p-4 text-white">
+        <div className="flex items-center gap-2 mb-4">
+          <BsFire className="text-2xl" />
           <h2 className="text-2xl font-bold">Горящие туры</h2>
         </div>
 
-        <Swiper
-          modules={[Navigation, Pagination, Autoplay]}
-          spaceBetween={16}
-          slidesPerView={1}
-          navigation={{
-            nextEl: ".swiper-button-next-hot",
-            prevEl: ".swiper-button-prev-hot",
-          }}
-          pagination={{
-            clickable: true,
-            el: ".swiper-pagination-hot",
-          }}
-          autoplay={{
-            delay: 4000,
-            disableOnInteraction: false,
-          }}
-          breakpoints={{
-            640: {
-              slidesPerView: 2,
-            },
-            1024: {
-              slidesPerView: 3,
-            },
-          }}
-          className="hot-tours-swiper"
-        >
-          {hotTours.map((tour: any, index: number) => (
-            <SwiperSlide key={index}>
-              <div
-                onClick={() =>
-                  navigate(`/hotel/${tour.hotelcode}/${tour.tourid}`)
-                }
-                className="bg-white/20 backdrop-blur-sm rounded-xl p-4 cursor-pointer transition-all duration-300 hover:bg-white/30 hover:scale-105"
-              >
-                {/* Изображение */}
-                <div className="w-full h-32 rounded-lg mb-3 overflow-hidden">
-                  <img
-                    src={
-                      tour.hotelpicture
-                        ? `https:${tour.hotelpicture}`
-                        : "/default-image.jpg"
-                    }
-                    alt={tour.hotelname}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-
-                {/* Информация об отеле */}
-                <div className="space-y-2">
-                  <div className="flex items-center gap-1">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <img
-                        key={i}
-                        src={
-                          i < parseInt(tour.hotelstars)
-                            ? starFilled
-                            : starOutline
-                        }
-                        alt={
-                          i < parseInt(tour.hotelstars)
-                            ? "filled star"
-                            : "outline star"
-                        }
-                        className="w-3 h-3"
-                      />
-                    ))}
-                    {tour.hotelrating !== "0" && (
-                      <div className="bg-white/30 text-white text-xs font-medium px-1.5 py-0.5 rounded-full ml-1">
-                        {tour.hotelrating}
-                      </div>
-                    )}
+        <div className="relative">
+          <Swiper
+            modules={[Navigation, Pagination, Autoplay]}
+            spaceBetween={16}
+            slidesPerView={1}
+            navigation={{
+              nextEl: ".swiper-button-next-hot",
+              prevEl: ".swiper-button-prev-hot",
+            }}
+            pagination={{
+              clickable: true,
+              el: ".swiper-pagination-hot",
+            }}
+            autoplay={{
+              delay: 4000,
+              disableOnInteraction: false,
+              pauseOnMouseEnter: true,
+            }}
+            breakpoints={{
+              640: {
+                slidesPerView: 2,
+              },
+              1024: {
+                slidesPerView: 3,
+              },
+            }}
+            className="hot-tours-swiper"
+          >
+            {hotTours.map((tour: any, index: number) => (
+              <SwiperSlide key={index}>
+                <div
+                  onClick={() =>
+                    navigate(`/hotel/${tour.hotelcode}/${tour.tourid}`)
+                  }
+                  className="bg-white/20 backdrop-blur-sm rounded-xl p-4 cursor-pointer transition-all duration-300 hover:bg-white/30"
+                >
+                  {/* Изображение */}
+                  <div className="w-full h-44 rounded-lg mb-3 overflow-hidden">
+                    <img
+                      src={
+                        tour.hotelpicture
+                          ? `https:${tour.hotelpicture}`
+                          : "/default-image.jpg"
+                      }
+                      alt={tour.hotelname}
+                      className="w-full h-full object-cover"
+                    />
                   </div>
 
-                  <h3 className="text-white text-sm font-bold leading-tight">
-                    {truncateHotelName(tour.hotelname)}
-                  </h3>
+                  {/* Информация об отеле */}
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-1">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <img
+                          key={i}
+                          src={
+                            i < parseInt(tour.hotelstars)
+                              ? starFilled
+                              : starOutline
+                          }
+                          alt={
+                            i < parseInt(tour.hotelstars)
+                              ? "filled star"
+                              : "outline star"
+                          }
+                          className="w-4 h-4"
+                        />
+                      ))}
+                      {tour.hotelrating !== "0" && (
+                        <div className="bg-white/30 text-white text-xs font-medium px-1.5 py-0.5 rounded-full ml-1">
+                          {tour.hotelrating}
+                        </div>
+                      )}
+                    </div>
 
-                  <p className="text-white/80 text-xs">
-                    {tour.countryname}, {tour.hotelregionname}
-                  </p>
+                    <h3 className="text-white text-sm font-bold leading-tight">
+                      {truncateHotelName(tour.hotelname)}
+                    </h3>
 
-                  {/* Питание */}
-                  <div className="flex items-center gap-1">
-                    <img src={utensils} alt="meal" className="w-3 h-3" />
-                    <span className="text-white/90 text-xs">
-                      {getMealType(tour.meal)}
-                    </span>
-                  </div>
+                    <p className="text-white/80 text-xs">
+                      {tour.countryname}, {tour.hotelregionname}
+                    </p>
 
-                  {/* Цена и даты */}
-                  <div className="flex justify-between items-end">
-                    <span className="text-white text-lg font-bold">
-                      {tour.price * 2}
-                      {tour.currency === "EUR"
-                        ? "€"
-                        : tour.currency === "USD"
-                        ? "$"
-                        : tour.currency}
-                    </span>
-                    <div className="text-right">
-                      <div className="text-white text-xs font-medium">
-                        {formatDate(tour.flydate)} -{" "}
-                        {getEndDate(tour.flydate, parseInt(tour.nights))}
+                    {/* Питание */}
+                    <div className="flex items-center gap-1">
+                      <img src={utensils} alt="meal" className="w-3 h-3" />
+                      <span className="text-white/90 text-xs">
+                        {getMealType(tour.meal)}
+                      </span>
+                    </div>
+
+                    {/* Цена и даты */}
+                    <div className="flex justify-between items-end">
+                      <div className="text-white text-lg font-bold flex items-baseline gap-1">
+                        {tour.price * 2}
+                        {tour.currency === "EUR"
+                          ? "€"
+                          : tour.currency === "USD"
+                          ? "$"
+                          : tour.currency}
+                        {tour.priceold > tour.price && (
+                          <span className="text-white text-sm font-medium line-through">
+                            {tour.priceold * 2}
+                            {tour.currency === "EUR"
+                              ? "€"
+                              : tour.currency === "USD"
+                              ? "$"
+                              : tour.currency}
+                          </span>
+                        )}
                       </div>
-                      <div className="text-white/70 text-xs">
-                        {tour.nights} ночей
+                      <div className="text-right">
+                        <div className="text-white text-xs font-medium">
+                          {formatDate(tour.flydate)} -{" "}
+                          {getEndDate(tour.flydate, parseInt(tour.nights))}
+                        </div>
+                        <div className="text-white/70 text-xs">
+                          {tour.nights} ночей
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </SwiperSlide>
-          ))}
-        </Swiper>
+              </SwiperSlide>
+            ))}
+          </Swiper>
 
-        {/* Кастомные кнопки навигации */}
-        <div className="flex justify-center gap-4 mt-4">
+          {/* Кнопки навигации по бокам - только на десктопе */}
+          <button className="swiper-button-prev-hot absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 bg-white/20 hover:bg-white/30 text-white p-3 rounded-full transition-all duration-300 z-10 hidden lg:flex items-center justify-center">
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 19l-7-7 7-7"
+              />
+            </svg>
+          </button>
+          <button className="swiper-button-next-hot absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 bg-white/20 hover:bg-white/30 text-white p-3 rounded-full transition-all duration-300 z-10 hidden lg:flex items-center justify-center">
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 5l7 7-7 7"
+              />
+            </svg>
+          </button>
+        </div>
+
+        {/* Кнопки навигации внизу - только на мобильных */}
+        <div className="flex justify-center gap-4 mt-4 lg:hidden">
           <button className="swiper-button-prev-hot bg-white/20 hover:bg-white/30 text-white p-2 rounded-full transition-all duration-300">
             <svg
               className="w-5 h-5"
@@ -261,18 +361,27 @@ export default function SwiperHotTours() {
         </div>
 
         {/* Кастомная пагинация */}
-        <div className="swiper-pagination-hot flex justify-center mt-4"></div>
+        {/* <div className="swiper-pagination-hot flex justify-center mt-4"></div> */}
       </div>
 
-      <style>{`
+      {/* <style>{`
         .hot-tours-swiper .swiper-pagination-bullet {
-          background: rgba(255, 255, 255, 0.5);
+          background: rgba(255, 255, 255, 0.3);
           opacity: 1;
+          width: 12px;
+          height: 12px;
+          margin: 0 6px;
+          transition: all 0.3s ease;
         }
         .hot-tours-swiper .swiper-pagination-bullet-active {
-          background: white;
+          background: #ffffff;
+          transform: scale(1.2);
+          box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
         }
-      `}</style>
+        .hot-tours-swiper .swiper-pagination-bullet:hover {
+          background: rgba(255, 255, 255, 0.6);
+        }
+      `}</style> */}
     </div>
   );
 }

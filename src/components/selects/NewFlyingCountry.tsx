@@ -144,6 +144,12 @@ export default function NewFlyingCountry() {
       const selectedRegion = selectedCountryData?.regions.find(
         (region) => region.id === selectedRegions[0]
       );
+
+      // Если название региона больше 8 символов, показываем (1)
+      if (selectedRegion && selectedRegion.name.length > 8) {
+        return `${selectedCountryData?.name} (1)`;
+      }
+
       return `${selectedCountryData?.name}, ${selectedRegion?.name}`;
     }
 

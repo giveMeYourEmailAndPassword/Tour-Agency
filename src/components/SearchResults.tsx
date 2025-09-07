@@ -164,7 +164,15 @@ export default function SearchResults() {
           searchParams.set("hotelTypes", params.param6.join(","));
         if (params.param7?.length) searchParams.set("meal", params.param7[0]);
         if (params.param8?.length) searchParams.set("rating", params.param8[0]);
-        if (params.param9) searchParams.set("stars", params.param9.toString());
+        if (params.param9) {
+          // Если param9 - это массив, объединяем его через запятую
+          if (Array.isArray(params.param9)) {
+            searchParams.set("stars", params.param9.join(","));
+          } else {
+            // Если это одно число, используем его как есть
+            searchParams.set("stars", params.param9.toString());
+          }
+        }
         if (params.param10?.length)
           searchParams.set("services", params.param10.join(","));
 
@@ -262,12 +270,11 @@ export default function SearchResults() {
       </div>
     </div>
   );
-
   return (
     <div className="mx-2 md:mx-0 md:ml-2 flex-grow pb-4">
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-2">
         {tours.map((tour: Tour, index: number) => {
-          const shouldShowSwiper = (index + 1) % 8 === 0 && index > 0;
+          const shouldShowSwiper = index === 7; // Показываем только после 8-го тура
 
           return (
             <React.Fragment key={index}>

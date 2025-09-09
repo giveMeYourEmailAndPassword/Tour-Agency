@@ -123,7 +123,7 @@ export default function SearchResult() {
             >
               <div className="w-64 flex flex-col gap-2">
                 {/* Изображение */}
-                <div className="w-full h-36 rounded">
+                <div className="w-full h-44 md:h-36 rounded overflow-hidden">
                   <img
                     src={
                       hotel.picturelink

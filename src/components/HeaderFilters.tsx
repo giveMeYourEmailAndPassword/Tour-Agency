@@ -13,7 +13,7 @@ interface HeaderProps {
 export default function HeaderFilters({ onSearch }: HeaderProps) {
   return (
     <div className="w-full bg-white">
-      <div className="max-w-[1560px] mx-auto">
+      <div className="max-w-[1440px] mx-auto">
         {/* Мобильная версия */}
         <div className="md:hidden px-4 py-3">
           <h1 className="text-2xl font-semibold">Кругосвет</h1>

@@ -11,6 +11,7 @@ import {
 import FavoriteModal from "./Favorite/FavoriteModal";
 import { DataContext } from "./DataProvider";
 import LOGO from "../assets/logo2.png";
+import { FaMapMarkerAlt, FaPhone, FaWhatsapp } from "react-icons/fa";
 
 export default function Header() {
   const { favoriteTours, isFavorite } = useContext(DataContext);
@@ -21,14 +22,30 @@ export default function Header() {
 
   return (
     <div className="w-full bg-gray-100 md:bg-white pt-4 px-3 md:px-0">
-      <div className="max-w-[1560px] mx-auto">
+      <div className="max-w-[1440px] mx-auto">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
             <img src={LOGO} alt="logo" className="w-30 h-16 ml-[-10px]" />
           </div>
 
           {/* Кнопка избранного */}
-          <div className="flex items-center">
+          <div className="flex items-center gap-2">
+            <div className="flex flex-col items-end ">
+              <p className="text-sm text-gray-500 flex items-center gap-1">
+                <FaMapMarkerAlt size={16} />
+                ул. Жоомарта Боконбаева, 7
+              </p>
+              <p className="text-sm text-gray-500 flex items-center gap-1">
+                <FaPhone size={14} className="rotate-90" />
+                +996 701 044 445
+              </p>
+            </div>
+
+            <button className="bg-green-500 hover:bg-green-600 duration-300 text-white px-4 py-2 rounded-lg flex items-center gap-1">
+              <FaWhatsapp size={18} />
+              WhatsApp
+            </button>
+
             <button
               onClick={() => setIsFavoriteModalOpen(true)}
               className="relative p-2 rounded-lg border-2 border-gray-200 hover:border-[#FF621F] hover:text-[#FF621F] transition-colors"

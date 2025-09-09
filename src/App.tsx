@@ -31,6 +31,20 @@ export default function App() {
   };
 
   useEffect(() => {
+    // Отключаем только горизонтальную прокрутку во время поиска
+    if (searchInProgress) {
+      document.body.style.overflowX = "hidden";
+    } else {
+      document.body.style.overflowX = "unset";
+    }
+
+    // Очищаем стили при размонтировании компонента
+    return () => {
+      document.body.style.overflowX = "unset";
+    };
+  }, [searchInProgress]);
+
+  useEffect(() => {
     // Если мы вернулись назад и у нас есть туры или поиск в процессе
     if (navigationType === "POP" && (tours.length > 0 || searchInProgress)) {
       setShowResults(true);
@@ -67,7 +81,11 @@ export default function App() {
   ]);
 
   return (
-    <div className="min-h-screen flex flex-col md:bg-white bg-gray-100">
+    <div
+      className={`min-h-screen flex flex-col md:bg-white bg-gray-100 ${
+        searchInProgress ? "overflow-x-hidden" : ""
+      }`}
+    >
       <Header />
       <div className="hidden md:block">
         <HeaderFilters onSearch={() => setShowResults(true)} />
@@ -75,7 +93,7 @@ export default function App() {
 
       {/* Секция с белым фоном */}
       <div className="w-full mt-1 md:mt-0 md:bg-white bg-gray-100">
-        <div className="max-w-[1560px] mx-auto">
+        <div className="max-w-[1440px] mx-auto">
           {/* Фильтры и результаты поиска */}
           <div className="md:block hidden mt-4">
             <div className="flex items-start">
@@ -88,9 +106,9 @@ export default function App() {
                     {[...Array(36)].map((_, index) => (
                       <div
                         key={index}
-                        className="w-full flex items-center gap-2.5 p-4 bg-white border border-[#DBE0E5] rounded-[10px]"
+                        className="w-60 flex items-center gap-2.5 p-4 bg-white border border-[#DBE0E5] rounded-[10px]"
                       >
-                        <div className="w-full flex flex-col gap-2">
+                        <div className="w-64 flex flex-col gap-2">
                           <Skeleton className="w-full h-36 rounded" />
                           <div className="w-full flex flex-col gap-2">
                             <div className="w-full flex justify-between items-center gap-1">

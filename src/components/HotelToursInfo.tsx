@@ -100,6 +100,8 @@ export default function HotelToursInfo() {
         param10: searchParams.get("services")
           ? searchParams.get("services")!.split(",")
           : [],
+        // Добавляем новый параметр
+        param11: searchParams.get("charterOnly") === "true",
       };
 
       console.log("📋 Restored params:", restoredParams);

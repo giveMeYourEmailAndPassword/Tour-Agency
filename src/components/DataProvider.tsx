@@ -162,6 +162,10 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     const services = urlParams.get("services");
     if (services) parsedParams.param10 = services.split(",");
 
+    // Чартерные рейсы
+    const charterOnly = urlParams.get("charterOnly");
+    if (charterOnly === "true") parsedParams.param11 = true;
+
     return parsedParams;
   }, []);
 
@@ -339,6 +343,8 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         rating: params.param8?.[0] ?? "0",
         starsbetter: params.param9?.toString() ?? "1",
         services: params.param10?.join(",") ?? "",
+        // Добавляем параметр для чартерных рейсов
+        ...(params.param11 && { hideregular: "1" }),
       };
 
       const requestResponse = await fetch(`${API_BASE_URL}/search`, {
@@ -610,6 +616,8 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         rating: params.param8?.[0] ?? "0",
         starsbetter: params.param9?.toString() ?? "1",
         services: params.param10?.join(",") ?? "",
+        // Добавляем параметр для чартерных рейсов
+        ...(params.param11 && { hideregular: "1" }),
       };
 
       const existingRequests = countryRequests[params.param2];

@@ -37,12 +37,18 @@ export default function NewFlyingCountry() {
         }
       }
     }
+
+    // Инициализируем параметр чартерных рейсов по умолчанию
+    if (params.param11 === undefined) {
+      setData("param11", true);
+    }
   }, []); // Только при монтировании
 
   // Синхронизация с URL параметрами (только для внешних изменений)
   useEffect(() => {
     const urlCountryId = Number(params.param2);
     const urlRegions = params.param2Regions || [];
+    const urlCharterOnly = params.param11 === true;
 
     // Проверяем, изменились ли параметры извне (не от нашего компонента)
     if (urlCountryId !== selectedCountry) {
@@ -62,7 +68,12 @@ export default function NewFlyingCountry() {
       // Если страна та же, но регионы изменились извне
       setSelectedRegions(urlRegions);
     }
-  }, [params.param2, params.param2Regions]);
+
+    // Синхронизируем состояние чекбокса с URL параметрами
+    if (urlCharterOnly !== isCharterOnly) {
+      setIsCharterOnly(urlCharterOnly);
+    }
+  }, [params.param2, params.param2Regions, params.param11]);
 
   // Обновление URL при изменении выбора (с задержкой)
   useEffect(() => {
@@ -70,11 +81,12 @@ export default function NewFlyingCountry() {
       const timeoutId = setTimeout(() => {
         setData("param2", selectedCountry);
         setData("param2Regions", selectedRegions);
+        setData("param11", isCharterOnly);
       }, 100);
 
       return () => clearTimeout(timeoutId);
     }
-  }, [selectedCountry, selectedRegions, setData]);
+  }, [selectedCountry, selectedRegions, setData, isCharterOnly]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -131,8 +143,8 @@ export default function NewFlyingCountry() {
 
   const handleCharterToggle = () => {
     setIsCharterOnly(!isCharterOnly);
-    // Здесь можно добавить логику для обновления данных
-    // setData("charterOnly", !isCharterOnly);
+    // Обновляем параметр в контексте
+    setData("param11", !isCharterOnly);
   };
 
   const selectedCountryData = destinations.find(
@@ -153,7 +165,7 @@ export default function NewFlyingCountry() {
       );
 
       // Если название региона больше 8 символов, показываем (1)
-      if (selectedRegion && selectedRegion.name.length > 8) {
+      if (selectedRegion && selectedRegion.name.length > 6) {
         return `${selectedCountryData?.name} (1)`;
       }
 

@@ -58,6 +58,11 @@ export default function FindTourBtn({ onSearch }: FindTourBtnProps) {
       searchParams.set("services", serviceIds.join(","));
     }
 
+    // Добавляем параметр для чартерных рейсов
+    if (params.param11) {
+      searchParams.set("charterOnly", "true");
+    }
+
     const newUrl = `${location.pathname}?${searchParams.toString()}`;
 
     if (isOurToursPage) {

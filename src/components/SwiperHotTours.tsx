@@ -29,7 +29,7 @@ const fetchHotTours = async (departureCity: string) => {
 const truncateHotelName = (name: string) => {
   const words = name.split(" ");
   if (words.length > 3) {
-    return words.slice(0, 3).join(" ") + "...";
+    return words.slice(0, 3).join(" ");
   }
   return name;
 };
@@ -59,6 +59,15 @@ const getMealType = (meal: string) => {
   return mealTypes[meal] || meal;
 };
 
+const getDepartureCity = (departureCity: string) => {
+  if (departureCity === "80") {
+    return "Бишкека";
+  } else if (departureCity === "60") {
+    return "Алматы";
+  }
+  return departureCity;
+};
+
 export default function SwiperHotTours() {
   const { params } = useContext(DataContext);
   const navigate = useNavigate();
@@ -78,12 +87,14 @@ export default function SwiperHotTours() {
         <div className="bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl p-4 text-white">
           <div className="flex items-center gap-2 mb-4">
             <BsFire className="text-2xl animate-pulse" />
-            <h2 className="text-2xl font-bold">Горящие туры</h2>
+            <h2 className="text-2xl font-bold">
+              Горящие туры, из {getDepartureCity(departureCity)}
+            </h2>
           </div>
 
           <div className="relative">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {[...Array(6)].map((_, index) => (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+              {[...Array(3)].map((_, index) => (
                 <div
                   key={index}
                   className="bg-white/20 backdrop-blur-sm rounded-xl p-4 animate-pulse"
@@ -112,29 +123,21 @@ export default function SwiperHotTours() {
 
                     {/* Питание */}
                     <div className="flex items-center gap-1">
-                      <div className="w-3 h-3 bg-white/30 rounded"></div>
-                      <div className="h-3 bg-white/30 rounded w-20"></div>
+                      <div className="w-4 h-4 bg-white/30 rounded"></div>
+                      <div className="h-4 bg-white/30 rounded w-20"></div>
                     </div>
 
                     {/* Цена и даты */}
                     <div className="flex justify-between items-end">
                       <div className="h-5 bg-white/30 rounded w-16"></div>
                       <div className="text-right space-y-1">
-                        <div className="h-3 bg-white/30 rounded w-24"></div>
-                        <div className="h-3 bg-white/30 rounded w-16"></div>
+                        <div className="h-3.5 bg-white/30 rounded w-24"></div>
+                        <div className="h-3.5 bg-white/30 rounded w-16"></div>
                       </div>
                     </div>
                   </div>
                 </div>
               ))}
-            </div>
-
-            {/* Кнопки навигации - скелетон */}
-            <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 bg-white/20 p-3 rounded-full z-10 hidden lg:block animate-pulse">
-              <div className="w-6 h-6"></div>
-            </div>
-            <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 bg-white/20 p-3 rounded-full z-10 hidden lg:block animate-pulse">
-              <div className="w-6 h-6"></div>
             </div>
           </div>
 
@@ -163,7 +166,9 @@ export default function SwiperHotTours() {
       <div className="bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl p-4 text-white">
         <div className="flex items-center gap-2 mb-4">
           <BsFire className="text-2xl" />
-          <h2 className="text-2xl font-bold">Горящие туры</h2>
+          <h2 className="text-2xl font-bold">
+            Горящие туры, из {getDepartureCity(departureCity)}
+          </h2>
         </div>
 
         <div className="relative">
@@ -241,20 +246,22 @@ export default function SwiperHotTours() {
                       )}
                     </div>
 
-                    <h3 className="text-white text-sm font-bold leading-tight">
-                      {truncateHotelName(tour.hotelname)}
-                    </h3>
+                    <div>
+                      <h3 className="text-white text-sm font-bold leading-tight">
+                        {truncateHotelName(tour.hotelname)}
+                      </h3>
 
-                    <p className="text-white/80 text-xs">
-                      {tour.countryname}, {tour.hotelregionname}
-                    </p>
+                      <p className="text-white/80 text-xs">
+                        {tour.countryname}, {tour.hotelregionname}
+                      </p>
+                    </div>
 
                     {/* Питание */}
                     <div className="flex items-center gap-1">
-                      <img src={utensils} alt="meal" className="w-3 h-3" />
-                      <span className="text-white/90 text-xs">
+                      <span className="text-white/90 text-sm">
                         {getMealType(tour.meal)}
                       </span>
+                      <img src={utensils} alt="meal" className="w-3.5 h-3.5" />
                     </div>
 
                     {/* Цена и даты */}

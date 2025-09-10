@@ -174,7 +174,7 @@ export default function OurTours() {
           <Header />
         </div>
         <HeaderFilters />
-        <div className="max-w-[1560px] mx-auto mt-4">
+        <div className="max-w-[1440px] mx-auto mt-4">
           <div className="flex items-start">
             <Filters />
           </div>
@@ -194,7 +194,7 @@ export default function OurTours() {
         <Header />
       </div>
       <HeaderFilters />
-      <div className="max-w-[1560px] mx-auto mt-4">
+      <div className="max-w-[1440px] mx-auto mt-4">
         <div className="flex items-start">
           <div className="w-[400px] flex-shrink-0">
             <Filters />

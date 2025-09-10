@@ -27,7 +27,7 @@ export default function StarsFilter() {
       // Если это одно число, создаем массив с одним элементом
       return [Number(params.param9)];
     }
-    return [1, 2, 3, 4, 5]; // значения по умолчанию
+    return [4]; // значения по умолчанию - 4 звезды
   });
 
   const [isOpen, setIsOpen] = useState(false);
@@ -50,6 +50,9 @@ export default function StarsFilter() {
       if (JSON.stringify(newStars) !== JSON.stringify(selectedStars)) {
         setSelectedStars(newStars);
       }
+    } else {
+      // Если нет параметров URL, устанавливаем дефолтное значение 4 звезды
+      setSelectedStars([4]);
     }
   }, [params.param9]);
 

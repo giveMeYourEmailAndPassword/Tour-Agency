@@ -20,6 +20,7 @@ export default function NewFlyingCountry() {
     return country ? country.regions.map((region) => region.id) : [];
   });
   const [isOpen, setIsOpen] = useState(false);
+  const [isCharterOnly, setIsCharterOnly] = useState(true); // Добавляем состояние для чартерных рейсов
   const dropdownRef = useRef(null);
 
   // Инициализация при загрузке компонента
@@ -128,6 +129,12 @@ export default function NewFlyingCountry() {
     }
   };
 
+  const handleCharterToggle = () => {
+    setIsCharterOnly(!isCharterOnly);
+    // Здесь можно добавить логику для обновления данных
+    // setData("charterOnly", !isCharterOnly);
+  };
+
   const selectedCountryData = destinations.find(
     (country) => country.id === selectedCountry
   );
@@ -174,39 +181,23 @@ export default function NewFlyingCountry() {
       </button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 mt-1 bg-white rounded-lg shadow-lg border border-[#DBE0E5] z-10 flex">
-          <div className="w-[220px] border-r border-[#DBE0E5]">
-            {destinations.map((country) => (
-              <button
-                key={country.id}
-                onClick={() => handleCountrySelect(country)}
-                className={`w-full text-left px-5 py-2   hover:bg-gray-50 duration-300 flex items-center justify-between
-                  ${selectedCountry === country.id ? "bg-[#FDDEC2]" : ""}
-                `}
-              >
-                <span className="text-[#2E2E32] text-base">{country.name}</span>
-                <img src={marker} alt="marker" className="w-4 h-4" />
-              </button>
-            ))}
-          </div>
-
-          <div className="w-[220px]">
+        <div className="absolute top-full left-0 mt-1 bg-white rounded-lg shadow-lg border border-[#DBE0E5] z-10">
+          {/* Чекбокс "только чартерные рейсы" - отдельно вверху */}
+          <div className="px-5 py-3 border-b border-[#DBE0E5] hover:bg-gray-50 duration-300">
             <button
-              onClick={handleAllRegionsToggle}
-              className={`w-full text-left px-5 py-2 hover:bg-gray-50 duration-300 flex items-center gap-4 border-b border-[#DBE0E5]`}
+              onClick={handleCharterToggle}
+              className="w-full text-left flex items-center gap-2 rounded py-1"
             >
               <div
-                className={`w-5 h-5 rounded border flex items-center justify-center
+                className={`w-4 h-4 rounded border flex items-center justify-center
                   ${
-                    selectedRegions.length ===
-                    selectedCountryData?.regions.length
+                    isCharterOnly
                       ? "bg-[#FF621F] border-[#FF621F]"
-                      : "border-[#DBE0E5]"
+                      : "border-[#7E8389]"
                   }
                 `}
               >
-                {selectedRegions.length ===
-                  selectedCountryData?.regions.length && (
+                {isCharterOnly && (
                   <svg
                     width="11"
                     height="8"
@@ -215,32 +206,56 @@ export default function NewFlyingCountry() {
                     xmlns="http://www.w3.org/2000/svg"
                   >
                     <path
-                      d="M1 3.5L4 6.5L9.5 1"
+                      d="M1.33301 4L3.99967 6.66667L9.33301 1.33334"
                       stroke="white"
                       strokeWidth="1.6"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
                     />
                   </svg>
                 )}
               </div>
-              <span className="text-[#2E2E32] text-base">Все курорты</span>
+              <span className="text-base text-[#2E2E32]">
+                Только чартерные рейсы
+              </span>
             </button>
+          </div>
 
-            {selectedCountryData?.regions.map((region) => (
+          {/* Основной контент с двумя колонками */}
+          <div className="flex">
+            <div className="w-[220px] border-r border-[#DBE0E5]">
+              {destinations.map((country) => (
+                <button
+                  key={country.id}
+                  onClick={() => handleCountrySelect(country)}
+                  className={`w-full text-left px-5 py-2 hover:bg-gray-50 duration-300 flex items-center justify-between
+                    ${selectedCountry === country.id ? "bg-[#FDDEC2]" : ""}
+                  `}
+                >
+                  <span className="text-[#2E2E32] text-base">
+                    {country.name}
+                  </span>
+                  <img src={marker} alt="marker" className="w-4 h-4" />
+                </button>
+              ))}
+            </div>
+            <div className="w-[220px]">
               <button
-                key={region.id}
-                onClick={() => handleRegionToggle(region.id)}
-                className="w-full text-left px-5 py-2 hover:bg-gray-50 duration-300 flex items-center gap-4"
+                onClick={handleAllRegionsToggle}
+                className={`w-full text-left px-5 py-2 hover:bg-gray-50 duration-300 flex items-center gap-4 border-b border-[#DBE0E5]`}
               >
                 <div
                   className={`w-5 h-5 rounded border flex items-center justify-center
                     ${
-                      selectedRegions.includes(region.id)
+                      selectedRegions.length ===
+                      selectedCountryData?.regions.length
                         ? "bg-[#FF621F] border-[#FF621F]"
                         : "border-[#DBE0E5]"
                     }
                   `}
                 >
-                  {selectedRegions.includes(region.id) && (
+                  {selectedRegions.length ===
+                    selectedCountryData?.regions.length && (
                     <svg
                       width="11"
                       height="8"
@@ -256,9 +271,46 @@ export default function NewFlyingCountry() {
                     </svg>
                   )}
                 </div>
-                <span className="text-[#2E2E32] text-base">{region.name}</span>
+                <span className="text-[#2E2E32] text-base">Все курорты</span>
               </button>
-            ))}
+
+              {selectedCountryData?.regions.map((region) => (
+                <button
+                  key={region.id}
+                  onClick={() => handleRegionToggle(region.id)}
+                  className="w-full text-left px-5 py-2 hover:bg-gray-50 duration-300 flex items-center gap-4"
+                >
+                  <div
+                    className={`w-5 h-5 rounded border flex items-center justify-center
+                      ${
+                        selectedRegions.includes(region.id)
+                          ? "bg-[#FF621F] border-[#FF621F]"
+                          : "border-[#DBE0E5]"
+                      }
+                    `}
+                  >
+                    {selectedRegions.includes(region.id) && (
+                      <svg
+                        width="11"
+                        height="8"
+                        viewBox="0 0 11 8"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M1 3.5L4 6.5L9.5 1"
+                          stroke="white"
+                          strokeWidth="1.6"
+                        />
+                      </svg>
+                    )}
+                  </div>
+                  <span className="text-[#2E2E32] text-base">
+                    {region.name}
+                  </span>
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       )}

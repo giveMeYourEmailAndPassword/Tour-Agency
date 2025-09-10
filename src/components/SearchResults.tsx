@@ -34,8 +34,8 @@ interface Tour {
 // Функция для обрезки названия отеля после 3-го пробела
 const truncateHotelName = (name: string) => {
   const words = name.split(" ");
-  if (words.length > 3) {
-    return words.slice(0, 3).join(" ") + "...";
+  if (words.length > 2) {
+    return words.slice(0, 2).join(" ");
   }
   return name;
 };
@@ -226,12 +226,14 @@ export default function SearchResults() {
             </div>
           </div>
 
-          <h3 className="text-[#2E2E32] text-lg font-bold leading-[1.22]">
-            {truncateHotelName(tour.hotelname)}
-          </h3>
-          <p className="text-[#6B7280] text-base leading-[1.29]">
-            {tour.countryname}, {tour.regionname}
-          </p>
+          <div>
+            <h3 className="text-[#2E2E32] text-lg font-bold leading-[1.22]">
+              {truncateHotelName(tour.hotelname)}
+            </h3>
+            <p className="text-[#6B7280] text-base leading-[1.29]">
+              {tour.countryname}, {tour.regionname}
+            </p>
+          </div>
         </div>
 
         {/* Теги */}

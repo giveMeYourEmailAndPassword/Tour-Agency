@@ -169,7 +169,7 @@ export default function SwiperHotTours() {
         <div className="relative">
           <Swiper
             modules={[Navigation, Pagination, Autoplay]}
-            spaceBetween={16}
+            spaceBetween={8}
             slidesPerView={1}
             navigation={{
               nextEl: ".swiper-button-next-hot",

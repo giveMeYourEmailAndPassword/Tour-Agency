@@ -81,11 +81,6 @@ export default function FindTourBtn({ onSearch }: FindTourBtnProps) {
       >
         <FiSearch className="w-8 h-8 text-[#FAFBF6]" />
       </button>
-      {searchInProgress && (
-        <div className="z-[1000] absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-3 py-1 bg-gray-800 text-white text-sm rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-          Подождите, идёт поиск...
-        </div>
-      )}
     </div>
   );
 }

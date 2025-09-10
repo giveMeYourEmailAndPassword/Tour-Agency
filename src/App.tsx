@@ -31,20 +31,6 @@ export default function App() {
   };
 
   useEffect(() => {
-    // Отключаем только горизонтальную прокрутку во время поиска
-    if (searchInProgress) {
-      document.body.style.overflowX = "hidden";
-    } else {
-      document.body.style.overflowX = "unset";
-    }
-
-    // Очищаем стили при размонтировании компонента
-    return () => {
-      document.body.style.overflowX = "unset";
-    };
-  }, [searchInProgress]);
-
-  useEffect(() => {
     // Если мы вернулись назад и у нас есть туры или поиск в процессе
     if (navigationType === "POP" && (tours.length > 0 || searchInProgress)) {
       setShowResults(true);
@@ -81,11 +67,7 @@ export default function App() {
   ]);
 
   return (
-    <div
-      className={`min-h-screen flex flex-col md:bg-white bg-gray-100 ${
-        searchInProgress ? "overflow-x-hidden" : ""
-      }`}
-    >
+    <div className={`min-h-screen flex flex-col md:bg-white bg-gray-100`}>
       <Header />
       <div className="hidden md:block">
         <HeaderFilters onSearch={() => setShowResults(true)} />
@@ -106,7 +88,7 @@ export default function App() {
                     {[...Array(36)].map((_, index) => (
                       <div
                         key={index}
-                        className="w-60 flex items-center gap-2.5 p-4 bg-white border border-[#DBE0E5] rounded-[10px]"
+                        className="w-full flex items-center gap-2.5 p-4 bg-white border border-[#DBE0E5] rounded-[10px]"
                       >
                         <div className="w-64 flex flex-col gap-2">
                           <Skeleton className="w-full h-36 rounded" />

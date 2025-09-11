@@ -3,7 +3,12 @@ import useHotelToursInfo from "../Hooks/useHotelToursInfo";
 import { Skeleton } from "@heroui/react";
 import starFilled from "../assets/star_fill.svg";
 import starOutline from "../assets/star_unfill.svg";
+import bookingIcon from "../assets/booking.svg";
 import planeDeparture from "../assets/plane_departure.svg";
+import calendarIcon from "../assets/calendar.svg";
+import moonStarsIcon from "../assets/moon_stars.svg";
+import personLuggageIcon from "../assets/person_luggage.svg";
+import bedAltIcon from "../assets/bed_alt.svg";
 import { format, parse, addDays } from "date-fns";
 import { ru } from "date-fns/locale";
 import { IoAirplane } from "react-icons/io5";
@@ -53,9 +58,7 @@ export default function HotelToursInfo() {
   const [selectedTours, setSelectedTours] = useState(
     location.state?.hotelTours || []
   );
-  const [hotelDescription, setHotelDescription] = useState(
-    location.state?.hotelDescription || ""
-  );
+  const [hotelDescription] = useState(location.state?.hotelDescription || "");
   const [isRestoringSearch, setIsRestoringSearch] = useState(false);
   const [showAllVariants, setShowAllVariants] = useState(false);
 
@@ -107,7 +110,7 @@ export default function HotelToursInfo() {
       console.log("📋 Restored params:", restoredParams);
 
       // Запускаем поиск с восстановленными параметрами
-      searchTours(restoredParams);
+      // searchTours(restoredParams);
     }
   }, [searchParams, selectedTours.length, searchTours]);
 
@@ -145,7 +148,6 @@ export default function HotelToursInfo() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [mainImageIndex, setMainImageIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
-  const [activeTab, setActiveTab] = useState("about");
 
   // Авто-прокрутка
   useEffect(() => {
@@ -158,7 +160,7 @@ export default function HotelToursInfo() {
     }, 3000); // Переключение каждые 3 секунды
 
     return () => clearInterval(interval);
-  }, [isAutoPlaying, hotel?.images?.image?.length]);
+  }, [isAutoPlaying, hotel?.images?.image?.length, hotel?.images?.image]);
 
   // Остановка авто-прокрутки при взаимодействии
   const handleUserInteraction = () => {
@@ -226,7 +228,7 @@ export default function HotelToursInfo() {
   // Функция для проверки, находится ли тур в избранном
   const isTourFavorite = (
     tour: Tour,
-    tourIndex: number,
+    _tourIndex: number,
     variantIndex: number
   ) => {
     const tourVariant = tour.tours.tour[variantIndex];
@@ -240,7 +242,7 @@ export default function HotelToursInfo() {
   // Функция для добавления/удаления из избранного
   const handleFavoriteClick = (
     tour: Tour,
-    tourIndex: number,
+    _tourIndex: number,
     variantIndex: number
   ) => {
     const tourVariant = tour.tours.tour[variantIndex];
@@ -252,7 +254,7 @@ export default function HotelToursInfo() {
       tourId: tourId,
     };
 
-    if (isTourFavorite(tour, tourIndex, variantIndex)) {
+    if (isTourFavorite(tour, _tourIndex, variantIndex)) {
       removeFromFavorite(hotelCode, tourId);
     } else {
       addToFavorite(tourData);
@@ -262,7 +264,7 @@ export default function HotelToursInfo() {
   // Добавляем функцию для перехода в Booking
   const handleBookingClick = (
     tour: Tour,
-    tourIndex: number,
+    _tourIndex: number,
     variantIndex: number
   ) => {
     const tourVariant = tour.tours.tour[variantIndex];
@@ -270,15 +272,15 @@ export default function HotelToursInfo() {
 
     // Сохраняем данные о туре в localStorage для страницы бронирования
     const bookingData = {
-      hotelName: hotel.name,
+      hotelName: hotel?.name || "",
       departure: getDepartureCity(),
       flyDate: tourVariant.flydate,
       nights: tourVariant.nights,
       adults: tourVariant.adults.toString(),
       price: tourVariant.price || tour.price,
       currency: tourVariant.currency || tour.currency,
-      country: hotel.country,
-      region: hotel.region,
+      country: hotel?.country || "",
+      region: hotel?.region || "",
       mealType: getMealType(tourVariant.meal),
       roomType: tourVariant.room,
       hotelcode: hotelCode,
@@ -329,7 +331,7 @@ export default function HotelToursInfo() {
                 </div>
                 {/* Информация об отеле */}
                 {[...Array(3)].map((_, index) => (
-                  <div className="mt-4 space-y-3">
+                  <div key={index} className="mt-4 space-y-3">
                     <Skeleton className="w-full h-4" />
                     <Skeleton className="w-3/4 h-4" />
                     <Skeleton className="w-full h-4" />
@@ -523,79 +525,81 @@ export default function HotelToursInfo() {
                     </div>
                   </div>
 
-                  {hotel.placement && (
+                  {(hotel as any).placement && (
                     <div>
                       <h3 className="text-lg font-semibold text-[#2E2E32]">
                         Расположение:
                       </h3>
                       <div className="text-base text-[#6B7280]">
-                        {hotel.placement}
+                        {(hotel as any).placement}
                       </div>
                     </div>
                   )}
 
-                  {hotel.territory && (
+                  {(hotel as any).territory && (
                     <div>
                       <h3 className="text-lg font-semibold text-[#2E2E32]">
                         Территория отеля:
                       </h3>
                       <div className="text-base text-[#6B7280]">
-                        {formatList(hotel.territory)}
+                        {formatList((hotel as any).territory)}
                       </div>
                     </div>
                   )}
 
-                  {hotel.inroom && (
+                  {(hotel as any).inroom && (
                     <div>
                       <h3 className="text-lg font-semibold text-[#2E2E32]">
                         В номере:
                       </h3>
                       <div className="text-base text-[#6B7280]">
-                        {formatList(hotel.inroom)}
+                        {formatList((hotel as any).inroom)}
                       </div>
                     </div>
                   )}
 
-                  {hotel.roomtypes && (
+                  {(hotel as any).roomtypes && (
                     <div>
                       <h3 className="text-lg font-semibold text-[#2E2E32]">
                         Типы номеров:
                       </h3>
                       <div className="text-base text-[#6B7280]">
-                        {formatList(hotel.roomtypes)}
+                        {formatList((hotel as any).roomtypes)}
                       </div>
                     </div>
                   )}
 
-                  {hotel.services && (
+                  {(hotel as any).services && (
                     <div>
                       <h3 className="text-lg font-semibold text-[#2E2E32]">
                         Услуги отеля:
                       </h3>
                       <div className="text-base text-[#6B7280]">
-                        {formatList(hotel.services)}
+                        {Array.isArray((hotel as any).services)
+                          ? (hotel as any).services.join(", ")
+                          : formatList((hotel as any).services)}
                       </div>
                     </div>
                   )}
 
-                  {hotel.meallist && (
+                  {(hotel as any).meallist && (
                     <div>
                       <h3 className="text-lg font-semibold text-[#2E2E32]">
                         Питание:
                       </h3>
                       <div className="text-base text-[#6B7280]">
-                        {formatList(hotel.meallist)}
+                        {formatList((hotel as any).meallist)}
                       </div>
                     </div>
                   )}
 
-                  {hotel.build && (
+                  {(hotel as any).build && (
                     <div>
                       <h3 className="text-lg font-semibold text-[#2E2E32]">
                         Год постройки:
                       </h3>
                       <div className="text-base text-[#6B7280]">
-                        {hotel.build}
+                        {(hotel as any).build}
                       </div>
                     </div>
                   )}
@@ -681,14 +685,15 @@ export default function HotelToursInfo() {
                     {(() => {
                       // Подсчитываем общее количество вариантов
                       const totalVariants = selectedTours.reduce(
-                        (total, tour) => total + tour.tours.tour.length,
+                        (total: number, tour: Tour) =>
+                          total + tour.tours.tour.length,
                         0
                       );
 
                       // Определяем, какие варианты показывать
                       const variantsToShow = showAllVariants
                         ? selectedTours
-                        : selectedTours.map((tour) => ({
+                        : selectedTours.map((tour: Tour) => ({
                             ...tour,
                             tours: {
                               ...tour.tours,
@@ -698,7 +703,8 @@ export default function HotelToursInfo() {
 
                       // Подсчитываем количество показанных вариантов
                       const shownVariants = variantsToShow.reduce(
-                        (total, tour) => total + tour.tours.tour.length,
+                        (total: number, tour: Tour) =>
+                          total + tour.tours.tour.length,
                         0
                       );
 
@@ -709,46 +715,13 @@ export default function HotelToursInfo() {
                               (tourVariant, variantIndex: number) => (
                                 <div
                                   key={`${tourIndex}-${variantIndex}`}
-                                  className="space-y-2"
+                                  className="bg-white rounded-[10px] p-4 border border-gray-100"
                                 >
-                                  <h4 className="text-base font-semibold text-[#2E2E32]">
-                                    Вариант {variantIndex + 1}
-                                  </h4>
-                                  <div className="flex justify-between items-start">
-                                    <div className="w-[330px] space-y-2">
-                                      <p className="text-xs font-medium text-[#2E2E32]">
-                                        {getMealType(tourVariant.meal)},{" "}
-                                        {tourVariant.nights} ночей
-                                      </p>
-                                      <p className="text-xs font-semibold text-[#2E2E32]">
-                                        {`Номер ${tourVariant.room}, ${tourVariant.adults} взрослых`}
-                                      </p>
-                                    </div>
-                                    <div className="w-[330px] space-y-2">
-                                      <div className="flex items-center gap-1">
-                                        <p className="text-xs font-semibold text-[#6B7280]">
-                                          {formatDate(tourVariant.flydate)} –{" "}
-                                          {getEndDate(
-                                            tourVariant.flydate,
-                                            tourVariant.nights
-                                          )}
-                                        </p>
-                                      </div>
-                                      <div className="flex items-center gap-2">
-                                        <IoAirplane className="w-3.5 h-3.5 text-[#2E2E32]" />
-                                        <span className="text-xs font-medium text-[#2E2E32]">
-                                          {tourVariant.operatorname ||
-                                            "Pegasus Airlines"}
-                                        </span>
-                                        <span className="text-xs text-[#B3B9C0]">
-                                          {tourVariant.operatorname
-                                            ? tourVariant.operatorname.split(
-                                                " "
-                                              )[0]
-                                            : "Kompas (KZ)"}
-                                        </span>
-                                      </div>
-                                    </div>
+                                  {/* Заголовок блока */}
+                                  <div className="flex justify-between items-center mb-3">
+                                    <h4 className="text-lg font-semibold text-[#2E2E32]">
+                                      Вариант {variantIndex + 1}
+                                    </h4>
                                     <div className="flex items-center gap-2">
                                       {/* Кнопка избранного */}
                                       <button
@@ -759,7 +732,7 @@ export default function HotelToursInfo() {
                                             variantIndex
                                           )
                                         }
-                                        className={`p-1.5 rounded-lg border-2 transition-colors ${
+                                        className={`p-2 rounded-lg border-2 transition-colors ${
                                           isTourFavorite(
                                             tour,
                                             tourIndex,
@@ -788,33 +761,176 @@ export default function HotelToursInfo() {
                                           <FaRegHeart size={16} />
                                         )}
                                       </button>
-                                      {/* Кнопка цены */}
-                                      <button
-                                        onClick={() =>
-                                          handleBookingClick(
-                                            tour,
-                                            tourIndex,
-                                            variantIndex
-                                          )
-                                        }
-                                        className="bg-[#FF621F] text-white px-2 py-1 rounded-lg flex items-center gap-2 hover:bg-[#E55A1A] transition-colors cursor-pointer"
-                                      >
-                                        <span className="text-base font-semibold">
-                                          {tourVariant.price || tour.price}
-                                          {tourVariant.currency === "EUR"
-                                            ? "€"
-                                            : tourVariant.currency === "USD"
-                                            ? "$"
-                                            : tourVariant.currency ||
-                                              tour.currency === "EUR"
-                                            ? "€"
-                                            : tour.currency === "USD"
-                                            ? "$"
-                                            : tour.currency}
-                                        </span>
-                                        <IoAirplane className="w-6 h-6" />
-                                      </button>
                                     </div>
+                                  </div>
+
+                                  {/* Основная информация о туре */}
+                                  <div className="grid grid-cols-2 gap-4 mb-4">
+                                    {/* Левая колонка */}
+                                    <div className="space-y-4">
+                                      {/* Даты поездки */}
+                                      <div className="flex items-start gap-3">
+                                        <div className="w-5 h-5 flex-shrink-0 mt-0.5">
+                                          <img
+                                            src={calendarIcon}
+                                            alt="Calendar"
+                                            className="w-5 h-5"
+                                          />
+                                        </div>
+                                        <div className="flex-1">
+                                          <p className="text-base font-medium text-[#2E2E32] mb-1">
+                                            Даты поездки
+                                          </p>
+                                          <p className="text-sm text-[#6B7280]">
+                                            {formatDate(tourVariant.flydate)} —{" "}
+                                            {getEndDate(
+                                              tourVariant.flydate,
+                                              tourVariant.nights
+                                            )}
+                                          </p>
+                                        </div>
+                                      </div>
+
+                                      {/* Туристы */}
+                                      <div className="flex items-start gap-3">
+                                        <div className="w-5 h-5 flex-shrink-0 mt-0.5">
+                                          <img
+                                            src={personLuggageIcon}
+                                            alt="Person with luggage"
+                                            className="w-5 h-5"
+                                          />
+                                        </div>
+                                        <div className="flex-1">
+                                          <p className="text-base font-medium text-[#2E2E32] mb-1">
+                                            Туристы
+                                          </p>
+                                          <p className="text-sm text-[#6B7280]">
+                                            {tourVariant.adults} взрослых
+                                          </p>
+                                        </div>
+                                      </div>
+                                    </div>
+
+                                    {/* Правая колонка */}
+                                    <div className="space-y-4">
+                                      {/* Номер */}
+                                      <div className="flex items-start gap-3">
+                                        <div className="w-5 h-5 flex-shrink-0 mt-0.5">
+                                          <img
+                                            src={bedAltIcon}
+                                            alt="Bed"
+                                            className="w-5 h-5"
+                                          />
+                                        </div>
+                                        <div className="flex-1">
+                                          <p className="text-base font-medium text-[#2E2E32] mb-1">
+                                            Номер
+                                          </p>
+                                          <p className="text-sm text-[#6B7280]">
+                                            {tourVariant.room}
+                                          </p>
+                                        </div>
+                                      </div>
+
+                                      {/* Длительность */}
+                                      <div className="flex items-start gap-3">
+                                        <div className="w-5 h-5 flex-shrink-0 mt-0.5">
+                                          <img
+                                            src={moonStarsIcon}
+                                            alt="Moon with stars"
+                                            className="w-5 h-5"
+                                          />
+                                        </div>
+                                        <div className="flex-1">
+                                          <p className="text-base font-medium text-[#2E2E32] mb-1">
+                                            Длительность
+                                          </p>
+                                          <p className="text-sm text-[#6B7280]">
+                                            {tourVariant.nights} ночей
+                                          </p>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  {/* Дополнительная информация */}
+                                  <div className="mb-4 p-3 bg-gray-50 rounded-lg">
+                                    <div className="flex items-center gap-2 mb-2">
+                                      <IoAirplane className="w-4 h-4 text-[#2E2E32]" />
+                                      <span className="text-sm font-medium text-[#2E2E32]">
+                                        {tourVariant.operatorname ||
+                                          "Pegasus Airlines"}
+                                      </span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                      <FaUtensils className="w-3.5 h-3.5 text-[#2E2E32]" />
+                                      <span className="text-sm text-[#6B7280]">
+                                        {getMealType(tourVariant.meal)}
+                                      </span>
+                                    </div>
+                                  </div>
+
+                                  {/* Кнопки действий */}
+                                  <div className="flex gap-2">
+                                    <button className="flex-1 flex items-center justify-center gap-3 px-4 py-2 border border-[#DBE0E5] rounded-[10px] text-[#2E2E32] font-medium hover:bg-gray-50 transition-colors">
+                                      <svg
+                                        width="24"
+                                        height="24"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                      >
+                                        <path
+                                          d="M6 2H18C19.1 2 20 2.9 20 4V20C20 21.1 19.1 22 18 22H6C4.9 22 4 21.1 4 20V4C4 2.9 4.9 2 6 2Z"
+                                          stroke="currentColor"
+                                          strokeWidth="2"
+                                        />
+                                        <path
+                                          d="M8 6H16"
+                                          stroke="currentColor"
+                                          strokeWidth="2"
+                                        />
+                                        <path
+                                          d="M8 10H16"
+                                          stroke="currentColor"
+                                          strokeWidth="2"
+                                        />
+                                        <path
+                                          d="M8 14H14"
+                                          stroke="currentColor"
+                                          strokeWidth="2"
+                                        />
+                                      </svg>
+                                      Изменить
+                                    </button>
+                                    <button
+                                      onClick={() =>
+                                        handleBookingClick(
+                                          tour,
+                                          tourIndex,
+                                          variantIndex
+                                        )
+                                      }
+                                      className="flex-1 bg-[#FF621F] text-white px-4 py-2 rounded-[10px] flex items-center justify-center gap-4 hover:bg-[#E55A1A] transition-colors font-medium"
+                                    >
+                                      <span className="text-base font-bold">
+                                        {tourVariant.price || tour.price}
+                                        {tourVariant.currency === "EUR"
+                                          ? "€"
+                                          : tourVariant.currency === "USD"
+                                          ? "$"
+                                          : tourVariant.currency ||
+                                            tour.currency === "EUR"
+                                          ? "€"
+                                          : tour.currency === "USD"
+                                          ? "$"
+                                          : tour.currency}
+                                      </span>
+                                      <img
+                                        src={bookingIcon}
+                                        alt="Booking"
+                                        className="w-6 h-6"
+                                      />
+                                    </button>
                                   </div>
                                 </div>
                               )

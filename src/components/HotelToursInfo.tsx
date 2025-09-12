@@ -315,7 +315,7 @@ export default function HotelToursInfo() {
         <Header />
         <div className="w-full mt-1 md:mt-0 md:bg-white bg-gray-100">
           <div className="max-w-[1560px] mx-auto px-6 py-4">
-            <div className="flex justify-between gap-4">
+            <div className="flex justify-between gap-3">
               {/* Левая колонка с галереей */}
               <div className="flex flex-col gap-1 flex-[0.9]">
                 {/* Основное фото */}
@@ -435,12 +435,12 @@ export default function HotelToursInfo() {
     <div className="min-h-screen flex flex-col md:bg-white bg-gray-100">
       <Header />
       <div className="w-full mt-1 md:mt-0 md:bg-white bg-gray-100">
-        <div className="max-w-[1560px] mx-auto px-6 py-4">
+        <div className="max-w-[1440px] mx-auto py-4">
           {/* Заголовок */}
           <div className="flex flex-col gap-3">
             {/* Галерея и контент */}
-            <div className="flex justify-between gap-4">
-              <div className="flex flex-col gap-1 flex-[0.9]">
+            <div className="flex justify-between gap-3">
+              <div className="flex flex-col gap-1 flex-[1]">
                 {/* Основное фото */}
                 <div className="w-full h-[400px] rounded-xl overflow-hidden relative group">
                   <img
@@ -607,7 +607,7 @@ export default function HotelToursInfo() {
               </div>
 
               {/* Варианты туров */}
-              <div className="w-full flex-1">
+              <div className="w-[45%]">
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-2">
                     <div className="flex items-center gap-0.5">
@@ -645,8 +645,7 @@ export default function HotelToursInfo() {
                     />
                   </div>
                 </div>
-
-                <div className="flex flex-col gap-1">
+                <div className="flex flex-col">
                   <h1 className="text-xl font-bold text-[#2E2E32]">
                     {hotel.name}
                   </h1>
@@ -675,13 +674,12 @@ export default function HotelToursInfo() {
                     </div>
                   </div>
                 </div>
-
                 {/* Варианты туров */}
                 <div className="mt-6">
-                  <h3 className="text-lg font-semibold text-[#2E2E32] mb-4">
+                  <h3 className="text-lg font-semibold text-[#2E2E32] mb-3">
                     Варианты туров
                   </h3>
-                  <div className="space-y-4">
+                  <div className="space-y-2">
                     {(() => {
                       // Подсчитываем общее количество вариантов
                       const totalVariants = selectedTours.reduce(
@@ -812,7 +810,7 @@ export default function HotelToursInfo() {
                                     </div>
 
                                     {/* Правая колонка */}
-                                    <div className="space-y-4">
+                                    <div className="space-y-4 mb-2">
                                       {/* Номер */}
                                       <div className="flex items-start gap-3">
                                         <div className="w-5 h-5 flex-shrink-0 mt-0.5">
@@ -854,54 +852,24 @@ export default function HotelToursInfo() {
                                   </div>
 
                                   {/* Дополнительная информация */}
-                                  <div className="mb-4 p-3 bg-gray-50 rounded-lg">
-                                    <div className="flex items-center gap-2 mb-2">
-                                      <IoAirplane className="w-4 h-4 text-[#2E2E32]" />
-                                      <span className="text-sm font-medium text-[#2E2E32]">
-                                        {tourVariant.operatorname ||
-                                          "Pegasus Airlines"}
-                                      </span>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                      <FaUtensils className="w-3.5 h-3.5 text-[#2E2E32]" />
-                                      <span className="text-sm text-[#6B7280]">
-                                        {getMealType(tourVariant.meal)}
-                                      </span>
-                                    </div>
-                                  </div>
 
                                   {/* Кнопки действий */}
                                   <div className="flex gap-2">
-                                    <button className="flex-1 flex items-center justify-center gap-3 px-4 py-2 border border-[#DBE0E5] rounded-[10px] text-[#2E2E32] font-medium hover:bg-gray-50 transition-colors">
-                                      <svg
-                                        width="24"
-                                        height="24"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                      >
-                                        <path
-                                          d="M6 2H18C19.1 2 20 2.9 20 4V20C20 21.1 19.1 22 18 22H6C4.9 22 4 21.1 4 20V4C4 2.9 4.9 2 6 2Z"
-                                          stroke="currentColor"
-                                          strokeWidth="2"
-                                        />
-                                        <path
-                                          d="M8 6H16"
-                                          stroke="currentColor"
-                                          strokeWidth="2"
-                                        />
-                                        <path
-                                          d="M8 10H16"
-                                          stroke="currentColor"
-                                          strokeWidth="2"
-                                        />
-                                        <path
-                                          d="M8 14H14"
-                                          stroke="currentColor"
-                                          strokeWidth="2"
-                                        />
-                                      </svg>
-                                      Изменить
-                                    </button>
+                                    <div className="p-2 bg-gray-50 rounded-lg w-[50%] flex items-center gap-3">
+                                      <div className="flex items-center gap-2">
+                                        <IoAirplane className="w-4 h-4 text-[#2E2E32]" />
+                                        <span className="text-sm font-medium text-[#2E2E32]">
+                                          {tourVariant.operatorname ||
+                                            "Pegasus Airlines"}
+                                        </span>
+                                      </div>
+                                      <div className="flex items-center gap-2">
+                                        <FaUtensils className="w-3.5 h-3.5 text-[#2E2E32]" />
+                                        <span className="text-sm text-[#6B7280]">
+                                          {getMealType(tourVariant.meal)}
+                                        </span>
+                                      </div>
+                                    </div>
                                     <button
                                       onClick={() =>
                                         handleBookingClick(
@@ -910,7 +878,7 @@ export default function HotelToursInfo() {
                                           variantIndex
                                         )
                                       }
-                                      className="flex-1 bg-[#FF621F] text-white px-4 py-2 rounded-[10px] flex items-center justify-center gap-4 hover:bg-[#E55A1A] transition-colors font-medium"
+                                      className="w-[50%] bg-[#FF621F] text-white px-4 py-2 rounded-[10px] flex items-center justify-center gap-4 hover:bg-[#E55A1A] transition-colors font-medium"
                                     >
                                       <span className="text-base font-bold">
                                         {tourVariant.price || tour.price}

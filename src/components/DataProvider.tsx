@@ -8,6 +8,35 @@ import React, {
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { departures } from "./data/destinations";
 
+interface Tour {
+  hotelcode: string;
+  picturelink: string;
+  hotelname: string;
+  hotelstars: string;
+  hotelrating: string;
+  countryname: string;
+  regionname: string;
+  price: string;
+  currency: string;
+  tours: {
+    tour: Array<{
+      meal: string;
+      flydate: string;
+      nights: number;
+    }>;
+  };
+}
+
+interface TourData {
+  result?: {
+    hotel: Tour[];
+  };
+  status?: {
+    state: string;
+    toursfound: number;
+  };
+}
+
 type Params = { [key: string]: any };
 type City = { id: string; label: string };
 type Countries = { id: string; label: string };
@@ -22,11 +51,12 @@ export interface FavoriteTourData {
 type DataContextType = {
   params: Params;
   requestId: string | null;
-  tours: any[];
+  randomRequestId: string | null;
+  tours: Tour[];
   loading: boolean;
   error: string | null;
-  tourDataStatus: any;
-  setData: (key: keyof Params, value: any) => void;
+  tourDataStatus: TourData["status"];
+  setData: (key: keyof Params, value: unknown) => void;
   cities: City[];
   countries: Countries[];
   searchTours: () => Promise<void>;
@@ -38,11 +68,10 @@ type DataContextType = {
   removeFromFavorite: (hotelcode: string, tourId: string) => void;
   isFavorite: boolean;
   // Добавляем новые поля из DataProviderManager
-  countryResults: any;
+  countryResults: Record<string, TourData>;
   searchMultyTours: () => Promise<void>;
-  searchInProgress: boolean; // добавляем новое поле
-  loading: boolean;
-  isSearching: boolean; // добавляем новое поле
+  searchInProgress: boolean;
+  isSearching: boolean;
 };
 
 const API_BASE_URL =
@@ -57,31 +86,28 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
 
   const [params, setParams] = useState<Params>({});
   const [requestId, setRequestId] = useState<string | null>(null);
-  const [tours, setTours] = useState<any[]>([]);
-  const [allTours, setAllTours] = useState<any[]>([]);
+  const [randomRequestId, setRandomRequestId] = useState<string | null>(null);
+  const [tours, setTours] = useState<Tour[]>([]);
+  const [allTours, setAllTours] = useState<Tour[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [tourDataStatus, setTourDataStatus] = useState<any[]>([]);
+  const [tourDataStatus, setTourDataStatus] = useState<TourData["status"]>();
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [cities, setCities] = useState<Array<{ id: string; label: string }>>(
-    []
-  );
-  const [countries, setCountries] = useState<
-    Array<{ id: string; label: string }>
-  >([]);
+  const [cities, setCities] = useState<City[]>([]);
+  const [countries, setCountries] = useState<Countries[]>([]);
 
   // Добавьте новые состояния для избранного
   const [favoriteTours, setFavoriteTours] = useState<FavoriteTourData[]>([]);
   const [isFavorite, setIsFavorite] = useState(false);
 
   // Добавляем новые состояния из DataProviderManager
-  const [countryRequests, setCountryRequests] = useState<{
-    [key: string]: any;
-  }>({});
-  const [countryResults, setCountryResults] = useState<any>({});
-  const [countryPages, setCountryPages] = useState<{ [key: string]: number }>(
-    {}
-  );
+  const [countryRequests, setCountryRequests] = useState<
+    Record<string, { requestId: string }>
+  >({});
+  const [countryResults, setCountryResults] = useState<
+    Record<string, TourData>
+  >({});
+  const [countryPages, setCountryPages] = useState<Record<string, number>>({});
 
   // Добавляем новое состояние в начало компонента DataProvider
   const [searchInProgress, setSearchInProgress] = useState<boolean>(false);
@@ -359,6 +385,11 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
       if (responseData.result?.requestid) {
         setRequestId(responseData.result.requestid);
         pollSearchResults(responseData.result.requestid); // Используем новую функцию
+      }
+      if (responseData.randomresult?.requestid) {
+        // Для случайных туров просто сохраняем requestId
+        // Компонент SwiperRandomTours сам будет делать запросы
+        setRandomRequestId(responseData.randomresult.requestid);
       }
     } catch (error) {
       console.error("Ошибка:", error);
@@ -687,6 +718,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
       value={{
         params,
         requestId,
+        randomRequestId,
         tours: allTours,
         loading,
         error,

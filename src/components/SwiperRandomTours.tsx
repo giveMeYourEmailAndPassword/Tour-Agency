@@ -3,13 +3,17 @@ import axios from "axios";
 import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { DataContext } from "./DataProvider";
-import { BsFire } from "react-icons/bs";
+import { IoEarth } from "react-icons/io5";
 import { parse, format, addDays } from "date-fns";
 import { ru } from "date-fns/locale";
+import { countryDeclensions } from "./data/countryDeclensions";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
+// @ts-expect-error - Swiper CSS modules don't have type definitions
 import "swiper/css";
+// @ts-expect-error - Swiper navigation CSS module doesn't have type definitions
 import "swiper/css/navigation";
+// @ts-expect-error - Swiper pagination CSS module doesn't have type definitions
 import "swiper/css/pagination";
 import starFilled from "../assets/star_fill.svg";
 import starOutline from "../assets/star_unfill.svg";
@@ -18,9 +22,29 @@ import utensils from "../assets/utensils.svg";
 const API_BASE_URL =
   import.meta.env.VITE_API_URL || "http://localhost:8000/api";
 
-const fetchHotTours = async (departureCity: string) => {
+interface Tour {
+  hotelcode: string;
+  tourid: string;
+  picturelink: string;
+  hotelname: string;
+  hotelstars: string;
+  hotelrating: string;
+  countryname: string;
+  regionname: string;
+  price: string;
+  currency: string;
+  tours: {
+    tour: Array<{
+      meal: string;
+      flydate: string;
+      nights: number;
+    }>;
+  };
+}
+
+const fetchRandomTours = async (requestId: string) => {
   const response = await axios.get(
-    `${API_BASE_URL}/hot-tours?departure=${departureCity}`
+    `${API_BASE_URL}/results/${requestId}?page=1`
   );
   return response.data;
 };
@@ -59,37 +83,48 @@ const getMealType = (meal: string) => {
   return mealTypes[meal] || meal;
 };
 
-const getDepartureCity = (departureCity: string) => {
-  if (departureCity === "80") {
-    return "Бишкека";
-  } else if (departureCity === "60") {
-    return "Алматы";
+// Функция для получения склонения страны
+const getCountryCase = (
+  countryName: string,
+  useCase: "nominative" | "genitive" = "nominative"
+): string => {
+  console.log("getCountryCase input:", { countryName, useCase });
+  const declension = countryDeclensions[countryName];
+  console.log("Found declension:", declension);
+  if (declension) {
+    const result = declension[useCase];
+    console.log("Result:", result);
+    return result;
   }
-  return departureCity;
+  console.log("No declension found, returning original:", countryName);
+  return countryName; // Возвращаем оригинальное название, если склонение не найдено
 };
 
-export default function SwiperHotTours() {
-  const { params } = useContext(DataContext);
+export default function SwiperRandomTours() {
+  const { randomRequestId } = useContext(DataContext);
   const navigate = useNavigate();
 
-  // Получаем город отправления из контекста
-  const departureCity = params.param1 || "80"; // По умолчанию Бишкек
-
+  // Используем отдельный стейт для случайных туров
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["hotTours", departureCity],
-    queryFn: () => fetchHotTours(departureCity),
-    enabled: !!departureCity,
+    queryKey: ["randomTours", randomRequestId],
+    queryFn: () => fetchRandomTours(randomRequestId as string),
+    enabled: !!randomRequestId,
+    // Не обновляем данные при фокусе окна
+    refetchOnWindowFocus: false,
+    // Не обновляем данные при монтировании
+    refetchOnMount: false,
+    // Кэшируем данные "вечно"
+    staleTime: Infinity,
+    cacheTime: Infinity,
   });
 
   if (isLoading) {
     return (
       <div className="w-full">
-        <div className="bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl p-4 text-white">
+        <div className="bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl p-4 text-white">
           <div className="flex items-center gap-2 mb-4">
-            <BsFire className="text-2xl animate-pulse" />
-            <h2 className="text-2xl font-bold">
-              Горящие туры, из {getDepartureCity(departureCity)}
-            </h2>
+            <IoEarth className="text-2xl animate-pulse" />
+            <h2 className="text-2xl font-bold">Случайные направления</h2>
           </div>
 
           <div className="relative">
@@ -155,19 +190,28 @@ export default function SwiperHotTours() {
     );
   }
 
-  if (isError || !data?.hottours?.tour?.length) {
+  console.log("Random tours data:", data); // Добавим лог для отладки
+
+  if (isError || !data?.data?.result?.hotel?.length) {
+    console.log("No random tours data or error:", { isError, data }); // Добавим лог для отладки
     return null; // Не показываем компонент если нет данных
   }
 
-  const hotTours = data.hottours.tour.slice(0, 16); // Берем только первые 16 туров
+  const randomTours = data.data.result.hotel.slice(0, 16); // Берем только первые 16 туров
+  console.log("First random tour:", randomTours[0]);
 
   return (
     <div className="w-full">
-      <div className="bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl p-4 text-white">
+      <div className="bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl p-4 text-white">
         <div className="flex items-center gap-2 mb-4">
-          <BsFire className="text-2xl" />
+          <IoEarth className="text-2xl" />
           <h2 className="text-2xl font-bold">
-            Горящие туры, из {getDepartureCity(departureCity)}
+            {randomTours[0]
+              ? `Лучшие отели ${getCountryCase(
+                  randomTours[0].countryname,
+                  "genitive"
+                )}, специально для вас`
+              : "Случайные направления"}
           </h2>
         </div>
 
@@ -177,12 +221,12 @@ export default function SwiperHotTours() {
             spaceBetween={8}
             slidesPerView={1}
             navigation={{
-              nextEl: ".swiper-button-next-hot",
-              prevEl: ".swiper-button-prev-hot",
+              nextEl: ".swiper-button-next-random",
+              prevEl: ".swiper-button-prev-random",
             }}
             pagination={{
               clickable: true,
-              el: ".swiper-pagination-hot",
+              el: ".swiper-pagination-random",
             }}
             autoplay={{
               delay: 4000,
@@ -197,9 +241,9 @@ export default function SwiperHotTours() {
                 slidesPerView: 3,
               },
             }}
-            className="hot-tours-swiper"
+            className="random-tours-swiper"
           >
-            {hotTours.map((tour: any, index: number) => (
+            {randomTours.map((tour: Tour, index: number) => (
               <SwiperSlide key={index}>
                 <div
                   onClick={() =>
@@ -210,11 +254,7 @@ export default function SwiperHotTours() {
                   {/* Изображение */}
                   <div className="w-full h-44 rounded-lg mb-3 overflow-hidden">
                     <img
-                      src={
-                        tour.hotelpicture
-                          ? `https:${tour.hotelpicture}`
-                          : "/default-image.jpg"
-                      }
+                      src={tour.picturelink}
                       alt={tour.hotelname}
                       className="w-full h-full object-cover"
                     />
@@ -252,45 +292,38 @@ export default function SwiperHotTours() {
                       </h3>
 
                       <p className="text-white/80 text-xs">
-                        {tour.countryname}, {tour.hotelregionname}
+                        {tour.countryname}, {tour.regionname}
                       </p>
                     </div>
 
                     {/* Питание */}
                     <div className="flex items-center gap-1">
                       <span className="text-white/90 text-sm">
-                        {getMealType(tour.meal)}
+                        {getMealType(tour.tours.tour[0].meal)}
                       </span>
                       <img src={utensils} alt="meal" className="w-3.5 h-3.5" />
                     </div>
 
                     {/* Цена и даты */}
                     <div className="flex justify-between items-end">
-                      <div className="text-white text-lg font-bold flex items-baseline gap-1">
-                        {tour.price * 2}
+                      <div className="text-white text-lg font-bold">
+                        {tour.price}
                         {tour.currency === "EUR"
                           ? "€"
                           : tour.currency === "USD"
                           ? "$"
                           : tour.currency}
-                        {tour.priceold > tour.price && (
-                          <span className="text-white text-sm font-medium line-through">
-                            {tour.priceold * 2}
-                            {tour.currency === "EUR"
-                              ? "€"
-                              : tour.currency === "USD"
-                              ? "$"
-                              : tour.currency}
-                          </span>
-                        )}
                       </div>
                       <div className="text-right">
                         <div className="text-white text-xs font-medium">
-                          {formatDate(tour.flydate)} -{" "}
-                          {getEndDate(tour.flydate, parseInt(tour.nights))}
+                          {formatDate(tour.tours.tour[0].flydate)} -{" "}
+                          {getEndDate(
+                            tour.tours.tour[0].flydate,
+                            tour.tours.tour[0].nights
+                          )}
                         </div>
                         <div className="text-white/70 text-xs">
-                          {tour.nights} ночей
+                          {tour.tours.tour[0].nights} ночей
                         </div>
                       </div>
                     </div>
@@ -301,7 +334,7 @@ export default function SwiperHotTours() {
           </Swiper>
 
           {/* Кнопки навигации по бокам - только на десктопе */}
-          <button className="swiper-button-prev-hot absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 bg-white/20 hover:bg-white/30 text-white p-3 rounded-full transition-all duration-300 z-10 hidden lg:flex items-center justify-center">
+          <button className="swiper-button-prev-random absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 bg-white/20 hover:bg-white/30 text-white p-3 rounded-full transition-all duration-300 z-10 hidden lg:flex items-center justify-center">
             <svg
               className="w-6 h-6"
               fill="none"
@@ -316,7 +349,7 @@ export default function SwiperHotTours() {
               />
             </svg>
           </button>
-          <button className="swiper-button-next-hot absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 bg-white/20 hover:bg-white/30 text-white p-3 rounded-full transition-all duration-300 z-10 hidden lg:flex items-center justify-center">
+          <button className="swiper-button-next-random absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 bg-white/20 hover:bg-white/30 text-white p-3 rounded-full transition-all duration-300 z-10 hidden lg:flex items-center justify-center">
             <svg
               className="w-6 h-6"
               fill="none"
@@ -335,7 +368,7 @@ export default function SwiperHotTours() {
 
         {/* Кнопки навигации внизу - только на мобильных */}
         <div className="flex justify-center gap-4 mt-4 lg:hidden">
-          <button className="swiper-button-prev-hot bg-white/20 hover:bg-white/30 text-white p-2 rounded-full transition-all duration-300">
+          <button className="swiper-button-prev-random bg-white/20 hover:bg-white/30 text-white p-2 rounded-full transition-all duration-300">
             <svg
               className="w-5 h-5"
               fill="none"
@@ -350,7 +383,7 @@ export default function SwiperHotTours() {
               />
             </svg>
           </button>
-          <button className="swiper-button-next-hot bg-white/20 hover:bg-white/30 text-white p-2 rounded-full transition-all duration-300">
+          <button className="swiper-button-next-random bg-white/20 hover:bg-white/30 text-white p-2 rounded-full transition-all duration-300">
             <svg
               className="w-5 h-5"
               fill="none"
@@ -366,29 +399,7 @@ export default function SwiperHotTours() {
             </svg>
           </button>
         </div>
-
-        {/* Кастомная пагинация */}
-        {/* <div className="swiper-pagination-hot flex justify-center mt-4"></div> */}
       </div>
-
-      {/* <style>{`
-        .hot-tours-swiper .swiper-pagination-bullet {
-          background: rgba(255, 255, 255, 0.3);
-          opacity: 1;
-          width: 12px;
-          height: 12px;
-          margin: 0 6px;
-          transition: all 0.3s ease;
-        }
-        .hot-tours-swiper .swiper-pagination-bullet-active {
-          background: #ffffff;
-          transform: scale(1.2);
-          box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-        }
-        .hot-tours-swiper .swiper-pagination-bullet:hover {
-          background: rgba(255, 255, 255, 0.6);
-        }
-      `}</style> */}
     </div>
   );
 }

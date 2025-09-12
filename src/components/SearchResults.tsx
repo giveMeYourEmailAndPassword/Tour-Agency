@@ -6,8 +6,9 @@ import starOutline from "../assets/star_unfill.svg";
 import utensils from "../assets/utensils.svg";
 import { useContext } from "react";
 import { DataContext } from "./DataProvider";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import SwiperHotTours from "./SwiperHotTours";
+import SwiperRandomTours from "./SwiperRandomTours";
 import React from "react";
 
 interface Tour {
@@ -20,7 +21,7 @@ interface Tour {
   regionname: string;
   price: string;
   currency: string;
-  hoteldescription: string;
+  hoteldescription?: string;
   tours: {
     tour: Array<{
       tourid: string;
@@ -69,7 +70,6 @@ const getMealType = (meal: string) => {
 export default function SearchResults() {
   const { tours, loading, error, params } = useContext(DataContext);
   const navigate = useNavigate();
-  const location = useLocation();
 
   if (loading) {
     return (
@@ -276,15 +276,29 @@ export default function SearchResults() {
     <div className="mx-2 md:mx-0 md:ml-2 flex-grow pb-4">
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-2">
         {tours.map((tour: Tour, index: number) => {
-          const shouldShowSwiper = index === 7; // Показываем только после 8-го тура
+          const shouldShowHotTours = index === 7; // Показываем после 8-го тура
+          const shouldShowRandomTours = index === 15; // Показываем после 16-го тура
 
           return (
             <React.Fragment key={index}>
               {renderTour(tour, index)}
-              {shouldShowSwiper && (
-                <div key={`swiper-${index}`} className="col-span-full w-full">
+              {shouldShowHotTours && (
+                <div
+                  key={`hot-swiper-${index}`}
+                  className="col-span-full w-full"
+                >
                   <div className="w-full">
                     <SwiperHotTours />
+                  </div>
+                </div>
+              )}
+              {shouldShowRandomTours && (
+                <div
+                  key={`random-swiper-${index}`}
+                  className="col-span-full w-full"
+                >
+                  <div className="w-full">
+                    <SwiperRandomTours />
                   </div>
                 </div>
               )}

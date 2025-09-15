@@ -53,7 +53,7 @@ export default function HotTours() {
             <BsFire className="md:text-3xl text-2xl text-orange-500" />
           </div>
           <div className="flex md:gap-2 gap-1">
-            <button className="px-5 py-2 rounded-full font-semibold text-blue-500 bg-slate-200">
+            <button className="px-5 py-2 rounded-full font-semibold text-orange-500 bg-slate-200">
               Все
             </button>
             <button className="px-5 py-2 rounded-full font-semibold text-black bg-slate-100 text-opacity-50">
@@ -71,7 +71,7 @@ export default function HotTours() {
               className="w-full flex items-center gap-2.5 p-4 bg-white border border-[#DBE0E5] rounded-[10px]"
             >
               <div className="w-full flex flex-col gap-2">
-                <Skeleton className="w-full h-44 md:h-36 rounded" />
+                <Skeleton className="w-full h-44 md:h-44 rounded" />
                 <div className="w-full flex flex-col gap-2">
                   <div className="w-full flex justify-between items-center gap-1">
                     <div className="flex items-center gap-0.5">
@@ -147,7 +147,7 @@ export default function HotTours() {
           <button
             className={`px-5 py-2 rounded-full font-semibold ${
               selectedCity === ""
-                ? "text-blue-500 bg-slate-200"
+                ? "text-orange-500 bg-slate-200"
                 : "text-black bg-slate-100 text-opacity-50"
             }`}
             onClick={() => setSelectedCity("")}
@@ -157,7 +157,7 @@ export default function HotTours() {
           <button
             className={`px-5 py-2 rounded-full font-semibold ${
               selectedCity === "80"
-                ? "text-blue-500 bg-slate-200"
+                ? "text-orange-500 bg-slate-200"
                 : "text-black bg-slate-100 text-opacity-50"
             }`}
             onClick={() => setSelectedCity("80")}
@@ -167,7 +167,7 @@ export default function HotTours() {
           <button
             className={`px-5 py-2 rounded-full font-semibold ${
               selectedCity === "60"
-                ? "text-blue-500 bg-slate-200"
+                ? "text-orange-500 bg-slate-200"
                 : "text-black bg-slate-100 text-opacity-50"
             }`}
             onClick={() => setSelectedCity("60")}
@@ -186,7 +186,7 @@ export default function HotTours() {
           >
             <div className="w-full flex flex-col gap-2">
               {/* Изображение */}
-              <div className="w-full h-44 md:h-36 rounded">
+              <div className="w-full h-48 md:h-44 rounded">
                 <img
                   src={
                     tour.hotelpicture

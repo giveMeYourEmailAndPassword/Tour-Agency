@@ -7,15 +7,22 @@ import planeDeparture from "../assets/plane_departure.svg";
 import { format, parse, addDays } from "date-fns";
 import { ru } from "date-fns/locale";
 import { IoAirplane } from "react-icons/io5";
-import { FaUtensils } from "react-icons/fa";
+import { FaHeart, FaUtensils } from "react-icons/fa";
 import { FaUmbrellaBeach } from "react-icons/fa";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import Lightbox from "yet-another-react-lightbox";
 import Thumbnails from "yet-another-react-lightbox/plugins/thumbnails";
 import "yet-another-react-lightbox/styles.css";
 import "yet-another-react-lightbox/plugins/thumbnails.css";
 import { IoChevronBackOutline, IoChevronForwardOutline } from "react-icons/io5";
 import Header from "../components/Header";
+import bookingIcon from "../assets/booking.svg";
+import calendarIcon from "../assets/calendar.svg";
+import moonStarsIcon from "../assets/moon_stars.svg";
+import personLuggageIcon from "../assets/person_luggage.svg";
+import bedAltIcon from "../assets/bed_alt.svg";
+import { DataContext } from "../components/DataProvider";
+import { FaRegHeart } from "react-icons/fa";
 // import SimilarHotTours from "../components/SimilarHotTours";
 
 export default function HotelDetails() {
@@ -28,6 +35,8 @@ export default function HotelDetails() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [mainImageIndex, setMainImageIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const { addToFavorite, removeFromFavorite, favoriteTours } =
+    useContext(DataContext);
 
   useEffect(() => {
     if (data?.hotel?.data?.hotel) {
@@ -257,16 +266,34 @@ export default function HotelDetails() {
     navigate(`/hotel/${hotelcode}/${tourId}/booking`);
   };
 
+  const isTourFavorite = () => {
+    const hotelCode = String(hotelcode);
+    const tId = String(tourId);
+    return favoriteTours.some(
+      (fav) => fav.hotelcode === hotelCode && fav.tourId === tId
+    );
+  };
+
+  const handleFavoriteClick = () => {
+    const hotelCode = String(hotelcode);
+    const tId = String(tourId);
+    if (isTourFavorite()) {
+      removeFromFavorite(hotelCode, tId);
+    } else {
+      addToFavorite({ hotelcode: hotelCode, tourId: tId });
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col md:bg-white bg-gray-100">
       <Header />
       <div className="w-full mt-1 md:mt-0 md:bg-white bg-gray-100">
-        <div className="max-w-[1560px] mx-auto px-6 py-4">
+        <div className="max-w-[1440px] mx-auto py-4">
           {/* Заголовок */}
           <div className="flex flex-col gap-3">
             {/* Галерея и контент */}
-            <div className="flex justify-between gap-4">
-              <div className="flex flex-col gap-1 flex-[0.9]">
+            <div className="flex justify-between gap-3">
+              <div className="flex flex-col gap-1 flex-[1]">
                 {/* Основное фото */}
                 <div className="w-full h-[400px] rounded-xl overflow-hidden relative group">
                   <img
@@ -430,7 +457,7 @@ export default function HotelDetails() {
               </div>
 
               {/* Информация о туре */}
-              <div className="w-full flex-1">
+              <div className="w-[45%]">
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-2">
                     <div className="flex items-center gap-0.5">
@@ -498,61 +525,165 @@ export default function HotelDetails() {
                   </div>
                 </div>
 
-                {/* Информация о туре */}
+                {/* Варианты туров */}
                 <div className="mt-6">
-                  <h3 className="text-lg font-semibold text-[#2E2E32] mb-4">
+                  <h3 className="text-lg font-semibold text-[#2E2E32] mb-3">
                     Информация о туре
                   </h3>
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <h4 className="text-base font-semibold text-[#2E2E32]">
-                        Выбранный тур
-                      </h4>
-                      <div className="flex justify-between items-start">
-                        <div className="w-[330px] space-y-2">
-                          <p className="text-xs font-medium text-[#2E2E32]">
-                            {getMealType(tour.meal)}, {tour.nights} ночей
-                          </p>
-                          <p className="text-xs font-semibold text-[#2E2E32]">
-                            {`Номер ${tour.room}, ${tour.placement}`}
-                          </p>
-                        </div>
-                        <div className="w-[330px] space-y-2">
-                          <div className="flex items-center gap-1">
-                            <p className="text-xs font-semibold text-[#6B7280]">
-                              {formatDate(tour.flydate)} –{" "}
-                              {getEndDate(tour.flydate, tour.nights)}
-                            </p>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <IoAirplane className="w-3.5 h-3.5 text-[#2E2E32]" />
-                            <span className="text-xs font-medium text-[#2E2E32]">
-                              {tour.operatorname || "Pegasus Airlines"}
-                            </span>
-                            <span className="text-xs text-[#B3B9C0]">
-                              {tour.operatorname
-                                ? tour.operatorname.split(" ")[0]
-                                : "Kompas (KZ)"}
-                            </span>
-                          </div>
-                        </div>
+
+                  {/* В данном маршруте у нас один выбранный тур, поэтому показываем один вариант */}
+                  <div className="space-y-2">
+                    <div className="bg-white rounded-[10px] p-4 border border-gray-100">
+                      {/* Заголовок блока */}
+                      <div className="flex justify-between items-center mb-3">
+                        <h4 className="text-lg font-semibold text-[#2E2E32]">
+                          Выбранный тур
+                        </h4>
                         <div className="flex items-center gap-2">
-                          {/* Кнопка цены */}
+                          {/* Кнопка избранного */}
                           <button
-                            onClick={handleBookingClick}
-                            className="bg-[#FF621F] text-white px-2 py-1 rounded-lg flex items-center gap-2 hover:bg-[#E55A1A] transition-colors cursor-pointer"
+                            onClick={handleFavoriteClick}
+                            className={`p-2 rounded-lg border-2 transition-colors ${
+                              isTourFavorite()
+                                ? "border-[#FF621F] text-[#FF621F] hover:bg-orange-50"
+                                : "border-gray-300 text-gray-400 hover:border-[#FF621F] hover:text-[#FF621F]"
+                            }`}
+                            title={
+                              isTourFavorite()
+                                ? "Убрать из избранного"
+                                : "Добавить в избранное"
+                            }
                           >
-                            <span className="text-base font-semibold">
-                              {tour.price}
-                              {tour.currency === "EUR"
-                                ? "€"
-                                : tour.currency === "USD"
-                                ? "$"
-                                : tour.currency}
-                            </span>
-                            <IoAirplane className="w-6 h-6" />
+                            {isTourFavorite() ? (
+                              <FaHeart size={16} />
+                            ) : (
+                              <FaRegHeart size={16} />
+                            )}
                           </button>
                         </div>
+                      </div>
+
+                      {/* Основная информация о туре */}
+                      <div className="grid grid-cols-2 gap-4 mb-4">
+                        {/* Левая колонка */}
+                        <div className="space-y-4">
+                          {/* Даты поездки */}
+                          <div className="flex items-start gap-3">
+                            <div className="w-5 h-5 flex-shrink-0 mt-0.5">
+                              <img
+                                src={calendarIcon}
+                                alt="Calendar"
+                                className="w-5 h-5"
+                              />
+                            </div>
+                            <div className="flex-1">
+                              <p className="text-base font-medium text-[#2E2E32] mb-1">
+                                Даты поездки
+                              </p>
+                              <p className="text-sm text-[#6B7280]">
+                                {formatDate(tour.flydate)} —{" "}
+                                {getEndDate(tour.flydate, tour.nights)}
+                              </p>
+                            </div>
+                          </div>
+
+                          {/* Туристы */}
+                          <div className="flex items-start gap-3">
+                            <div className="w-5 h-5 flex-shrink-0 mt-0.5">
+                              <img
+                                src={personLuggageIcon}
+                                alt="Person with luggage"
+                                className="w-5 h-5"
+                              />
+                            </div>
+                            <div className="flex-1">
+                              <p className="text-base font-medium text-[#2E2E32] mb-1">
+                                Туристы
+                              </p>
+                              <p className="text-sm text-[#6B7280]">
+                                {(tour as any).adults ?? 2} взрослых
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Правая колонка */}
+                        <div className="space-y-4 mb-2">
+                          {/* Номер */}
+                          <div className="flex items-start gap-3">
+                            <div className="w-5 h-5 flex-shrink-0 mt-0.5">
+                              <img
+                                src={bedAltIcon}
+                                alt="Bed"
+                                className="w-5 h-5"
+                              />
+                            </div>
+                            <div className="flex-1">
+                              <p className="text-base font-medium text-[#2E2E32] mb-1">
+                                Номер
+                              </p>
+                              <p className="text-sm text-[#6B7280]">
+                                {tour.room}
+                              </p>
+                            </div>
+                          </div>
+
+                          {/* Длительность */}
+                          <div className="flex items-start gap-3">
+                            <div className="w-5 h-5 flex-shrink-0 mt-0.5">
+                              <img
+                                src={moonStarsIcon}
+                                alt="Moon with stars"
+                                className="w-5 h-5"
+                              />
+                            </div>
+                            <div className="flex-1">
+                              <p className="text-base font-medium text-[#2E2E32] mb-1">
+                                Длительность
+                              </p>
+                              <p className="text-sm text-[#6B7280]">
+                                {tour.nights} ночей
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Доп. инфо и кнопка */}
+                      <div className="flex gap-2">
+                        <div className="p-2 bg-gray-50 rounded-lg w-[50%] flex items-center gap-3">
+                          <div className="flex items-center gap-2">
+                            <IoAirplane className="w-4 h-4 text-[#2E2E32]" />
+                            <span className="text-sm font-medium text-[#2E2E32]">
+                              {tour.operatorname || "Pegasus Airlines"}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <FaUtensils className="w-3.5 h-3.5 text-[#2E2E32]" />
+                            <span className="text-sm text-[#6B7280]">
+                              {getMealType(tour.meal)}
+                            </span>
+                          </div>
+                        </div>
+
+                        <button
+                          onClick={handleBookingClick}
+                          className="w-[50%] bg-[#FF621F] text-white px-4 py-2 rounded-[10px] flex items-center justify-center gap-4 hover:bg-[#E55A1A] transition-colors font-medium"
+                        >
+                          <span className="text-base font-bold">
+                            {tour.price}
+                            {tour.currency === "EUR"
+                              ? "€"
+                              : tour.currency === "USD"
+                              ? "$"
+                              : tour.currency}
+                          </span>
+                          <img
+                            src={bookingIcon}
+                            alt="Booking"
+                            className="w-6 h-6"
+                          />
+                        </button>
                       </div>
                     </div>
                   </div>

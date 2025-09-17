@@ -1,7 +1,6 @@
 import { useState, useContext } from "react";
 import { useLocation, useNavigationType } from "react-router-dom";
 import HeaderFilters from "./components/HeaderFilters";
-import Filters from "./components/Filters";
 import FiltersMobile from "./components/FiltersMobile";
 import { DataContext } from "./components/DataProvider";
 import { useSearchParams } from "./Hooks/useSearchParams";

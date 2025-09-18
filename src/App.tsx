@@ -16,7 +16,11 @@ export default function App() {
   return (
     <div className={`min-h-screen flex flex-col md:bg-white bg-gray-100`}>
       <Header />
-      <div className="hidden md:block">
+      <div className="hidden md:flex flex-col items-center gap-4 mt-8">
+        <h1 className="text-2xl md:text-5xl font-semibold">Найти туры</h1>
+        <p className="text-sm md:text-xl text-gray-500">
+          Лучшие предложения для вашего отдыха по выгодным ценам
+        </p>
         <HeaderFilters />
       </div>
 
@@ -24,7 +28,7 @@ export default function App() {
         <div className="max-w-[1440px] mx-auto">
           <div className="md:block hidden mt-4">
             <div className="flex items-start">
-              <div className="ml-2 flex-grow pb-4">
+              <div className="ml-2 flex-grow pb-4 mt-8">
                 <HotTours />
               </div>
             </div>

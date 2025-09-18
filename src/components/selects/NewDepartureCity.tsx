@@ -49,7 +49,7 @@ export default function NewDepartureCity() {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center px-7 py-1 border border-[#DBE0E5] rounded-lg bg-white hover:bg-gray-50 duration-300 w-[220px]"
+        className="flex items-center px-7 py-1 border border-[#DBE0E5] rounded-lg bg-white hover:bg-gray-50 duration-300 w-[200px]"
       >
         <img src={plane_departure} alt="plane_departure" className="w-6 h-6" />
         <div className="flex flex-col justify-between flex-1">

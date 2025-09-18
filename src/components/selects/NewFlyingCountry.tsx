@@ -5,12 +5,14 @@ import { destinations } from "../data/destinations";
 
 export default function NewFlyingCountry() {
   const { setData, params } = useContext(DataContext);
+  const TURKEY_ID = 4;
+
   const [selectedCountry, setSelectedCountry] = useState(
-    Number(params.param2) || 4
+    Number(params.param2) || TURKEY_ID
   );
   const [selectedRegions, setSelectedRegions] = useState<number[]>(() => {
     const country = destinations.find(
-      (country) => country.id === (Number(params.param2) || 4)
+      (country) => country.id === (Number(params.param2) || TURKEY_ID)
     );
 
     if (params.param2Regions?.length) {
@@ -20,7 +22,12 @@ export default function NewFlyingCountry() {
     return country ? country.regions.map((region) => region.id) : [];
   });
   const [isOpen, setIsOpen] = useState(false);
-  const [isCharterOnly, setIsCharterOnly] = useState(true); // Добавляем состояние для чартерных рейсов
+  const [isCharterOnly, setIsCharterOnly] = useState<boolean>(() => {
+    if (params.param11 !== undefined) {
+      return params.param11 === true;
+    }
+    return (Number(params.param2) || TURKEY_ID) === TURKEY_ID;
+  });
   const dropdownRef = useRef(null);
 
   // Инициализация при загрузке компонента
@@ -36,11 +43,6 @@ export default function NewFlyingCountry() {
           setSelectedRegions(country.regions.map((region) => region.id));
         }
       }
-    }
-
-    // Инициализируем параметр чартерных рейсов по умолчанию
-    if (params.param11 === undefined) {
-      setData("param11", true);
     }
   }, []); // Только при монтировании
 
@@ -62,16 +64,18 @@ export default function NewFlyingCountry() {
         );
       }
     } else if (
-      JSON.stringify(urlRegions.sort()) !==
-      JSON.stringify(selectedRegions.sort())
+      JSON.stringify(urlRegions.slice().sort()) !==
+      JSON.stringify(selectedRegions.slice().sort())
     ) {
       // Если страна та же, но регионы изменились извне
       setSelectedRegions(urlRegions);
     }
 
-    // Синхронизируем состояние чекбокса с URL параметрами
-    if (urlCharterOnly !== isCharterOnly) {
-      setIsCharterOnly(urlCharterOnly);
+    // Синхронизируем состояние чекбокса:
+    // если страна Турция — берем значение из URL, иначе выключаем
+    const desiredCharter = urlCountryId === TURKEY_ID ? urlCharterOnly : false;
+    if (desiredCharter !== isCharterOnly) {
+      setIsCharterOnly(desiredCharter);
     }
   }, [params.param2, params.param2Regions, params.param11]);
 
@@ -133,12 +137,25 @@ export default function NewFlyingCountry() {
   const handleCountrySelect = (country: any) => {
     setSelectedCountry(country.id);
     const newCountry = destinations.find((c) => c.id === country.id);
+
     if (newCountry) {
-      // При смене страны всегда выбираем первый регион по умолчанию
-      setSelectedRegions([newCountry.regions[0].id]);
+      // Всегда выбираем все регионы новой страны
+      const allRegionIds = newCountry.regions.map((r) => r.id);
+      setSelectedRegions(allRegionIds);
+
+      // Сразу обновляем параметры, чтобы эффект синхронизации не откатывал выбор
+      setData("param2", country.id);
+      setData("param2Regions", allRegionIds);
     } else {
       setSelectedRegions([]);
+      setData("param2", country.id);
+      setData("param2Regions", []);
     }
+
+    // Автовыбор чартеров только для Турции, иначе выключаем
+    const autoCharter = country.id === TURKEY_ID;
+    setIsCharterOnly(autoCharter);
+    setData("param11", autoCharter);
   };
 
   const handleCharterToggle = () => {
@@ -164,7 +181,7 @@ export default function NewFlyingCountry() {
         (region) => region.id === selectedRegions[0]
       );
 
-      // Если название региона больше 8 символов, показываем (1)
+      // Если название региона больше 6 символов, показываем (1)
       if (selectedRegion && selectedRegion.name.length > 6) {
         return `${selectedCountryData?.name} (1)`;
       }

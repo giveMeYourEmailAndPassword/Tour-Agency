@@ -226,7 +226,7 @@ export default function HotTours() {
                       </div>
                     )}
                   </div>
-                  <span className="text-xs text-[#FF621F]">
+                  <span className="text-sm text-[#FF621F]">
                     из {tour.departurenamefrom}
                   </span>
                 </div>

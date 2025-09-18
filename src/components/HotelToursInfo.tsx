@@ -335,77 +335,190 @@ export default function HotelToursInfo() {
       <div className="min-h-screen flex flex-col md:bg-white bg-gray-100">
         <Header />
         <div className="w-full mt-1 md:mt-0 md:bg-white bg-gray-100">
-          <div className="max-w-[1560px] mx-auto px-6 py-4">
+          <div className="max-w-[1440px] mx-auto py-4">
             <div className="flex justify-between gap-3">
               {/* Левая колонка с галереей */}
-              <div className="flex flex-col gap-1 flex-[0.9]">
-                {/* Основное фото */}
-                <Skeleton className="w-full h-[400px] rounded-xl" />
+              <div className="flex flex-col gap-1 flex-[1]">
+                {/* Основное фото с улучшенным скелетоном */}
+                <div className="relative">
+                  <Skeleton className="w-full h-[400px] rounded-xl animate-pulse" />
+                  {/* Индикаторы слайдов */}
+                  <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
+                    {Array.from({ length: 4 }).map((_, index) => (
+                      <div
+                        key={index}
+                        className={`w-2 h-2 rounded-full ${
+                          index === 0 ? "bg-gray-400 w-4" : "bg-gray-300"
+                        }`}
+                      />
+                    ))}
+                  </div>
+                </div>
+
                 {/* Дополнительные фото */}
                 <div className="grid grid-cols-4 gap-1 h-[100px]">
                   {Array.from({ length: 4 }).map((_, index) => (
                     <Skeleton
                       key={index}
-                      className="w-full h-full rounded-xl"
+                      className="w-full h-full rounded-xl animate-pulse"
                     />
                   ))}
                 </div>
-                {/* Информация об отеле */}
-                {[...Array(3)].map((_, index) => (
-                  <div key={index} className="mt-4 space-y-3">
-                    <Skeleton className="w-full h-4" />
-                    <Skeleton className="w-3/4 h-4" />
-                    <Skeleton className="w-full h-4" />
-                    <Skeleton className="w-2/3 h-4" />
-                    <Skeleton className="w-full h-4" />
-                    <Skeleton className="w-4/5 h-4" />
+
+                {/* Информация об отеле с улучшенным дизайном */}
+                <div className="mt-4 space-y-4">
+                  {/* Заголовок секции */}
+                  <div className="space-y-3">
+                    <Skeleton className="w-48 h-5 rounded" />
+                    <div className="space-y-2">
+                      <Skeleton className="w-full h-4 rounded" />
+                      <Skeleton className="w-4/5 h-4 rounded" />
+                      <Skeleton className="w-3/4 h-4 rounded" />
+                    </div>
                   </div>
-                ))}
+
+                  {/* Расположение */}
+                  <div className="space-y-3">
+                    <Skeleton className="w-32 h-5 rounded" />
+                    <div className="space-y-2">
+                      <Skeleton className="w-full h-4 rounded" />
+                      <Skeleton className="w-2/3 h-4 rounded" />
+                    </div>
+                  </div>
+
+                  {/* Территория отеля */}
+                  <div className="space-y-3">
+                    <Skeleton className="w-40 h-5 rounded" />
+                    <div className="space-y-2">
+                      <Skeleton className="w-full h-4 rounded" />
+                      <Skeleton className="w-5/6 h-4 rounded" />
+                      <Skeleton className="w-3/5 h-4 rounded" />
+                    </div>
+                  </div>
+
+                  {/* В номере */}
+                  <div className="space-y-3">
+                    <Skeleton className="w-24 h-5 rounded" />
+                    <div className="space-y-2">
+                      <Skeleton className="w-full h-4 rounded" />
+                      <Skeleton className="w-4/5 h-4 rounded" />
+                    </div>
+                  </div>
+                </div>
               </div>
 
               {/* Правая колонка с информацией */}
-              <div className="w-full flex-1">
+              <div className="w-[45%]">
                 {/* Заголовок и рейтинг */}
                 <div className="flex justify-between items-center mb-4">
                   <div className="flex items-center gap-2">
-                    <Skeleton className="w-20 h-4" />
-                    <Skeleton className="w-12 h-4 rounded-full" />
+                    {/* Звезды */}
+                    <div className="flex items-center gap-0.5">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <Skeleton key={i} className="w-4 h-4 rounded" />
+                      ))}
+                    </div>
+                    {/* Рейтинг */}
+                    <Skeleton className="w-12 h-6 rounded-full" />
                   </div>
-                  <Skeleton className="w-32 h-4" />
+                  {/* Город вылета */}
+                  <div className="flex items-center gap-2">
+                    <Skeleton className="w-24 h-4 rounded" />
+                    <Skeleton className="w-4 h-4 rounded" />
+                  </div>
                 </div>
 
                 {/* Название отеля */}
-                <Skeleton className="w-3/4 h-6 mb-2" />
-                <Skeleton className="w-1/2 h-4 mb-4" />
+                <div className="mb-4">
+                  <Skeleton className="w-3/4 h-7 rounded mb-2" />
+                  <div className="flex justify-between items-center">
+                    <Skeleton className="w-1/2 h-4 rounded" />
+                    <div className="flex gap-3">
+                      <Skeleton className="w-20 h-4 rounded" />
+                      <Skeleton className="w-24 h-4 rounded" />
+                    </div>
+                  </div>
+                </div>
 
                 {/* Варианты туров */}
-                <div className="mt-6">
-                  <Skeleton className="w-32 h-6 mb-4" />
-                  <div className="space-y-4">
-                    {Array.from({ length: 7 }).map((_, index) => (
-                      <div key={index} className="space-y-2">
-                        <Skeleton className="w-24 h-4" />
-                        <div className="flex justify-between items-start">
-                          <div className="w-[330px] space-y-2">
-                            <Skeleton className="w-48 h-3" />
-                            <Skeleton className="w-40 h-3" />
+                <div className="mt-6 ">
+                  <Skeleton className="w-40 h-6 rounded mb-4" />
+                  <div className="space-y-2">
+                    {Array.from({ length: 5 }).map((_, index) => (
+                      <div
+                        key={index}
+                        className="bg-white rounded-[10px] p-4 border border-gray-200"
+                      >
+                        {/* Заголовок варианта */}
+                        <div className="flex justify-between items-center mb-4">
+                          <Skeleton className="w-32 h-8 rounded" />
+                          <Skeleton className="w-8 h-8 rounded-lg" />
+                        </div>
+
+                        {/* Основная информация о туре */}
+                        <div className="grid grid-cols-2 gap-4 mb-4">
+                          {/* Левая колонка */}
+                          <div className="space-y-4">
+                            {/* Даты поездки */}
+                            <div className="flex items-start gap-3">
+                              <Skeleton className="w-6 h-6 rounded flex-shrink-0 mt-0.5" />
+                              <div className="flex-1 space-y-3">
+                                <Skeleton className="w-24 h-4 rounded" />
+                                <Skeleton className="w-32 h-3 rounded" />
+                              </div>
+                            </div>
+
+                            {/* Туристы */}
+                            <div className="flex items-start gap-3">
+                              <Skeleton className="w-6 h-6 rounded flex-shrink-0 mt-0.5" />
+                              <div className="flex-1 space-y-3">
+                                <Skeleton className="w-16 h-4 rounded" />
+                                <Skeleton className="w-20 h-3 rounded" />
+                              </div>
+                            </div>
                           </div>
-                          <div className="w-[330px] space-y-2">
-                            <Skeleton className="w-36 h-3" />
-                            <Skeleton className="w-32 h-3" />
+
+                          {/* Правая колонка */}
+                          <div className="space-y-4">
+                            {/* Номер */}
+                            <div className="flex items-start gap-3">
+                              <Skeleton className="w-6 h-6 rounded flex-shrink-0 mt-0.5" />
+                              <div className="flex-1 space-y-3">
+                                <Skeleton className="w-12 h-4 rounded" />
+                                <Skeleton className="w-24 h-3 rounded" />
+                              </div>
+                            </div>
+
+                            {/* Длительность */}
+                            <div className="flex items-start gap-3">
+                              <Skeleton className="w-6 h-6 rounded flex-shrink-0 mt-0.5" />
+                              <div className="flex-1 space-y-3">
+                                <Skeleton className="w-20 h-4 rounded" />
+                                <Skeleton className="w-16 h-3 rounded" />
+                              </div>
+                            </div>
                           </div>
-                          <div className="flex items-center gap-2">
-                            {/* Скелетон кнопки избранного */}
-                            <Skeleton className="w-8 h-8 rounded-lg" />
-                            {/* Скелетон кнопки цены */}
-                            <Skeleton className="w-24 h-8 rounded-lg" />
+                        </div>
+
+                        {/* Кнопки действий */}
+                        <div className="flex gap-2 pt-3">
+                          <div className="p-2 bg-gray-50 rounded-lg w-[50%] flex items-center gap-3">
+                            <div className="flex items-center gap-2">
+                              <Skeleton className="w-6 h-6 rounded" />
+                              <Skeleton className="w-32 h-6 rounded" />
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Skeleton className="w-6 h-6 rounded" />
+                              <Skeleton className="w-16 h-6 rounded" />
+                            </div>
                           </div>
+                          <Skeleton className="w-[50%] h-10 rounded-[10px]" />
                         </div>
                       </div>
                     ))}
 
-                    {/* Скелетон кнопки "Показать еще" если вариантов много */}
-                    <div className="flex justify-center pt-4">
+                    {/* Кнопка "Показать еще" */}
+                    <div className="flex justify-center pt-2">
                       <Skeleton className="w-48 h-10 rounded-lg" />
                     </div>
                   </div>

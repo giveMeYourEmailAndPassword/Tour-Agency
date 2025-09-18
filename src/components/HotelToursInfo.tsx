@@ -42,6 +42,26 @@ interface Tour {
   currency: string;
 }
 
+interface ExtendedHotel {
+  name: string;
+  country: string;
+  region: string;
+  stars: string;
+  rating: string;
+  images: {
+    image: string[];
+  };
+  description?: string;
+  beach?: string;
+  placement?: string;
+  territory?: string;
+  inroom?: string;
+  roomtypes?: string;
+  services?: string | string[];
+  meallist?: string;
+  build?: string;
+}
+
 export default function HotelToursInfo() {
   const location = useLocation();
   const [searchParams] = useSearchParams();
@@ -130,7 +150,7 @@ export default function HotelToursInfo() {
       console.log("📊 All tours before filtering:", tours);
 
       const filteredTours = tours.filter(
-        (tour) => tour.hotelcode === parseInt(hotelCode) // Преобразуем в число для сравнения
+        (tour) => tour.hotelcode === hotelCode // Сравниваем строки
       );
 
       console.log("🎯 Filtered tours:", filteredTours);
@@ -207,6 +227,7 @@ export default function HotelToursInfo() {
 
   const handleImageClick = (index: number) => {
     setCurrentIndex(index);
+    setMainImageIndex(index); // Синхронизируем mainImageIndex с currentIndex
     setIsOpen(true);
   };
 
@@ -489,28 +510,30 @@ export default function HotelToursInfo() {
 
                 {/* Дополнительные фото */}
                 <div className="grid grid-cols-4 gap-1 h-[100px]">
-                  {hotel.images.image.slice(1, 5).map((image, index) => (
-                    <div
-                      key={index}
-                      className="w-full overflow-hidden cursor-pointer"
-                      onClick={() => {
-                        setMainImageIndex(index + 1);
-                        handleUserInteraction();
-                      }}
-                    >
-                      <img
-                        src={`https:${image}`}
-                        alt={`${hotel.name} ${index + 1}`}
-                        className={`w-full h-full object-cover rounded-xl transition-opacity duration-300 select-none ${
-                          mainImageIndex === index + 1
-                            ? "opacity-70"
-                            : "opacity-100"
-                        }`}
-                        draggable={false}
-                        onDragStart={(e) => e.preventDefault()}
-                      />
-                    </div>
-                  ))}
+                  {hotel.images.image
+                    .slice(1, 5)
+                    .map((image: string, index: number) => (
+                      <div
+                        key={index}
+                        className="w-full overflow-hidden cursor-pointer"
+                        onClick={() => {
+                          setMainImageIndex(index + 1);
+                          handleUserInteraction();
+                        }}
+                      >
+                        <img
+                          src={`https:${image}`}
+                          alt={`${hotel.name} ${index + 1}`}
+                          className={`w-full h-full object-cover rounded-xl transition-opacity duration-300 select-none ${
+                            mainImageIndex === index + 1
+                              ? "opacity-70"
+                              : "opacity-100"
+                          }`}
+                          draggable={false}
+                          onDragStart={(e) => e.preventDefault()}
+                        />
+                      </div>
+                    ))}
                 </div>
 
                 {/* Информация об отеле */}
@@ -525,81 +548,85 @@ export default function HotelToursInfo() {
                     </div>
                   </div>
 
-                  {(hotel as any).placement && (
+                  {(hotel as ExtendedHotel).placement && (
                     <div>
                       <h3 className="text-lg font-semibold text-[#2E2E32]">
                         Расположение:
                       </h3>
                       <div className="text-base text-[#6B7280]">
-                        {(hotel as any).placement}
+                        {(hotel as ExtendedHotel).placement}
                       </div>
                     </div>
                   )}
 
-                  {(hotel as any).territory && (
+                  {(hotel as ExtendedHotel).territory && (
                     <div>
                       <h3 className="text-lg font-semibold text-[#2E2E32]">
                         Территория отеля:
                       </h3>
                       <div className="text-base text-[#6B7280]">
-                        {formatList((hotel as any).territory)}
+                        {formatList((hotel as ExtendedHotel).territory!)}
                       </div>
                     </div>
                   )}
 
-                  {(hotel as any).inroom && (
+                  {(hotel as ExtendedHotel).inroom && (
                     <div>
                       <h3 className="text-lg font-semibold text-[#2E2E32]">
                         В номере:
                       </h3>
                       <div className="text-base text-[#6B7280]">
-                        {formatList((hotel as any).inroom)}
+                        {formatList((hotel as ExtendedHotel).inroom!)}
                       </div>
                     </div>
                   )}
 
-                  {(hotel as any).roomtypes && (
+                  {(hotel as ExtendedHotel).roomtypes && (
                     <div>
                       <h3 className="text-lg font-semibold text-[#2E2E32]">
                         Типы номеров:
                       </h3>
                       <div className="text-base text-[#6B7280]">
-                        {formatList((hotel as any).roomtypes)}
+                        {formatList((hotel as ExtendedHotel).roomtypes!)}
                       </div>
                     </div>
                   )}
 
-                  {(hotel as any).services && (
+                  {(hotel as ExtendedHotel).services && (
                     <div>
                       <h3 className="text-lg font-semibold text-[#2E2E32]">
                         Услуги отеля:
                       </h3>
                       <div className="text-base text-[#6B7280]">
-                        {Array.isArray((hotel as any).services)
-                          ? (hotel as any).services.join(", ")
-                          : formatList((hotel as any).services)}
+                        {Array.isArray((hotel as ExtendedHotel).services)
+                          ? (
+                              (hotel as ExtendedHotel).services as string[]
+                            ).join(", ")
+                          : formatList(
+                              (hotel as ExtendedHotel).services as string
+                            )}
                       </div>
                     </div>
                   )}
 
-                  {(hotel as any).meallist && (
+                  {(hotel as ExtendedHotel).meallist && (
                     <div>
                       <h3 className="text-lg font-semibold text-[#2E2E32]">
                         Питание:
                       </h3>
                       <div className="text-base text-[#6B7280]">
-                        {formatList((hotel as any).meallist)}
+                        {formatList((hotel as ExtendedHotel).meallist!)}
                       </div>
                     </div>
                   )}
 
-                  {(hotel as any).build && (
+                  {(hotel as ExtendedHotel).build && (
                     <div>
                       <h3 className="text-lg font-semibold text-[#2E2E32]">
                         Год постройки:
                       </h3>
                       <div className="text-base text-[#6B7280]">
-                        {(hotel as any).build}
+                        {(hotel as ExtendedHotel).build}
                       </div>
                     </div>
                   )}
@@ -713,7 +740,7 @@ export default function HotelToursInfo() {
                               (tourVariant, variantIndex: number) => (
                                 <div
                                   key={`${tourIndex}-${variantIndex}`}
-                                  className="bg-white rounded-[10px] p-4 border border-gray-100"
+                                  className="bg-white rounded-[10px] p-4 border border-[#DBE0E5]"
                                 >
                                   {/* Заголовок блока */}
                                   <div className="flex justify-between items-center mb-3">
@@ -934,10 +961,22 @@ export default function HotelToursInfo() {
       </div>
       <Lightbox
         open={isOpen}
-        close={() => setIsOpen(false)}
+        close={() => {
+          setIsOpen(false);
+          // Синхронизируем mainImageIndex с currentIndex при закрытии
+          setMainImageIndex(currentIndex);
+          // Возобновляем автопрокрутку только когда закрываем лайтбокс
+          setTimeout(() => setIsAutoPlaying(true), 500);
+        }}
         slides={slides}
         plugins={[Thumbnails]}
         index={currentIndex}
+        on={{
+          view: ({ index }) => {
+            // Обновляем currentIndex при навигации в Lightbox
+            setCurrentIndex(index);
+          },
+        }}
       />
     </div>
   );

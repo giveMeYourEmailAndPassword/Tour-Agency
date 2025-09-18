@@ -229,7 +229,7 @@ export default function HotelDetailsMobile() {
                 disableOnInteraction: false,
                 pauseOnMouseEnter: true,
               }}
-              loop={true}
+              loop={hotel.images.image.length > 1}
               className="w-full h-[180px]"
             >
               {hotel.images.image.map((img: string, index: number) => (

@@ -59,13 +59,11 @@ export default function HotelDetails() {
     }, 3000); // Переключение каждые 3 секунды
 
     return () => clearInterval(interval);
-  }, [isAutoPlaying, data?.hotel?.data?.hotel?.images?.image?.length]);
+  }, [isAutoPlaying, data?.hotel?.data?.hotel?.images?.image]);
 
   // Остановка авто-прокрутки при взаимодействии
   const handleUserInteraction = () => {
     setIsAutoPlaying(false);
-    // Возобновление авто-прокрутки через 5 секунд после взаимодействия
-    setTimeout(() => setIsAutoPlaying(true), 5000);
   };
 
   if (isLoading) {
@@ -214,6 +212,7 @@ export default function HotelDetails() {
 
   const handleImageClick = (index: number) => {
     setCurrentIndex(index);
+    setMainImageIndex(index); // Синхронизируем mainImageIndex с currentIndex
     setIsOpen(true);
   };
 
@@ -328,7 +327,7 @@ export default function HotelDetails() {
                   </button>
                   {/* Индикатор слайдов */}
                   <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2 z-10">
-                    {hotel.images.image.map((_, index) => (
+                    {hotel.images.image.map((_: string, index: number) => (
                       <div
                         key={index}
                         className={`w-2 h-2 rounded-full transition-all duration-300 ${
@@ -343,28 +342,30 @@ export default function HotelDetails() {
 
                 {/* Дополнительные фото */}
                 <div className="grid grid-cols-4 gap-1 h-[100px]">
-                  {hotel.images.image.slice(1, 5).map((image, index) => (
-                    <div
-                      key={index}
-                      className="w-full overflow-hidden cursor-pointer"
-                      onClick={() => {
-                        setMainImageIndex(index + 1);
-                        handleUserInteraction();
-                      }}
-                    >
-                      <img
-                        src={`https:${image}`}
-                        alt={`${hotel.name} ${index + 1}`}
-                        className={`w-full h-full object-cover rounded-xl transition-opacity duration-300 select-none ${
-                          mainImageIndex === index + 1
-                            ? "opacity-70"
-                            : "opacity-100"
-                        }`}
-                        draggable={false}
-                        onDragStart={(e) => e.preventDefault()}
-                      />
-                    </div>
-                  ))}
+                  {hotel.images.image
+                    .slice(1, 5)
+                    .map((image: string, index: number) => (
+                      <div
+                        key={index}
+                        className="w-full overflow-hidden cursor-pointer"
+                        onClick={() => {
+                          setMainImageIndex(index + 1);
+                          handleUserInteraction();
+                        }}
+                      >
+                        <img
+                          src={`https:${image}`}
+                          alt={`${hotel.name} ${index + 1}`}
+                          className={`w-full h-full object-cover rounded-xl transition-opacity duration-300 select-none ${
+                            mainImageIndex === index + 1
+                              ? "opacity-70"
+                              : "opacity-100"
+                          }`}
+                          draggable={false}
+                          onDragStart={(e) => e.preventDefault()}
+                        />
+                      </div>
+                    ))}
                 </div>
 
                 {/* Информация об отеле */}
@@ -604,7 +605,8 @@ export default function HotelDetails() {
                                 Туристы
                               </p>
                               <p className="text-sm text-[#6B7280]">
-                                {(tour as any).adults ?? 2} взрослых
+                                {(tour as { adults?: number }).adults ?? 2}{" "}
+                                взрослых
                               </p>
                             </div>
                           </div>
@@ -710,10 +712,22 @@ export default function HotelDetails() {
 
         <Lightbox
           open={isOpen}
-          close={() => setIsOpen(false)}
+          close={() => {
+            setIsOpen(false);
+            // Синхронизируем mainImageIndex с currentIndex при закрытии
+            setMainImageIndex(currentIndex);
+            // Возобновляем автопрокрутку только когда закрываем лайтбокс
+            setTimeout(() => setIsAutoPlaying(true), 500);
+          }}
           slides={slides}
           plugins={[Thumbnails]}
           index={currentIndex}
+          on={{
+            view: ({ index }) => {
+              // Обновляем currentIndex при навигации в Lightbox
+              setCurrentIndex(index);
+            },
+          }}
         />
       </div>
     </div>

@@ -75,7 +75,7 @@ export default function SimilarHotTours({
   if (isLoading) {
     return (
       <div className="flex flex-col gap-4">
-        <h2 className="text-2xl font-semibold flex items-center gap-2">
+        <h2 className="text-2xl font-semibold flex items-center gap-1">
           Похожие туры <BsFire className="text-orange-500" />
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
@@ -113,7 +113,7 @@ export default function SimilarHotTours({
 
   return (
     <div className="flex flex-col gap-2">
-      <h2 className="text-2xl font-semibold flex items-center gap-2">
+      <h2 className="text-2xl font-semibold flex items-center gap-1">
         Похожие туры <BsFire className="text-orange-500" />
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">

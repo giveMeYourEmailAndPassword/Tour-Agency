@@ -9,12 +9,21 @@ import { useState } from "react";
 import starFilled from "../assets/star_fill.svg";
 import starOutline from "../assets/star_unfill.svg";
 import utensils from "../assets/utensils.svg";
+import { destinations } from "./data/destinations";
+import { getCountryDeclension } from "../utils/getCountryDeclension";
 
 const API_BASE_URL =
   import.meta.env.VITE_API_URL || "http://localhost:8000/api";
 
-const fetchHotTours = async () => {
-  const response = await axios.get(`${API_BASE_URL}/hot-tours`);
+const fetchHotTours = async ({
+  queryKey,
+}: {
+  queryKey: [string, { country: string | null }];
+}) => {
+  const [, { country }] = queryKey;
+  const response = await axios.get(`${API_BASE_URL}/hot-tours`, {
+    params: country ? { countries: country } : {},
+  });
   return response.data;
 };
 
@@ -30,10 +39,13 @@ const truncateHotelName = (name: string) => {
 export default function HotTours() {
   const navigate = useNavigate();
   const [selectedCity, setSelectedCity] = useState<string>("");
+  const [selectedCountry, setSelectedCountry] = useState<string>("");
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["hotTours"],
-    queryFn: fetchHotTours,
+    queryKey: ["hotTours", { country: selectedCountry || null }],
+    queryFn: fetchHotTours as any,
+    // чтобы не мигала сетка при переключении стран
+    keepPreviousData: true,
   });
 
   const filteredTours = selectedCity
@@ -49,19 +61,77 @@ export default function HotTours() {
           <div className="flex items-end gap-1">
             <h2 className="text-2xl md:text-3xl font-medium md:font-semibold">
               Горящие туры
+              {selectedCity === "80"
+                ? " из Бишкека"
+                : selectedCity === "60"
+                ? " из Алматы"
+                : ""}
+              {(() => {
+                const cn =
+                  destinations.find((d) => d.id === selectedCountry)?.name ||
+                  "";
+                return cn ? ` ${getCountryDeclension(cn, "accusative")}` : "";
+              })()}
             </h2>
             <BsFire className="md:text-3xl text-2xl text-orange-500" />
           </div>
           <div className="flex md:gap-2 gap-1">
-            <button className="px-5 py-2 rounded-full font-semibold text-orange-500 bg-slate-200">
+            <button
+              className={`px-5 py-2 rounded-full font-semibold ${
+                selectedCity === ""
+                  ? "text-white bg-orange-500"
+                  : "text-black bg-slate-100 text-opacity-50"
+              }`}
+              onClick={() => setSelectedCity("")}
+            >
               Все
             </button>
-            <button className="px-5 py-2 rounded-full font-semibold text-black bg-slate-100 text-opacity-50">
+            <button
+              className={`px-5 py-2 rounded-full font-semibold ${
+                selectedCity === "80"
+                  ? "text-white bg-orange-500"
+                  : "text-black bg-slate-100 text-opacity-50"
+              }`}
+              onClick={() => setSelectedCity("80")}
+            >
               из Бишкека
             </button>
-            <button className="px-5 py-2 rounded-full font-semibold text-black bg-slate-100 text-opacity-50">
+            <button
+              className={`px-5 py-2 rounded-full font-semibold ${
+                selectedCity === "60"
+                  ? "text-white bg-orange-500"
+                  : "text-black bg-slate-100 text-opacity-50"
+              }`}
+              onClick={() => setSelectedCity("60")}
+            >
               из Алматы
             </button>
+          </div>
+          <div className="flex flex-wrap gap-1 md:gap-2">
+            <button
+              className={`px-7 py-2 rounded-full font-semibold ${
+                selectedCountry === ""
+                  ? "text-white bg-orange-500"
+                  : "text-black bg-slate-100 text-opacity-50"
+              }`}
+              onClick={() => setSelectedCountry("")}
+            >
+              Все страны
+            </button>
+            {destinations.map((d) => (
+              <button
+                key={d.id}
+                className={`px-7 py-2 rounded-full font-semibold ${
+                  selectedCountry === d.id
+                    ? "text-white bg-orange-500"
+                    : "text-black bg-slate-100 text-opacity-50"
+                }`}
+                onClick={() => setSelectedCountry(d.id)}
+                title={d.name}
+              >
+                {d.name}
+              </button>
+            ))}
           </div>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-2">
@@ -99,7 +169,6 @@ export default function HotTours() {
       </div>
     );
   }
-
   if (isError) {
     return (
       <div className="text-center text-red-500">Ошибка загрузки данных.</div>
@@ -140,14 +209,20 @@ export default function HotTours() {
               : selectedCity === "60"
               ? " из Алматы"
               : ""}
+            {(() => {
+              const cn =
+                destinations.find((d) => d.id === selectedCountry)?.name || "";
+              return cn ? ` ${getCountryDeclension(cn, "accusative")}` : "";
+            })()}
           </h2>
           <BsFire className="md:text-3xl text-2xl text-orange-500" />
         </div>
+        {/* Города вылета */}
         <div className="flex md:gap-2 gap-1">
           <button
             className={`px-5 py-2 rounded-full font-semibold ${
               selectedCity === ""
-                ? "text-orange-500 bg-slate-200"
+                ? "text-white bg-orange-500"
                 : "text-black bg-slate-100 text-opacity-50"
             }`}
             onClick={() => setSelectedCity("")}
@@ -157,7 +232,7 @@ export default function HotTours() {
           <button
             className={`px-5 py-2 rounded-full font-semibold ${
               selectedCity === "80"
-                ? "text-orange-500 bg-slate-200"
+                ? "text-white bg-orange-500"
                 : "text-black bg-slate-100 text-opacity-50"
             }`}
             onClick={() => setSelectedCity("80")}
@@ -167,13 +242,41 @@ export default function HotTours() {
           <button
             className={`px-5 py-2 rounded-full font-semibold ${
               selectedCity === "60"
-                ? "text-orange-500 bg-slate-200"
+                ? "text-white bg-orange-500"
                 : "text-black bg-slate-100 text-opacity-50"
             }`}
             onClick={() => setSelectedCity("60")}
           >
             из Алматы
           </button>
+        </div>
+
+        {/* Страны */}
+        <div className="flex flex-wrap md:gap-2 gap-1">
+          <button
+            className={`px-7 py-2 rounded-full font-semibold ${
+              selectedCountry === ""
+                ? "text-white bg-orange-500"
+                : "text-black bg-slate-100 text-opacity-50"
+            }`}
+            onClick={() => setSelectedCountry("")}
+          >
+            Все страны
+          </button>
+          {destinations.map((d) => (
+            <button
+              key={d.id}
+              className={`px-7 py-2 rounded-full font-semibold ${
+                selectedCountry === d.id
+                  ? "text-white bg-orange-500"
+                  : "text-black bg-slate-100 text-opacity-50"
+              }`}
+              onClick={() => setSelectedCountry(d.id)}
+              title={d.name}
+            >
+              {d.name}
+            </button>
+          ))}
         </div>
       </div>
 

@@ -31,11 +31,11 @@ export default function Header() {
           {/* Кнопка избранного */}
           <div className="flex items-center gap-2">
             <div className="flex flex-col items-end ">
-              <p className="text-sm text-gray-500 flex items-center gap-1">
+              <p className="text-sm text-gray-500 items-center gap-1 hidden md:flex">
                 <FaMapMarkerAlt size={16} />
                 ул. Жоомарта Боконбаева, 7
               </p>
-              <p className="text-sm text-gray-500 flex items-center gap-1">
+              <p className="text-sm text-gray-500 items-center gap-1 hidden md:flex">
                 <FaPhone size={14} className="rotate-90" />
                 +996 701 044 445
               </p>

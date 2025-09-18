@@ -23,7 +23,7 @@ import personLuggageIcon from "../assets/person_luggage.svg";
 import bedAltIcon from "../assets/bed_alt.svg";
 import { DataContext } from "../components/DataProvider";
 import { FaRegHeart } from "react-icons/fa";
-// import SimilarHotTours from "../components/SimilarHotTours";
+import SimilarHotTours from "../components/SimilarHotTours";
 
 export default function HotelDetails() {
   const { hotelcode, tourId } = useParams();
@@ -194,6 +194,7 @@ export default function HotelDetails() {
       AI: "Всё включено",
       UAI: "Ультра всё включено",
       RO: "Без питания",
+      "BED & BREAKFAST": "Завтрак",
     };
     return mealTypes[meal] || meal;
   };
@@ -368,14 +369,16 @@ export default function HotelDetails() {
 
                 {/* Информация об отеле */}
                 <div className="mt-4 space-y-3">
-                  <div className="">
-                    <h2 className="text-lg font-semibold text-[#2E2E32]">
-                      Информация об отеле:
-                    </h2>
-                    <div className="text-base text-[#6B7280]">
-                      {hotel.description}
+                  {hotel.description && (
+                    <div className="">
+                      <h2 className="text-lg font-semibold text-[#2E2E32]">
+                        Информация об отеле:
+                      </h2>
+                      <div className="text-base text-[#6B7280]">
+                        {hotel.description}
+                      </div>
                     </div>
-                  </div>
+                  )}
 
                   {hotel.placement && (
                     <div>
@@ -527,13 +530,13 @@ export default function HotelDetails() {
 
                 {/* Варианты туров */}
                 <div className="mt-6">
-                  <h3 className="text-lg font-semibold text-[#2E2E32] mb-3">
+                  <h3 className="text-2xl font-semibold text-[#2E2E32] mb-3">
                     Информация о туре
                   </h3>
 
                   {/* В данном маршруте у нас один выбранный тур, поэтому показываем один вариант */}
                   <div className="space-y-2">
-                    <div className="bg-white rounded-[10px] p-4 border border-gray-100">
+                    <div className="bg-white rounded-[10px] p-4 border border-[#DBE0E5]">
                       {/* Заголовок блока */}
                       <div className="flex justify-between items-center mb-3">
                         <h4 className="text-lg font-semibold text-[#2E2E32]">
@@ -686,6 +689,16 @@ export default function HotelDetails() {
                         </button>
                       </div>
                     </div>
+                    {isHotTourPath && (
+                      <div className="pt-1">
+                        <SimilarHotTours
+                          countrycode={hotel.countrycode}
+                          departurecode={tour.departurecode}
+                          currentHotelCode={hotel.hotelcode}
+                          currentHotelName={hotel.name}
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -694,16 +707,6 @@ export default function HotelDetails() {
         </div>
 
         {/* SimilarHotTours */}
-        {/* {isHotTourPath && (
-        <div className="mt-8">
-          <SimilarHotTours
-            countrycode={hotel.countrycode}
-            departurecode={tour.departurecode}
-            currentHotelCode={hotel.hotelcode}
-            currentHotelName={hotel.name}
-          />
-        </div>
-      )} */}
 
         <Lightbox
           open={isOpen}

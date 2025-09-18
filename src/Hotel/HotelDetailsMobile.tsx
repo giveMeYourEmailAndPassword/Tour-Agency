@@ -18,7 +18,6 @@ import { Pagination, Autoplay } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
 import Header from "../components/Header";
-// import SimilarHotTours from "../components/SimilarHotTours";
 
 export default function HotelDetailsMobile() {
   const { hotelcode, tourId } = useParams();
@@ -252,7 +251,6 @@ export default function HotelDetailsMobile() {
               {currentIndex + 1}/{hotel.images.image.length}
             </div>
           </div>
-
           {/* Заголовок и информация */}
           <div className="py-2 space-y-1">
             {/* Звезды, рейтинг и город вылета */}
@@ -318,7 +316,6 @@ export default function HotelDetailsMobile() {
               )}
             </div>
           </div>
-
           {/* Табы */}
           <div className="">
             <div className="bg-white rounded-t-xl px-1 pt-2 flex gap-1">
@@ -405,7 +402,6 @@ export default function HotelDetailsMobile() {
               </div>
             )}
           </div>
-
           {/* Информация о туре */}
           <div className="">
             <div className="bg-white rounded-xl px-3 py-2">
@@ -459,18 +455,15 @@ export default function HotelDetailsMobile() {
               </div>
             </div>
           </div>
-
           {/* SimilarHotTours */}
-          {/* {isHotTourPath && (
-            <div className="mt-4">
-              <SimilarHotTours
-                countrycode={hotel.countrycode}
-                departurecode={tour.departurecode}
-                currentHotelCode={hotel.hotelcode}
-                currentHotelName={hotel.name}
-              />
-            </div>
-          )} */}
+          {/* <div className="mt-4">
+            <SimilarHotTours
+              countrycode={hotel.countrycode}
+              departurecode={tour.departurecode}
+              currentHotelCode={hotel.hotelcode}
+              currentHotelName={hotel.name}
+            /> */}
+          {/* </div> */}
         </div>
 
         {/* Lightbox для галереи */}

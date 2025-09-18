@@ -356,14 +356,26 @@ export default function HotTours() {
 
               {/* Цена и даты */}
               <div className="w-full flex justify-between items-center">
-                <span className="text-xl font-bold text-[#2E2E32]">
-                  {tour.price * 2}
-                  {tour.currency === "EUR"
-                    ? "€"
-                    : tour.currency === "USD"
-                    ? "$"
-                    : tour.currency}
-                </span>
+                <div className="flex items-center gap-1">
+                  {Number(tour.priceold) > Number(tour.price) && (
+                    <span className="text-[#6B7280] line-through text-sm">
+                      {tour.priceold * 2}
+                      {tour.currency === "EUR"
+                        ? "€"
+                        : tour.currency === "USD"
+                        ? "$"
+                        : tour.currency}
+                    </span>
+                  )}
+                  <span className="text-xl font-bold text-[#2E2E32]">
+                    {tour.price * 2}
+                    {tour.currency === "EUR"
+                      ? "€"
+                      : tour.currency === "USD"
+                      ? "$"
+                      : tour.currency}
+                  </span>
+                </div>
                 <div className="flex flex-col items-end">
                   <span className="text-xs font-bold text-[#2E2E32]">
                     {formatDate(tour.flydate)} -{" "}

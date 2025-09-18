@@ -1,11 +1,33 @@
 import { BsFire } from "react-icons/bs";
-import { GoStarFill } from "react-icons/go";
-import { parse, format } from "date-fns";
+import { parse, format, addDays } from "date-fns";
 import { ru } from "date-fns/locale";
 import { Skeleton } from "@heroui/react";
 import { useNavigate } from "react-router";
 import useSimilarHotTours from "../Hooks/useSimilarHotTours";
-import { countryCodeMap } from "../constants/countryCodeMap";
+import starFilled from "../assets/star_fill.svg";
+import starOutline from "../assets/star_unfill.svg";
+import { FaUtensils } from "react-icons/fa";
+import { FaUmbrellaBeach } from "react-icons/fa";
+
+interface Tour {
+  hotelcode: string;
+  tourid: string;
+  hotelpicture: string;
+  hotelname: string;
+  hotelstars: string;
+  hotelrating: string;
+  countryname: string;
+  hotelregionname: string;
+  meal: string;
+  beach?: boolean;
+  operatorname?: string;
+  departurename: string;
+  flydate: string;
+  nights: string;
+  price: string;
+  priceold: string;
+  currency: string;
+}
 
 interface SimilarHotToursProps {
   countrycode: string;
@@ -29,6 +51,25 @@ export default function SimilarHotTours({
   const formatDate = (dateString: string) => {
     const date = parse(dateString, "dd.MM.yyyy", new Date());
     return format(date, "d MMMM", { locale: ru });
+  };
+
+  const getMealType = (meal: string) => {
+    const mealTypes: { [key: string]: string } = {
+      "": "Без питания",
+      BB: "Завтрак",
+      HB: "Полупансион",
+      FB: "Полный пансион",
+      AI: "Всё включено",
+      UAI: "Ультра всё включено",
+      RO: "Без питания",
+      "BED & BREAKFAST": "Завтрак",
+    };
+    return mealTypes[meal] || meal;
+  };
+
+  const getEndDate = (startDate: string, nights: number) => {
+    const date = parse(startDate, "dd.MM.yyyy", new Date());
+    return format(addDays(date, nights), "d MMMM", { locale: ru });
   };
 
   if (isLoading) {
@@ -71,82 +112,100 @@ export default function SimilarHotTours({
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-2">
       <h2 className="text-2xl font-semibold flex items-center gap-2">
         Похожие туры <BsFire className="text-orange-500" />
       </h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-        {similarTours.map((tour: any, index: number) => (
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+        {similarTours.map((tour: Tour, index: number) => (
           <div
             key={index}
-            className="bg-white shadow-md rounded-md flex flex-col cursor-pointer"
+            className="w-full p-4 bg-white border border-[#DBE0E5] rounded-[10px] cursor-pointer transition-shadow duration-300"
             onClick={() => navigate(`/hotel/${tour.hotelcode}/${tour.tourid}`)}
           >
-            <div className="relative">
-              <img
-                src={
-                  tour.hotelpicture
-                    ? `https:${tour.hotelpicture}`
-                    : "/default-image.jpg"
-                }
-                alt={tour.hotelname}
-                className="rounded-lg object-cover h-48 w-full"
-              />
-              {tour.priceold > tour.price && (
-                <div className="absolute top-4 right-4 z-10 bg-white/85 px-2 py-1 rounded-full">
-                  <span className="text-orange-500 text-sm font-medium">
-                    -{" "}
-                    {Math.round(
-                      ((tour.priceold - tour.price) / tour.priceold) * 100
-                    )}
-                    %
-                  </span>
-                </div>
-              )}
-            </div>
-
-            <div className="flex flex-col relative">
-              <div className="flex items-center gap-2 justify-between px-2 bg-blue-400 py-1 absolute w-full -top-[27px]">
-                <div className="flex gap-0.5">
-                  {Array.from({ length: parseInt(tour.hotelstars) }, (_, i) => (
-                    <GoStarFill key={i} className="text-white" />
-                  ))}
-                </div>
-                <span className="text-white text-sm font-medium">
-                  {tour.hotelrating === "0" ? "" : `${tour.hotelrating} / 5`}
-                </span>
+            <div className="w-full flex flex-col gap-2">
+              {/* Изображение */}
+              <div className="w-full h-48 md:h-44 rounded overflow-hidden">
+                <img
+                  src={
+                    tour.hotelpicture
+                      ? `https:${tour.hotelpicture}`
+                      : "/default-image.jpg"
+                  }
+                  alt={tour.hotelname}
+                  className="w-full h-full object-cover rounded"
+                />
               </div>
 
-              <div className="flex flex-col gap-2 px-2 pb-2 pt-1">
-                <div className="flex flex-col">
-                  <h3 className="text-lg font-semibold truncate">
-                    {tour.hotelname.length > 26
-                      ? `${tour.hotelname.substring(0, 26)}...`
+              {/* Информация об отеле */}
+              <div className="w-full flex flex-col gap-2">
+                <div className="w-full flex justify-between items-center gap-1">
+                  <div className="flex items-center gap-0.5">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <img
+                        key={i}
+                        src={
+                          i < parseInt(tour.hotelstars)
+                            ? starFilled
+                            : starOutline
+                        }
+                        alt={
+                          i < parseInt(tour.hotelstars)
+                            ? "filled star"
+                            : "outline star"
+                        }
+                        className="w-4 h-4"
+                      />
+                    ))}
+                    {tour.hotelrating !== "0" && (
+                      <div className="bg-[#FF621F] text-white text-xs font-medium px-1 rounded-[20px] ml-0.5">
+                        {tour.hotelrating.length === 1
+                          ? `${tour.hotelrating}.0`
+                          : tour.hotelrating}
+                      </div>
+                    )}
+                  </div>
+                  <span className="text-sm text-[#FF621F]">
+                    из {tour.departurename}
+                  </span>
+                </div>
+
+                <div>
+                  <h3 className="text-[#2E2E32] text-lg font-bold leading-[1.22]">
+                    {tour.hotelname.length > 22
+                      ? `${tour.hotelname.substring(0, 22)}...`
                       : tour.hotelname}
                   </h3>
-                  <p className="text-gray-500 font-medium text-sm flex items-center gap-1">
-                    {countryCodeMap[tour.countryname] && (
-                      <img
-                        src={`https://flagcdn.com/${countryCodeMap[
-                          tour.countryname
-                        ].toLowerCase()}.svg`}
-                        alt={tour.countryname}
-                        className="w-4 h-3 object-cover rounded-sm"
-                      />
-                    )}
+                  <p className="text-[#6B7280] text-base leading-[1.29]">
                     {tour.countryname}, {tour.hotelregionname}
                   </p>
                 </div>
+              </div>
 
-                <p className="text-blue-500 text-sm">
-                  из {tour.departurename}, {formatDate(tour.flydate)}. На{" "}
-                  {tour.nights} ночей
-                </p>
+              {/* Теги */}
+              <div className="w-full flex items-center gap-3 pb-1 border-b border-[#DBE0E5]">
+                <div className="flex items-center gap-1">
+                  <span className="text-sm text-[#2E2E32]">
+                    {getMealType(tour.meal)}
+                  </span>
+                  <FaUtensils className="w-3.5 h-3.5 text-[#2E2E32]" />
+                </div>
+                {tour.beach && (
+                  <div className="flex items-center gap-1">
+                    <span className="text-sm text-[#2E2E32]">
+                      Береговая линия
+                    </span>
+                    <FaUmbrellaBeach className="w-3.5 h-3.5 text-[#2E2E32]" />
+                  </div>
+                )}
+              </div>
 
-                <div className="flex items-center gap-2 bg-blue-100 p-2 rounded-md justify-between">
-                  {tour.priceold > tour.price && (
-                    <span className="text-black line-through">
-                      {tour.priceold * 2}
+              {/* Цена и даты */}
+              <div className="w-full flex justify-between items-center">
+                <div className="flex items-center gap-1">
+                  {Number(tour.priceold) > Number(tour.price) && (
+                    <span className="text-[#6B7280] line-through text-sm">
+                      {tour.priceold}
                       {tour.currency === "EUR"
                         ? "€"
                         : tour.currency === "USD"
@@ -154,17 +213,23 @@ export default function SimilarHotTours({
                         : tour.currency}
                     </span>
                   )}
-                  <p className="text-black flex gap-2 items-baseline">
-                    за двоих
-                    <span className="text-lg text-orange-500 font-semibold">
-                      {tour.price * 2}
-                      {tour.currency === "EUR"
-                        ? "€"
-                        : tour.currency === "USD"
-                        ? "$"
-                        : tour.currency}
-                    </span>
-                  </p>
+                  <span className="text-xl font-bold text-[#2E2E32]">
+                    {tour.price}
+                    {tour.currency === "EUR"
+                      ? "€"
+                      : tour.currency === "USD"
+                      ? "$"
+                      : tour.currency}
+                  </span>
+                </div>
+                <div className="flex flex-col items-end">
+                  <span className="text-xs font-bold text-[#2E2E32]">
+                    {formatDate(tour.flydate)} -{" "}
+                    {getEndDate(tour.flydate, parseInt(tour.nights))}
+                  </span>
+                  <span className="text-sm text-[#6B7280]">
+                    кол-во ночей: {tour.nights}
+                  </span>
                 </div>
               </div>
             </div>

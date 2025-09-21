@@ -6,9 +6,9 @@ import starOutline from "../assets/star_unfill.svg";
 import planeDeparture from "../assets/plane_departure.svg";
 import { format, parse, addDays } from "date-fns";
 import { ru } from "date-fns/locale";
-import { FaUtensils } from "react-icons/fa";
+import { FaHeart, FaRegHeart, FaUtensils } from "react-icons/fa";
 import { FaUmbrellaBeach } from "react-icons/fa";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import Lightbox from "yet-another-react-lightbox";
 import Thumbnails from "yet-another-react-lightbox/plugins/thumbnails";
 import "yet-another-react-lightbox/styles.css";
@@ -18,6 +18,14 @@ import { Pagination, Autoplay } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
 import Header from "../components/Header";
+import calendarIcon from "../assets/calendar.svg";
+import personLuggageIcon from "../assets/person_luggage.svg";
+import bedAltIcon from "../assets/bed_alt.svg";
+import moonStarsIcon from "../assets/moon_stars.svg";
+import bookingIcon from "../assets/booking.svg";
+import { IoAirplane } from "react-icons/io5";
+import { Tour } from "../Types/Tour";
+import { DataContext } from "../components/DataProvider";
 
 export default function HotelDetailsMobile() {
   const { hotelcode, tourId } = useParams();
@@ -28,6 +36,8 @@ export default function HotelDetailsMobile() {
   const [activeTab, setActiveTab] = useState("about");
   const [isOpen, setIsOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const { addToFavorite, removeFromFavorite, favoriteTours } =
+    useContext(DataContext);
 
   useEffect(() => {
     if (data?.hotel?.data?.hotel) {
@@ -79,7 +89,7 @@ export default function HotelDetailsMobile() {
               <Skeleton className="w-1/2 h-4" />
 
               {/* Skeleton для тегов */}
-              <div className="flex gap-3 pt-1.5">
+              <div className="flex gap-2 pt-1.5">
                 <Skeleton className="w-20 h-6 rounded-lg" />
                 <Skeleton className="w-28 h-6 rounded-lg" />
               </div>
@@ -100,6 +110,36 @@ export default function HotelDetailsMobile() {
                     <Skeleton className="w-full h-4" />
                     <Skeleton className="w-5/6 h-4" />
                     <Skeleton className="w-4/6 h-4" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Skeleton для информации о туре */}
+            <div className="">
+              <div className="bg-white rounded-xl px-3 py-2">
+                <Skeleton className="w-40 h-5 mb-2" />
+                <div className="space-y-4">
+                  <div className="space-y-2 p-3 border border-gray-100 rounded-lg">
+                    <Skeleton className="w-32 h-5" />
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <div className="space-y-1">
+                          <Skeleton className="w-36 h-4" />
+                          <Skeleton className="w-40 h-4" />
+                        </div>
+                        <div className="text-right">
+                          <Skeleton className="w-24 h-4" />
+                        </div>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <Skeleton className="w-28 h-4" />
+                        <div className="flex items-center gap-1">
+                          <Skeleton className="w-8 h-8 rounded-lg" />
+                          <Skeleton className="w-20 h-8 rounded-lg" />
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -208,6 +248,32 @@ export default function HotelDetailsMobile() {
     navigate(`/hotel/${hotelcode}/${tourId}/booking`);
   };
 
+  // Исправляем функцию handleFavoriteClick
+  const handleFavoriteClick = () => {
+    const tourId = tour.tourid;
+    const hotelCode = hotelcode;
+
+    const tourData = {
+      hotelcode: hotelCode,
+      tourId: tourId,
+    };
+
+    if (isTourFavorite()) {
+      removeFromFavorite(hotelCode, tourId);
+    } else {
+      addToFavorite(tourData);
+    }
+  };
+
+  // Исправляем функцию isTourFavorite
+  const isTourFavorite = () => {
+    const tourId = tour.tourid;
+    const hotelCode = hotelcode;
+    return favoriteTours.some(
+      (favTour) => favTour.hotelcode === hotelCode && favTour.tourId === tourId
+    );
+  };
+
   return (
     <>
       <Header />
@@ -297,7 +363,7 @@ export default function HotelDetailsMobile() {
             </p>
 
             {/* Теги */}
-            <div className="flex gap-3 pt-1.5">
+            <div className="flex gap-2 pt-1.5">
               {tour.meal && (
                 <div className="flex items-center gap-1 bg-white border border-gray-200 px-2 py-1 rounded-lg">
                   <FaUtensils className="w-3 h-3 text-[#2E2E32]" />
@@ -409,47 +475,151 @@ export default function HotelDetailsMobile() {
                 Информация о туре
               </h3>
               <div className="space-y-4">
-                <div className="space-y-2 p-3 border border-gray-100 rounded-lg">
-                  <h4 className="text-base font-semibold text-[#2E2E32]">
-                    Выбранный тур
-                  </h4>
-                  <div className="space-y-2">
-                    <div className="flex justify-between items-center">
-                      <div className="space-y-1">
-                        <p className="text-sm font-medium text-[#2E2E32]">
-                          {getMealType(tour.meal)}, {tour.nights} ночей
-                        </p>
-                        <p className="text-sm font-semibold text-[#2E2E32]">
-                          Номер {tour.room}, {tour.placement}
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-sm font-semibold text-[#6B7280]">
-                          {formatDate(tour.flydate)} –{" "}
-                          {getEndDate(tour.flydate, tour.nights)}
-                        </p>
+                <div className="bg-white rounded-[10px] p-3 border border-[#DBE0E5]">
+                  {/* Заголовок блока */}
+                  <div className="flex justify-between items-center mb-3">
+                    <div className="flex items-baseline gap-2">
+                      <h4 className="text-lg font-semibold text-[#2E2E32]">
+                        Выбранный тур,
+                      </h4>
+                      <div className="flex items-baseline gap-1">
+                        <FaUtensils className="w-3.5 h-3.5 text-[#2E2E32]" />
+                        <span className="text-base text-[#6B7280]">
+                          {getMealType(tour.meal)}
+                        </span>
                       </div>
                     </div>
-                    <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={handleFavoriteClick}
+                        className={`p-2 rounded-lg border-2 transition-colors ${
+                          isTourFavorite()
+                            ? "border-[#FF621F] text-[#FF621F] hover:bg-orange-50"
+                            : "border-gray-300 text-gray-400 hover:border-[#FF621F] hover:text-[#FF621F]"
+                        }`}
+                        title={
+                          isTourFavorite()
+                            ? "Убрать из избранного"
+                            : "Добавить в избранное"
+                        }
+                      >
+                        {isTourFavorite() ? (
+                          <FaHeart size={16} />
+                        ) : (
+                          <FaRegHeart size={16} />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Основная информация о туре */}
+                  <div className="grid grid-cols-2 gap-2 mb-4">
+                    {/* Левая колонка */}
+                    <div className="space-y-4">
+                      {/* Даты поездки */}
+                      <div className="flex items-start gap-3">
+                        <div className="w-5 h-5 flex-shrink-0 mt-0.5">
+                          <img
+                            src={calendarIcon}
+                            alt="Calendar"
+                            className="w-5 h-5"
+                          />
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-base font-medium text-[#2E2E32] mb-1">
+                            Даты поездки
+                          </p>
+                          <p className="text-sm text-[#6B7280]">
+                            {formatDate(tour.flydate)} —{" "}
+                            {getEndDate(tour.flydate, tour.nights)}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Туристы */}
+                      <div className="flex items-start gap-3">
+                        <div className="w-5 h-5 flex-shrink-0 mt-0.5">
+                          <img
+                            src={personLuggageIcon}
+                            alt="Person with luggage"
+                            className="w-5 h-5"
+                          />
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-base font-medium text-[#2E2E32] mb-1">
+                            Туристы
+                          </p>
+                          <p className="text-sm text-[#6B7280]">
+                            {tour.adults} взрослых
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Правая колонка */}
+                    <div className="space-y-4 mb-2">
+                      {/* Номер */}
+                      <div className="flex items-start gap-3">
+                        <div className="w-5 h-5 flex-shrink-0 mt-0.5">
+                          <img src={bedAltIcon} alt="Bed" className="w-5 h-5" />
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-base font-medium text-[#2E2E32] mb-1">
+                            Номер
+                          </p>
+                          <p className="text-sm text-[#6B7280]">{tour.room}</p>
+                        </div>
+                      </div>
+
+                      {/* Длительность */}
+                      <div className="flex items-start gap-3">
+                        <div className="w-5 h-5 flex-shrink-0 mt-0.5">
+                          <img
+                            src={moonStarsIcon}
+                            alt="Moon with stars"
+                            className="w-5 h-5"
+                          />
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-base font-medium text-[#2E2E32] mb-1">
+                            Длительность
+                          </p>
+                          <p className="text-sm text-[#6B7280]">
+                            {tour.nights} ночей
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Кнопки действий */}
+                  <div className="flex gap-2">
+                    <div className="p-2 bg-gray-50 rounded-lg w-[50%] flex items-center gap-3">
                       <div className="flex items-center gap-2">
-                        <span className="text-sm text-[#B3B9C0]">
+                        <IoAirplane className="w-4 h-4 text-[#2E2E32]" />
+                        <span className="text-xs font-medium text-[#2E2E32]">
                           {tour.operatorname || "Pegasus Airlines"}
                         </span>
                       </div>
-                      <div className="flex items-center gap-1">
-                        <button
-                          onClick={handleBookingClick}
-                          className="bg-[#FF621F] text-white px-8 py-1.5 rounded-lg text-sm font-semibold hover:bg-[#E55A1A] transition-colors cursor-pointer"
-                        >
-                          {tour.price}
-                          {tour.currency === "EUR"
-                            ? "€"
-                            : tour.currency === "USD"
-                            ? "$"
-                            : tour.currency}
-                        </button>
-                      </div>
                     </div>
+                    <button
+                      onClick={handleBookingClick}
+                      className="w-[50%] bg-[#FF621F] text-white px-4 py-2 rounded-[10px] flex items-center justify-center gap-4 hover:bg-[#E55A1A] transition-colors font-medium"
+                    >
+                      <span className="text-base font-bold">
+                        {tour.price}
+                        {tour.currency === "EUR"
+                          ? "€"
+                          : tour.currency === "USD"
+                          ? "$"
+                          : tour.currency}
+                      </span>
+                      <img
+                        src={bookingIcon}
+                        alt="Booking"
+                        className="w-6 h-6"
+                      />
+                    </button>
                   </div>
                 </div>
               </div>

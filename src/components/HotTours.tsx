@@ -5,7 +5,7 @@ import { BsFire } from "react-icons/bs";
 import { parse, format, addDays } from "date-fns";
 import { ru } from "date-fns/locale";
 import { Skeleton } from "@heroui/react";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import starFilled from "../assets/star_fill.svg";
 import starOutline from "../assets/star_unfill.svg";
 import utensils from "../assets/utensils.svg";
@@ -40,6 +40,10 @@ export default function HotTours() {
   const navigate = useNavigate();
   const [selectedCity, setSelectedCity] = useState<string>("");
   const [selectedCountry, setSelectedCountry] = useState<string>("");
+  const [isCountryDropdownOpen, setIsCountryDropdownOpen] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["hotTours", { country: selectedCountry || null }],
@@ -54,10 +58,57 @@ export default function HotTours() {
       )
     : data?.hottours?.tour || [];
 
+  const selectedCountryData = destinations.find(
+    (country) => String(country.id) === selectedCountry
+  );
+
+  const handleCountrySelect = (countryId: string) => {
+    setSelectedCountry(countryId);
+    closeDropdown();
+  };
+
+  const openDropdown = () => {
+    if (isAnimating) return;
+    setIsAnimating(true);
+    setIsCountryDropdownOpen(true);
+
+    // Небольшая задержка для плавной анимации
+    setTimeout(() => {
+      setIsAnimating(false);
+    }, 300);
+  };
+
+  const closeDropdown = () => {
+    if (isAnimating) return;
+    setIsAnimating(true);
+    setIsCountryDropdownOpen(false);
+
+    setTimeout(() => {
+      setIsAnimating(false);
+    }, 300);
+  };
+
+  // Закрытие dropdown при клике вне его
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        if (isCountryDropdownOpen) {
+          closeDropdown();
+        }
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isCountryDropdownOpen]);
+
   if (isLoading) {
     return (
       <div className="flex-grow pb-4">
-        <div className="flex flex-col gap-3 mb-4">
+        <div className="flex flex-col gap-2 md:gap-3  mb-4">
           <div className="flex items-end gap-1">
             <h2 className="text-2xl md:text-3xl font-medium md:font-semibold">
               Горящие туры
@@ -107,7 +158,64 @@ export default function HotTours() {
               из Алматы
             </button>
           </div>
-          <div className="flex flex-wrap gap-1 md:gap-2">
+          {/* Мобильный dropdown для стран */}
+          <div className="md:hidden">
+            <div className="relative" ref={dropdownRef}>
+              <button
+                onClick={isCountryDropdownOpen ? closeDropdown : openDropdown}
+                className={`flex items-center justify-between w-full px-4 py-3 rounded-full font-semibold transition-all duration-300 ${
+                  selectedCountry === ""
+                    ? "text-white bg-orange-500"
+                    : "text-white bg-orange-500"
+                }`}
+              >
+                <span>{selectedCountryData?.name || "Все страны"}</span>
+                <svg
+                  className={`w-5 h-5 transition-transform duration-300 ${
+                    isCountryDropdownOpen ? "rotate-90" : "rotate-0"
+                  }`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </button>
+
+              {/* Анимированный контент */}
+              <div
+                ref={contentRef}
+                className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                  isCountryDropdownOpen
+                    ? "max-h-96 opacity-100 mt-2"
+                    : "max-h-0 opacity-0 mt-0"
+                }`}
+              >
+                <div className="bg-white border border-[#DBE0E5] rounded-lg shadow-lg p-2 space-y-1">
+                  {destinations.map((country) => (
+                    <button
+                      key={country.id}
+                      onClick={() => handleCountrySelect(String(country.id))}
+                      className={`w-full text-left px-4 py-3 rounded-lg font-semibold transition-all duration-200 hover:bg-orange-50 ${
+                        selectedCountry === String(country.id)
+                          ? "text-white bg-orange-500"
+                          : "text-black hover:text-orange-500"
+                      }`}
+                    >
+                      {country.name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+          {/* Десктопные кнопки для стран */}
+          <div className="hidden md:flex flex-wrap gap-1 md:gap-2">
             <button
               className={`px-7 py-2 rounded-full font-semibold ${
                 selectedCountry === ""
@@ -200,7 +308,7 @@ export default function HotTours() {
 
   return (
     <div className="flex-grow pb-4">
-      <div className="flex flex-col gap-3 mb-4">
+      <div className="flex flex-col gap-2 md:gap-3 mb-4">
         <div className="flex items-end gap-1">
           <h2 className="text-2xl md:text-3xl font-medium md:font-semibold">
             Горящие туры
@@ -251,8 +359,82 @@ export default function HotTours() {
           </button>
         </div>
 
-        {/* Страны */}
-        <div className="flex flex-wrap md:gap-2 gap-1">
+        {/* Мобильный dropdown для стран */}
+        <div className="md:hidden">
+          <div className="relative" ref={dropdownRef}>
+            <button
+              onClick={isCountryDropdownOpen ? closeDropdown : openDropdown}
+              className={`flex items-center justify-between w-full px-4 py-3 rounded-full font-semibold transition-all duration-300 ${
+                selectedCountry === ""
+                  ? "text-white bg-orange-500"
+                  : "text-white bg-orange-500"
+              }`}
+            >
+              <span>
+                {selectedCountry === ""
+                  ? "Все страны"
+                  : selectedCountryData?.name || "Все страны"}
+              </span>
+              <svg
+                className={`w-5 h-5 transition-transform duration-300 ${
+                  isCountryDropdownOpen ? "rotate-90" : "rotate-0"
+                }`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </button>
+
+            {/* Анимированный контент */}
+            <div
+              ref={contentRef}
+              className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                isCountryDropdownOpen
+                  ? "max-h-96 opacity-100 mt-2"
+                  : "max-h-0 opacity-0 mt-0"
+              }`}
+            >
+              <div className="bg-white border border-[#DBE0E5] rounded-lg p-2 space-y-1 overflow-y-auto max-h-96">
+                {/* Кнопка "Все страны" */}
+                <button
+                  onClick={() => handleCountrySelect("")}
+                  className={`w-full text-left px-4 py-3 rounded-lg font-semibold transition-all duration-200 hover:bg-orange-50 ${
+                    selectedCountry === ""
+                      ? "text-white bg-orange-500"
+                      : "text-black hover:text-orange-500"
+                  }`}
+                >
+                  Все страны
+                </button>
+
+                {/* Список стран */}
+                {destinations.map((country) => (
+                  <button
+                    key={country.id}
+                    onClick={() => handleCountrySelect(String(country.id))}
+                    className={`w-full text-left px-4 py-3 rounded-lg font-semibold transition-all duration-200 hover:bg-orange-50 ${
+                      selectedCountry === String(country.id)
+                        ? "text-white bg-orange-500"
+                        : "text-black hover:text-orange-500"
+                    }`}
+                  >
+                    {country.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Десктопные кнопки для стран */}
+        <div className="hidden md:flex flex-wrap gap-1 md:gap-2">
           <button
             className={`px-7 py-2 rounded-full font-semibold ${
               selectedCountry === ""

@@ -70,7 +70,7 @@ export default function FindTourMobile() {
       className={`w-full flex justify-center items-center gap-2 py-3 px-6 mb-2 rounded-lg transition-colors ${
         isSearching
           ? "bg-gray-400 cursor-not-allowed"
-          : "bg-[#FF621F] hover:bg-[#E55A1A]"
+          : "bg-orange-500 hover:bg-orange-600"
       }`}
     >
       <span className="text-lg font-medium text-white">

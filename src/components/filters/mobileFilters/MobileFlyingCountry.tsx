@@ -7,6 +7,8 @@ import marker from "../../../assets/marker.svg";
 
 export default function MobileFlyingCountry() {
   const { setData, params } = useContext(DataContext); // Добавляем params из контекста
+  const TURKEY_ID = 4;
+
   const [selectedCountry, setSelectedCountry] = useState(
     Number(params.param2) || 4
   ); // Используем значение из URL или Турцию по умолчанию
@@ -25,6 +27,12 @@ export default function MobileFlyingCountry() {
   });
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isCharterOnly, setIsCharterOnly] = useState<boolean>(() => {
+    if (params.param11 !== undefined) {
+      return params.param11 === true;
+    }
+    return (Number(params.param2) || TURKEY_ID) === TURKEY_ID;
+  });
 
   // Добавляем эффект для отслеживания изменений params.param2
   useEffect(() => {
@@ -43,18 +51,26 @@ export default function MobileFlyingCountry() {
             setSelectedRegions(country.regions.map((region) => region.id));
           }
         }
+        // Синхронизируем чекбокс с URL и страной:
+        // для Турции используем значение из URL, иначе выключаем
+        const urlCharterOnly = params.param11 === true;
+        const desiredCharter =
+          newCountryId === TURKEY_ID ? urlCharterOnly : false;
+        if (desiredCharter !== isCharterOnly) {
+          setIsCharterOnly(desiredCharter);
+        }
       }
     }
-  }, [params.param2, selectedCountry]); // Добавляем selectedCountry в зависимости
+  }, [params.param2, params.param11, selectedCountry]); // Добавляем selectedCountry в зависимости
 
-  // Добавляем эффект для обновления параметров при изменении регионов
+  // Добавляем эффект для обновления параметров при изменении регионов/страны/чартера
   useEffect(() => {
     if (selectedCountry) {
       setData("param2", selectedCountry);
-      // Добавляем параметр для регионов
       setData("param2Regions", selectedRegions);
+      setData("param11", isCharterOnly);
     }
-  }, [selectedCountry, selectedRegions, setData]);
+  }, [selectedCountry, selectedRegions, isCharterOnly, setData]);
 
   // Добавляем эффект для отслеживания изменений params.param2Regions
   useEffect(() => {
@@ -70,11 +86,19 @@ export default function MobileFlyingCountry() {
     if (newCountry) {
       const allRegions = newCountry.regions.map((region) => region.id);
       setSelectedRegions(allRegions);
+      setData("param2Regions", allRegions);
     } else {
       setSelectedRegions([]);
+      setData("param2Regions", []);
     }
     // Затем обновляем параметр в контексте
     setData("param2", country.id);
+
+    // Автовыбор чартера: только для Турции — вкл, иначе выкл
+    const autoCharter = country.id === TURKEY_ID;
+    setIsCharterOnly(autoCharter);
+    setData("param11", autoCharter);
+
     setSearchQuery("");
   };
 
@@ -101,6 +125,12 @@ export default function MobileFlyingCountry() {
         );
       }
     }
+  };
+
+  const handleCharterToggle = () => {
+    const next = !isCharterOnly;
+    setIsCharterOnly(next);
+    setData("param11", next);
   };
 
   const selectedCountryData = destinations.find(
@@ -199,11 +229,48 @@ export default function MobileFlyingCountry() {
                 </button>
               </div>
 
+              {/* Чекбокс "Только чартерные рейсы" */}
+              <div className="px-7 py-3 border-b border-[#DBE0E5]">
+                <button
+                  onClick={handleCharterToggle}
+                  className="w-full text-left flex items-center gap-2 rounded py-1"
+                >
+                  <div
+                    className={`w-5 h-5 rounded border flex items-center justify-center
+                      ${
+                        isCharterOnly
+                          ? "bg-[#FF621F] border-[#FF621F]"
+                          : "border-[#7E8389]"
+                      }
+                    `}
+                  >
+                    {isCharterOnly && (
+                      <svg
+                        width="11"
+                        height="8"
+                        viewBox="0 0 11 8"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M1 3.5L4 6.5L9.5 1"
+                          stroke="white"
+                          strokeWidth="1.6"
+                        />
+                      </svg>
+                    )}
+                  </div>
+                  <span className="text-[#2E2E32] text-base">
+                    Только чартерные рейсы
+                  </span>
+                </button>
+              </div>
+
               <div className="flex px-3">
                 {/* Левая колонка - страны */}
                 <div className="w-1/2 relative">
                   <div className="absolute right-0 h-full w-[1px] bg-[#DBE0E5]" />
-                  <div className="py-3 pr-2">
+                  <div className="pb-3 pr-2">
                     {filteredCountries.map((country) => (
                       <button
                         key={country.id}
@@ -233,7 +300,7 @@ export default function MobileFlyingCountry() {
 
                 {/* Правая колонка - регионы */}
                 <div className="w-1/2">
-                  <div className="py-3 pl-2">
+                  <div className="pb-3 pl-2">
                     <button
                       onClick={handleAllRegionsToggle}
                       className="w-full text-left px-4 py-2 duration-300 flex items-center gap-2 border-b border-[#DBE0E5]"

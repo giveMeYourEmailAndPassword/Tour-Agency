@@ -200,7 +200,22 @@ export default function OurTours() {
             <Filters />
           </div>
           {tours.length > 0 ? (
-            <SearchResults />
+            <div className="ml-2 flex-grow pb-4">
+              <SearchResults />
+              {/* Кнопка "Показать еще туры" для десктопа */}
+              {tourDataStatus?.state === "finished" &&
+                tours.length < tourDataStatus?.hotelsfound && (
+                  <div className="w-full flex justify-center mt-8">
+                    <button
+                      onClick={() => fetchNextPage()}
+                      disabled={isFetchingNextPage}
+                      className="px-6 py-3 bg-[#FF621F] text-white rounded-lg hover:bg-[#E55A1C] transition-colors disabled:bg-gray-400 w-[200px]"
+                    >
+                      {isFetchingNextPage ? "Загрузка..." : "Показать еще туры"}
+                    </button>
+                  </div>
+                )}
+            </div>
           ) : (
             <div className="ml-2 flex-grow pb-4">
               <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-2">

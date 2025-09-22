@@ -84,10 +84,10 @@ export default function SwiperHotTours() {
   if (isLoading) {
     return (
       <div className="w-full">
-        <div className="bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl p-4 text-white">
+        <div className="bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl px-4 pt-4 md:p-4 text-white">
           <div className="flex items-center gap-2 mb-4">
             <BsFire className="text-2xl animate-pulse" />
-            <h2 className="text-2xl font-bold">
+            <h2 className="text-xl md:text-2xl font-bold">
               Горящие туры, из {getDepartureCity(departureCity)}
             </h2>
           </div>
@@ -163,10 +163,10 @@ export default function SwiperHotTours() {
 
   return (
     <div className="w-full">
-      <div className="bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl p-4 text-white">
+      <div className="bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl px-4 pt-4 md:p-4 text-white">
         <div className="flex items-center gap-2 mb-4">
           <BsFire className="text-2xl" />
-          <h2 className="text-2xl font-bold">
+          <h2 className="text-xl md:text-2xl font-bold">
             Горящие туры, из {getDepartureCity(departureCity)}
           </h2>
         </div>
@@ -333,42 +333,8 @@ export default function SwiperHotTours() {
           </button>
         </div>
 
-        {/* Кнопки навигации внизу - только на мобильных */}
-        <div className="flex justify-center gap-4 mt-4 lg:hidden">
-          <button className="swiper-button-prev-hot bg-white/20 hover:bg-white/30 text-white p-2 rounded-full transition-all duration-300">
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 19l-7-7 7-7"
-              />
-            </svg>
-          </button>
-          <button className="swiper-button-next-hot bg-white/20 hover:bg-white/30 text-white p-2 rounded-full transition-all duration-300">
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 5l7 7-7 7"
-              />
-            </svg>
-          </button>
-        </div>
-
         {/* Кастомная пагинация */}
-        {/* <div className="swiper-pagination-hot flex justify-center mt-4"></div> */}
+        <div className="swiper-pagination-hot flex justify-center mt-4 lg:hidden"></div>
       </div>
 
       {/* <style>{`

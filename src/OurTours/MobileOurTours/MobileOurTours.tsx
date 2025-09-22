@@ -10,6 +10,9 @@ import { ru } from "date-fns/locale";
 import { ProgressBar } from "../../components/Loading/ProgressBar";
 import FiltersMobile from "../../components/FiltersMobile";
 import Header from "../../components/Header";
+import SwiperHotTours from "../../components/SwiperHotTours";
+import SwiperRandomTours from "../../components/SwiperRandomTours";
+import React from "react";
 
 // Добавляем вспомогательные функции из SearchResults
 const truncateHotelName = (name: string) => {
@@ -240,6 +243,140 @@ export default function MobileOurTours() {
     );
   }
 
+  // Функция для рендеринга тура
+  const renderTour = (hotel: any, index: number) => (
+    <div
+      key={index}
+      onClick={() => {
+        // Фильтруем туры для конкретного отеля
+        const hotelTours = tours.filter(
+          (tour) => tour.hotelcode === hotel.hotelcode
+        );
+
+        // Создаем объект URLSearchParams для сохранения текущих фильтров
+        const searchParams = new URLSearchParams();
+
+        // Добавляем все текущие параметры фильтров
+        if (params.param1) searchParams.set("departure", params.param1);
+        if (params.param2) searchParams.set("country", params.param2);
+
+        // Добавляем параметр для регионов
+        if (params.param2Regions?.length) {
+          searchParams.set("regions", params.param2Regions.join(","));
+        }
+
+        if (params.param3?.startDay)
+          searchParams.set("nightsFrom", params.param3.startDay.toString());
+        if (params.param3?.endDay)
+          searchParams.set("nightsTo", params.param3.endDay.toString());
+        if (params.param4?.startDate)
+          searchParams.set("dateFrom", params.param4.startDate);
+        if (params.param4?.endDate)
+          searchParams.set("dateTo", params.param4.endDate);
+        if (params.param5?.adults)
+          searchParams.set("adults", params.param5.adults.toString());
+        if (params.param5?.childrenList?.length)
+          searchParams.set("children", params.param5.childrenList.join(","));
+        if (params.param6?.length)
+          searchParams.set("hotelTypes", params.param6.join(","));
+        if (params.param7?.length) searchParams.set("meal", params.param7[0]);
+        if (params.param8?.length) searchParams.set("rating", params.param8[0]);
+        if (params.param9) searchParams.set("stars", params.param9.toString());
+        if (params.param10?.length)
+          searchParams.set("services", params.param10.join(","));
+
+        // Формируем полный URL с параметрами
+        const urlWithParams = `/hotel/${
+          hotel.hotelcode
+        }?${searchParams.toString()}`;
+
+        navigate(urlWithParams, {
+          state: {
+            hotelTours: hotelTours,
+            hotelDescription: hotel.hoteldescription,
+          },
+        });
+      }}
+      className="w-full flex items-center gap-2.5 p-4 bg-white border border-[#DBE0E5] rounded-[10px] cursor-pointer transition-all duration-300"
+    >
+      <div className="w-full flex flex-col gap-2">
+        {/* Изображение */}
+        <div className="w-full h-44 md:h-36 rounded">
+          <img
+            src={hotel.picturelink}
+            alt={hotel.hotelname}
+            className="w-full h-full object-cover rounded"
+          />
+        </div>
+
+        {/* Информация об отеле */}
+        <div className="w-full flex flex-col gap-2">
+          <div className="w-full flex justify-between items-center gap-1">
+            <div className="flex items-center gap-0.5">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <img
+                  key={i}
+                  src={i < hotel.hotelstars ? starFilled : starOutline}
+                  alt={i < hotel.hotelstars ? "filled star" : "outline star"}
+                  className="w-4 h-4"
+                />
+              ))}
+              {hotel.hotelrating !== "0" && (
+                <div className="bg-[#FF621F] text-white text-xs font-medium px-1 rounded-[20px] ml-0.5">
+                  {hotel.hotelrating.length === 1
+                    ? `${hotel.hotelrating}.0`
+                    : hotel.hotelrating}
+                </div>
+              )}
+            </div>
+          </div>
+
+          <h3 className="text-[#2E2E32] text-lg font-bold leading-[1.22]">
+            {truncateHotelName(hotel.hotelname)}
+          </h3>
+          <p className="text-[#6B7280] text-base leading-[1.29]">
+            {hotel.regionname}
+            {hotel.subregionname == 0 ? "" : `, ${hotel.subregionname}`}
+          </p>
+        </div>
+
+        {/* Теги */}
+        <div className="w-full flex items-center gap-3 pb-1 border-b border-[#DBE0E5]">
+          <div className="flex items-center gap-1">
+            <span className="text-sm text-[#2E2E32]">
+              {getMealType(hotel.tours.tour[0].meal)}
+            </span>
+            <img src={utensils} alt="meal" className="w-3.5 h-3.5" />
+          </div>
+        </div>
+
+        {/* Цена и даты */}
+        <div className="w-full flex justify-between items-center">
+          <span className="text-xl font-bold text-[#2E2E32]">
+            {hotel.price}
+            {hotel.currency === "EUR"
+              ? "€"
+              : hotel.currency === "USD"
+              ? "$"
+              : hotel.currency}
+          </span>
+          <div className="flex flex-col items-end">
+            <span className="text-xs font-bold text-[#2E2E32]">
+              {formatDate(hotel.tours.tour[0].flydate)} -{" "}
+              {getEndDate(
+                hotel.tours.tour[0].flydate,
+                hotel.tours.tour[0].nights
+              )}
+            </span>
+            <span className="text-sm text-[#6B7280]">
+              кол-во ночей: {hotel.tours.tour[0].nights}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <div className="w-full min-h-screen bg-gray-100">
       <Header onSearch={() => setShowResults(true)} />
@@ -247,151 +384,36 @@ export default function MobileOurTours() {
       <ProgressBar />
       <div className="mx-2 flex-grow pb-4">
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-2">
-          {tours.map((hotel, index) => (
-            <div
-              key={index}
-              onClick={() => {
-                // Фильтруем туры для конкретного отеля
-                const hotelTours = tours.filter(
-                  (tour) => tour.hotelcode === hotel.hotelcode
-                );
+          {tours.map((hotel, index) => {
+            const shouldShowHotTours = index === 7; // Показываем после 8-го тура
+            const shouldShowRandomTours = index === 15; // Показываем после 16-го тура
 
-                // Создаем объект URLSearchParams для сохранения текущих фильтров
-                const searchParams = new URLSearchParams();
-
-                // Добавляем все текущие параметры фильтров
-                if (params.param1) searchParams.set("departure", params.param1);
-                if (params.param2) searchParams.set("country", params.param2);
-
-                // Добавляем параметр для регионов
-                if (params.param2Regions?.length) {
-                  searchParams.set("regions", params.param2Regions.join(","));
-                }
-
-                if (params.param3?.startDay)
-                  searchParams.set(
-                    "nightsFrom",
-                    params.param3.startDay.toString()
-                  );
-                if (params.param3?.endDay)
-                  searchParams.set("nightsTo", params.param3.endDay.toString());
-                if (params.param4?.startDate)
-                  searchParams.set("dateFrom", params.param4.startDate);
-                if (params.param4?.endDate)
-                  searchParams.set("dateTo", params.param4.endDate);
-                if (params.param5?.adults)
-                  searchParams.set("adults", params.param5.adults.toString());
-                if (params.param5?.childrenList?.length)
-                  searchParams.set(
-                    "children",
-                    params.param5.childrenList.join(",")
-                  );
-                if (params.param6?.length)
-                  searchParams.set("hotelTypes", params.param6.join(","));
-                if (params.param7?.length)
-                  searchParams.set("meal", params.param7[0]);
-                if (params.param8?.length)
-                  searchParams.set("rating", params.param8[0]);
-                if (params.param9)
-                  searchParams.set("stars", params.param9.toString());
-                if (params.param10?.length)
-                  searchParams.set("services", params.param10.join(","));
-
-                // Формируем полный URL с параметрами
-                const urlWithParams = `/hotel/${
-                  hotel.hotelcode
-                }?${searchParams.toString()}`;
-
-                navigate(urlWithParams, {
-                  state: {
-                    hotelTours: hotelTours,
-                    hotelDescription: hotel.hoteldescription,
-                  },
-                });
-              }}
-              className="w-full flex items-center gap-2.5 p-4 bg-white border border-[#DBE0E5] rounded-[10px] cursor-pointer transition-all duration-300"
-            >
-              <div className="w-full flex flex-col gap-2">
-                {/* Изображение */}
-                <div className="w-full h-44 md:h-36 rounded">
-                  <img
-                    src={hotel.picturelink}
-                    alt={hotel.hotelname}
-                    className="w-full h-full object-cover rounded"
-                  />
-                </div>
-
-                {/* Информация об отеле */}
-                <div className="w-full flex flex-col gap-2">
-                  <div className="w-full flex justify-between items-center gap-1">
-                    <div className="flex items-center gap-0.5">
-                      {Array.from({ length: 5 }).map((_, i) => (
-                        <img
-                          key={i}
-                          src={i < hotel.hotelstars ? starFilled : starOutline}
-                          alt={
-                            i < hotel.hotelstars
-                              ? "filled star"
-                              : "outline star"
-                          }
-                          className="w-4 h-4"
-                        />
-                      ))}
-                      {hotel.hotelrating !== "0" && (
-                        <div className="bg-[#FF621F] text-white text-xs font-medium px-1 rounded-[20px] ml-0.5">
-                          {hotel.hotelrating.length === 1
-                            ? `${hotel.hotelrating}.0`
-                            : hotel.hotelrating}
-                        </div>
-                      )}
+            return (
+              <React.Fragment key={index}>
+                {renderTour(hotel, index)}
+                {shouldShowHotTours && (
+                  <div
+                    key={`hot-swiper-${index}`}
+                    className="col-span-full w-full"
+                  >
+                    <div className="w-full">
+                      <SwiperHotTours />
                     </div>
                   </div>
-
-                  <h3 className="text-[#2E2E32] text-lg font-bold leading-[1.22]">
-                    {truncateHotelName(hotel.hotelname)}
-                  </h3>
-                  <p className="text-[#6B7280] text-base leading-[1.29]">
-                    {hotel.regionname}
-                    {hotel.subregionname == 0 ? "" : `, ${hotel.subregionname}`}
-                  </p>
-                </div>
-
-                {/* Теги */}
-                <div className="w-full flex items-center gap-3 pb-1 border-b border-[#DBE0E5]">
-                  <div className="flex items-center gap-1">
-                    <span className="text-sm text-[#2E2E32]">
-                      {getMealType(hotel.tours.tour[0].meal)}
-                    </span>
-                    <img src={utensils} alt="meal" className="w-3.5 h-3.5" />
+                )}
+                {shouldShowRandomTours && (
+                  <div
+                    key={`random-swiper-${index}`}
+                    className="col-span-full w-full"
+                  >
+                    <div className="w-full">
+                      <SwiperRandomTours />
+                    </div>
                   </div>
-                </div>
-
-                {/* Цена и даты */}
-                <div className="w-full flex justify-between items-center">
-                  <span className="text-xl font-bold text-[#2E2E32]">
-                    {hotel.price}
-                    {hotel.currency === "EUR"
-                      ? "€"
-                      : hotel.currency === "USD"
-                      ? "$"
-                      : hotel.currency}
-                  </span>
-                  <div className="flex flex-col items-end">
-                    <span className="text-xs font-bold text-[#2E2E32]">
-                      {formatDate(hotel.tours.tour[0].flydate)} -{" "}
-                      {getEndDate(
-                        hotel.tours.tour[0].flydate,
-                        hotel.tours.tour[0].nights
-                      )}
-                    </span>
-                    <span className="text-sm text-[#6B7280]">
-                      кол-во ночей: {hotel.tours.tour[0].nights}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
+                )}
+              </React.Fragment>
+            );
+          })}
         </div>
 
         {/* Кнопка "Показать еще" */}

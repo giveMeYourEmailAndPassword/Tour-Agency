@@ -25,23 +25,39 @@ export default function Header() {
       <div className="max-w-[1440px] mx-auto">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
-            <img src={LOGO} alt="logo" className="w-30 h-16 ml-[-10px]" />
+            <img
+              src={LOGO}
+              alt="logo"
+              className="w-30 h-16 ml-[-10px]"
+              onClick={() => (window.location.href = "/")}
+            />
           </div>
 
           {/* Кнопка избранного */}
           <div className="flex items-center gap-2">
             <div className="flex flex-col items-end ">
-              <p className="text-sm text-gray-500 items-center gap-1 hidden md:flex">
+              <a
+                href="https://go.2gis.com/Q6U4a"
+                className="text-sm text-gray-500 items-center gap-1 hidden md:flex"
+              >
                 <FaMapMarkerAlt size={16} />
                 ул. Жоомарта Боконбаева, 7
-              </p>
-              <p className="text-sm text-gray-500 items-center gap-1 hidden md:flex">
+              </a>
+              <a
+                href="tel:+996701044445"
+                className="text-sm text-gray-500 items-center gap-1 hidden md:flex"
+              >
                 <FaPhone size={14} className="rotate-90" />
                 +996 701 044 445
-              </p>
+              </a>
             </div>
 
-            <button className="bg-green-500 hover:bg-green-600 duration-300 text-white px-4 py-2 rounded-lg flex items-center gap-1">
+            <button
+              className="bg-green-500 hover:bg-green-600 duration-300 text-white px-4 py-2 rounded-lg flex items-center gap-1"
+              onClick={() =>
+                window.open("https://wa.me/996701044445", "_blank")
+              }
+            >
               <FaWhatsapp size={18} />
               WhatsApp
             </button>

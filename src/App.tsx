@@ -6,6 +6,7 @@ import { DataContext } from "./components/DataProvider";
 import { useSearchParams } from "./Hooks/useSearchParams";
 import Header from "./components/Header";
 import HotTours from "./components/HotTours";
+import GallaryCountries from "./components/GallaryCountries";
 
 export default function App() {
   const { params } = useContext(DataContext);
@@ -28,7 +29,8 @@ export default function App() {
         <div className="max-w-[1440px] mx-auto">
           <div className="md:block hidden mt-4">
             <div className="flex items-start">
-              <div className="ml-2 flex-grow pb-4 mt-8">
+              <div className="ml-2 flex-col pb-4 mt-8 w-full">
+                <GallaryCountries />
                 <HotTours />
               </div>
             </div>

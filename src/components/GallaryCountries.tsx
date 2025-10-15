@@ -72,15 +72,18 @@ export default function GallaryCountries() {
               <div
                 className="relative w-full h-72 overflow-hidden rounded-xl cursor-pointer"
                 onClick={() => handleImageClick(item.id)}
+                style={{ contentVisibility: "auto" }}
               >
                 <img
                   src={item.img}
                   alt={item.name}
-                  className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                  className="w-full h-full object-cover transition-transform"
                   loading="lazy"
+                  decoding="async"
+                  fetchPriority="high"
                 />
-                <div className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-black/60 via-black/30 to-transparent">
-                  <span className="text-white text-xl font-semibold drop-shadow bg-black/50 px-5 py-1 rounded-2xl">
+                <div className="absolute inset-x-0 bottom-0 px-4 py-8 bg-gradient-to-t from-black/60 via-black/30 to-transparent">
+                  <span className="text-white text-2xl font-semibold drop-shadow bg-black/70 px-7 py-2 rounded-2xl">
                     {item.name}
                   </span>
                 </div>
@@ -97,15 +100,18 @@ export default function GallaryCountries() {
             <div
               className="relative w-full h-56 overflow-hidden rounded-xl cursor-pointer"
               onClick={() => handleImageClick(item.id)}
+              style={{ contentVisibility: "auto" }}
             >
               <img
                 src={item.img}
                 alt={item.name}
-                className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                className="w-full h-full object-cover transition-transform"
                 loading="lazy"
+                decoding="async"
+                fetchPriority="high"
               />
               <div className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-black/60 via-black/30 to-transparent">
-                <span className="text-white text-xl font-semibold drop-shadow bg-black/50 px-5 py-1 rounded-2xl">
+                <span className="text-white text-2xl font-semibold drop-shadow bg-black/70 px-5 py-1 rounded-2xl">
                   {item.name}
                 </span>
               </div>

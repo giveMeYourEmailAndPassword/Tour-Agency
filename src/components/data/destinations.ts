@@ -8,18 +8,19 @@ import id1 from "../../assets/ID/Kafedralnyy-sobor-Dzhakarty-1.jpg";
 import id2 from "../../assets/ID/SHosse-v-tsentre-Dzhakarty.jpg";
 
 import mv1 from "../../assets/MV/pexels-asadphoto-1430677.jpg";
-import mv2 from "../../assets/MV/pexels-asadphoto-1450360.jpg";
+import mv2 from "../../assets/MV/mv1.jpg";
 import mv3 from "../../assets/MV/pexels-asadphoto-3293148.jpg";
 import mv4 from "../../assets/MV/pexels-asadphoto-3601453.jpg";
 
 import th1 from "../../assets/TH/pexels-duichantran-31188948.jpg";
+import th2 from "../../assets/TH/asdasd.jpg";
 
 import tr1 from "../../assets/TR/pexels-arefin-879478.jpg";
 import tr2 from "../../assets/TR/pexels-smuldur-2048865.jpg";
 
-import vn1 from "../../assets/VN/pexels-tomfisk-1551491.jpg";
-import vn2 from "../../assets/VN/pexels-tomfisk-2032110.jpg";
-import vn3 from "../../assets/VN/pexels-truongbanreview-2847871.jpg";
+import vn1 from "../../assets/VN/pexels-tomfisk-2032110.jpg";
+import vn2 from "../../assets/VN/vn2.jpg";
+import vn3 from "../../assets/VN/vn1.jpg";
 
 export const destinations = [
   {
@@ -38,7 +39,7 @@ export const destinations = [
       { id: 8, name: "Пхукет" },
       { id: 7, name: "Паттайя" },
     ],
-    images: [th1],
+    images: [th1, th2],
   },
   {
     id: 4,

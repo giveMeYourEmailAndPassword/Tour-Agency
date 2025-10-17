@@ -72,6 +72,7 @@ type DataContextType = {
   searchMultyTours: () => Promise<void>;
   searchInProgress: boolean;
   isSearching: boolean;
+  searchToursFromGallery: () => Promise<void>;
 };
 
 const API_BASE_URL =
@@ -616,6 +617,68 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     [params.param2]
   );
 
+  // Добавляем функцию searchToursFromGallery для поиска из галереи стран
+  const searchToursFromGallery = useCallback(async () => {
+    if (!params.param1 || !params.param2) {
+      return;
+    }
+
+    setLoading(true);
+    setSearchInProgress(true);
+    setError(null);
+    setTours([]);
+    setAllTours([]);
+    setCurrentPage(1);
+    setTourDataStatus(null);
+    setIsSearching(false);
+
+    try {
+      const requestData = {
+        departure: params.param1,
+        country: params.param2,
+        // Добавляем параметр для регионов
+        regions: params.param2Regions?.join(",") || "",
+        // Даты делаем необязательными - добавляем только если они есть
+        ...(params.param4?.startDate && { datefrom: params.param4.startDate }),
+        ...(params.param4?.endDate && { dateto: params.param4.endDate }),
+        nightsfrom: params.param3?.startDay?.toString() || "",
+        nightsto: params.param3?.endDay?.toString() || "",
+        adults: params.param5?.adults?.toString() || "2",
+        child: (params.param5?.childrenList.length || 0).toString(),
+        hoteltypes: params.param6?.join(",") ?? "any",
+        mealbetter: params.param7?.[0] ?? "2",
+        rating: params.param8?.[0] ?? "0",
+        starsbetter: params.param9?.toString() ?? "1",
+        services: params.param10?.join(",") ?? "",
+        // Добавляем параметр для чартерных рейсов
+        ...(params.param11 && { hideregular: "1" }),
+      };
+
+      const requestResponse = await fetch(`${API_BASE_URL}/search`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestData),
+      });
+      const responseData = await requestResponse.json();
+
+      if (responseData.result?.requestid) {
+        setRequestId(responseData.result.requestid);
+        pollSearchResults(responseData.result.requestid);
+      }
+      if (responseData.randomresult?.requestid) {
+        setRandomRequestId(responseData.randomresult.requestid);
+      }
+    } catch (error) {
+      console.error("Ошибка:", error);
+      setError("Ошибка при загрузке данных");
+      setLoading(false);
+      setSearchInProgress(false);
+      setIsSearching(false);
+    }
+  }, [params, pollSearchResults]);
+
   // Добавляем функцию searchMultyTours
   const searchMultyTours = useCallback(async () => {
     if (!areParamsReady(params)) {
@@ -738,6 +801,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         searchMultyTours,
         searchInProgress, // добавляем новое поле
         isSearching, // добавляем новое поле
+        searchToursFromGallery, // добавляем новую функцию для поиска из галереи
       }}
     >
       {children}

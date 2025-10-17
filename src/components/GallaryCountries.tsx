@@ -1,6 +1,7 @@
-import { useMemo } from "react";
+import { useMemo, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { destinations } from "./data/destinations";
+import { DataContext } from "./DataProvider";
 
 // Функция для перемешивания массива (алгоритм Фишера-Йетса)
 function shuffleArray<T>(array: T[]): T[] {
@@ -19,6 +20,7 @@ function getRandomElement<T>(array: T[]): T {
 
 export default function GallaryCountries() {
   const navigate = useNavigate();
+  const { params, searchToursFromGallery, setData } = useContext(DataContext);
 
   // Мемоизируем случайный выбор стран и изображений
   const items = useMemo(() => {
@@ -39,20 +41,56 @@ export default function GallaryCountries() {
   }, []); // Пустой массив зависимостей означает, что это выполнится только один раз
 
   // Функция для обработки клика по картинке
-  const handleImageClick = (countryId: number) => {
+  const handleImageClick = async (countryId: number) => {
     // Находим страну по ID
     const country = destinations.find((d) => d.id === countryId);
     if (country) {
       // Получаем все регионы страны
       const regions = country.regions.map((region) => region.id);
 
+      // Сначала обновляем параметры в контексте
+      setData("param2", country.id.toString());
+      setData("param2Regions", regions);
+
       // Создаем URL параметры
       const searchParams = new URLSearchParams();
-      searchParams.set("country", countryId.toString());
+
+      // Добавляем текущие параметры из контекста
+      if (params.param1) searchParams.set("departure", params.param1);
+      // Используем ID страны
+      searchParams.set("country", country.id.toString());
       searchParams.set("regions", regions.join(","));
 
+      if (params.param3?.startDay)
+        searchParams.set("nightsFrom", params.param3.startDay.toString());
+      if (params.param3?.endDay)
+        searchParams.set("nightsTo", params.param3.endDay.toString());
+      // Убираем использование param4 для дат - они должны быть получены из кода страны
+      if (params.param5?.adults)
+        searchParams.set("adults", params.param5.adults.toString());
+      if (params.param5?.childrenList?.length)
+        searchParams.set("children", params.param5.childrenList.join(","));
+      if (params.param6?.length)
+        searchParams.set("hotelTypes", params.param6.join(","));
+      if (params.param7?.length) searchParams.set("meal", params.param7[0]);
+      if (params.param8?.length) searchParams.set("rating", params.param8[0]);
+      if (params.param9) searchParams.set("stars", params.param9.toString());
+      if (params.param10?.length)
+        searchParams.set("services", params.param10.join(","));
+      if (params.param11) {
+        searchParams.set("charterOnly", "true");
+      }
+
+      const newUrl = `/OurTours?${searchParams.toString()}`;
+
       // Переходим на страницу OurTours с параметрами
-      navigate(`/OurTours?${searchParams.toString()}`);
+      navigate(newUrl);
+
+      // После навигации запускаем поиск с новой функцией
+      // Небольшая задержка для того, чтобы параметры успели обновиться в контексте
+      setTimeout(() => {
+        searchToursFromGallery();
+      }, 200);
     }
   };
 

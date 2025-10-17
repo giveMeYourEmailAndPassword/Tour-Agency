@@ -54,6 +54,15 @@ export default function OurTours() {
     if (searchParams.has("country"))
       setData("param2", searchParams.get("country"));
 
+    // Добавляем обработку регионов
+    if (searchParams.has("regions")) {
+      const regions = searchParams.get("regions")!;
+      setData(
+        "param2Regions",
+        regions.split(",").map((id) => parseInt(id))
+      );
+    }
+
     if (searchParams.has("nightsFrom") || searchParams.has("nightsTo")) {
       setData("param3", {
         startDay: searchParams.get("nightsFrom")

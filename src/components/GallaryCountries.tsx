@@ -20,7 +20,7 @@ function getRandomElement<T>(array: T[]): T {
 
 export default function GallaryCountries() {
   const navigate = useNavigate();
-  const { params, searchToursFromGallery, setData } = useContext(DataContext);
+  const { params, setData } = useContext(DataContext);
 
   // Мемоизируем случайный выбор стран и изображений
   const items = useMemo(() => {
@@ -81,16 +81,16 @@ export default function GallaryCountries() {
         searchParams.set("charterOnly", "true");
       }
 
+      // Добавляем флаг, что переход из галереи
+      searchParams.set("fromGallery", "true");
+
       const newUrl = `/OurTours?${searchParams.toString()}`;
 
       // Переходим на страницу OurTours с параметрами
       navigate(newUrl);
 
-      // После навигации запускаем поиск с новой функцией
-      // Небольшая задержка для того, чтобы параметры успели обновиться в контексте
-      setTimeout(() => {
-        searchToursFromGallery();
-      }, 200);
+      // Поиск запустится автоматически на странице OurTours
+      // Параметры уже обновлены через setData выше
     }
   };
 

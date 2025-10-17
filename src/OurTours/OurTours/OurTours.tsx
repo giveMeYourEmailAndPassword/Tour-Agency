@@ -44,78 +44,6 @@ export default function OurTours() {
     };
   }, [navigate]);
 
-  // Эффект для установки параметров и запуска поиска при изменении URL
-  useEffect(() => {
-    const searchParams = new URLSearchParams(location.search);
-
-    // Устанавливаем параметры из URL
-    if (searchParams.has("departure"))
-      setData("param1", searchParams.get("departure"));
-    if (searchParams.has("country"))
-      setData("param2", searchParams.get("country"));
-
-    // Добавляем обработку регионов
-    if (searchParams.has("regions")) {
-      const regions = searchParams.get("regions")!;
-      setData(
-        "param2Regions",
-        regions.split(",").map((id) => parseInt(id))
-      );
-    }
-
-    if (searchParams.has("nightsFrom") || searchParams.has("nightsTo")) {
-      setData("param3", {
-        startDay: searchParams.get("nightsFrom")
-          ? parseInt(searchParams.get("nightsFrom")!)
-          : undefined,
-        endDay: searchParams.get("nightsTo")
-          ? parseInt(searchParams.get("nightsTo")!)
-          : undefined,
-      });
-    }
-
-    if (searchParams.has("dateFrom") || searchParams.has("dateTo")) {
-      setData("param4", {
-        startDate: searchParams.get("dateFrom") || undefined,
-        endDate: searchParams.get("dateTo") || undefined,
-      });
-    }
-
-    if (searchParams.has("adults") || searchParams.has("children")) {
-      setData("param5", {
-        adults: searchParams.get("adults")
-          ? parseInt(searchParams.get("adults")!)
-          : 2,
-        childrenList: searchParams.get("children")
-          ? searchParams.get("children")!.split(",").map(Number)
-          : [],
-      });
-    }
-
-    if (searchParams.has("hotelTypes"))
-      setData("param6", searchParams.get("hotelTypes")!.split(","));
-    if (searchParams.has("meal"))
-      setData("param7", [searchParams.get("meal")!]);
-    if (searchParams.has("rating"))
-      setData("param8", [searchParams.get("rating")!]);
-    if (searchParams.has("stars")) {
-      // Правильно парсим параметр stars как массив чисел
-      const starsParam = searchParams.get("stars")!;
-      const starsArray = starsParam.split(",").map(Number);
-      setData("param9", starsArray);
-    }
-    if (searchParams.has("services"))
-      setData("param10", searchParams.get("services")!.split(","));
-
-    // Запускаем поиск только при первом монтировании или если параметры изменились
-    if (searchParams.has("departure") && searchParams.has("country")) {
-      if (isInitialMount.current) {
-        isInitialMount.current = false;
-        searchTours();
-      }
-    }
-  }, [location.search, setData]);
-
   // Получаем выбранный город и страну
   const selectedCity =
     cities.find((city) => city.id === params?.param1)?.label || "";
@@ -130,40 +58,6 @@ export default function OurTours() {
           : "(Выберите страну)"
       } из ${getCityDeclension(selectedCity, "from")}`
     : "\u00A0".repeat(14);
-
-  // Добавляем состояние для отслеживания попыток поиска
-  const [searchAttempts, setSearchAttempts] = useState(0);
-
-  // Улучшенный эффект для автоматического перезапуска поиска
-  useEffect(() => {
-    // Перезапускаем поиск только если:
-    // - нет туров
-    // - не загружается
-    // - не загружается следующая страница
-    // - статус не "searching" или "loading"
-    // - не превышено количество попыток
-    if (
-      tours.length === 0 &&
-      !loading &&
-      !isFetchingNextPage &&
-      searchAttempts < 3 &&
-      tourDataStatus?.state !== "searching" &&
-      tourDataStatus?.state !== "loading"
-    ) {
-      const timer = setTimeout(() => {
-        setSearchAttempts((prev) => prev + 1);
-        searchTours();
-      }, 0); // Еще больше времени на завершение
-
-      return () => clearTimeout(timer);
-    }
-  }, [
-    tours.length,
-    loading,
-    isFetchingNextPage,
-    searchAttempts,
-    tourDataStatus?.state,
-  ]);
 
   if (error) {
     return (

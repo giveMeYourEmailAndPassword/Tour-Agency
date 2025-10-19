@@ -15,6 +15,12 @@ import HotelServiceOT from "./Filters/HotelServiceOT";
 export default function OurToursFilters() {
   const { countries } = useContext(DataContext);
 
+  // Функция для обработки поиска
+  const handleSearch = () => {
+    // Здесь можно добавить дополнительную логику после поиска
+    console.log("Поиск завершен");
+  };
+
   if (countries.length === 0) {
     return null;
   }
@@ -39,7 +45,7 @@ export default function OurToursFilters() {
           {/* Туристы */}
           <TouristsOT />
           {/* Кнопка поиска */}
-          <FindTourBtn />
+          <FindTourBtn onSearch={handleSearch} />
         </div>
 
         <div className="flex justify-between w-full">

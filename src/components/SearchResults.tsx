@@ -41,16 +41,25 @@ const truncateHotelName = (name: string) => {
   return name;
 };
 
-// Форматирование даты
-const formatDate = (dateString: string) => {
-  const date = parse(dateString, "dd.MM.yyyy", new Date());
-  return format(date, "d MMMM", { locale: ru });
-};
+// Функция для форматирования периода дат
+const formatDateRange = (startDate: string, nights: number) => {
+  const start = parse(startDate, "dd.MM.yyyy", new Date());
+  const end = addDays(start, nights);
 
-// Получение конечной даты
-const getEndDate = (startDate: string, nights: number) => {
-  const date = parse(startDate, "dd.MM.yyyy", new Date());
-  return format(addDays(date, nights), "d MMMM", { locale: ru });
+  const startMonth = format(start, "MMMM", { locale: ru });
+  const endMonth = format(end, "MMMM", { locale: ru });
+
+  if (startMonth === endMonth) {
+    const startDay = format(start, "d", { locale: ru });
+    const endDay = format(end, "d", { locale: ru });
+    return `${startDay} - ${endDay} ${startMonth}`;
+  } else {
+    return `${format(start, "d MMMM", { locale: ru })} - ${format(
+      end,
+      "d MMMM",
+      { locale: ru }
+    )}`;
+  }
 };
 
 // Определение типа питания
@@ -258,8 +267,7 @@ export default function SearchResults() {
           </span>
           <div className="flex flex-col items-end">
             <span className="text-xs font-bold text-[#2E2E32]">
-              {formatDate(tour.tours.tour[0].flydate)} -{" "}
-              {getEndDate(
+              {formatDateRange(
                 tour.tours.tour[0].flydate,
                 tour.tours.tour[0].nights
               )}

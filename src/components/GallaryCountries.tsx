@@ -1,4 +1,4 @@
-import { useMemo, useContext } from "react";
+import { useMemo, useContext, useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { destinations } from "./data/destinations";
 import { DataContext } from "./DataProvider";
@@ -18,9 +18,36 @@ function getRandomElement<T>(array: T[]): T {
   return array[Math.floor(Math.random() * array.length)];
 }
 
+// Skeleton компонент для карточки страны
+const CountrySkeleton = ({ colSpan }: { colSpan: string }) => (
+  <div className={colSpan}>
+    <div className="relative w-full h-72 overflow-hidden rounded-xl bg-gray-200 animate-pulse">
+      <div className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300"></div>
+      <div className="absolute inset-x-0 bottom-0 px-4 py-8 bg-gradient-to-t from-gray-300/60 via-gray-300/30 to-transparent">
+        <div className="bg-gray-300 h-8 w-32 rounded-2xl"></div>
+      </div>
+    </div>
+  </div>
+);
+
+// Skeleton компонент для нижней строки
+const BottomRowSkeleton = () => (
+  <div className="col-span-4">
+    <div className="relative w-full h-56 overflow-hidden rounded-xl bg-gray-200 animate-pulse">
+      <div className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300"></div>
+      <div className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-gray-300/60 via-gray-300/30 to-transparent">
+        <div className="bg-gray-300 h-8 w-24 rounded-2xl"></div>
+      </div>
+    </div>
+  </div>
+);
+
 export default function GallaryCountries() {
   const navigate = useNavigate();
   const { params, setData } = useContext(DataContext);
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadedImages, setLoadedImages] = useState<Set<string>>(new Set());
+  const imagesRef = useRef<string[]>([]);
 
   // Мемоизируем случайный выбор стран и изображений
   const items = useMemo(() => {
@@ -33,12 +60,60 @@ export default function GallaryCountries() {
     const shuffledCountries = shuffleArray(countriesWithImages).slice(0, 5);
 
     // Создаем элементы с случайными изображениями
-    return shuffledCountries.map((d) => ({
+    const result = shuffledCountries.map((d) => ({
       id: d.id,
       name: d.name,
       img: getRandomElement(d.images!),
     }));
-  }, []); // Пустой массив зависимостей означает, что это выполнится только один раз
+
+    // Сохраняем ссылки на изображения для отслеживания загрузки
+    imagesRef.current = result.map((item) => item.img);
+
+    return result;
+  }, []);
+
+  // Отслеживаем загрузку изображений
+  useEffect(() => {
+    const handleImageLoad = (src: string) => {
+      setLoadedImages((prev) => {
+        const newSet = new Set(prev);
+        newSet.add(src);
+        return newSet;
+      });
+    };
+
+    const handleImageError = (src: string) => {
+      // В случае ошибки тоже считаем изображение "загруженным"
+      setLoadedImages((prev) => {
+        const newSet = new Set(prev);
+        newSet.add(src);
+        return newSet;
+      });
+    };
+
+    // Предзагружаем изображения
+    imagesRef.current.forEach((src) => {
+      const img = new Image();
+      img.onload = () => handleImageLoad(src);
+      img.onerror = () => handleImageError(src);
+      img.src = src;
+    });
+  }, []);
+
+  // Проверяем, загружены ли все изображения
+  useEffect(() => {
+    if (
+      loadedImages.size === imagesRef.current.length &&
+      imagesRef.current.length > 0
+    ) {
+      // Добавляем небольшую задержку для плавности
+      const timer = setTimeout(() => {
+        setIsLoading(false);
+      }, 300);
+
+      return () => clearTimeout(timer);
+    }
+  }, [loadedImages]);
 
   // Функция для обработки клика по картинке
   const handleImageClick = async (countryId: number) => {
@@ -99,6 +174,26 @@ export default function GallaryCountries() {
   const topRow = items.slice(0, 2);
   const bottomRow = items.slice(2, 5);
 
+  // Показываем skeleton во время загрузки
+  if (isLoading) {
+    return (
+      <div className="w-full space-y-2">
+        {/* Верхняя плоскость skeleton */}
+        <div className="grid grid-cols-12 gap-2">
+          <CountrySkeleton colSpan="col-span-7" />
+          <CountrySkeleton colSpan="col-span-5" />
+        </div>
+
+        {/* Нижняя плоскость skeleton */}
+        <div className="grid grid-cols-12 gap-2">
+          <BottomRowSkeleton />
+          <BottomRowSkeleton />
+          <BottomRowSkeleton />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full space-y-2">
       {/* Верхняя плоскость */}
@@ -116,9 +211,6 @@ export default function GallaryCountries() {
                   src={item.img}
                   alt={item.name}
                   className="w-full h-full object-cover transition-transform"
-                  loading="lazy"
-                  decoding="async"
-                  fetchPriority="high"
                 />
                 <div className="absolute inset-x-0 bottom-0 px-4 py-8 bg-gradient-to-t from-black/60 via-black/30 to-transparent">
                   <span className="text-white text-2xl font-semibold drop-shadow bg-black/70 px-7 py-2 rounded-2xl">
@@ -144,9 +236,6 @@ export default function GallaryCountries() {
                 src={item.img}
                 alt={item.name}
                 className="w-full h-full object-cover transition-transform"
-                loading="lazy"
-                decoding="async"
-                fetchPriority="high"
               />
               <div className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-black/60 via-black/30 to-transparent">
                 <span className="text-white text-2xl font-semibold drop-shadow bg-black/70 px-5 py-1 rounded-2xl">

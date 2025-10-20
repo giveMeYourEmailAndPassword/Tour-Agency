@@ -14,6 +14,7 @@ import { ru } from "date-fns/locale";
 import { IoAirplane } from "react-icons/io5";
 import { FaUtensils } from "react-icons/fa";
 import { FaUmbrellaBeach } from "react-icons/fa";
+import { FaYoutube } from "react-icons/fa";
 import { useState, useEffect, useContext } from "react";
 import Lightbox from "yet-another-react-lightbox";
 import Thumbnails from "yet-another-react-lightbox/plugins/thumbnails";
@@ -23,6 +24,7 @@ import { IoChevronBackOutline, IoChevronForwardOutline } from "react-icons/io5";
 import { DataContext } from "./DataProvider";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 import Header from "./Header";
+import HotelDetailedInfo from "./HotelDetailedInfo";
 
 interface Tour {
   tours: {
@@ -60,6 +62,8 @@ interface ExtendedHotel {
   services?: string | string[];
   meallist?: string;
   build?: string;
+  coord1?: string; // широта
+  coord2?: string; // долгота
 }
 
 export default function HotelToursInfo() {
@@ -81,6 +85,7 @@ export default function HotelToursInfo() {
   const [hotelDescription] = useState(location.state?.hotelDescription || "");
   const [isRestoringSearch, setIsRestoringSearch] = useState(false);
   const [showAllVariants, setShowAllVariants] = useState(false);
+  const [showDetailedInfo, setShowDetailedInfo] = useState(false);
 
   useEffect(() => {
     // Если нет данных в state, но есть параметры в URL - восстанавливаем поиск
@@ -168,6 +173,11 @@ export default function HotelToursInfo() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [mainImageIndex, setMainImageIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+
+  // Получаем координаты отеля для карты
+  const hotelCode = location.pathname.split("/")[2];
+  const latitude = hotel?.coord1 ? Number(hotel.coord1) : null;
+  const longitude = hotel?.coord2 ? Number(hotel.coord2) : null;
 
   // Авто-прокрутка
   useEffect(() => {
@@ -330,13 +340,25 @@ export default function HotelToursInfo() {
     }
   };
 
+  // Функция для открытия YouTube с поиском обзора отеля
+  const handleYouTubeSearch = () => {
+    if (!hotel?.name) return;
+
+    const searchQuery = `${hotel.name} ${hotel.country} ${hotel.region} обзор отель`;
+    const youtubeUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(
+      searchQuery
+    )}`;
+
+    window.open(youtubeUrl, "_blank", "noopener,noreferrer");
+  };
+
   if (isLoading || isRestoringSearch) {
     return (
       <div className="min-h-screen flex flex-col md:bg-white bg-gray-100">
         <Header />
         <div className="w-full mt-1 md:mt-0 md:bg-white bg-gray-100">
           <div className="max-w-[1440px] mx-auto py-4">
-            <div className="flex justify-between gap-3">
+            <div className="flex justify-between gap-2">
               {/* Левая колонка с галереей */}
               <div className="flex flex-col gap-1 flex-[1]">
                 {/* Основное фото с улучшенным скелетоном */}
@@ -573,8 +595,29 @@ export default function HotelToursInfo() {
           {/* Заголовок */}
           <div className="flex flex-col gap-3">
             {/* Галерея и контент */}
-            <div className="flex justify-between gap-3">
+            <div className="flex justify-between gap-2">
               <div className="flex flex-col gap-1 flex-[1]">
+                <div className="flex items-center gap-2 mb-2">
+                  <h1 className="text-3xl font-bold text-[#2E2E32]">
+                    {hotel.name}
+                  </h1>
+                  <div className="flex items-center gap-0.5">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <img
+                        key={i}
+                        src={
+                          i < parseInt(hotel.stars) ? starFilled : starOutline
+                        }
+                        alt={
+                          i < parseInt(hotel.stars)
+                            ? "filled star"
+                            : "outline star"
+                        }
+                        className="w-6 h-6"
+                      />
+                    ))}
+                  </div>
+                </div>
                 {/* Основное фото */}
                 <div className="w-full h-[400px] rounded-xl overflow-hidden relative group">
                   <img
@@ -648,177 +691,61 @@ export default function HotelToursInfo() {
                       </div>
                     ))}
                 </div>
-
                 {/* Информация об отеле */}
-                <div className="mt-4 space-y-3">
-                  <div className="">
-                    <h2 className="text-lg font-semibold text-[#2E2E32]">
-                      Информация об отеле:
-                    </h2>
-                    <div className="text-base text-[#6B7280]">
-                      {hotelDescription} {""}
-                      {hotel.description}
-                    </div>
-                  </div>
-
-                  {(hotel as ExtendedHotel).placement && (
-                    <div>
-                      <h3 className="text-lg font-semibold text-[#2E2E32]">
-                        Расположение:
-                      </h3>
-                      <div className="text-base text-[#6B7280]">
-                        {(hotel as ExtendedHotel).placement}
-                      </div>
-                    </div>
-                  )}
-
-                  {(hotel as ExtendedHotel).territory && (
-                    <div>
-                      <h3 className="text-lg font-semibold text-[#2E2E32]">
-                        Территория отеля:
-                      </h3>
-                      <div className="text-base text-[#6B7280]">
-                        {formatList((hotel as ExtendedHotel).territory!)}
-                      </div>
-                    </div>
-                  )}
-
-                  {(hotel as ExtendedHotel).inroom && (
-                    <div>
-                      <h3 className="text-lg font-semibold text-[#2E2E32]">
-                        В номере:
-                      </h3>
-                      <div className="text-base text-[#6B7280]">
-                        {formatList((hotel as ExtendedHotel).inroom!)}
-                      </div>
-                    </div>
-                  )}
-
-                  {(hotel as ExtendedHotel).roomtypes && (
-                    <div>
-                      <h3 className="text-lg font-semibold text-[#2E2E32]">
-                        Типы номеров:
-                      </h3>
-                      <div className="text-base text-[#6B7280]">
-                        {formatList((hotel as ExtendedHotel).roomtypes!)}
-                      </div>
-                    </div>
-                  )}
-
-                  {(hotel as ExtendedHotel).services && (
-                    <div>
-                      <h3 className="text-lg font-semibold text-[#2E2E32]">
-                        Услуги отеля:
-                      </h3>
-                      <div className="text-base text-[#6B7280]">
-                        {Array.isArray((hotel as ExtendedHotel).services)
-                          ? (
-                              (hotel as ExtendedHotel).services as string[]
-                            ).join(", ")
-                          : formatList(
-                              (hotel as ExtendedHotel).services as string
-                            )}
-                      </div>
-                    </div>
-                  )}
-
-                  {(hotel as ExtendedHotel).meallist && (
-                    <div>
-                      <h3 className="text-lg font-semibold text-[#2E2E32]">
-                        Питание:
-                      </h3>
-                      <div className="text-base text-[#6B7280]">
-                        {formatList((hotel as ExtendedHotel).meallist!)}
-                      </div>
-                    </div>
-                  )}
-
-                  {(hotel as ExtendedHotel).build && (
-                    <div>
-                      <h3 className="text-lg font-semibold text-[#2E2E32]">
-                        Год постройки:
-                      </h3>
-                      <div className="text-base text-[#6B7280]">
-                        {(hotel as ExtendedHotel).build}
-                      </div>
-                    </div>
-                  )}
-                </div>
+                <HotelDetailedInfo hotel={hotel} />
               </div>
 
               {/* Варианты туров */}
               <div className="w-[45%]">
                 <div className="flex justify-between items-center">
-                  <div className="flex items-center gap-2">
-                    <div className="flex items-center gap-0.5">
-                      {Array.from({ length: 5 }).map((_, i) => (
-                        <img
-                          key={i}
-                          src={
-                            i < parseInt(hotel.stars) ? starFilled : starOutline
-                          }
-                          alt={
-                            i < parseInt(hotel.stars)
-                              ? "filled star"
-                              : "outline star"
-                          }
-                          className="w-4 h-4"
-                        />
-                      ))}
+                  <div className="flex items-baseline justify-between w-full text-base text-[#6B7280]">
+                    <div className="flex flex-col gap-1">
+                      <h3 className="text-2xl font-semibold text-[#2E2E32]">
+                        Варианты туров
+                      </h3>
+                      <p className="text-lg text-[#6B7280]">
+                        {hotel.country}, {hotel.region}
+                      </p>
                     </div>
-                    {hotel.rating !== "0" && (
-                      <div className="bg-[#FF621F] text-white text-xs font-medium px-2 py-0.5 rounded-[20px]">
-                        {hotel.rating.length === 1
-                          ? `${hotel.rating}.0`
-                          : hotel.rating}
+                    <div className="flex flex-col gap-1">
+                      <div className="flex items-center gap-1">
+                        <span className="text-[#FF621F] text-lg">
+                          вылет из {getDepartureCity()}
+                        </span>
+                        <img
+                          src={planeDeparture}
+                          alt="Plane Departure"
+                          className="w-5 h-5"
+                        />
                       </div>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-2 text-base text-[#6B7280]">
-                    <span className="text-[#FF621F] text-base">
-                      вылет из {getDepartureCity()}
-                    </span>
-                    <img
-                      src={planeDeparture}
-                      alt="Plane Departure"
-                      className="w-4 h-4"
-                    />
+
+                      <div className="flex gap-3 justify-end">
+                        {/* Добавляем проверку безопасности */}
+                        {selectedTours[0]?.tours?.tour?.[0]?.meal && (
+                          <div className="flex items-center gap-1">
+                            <span className="text-base text-[#2E2E32]">
+                              {getMealType(selectedTours[0].tours.tour[0].meal)}
+                            </span>
+                            <FaUtensils className="w-3.5 h-3.5 text-[#2E2E32]" />
+                          </div>
+                        )}
+                        {hotel.beach && (
+                          <div className="flex items-center gap-1">
+                            <span className="text-base text-[#2E2E32]">
+                              Береговая линия
+                            </span>
+                            <FaUmbrellaBeach className="w-3.5 h-3.5 text-[#2E2E32]" />
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </div>
                 <div className="flex flex-col">
-                  <h1 className="text-xl font-bold text-[#2E2E32]">
-                    {hotel.name}
-                  </h1>
-                  <div className="flex justify-between items-center pb-1">
-                    <p className="text-base text-[#6B7280]">
-                      {hotel.country}, {hotel.region}
-                    </p>
-                    <div className="flex gap-3">
-                      {/* Добавляем проверку безопасности */}
-                      {selectedTours[0]?.tours?.tour?.[0]?.meal && (
-                        <div className="flex items-center gap-1">
-                          <span className="text-sm text-[#2E2E32]">
-                            {getMealType(selectedTours[0].tours.tour[0].meal)}
-                          </span>
-                          <FaUtensils className="w-3.5 h-3.5 text-[#2E2E32]" />
-                        </div>
-                      )}
-                      {hotel.beach && (
-                        <div className="flex items-center gap-1">
-                          <span className="text-sm text-[#2E2E32]">
-                            Береговая линия
-                          </span>
-                          <FaUmbrellaBeach className="w-3.5 h-3.5 text-[#2E2E32]" />
-                        </div>
-                      )}
-                    </div>
-                  </div>
+                  <div className="flex justify-between items-center pb-1"></div>
                 </div>
                 {/* Варианты туров */}
-                <div className="mt-6">
-                  <h3 className="text-lg font-semibold text-[#2E2E32] mb-3">
-                    Варианты туров
-                  </h3>
+                <div className="mt-2">
                   <div className="space-y-2">
                     {(() => {
                       // Подсчитываем общее количество вариантов
@@ -835,7 +762,7 @@ export default function HotelToursInfo() {
                             ...tour,
                             tours: {
                               ...tour.tours,
-                              tour: tour.tours.tour.slice(0, 7),
+                              tour: tour.tours.tour.slice(0, 4),
                             },
                           }));
 
@@ -1072,6 +999,29 @@ export default function HotelToursInfo() {
           </div>
         </div>
       </div>
+
+      {/* Секция с картой */}
+      {latitude && longitude && (
+        <div className="w-full bg-white">
+          <div className="max-w-[1440px] mx-auto py-6">
+            <h2 className="text-2xl font-bold text-[#2E2E32] mb-4">
+              Местоположение
+            </h2>
+            <div className="w-full h-[600px] rounded-xl overflow-hidden border border-gray-200">
+              <iframe
+                src={`https://yandex.ru/map-widget/v1/?ll=${longitude}%2C${latitude}&z=17&pt=${longitude}%2C${latitude}%2Cpm2rdm`}
+                width="100%"
+                height="100%"
+                frameBorder="0"
+                allowFullScreen
+                title={`Карта местоположения отеля ${hotel?.name}`}
+                className="w-full h-full"
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
       <Lightbox
         open={isOpen}
         close={() => {

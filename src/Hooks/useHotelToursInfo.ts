@@ -17,6 +17,8 @@ interface HotelData {
   services: string[];
   meal: string;
   beach: string;
+  coord1?: string; // широта
+  coord2?: string; // долгота
   // ... другие поля
 }
 

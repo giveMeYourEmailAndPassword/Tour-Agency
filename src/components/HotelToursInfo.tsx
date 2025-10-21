@@ -14,7 +14,6 @@ import { ru } from "date-fns/locale";
 import { IoAirplane } from "react-icons/io5";
 import { FaUtensils } from "react-icons/fa";
 import { FaUmbrellaBeach } from "react-icons/fa";
-import { FaYoutube } from "react-icons/fa";
 import { useState, useEffect, useContext } from "react";
 import Lightbox from "yet-another-react-lightbox";
 import Thumbnails from "yet-another-react-lightbox/plugins/thumbnails";
@@ -44,28 +43,6 @@ interface Tour {
   currency: string;
 }
 
-interface ExtendedHotel {
-  name: string;
-  country: string;
-  region: string;
-  stars: string;
-  rating: string;
-  images: {
-    image: string[];
-  };
-  description?: string;
-  beach?: string;
-  placement?: string;
-  territory?: string;
-  inroom?: string;
-  roomtypes?: string;
-  services?: string | string[];
-  meallist?: string;
-  build?: string;
-  coord1?: string; // широта
-  coord2?: string; // долгота
-}
-
 export default function HotelToursInfo() {
   const location = useLocation();
   const [searchParams] = useSearchParams();
@@ -82,10 +59,12 @@ export default function HotelToursInfo() {
   const [selectedTours, setSelectedTours] = useState(
     location.state?.hotelTours || []
   );
-  const [hotelDescription] = useState(location.state?.hotelDescription || "");
+
+  // Добавляем отладочную информацию для selectedTours
+  console.log("🔍 Initial selectedTours:", selectedTours);
+  console.log("🔍 selectedTours.length:", selectedTours.length);
   const [isRestoringSearch, setIsRestoringSearch] = useState(false);
   const [showAllVariants, setShowAllVariants] = useState(false);
-  const [showDetailedInfo, setShowDetailedInfo] = useState(false);
 
   useEffect(() => {
     // Если нет данных в state, но есть параметры в URL - восстанавливаем поиск
@@ -151,12 +130,28 @@ export default function HotelToursInfo() {
     if (isRestoringSearch && tours.length > 0) {
       // Фильтруем туры только для текущего отеля
       const hotelCode = location.pathname.split("/")[2]; // Получаем hotelcode из URL
-      console.log("🏨 Hotel code from URL:", hotelCode);
-      console.log("📊 All tours before filtering:", tours);
-
-      const filteredTours = tours.filter(
-        (tour) => tour.hotelcode === hotelCode // Сравниваем строки
+      console.log(
+        "🏨 Hotel code from URL:",
+        hotelCode,
+        "type:",
+        typeof hotelCode
       );
+      console.log("📊 All tours before filtering:", tours);
+      console.log(
+        "📊 First tour hotelcode:",
+        tours[0]?.hotelcode,
+        "type:",
+        typeof tours[0]?.hotelcode
+      );
+
+      const filteredTours = tours.filter((tour) => {
+        const tourHotelCode = tour.hotelcode.toString();
+        const matches = tourHotelCode === hotelCode;
+        console.log(
+          `🔍 Comparing: ${tourHotelCode} === ${hotelCode} = ${matches}`
+        );
+        return matches;
+      });
 
       console.log("🎯 Filtered tours:", filteredTours);
 
@@ -175,7 +170,6 @@ export default function HotelToursInfo() {
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
 
   // Получаем координаты отеля для карты
-  const hotelCode = location.pathname.split("/")[2];
   const latitude = hotel?.coord1 ? Number(hotel.coord1) : null;
   const longitude = hotel?.coord2 ? Number(hotel.coord2) : null;
 
@@ -220,14 +214,6 @@ export default function HotelToursInfo() {
       RO: "Без питания",
     };
     return mealTypes[meal] || meal;
-  };
-
-  // Функция для форматирования строк с разделителями
-  const formatList = (text: string) => {
-    return text
-      .split(";")
-      .map((item) => item.trim())
-      .join(", ");
   };
 
   const slides =
@@ -338,18 +324,6 @@ export default function HotelToursInfo() {
       default:
         return "Бишкека"; // значение по умолчанию
     }
-  };
-
-  // Функция для открытия YouTube с поиском обзора отеля
-  const handleYouTubeSearch = () => {
-    if (!hotel?.name) return;
-
-    const searchQuery = `${hotel.name} ${hotel.country} ${hotel.region} обзор отель`;
-    const youtubeUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(
-      searchQuery
-    )}`;
-
-    window.open(youtubeUrl, "_blank", "noopener,noreferrer");
   };
 
   if (isLoading || isRestoringSearch) {
@@ -570,6 +544,12 @@ export default function HotelToursInfo() {
 
   // Проверяем, есть ли туры для отображения
   if (!selectedTours || selectedTours.length === 0) {
+    console.log("❌ No tours found - selectedTours:", selectedTours);
+    console.log("❌ selectedTours.length:", selectedTours?.length);
+    console.log("❌ isRestoringSearch:", isRestoringSearch);
+    console.log("❌ tours from context:", tours);
+    console.log("❌ tours.length:", tours.length);
+
     return (
       <div className="min-h-screen flex flex-col md:bg-white bg-gray-100">
         <Header />
@@ -580,6 +560,9 @@ export default function HotelToursInfo() {
                 Информация об отеле
               </h2>
               <p>Туры для данного отеля не найдены или загружаются...</p>
+              <p className="text-sm mt-2">
+                Debug: selectedTours.length = {selectedTours?.length || 0}
+              </p>
             </div>
           </div>
         </div>

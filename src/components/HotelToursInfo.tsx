@@ -580,7 +580,13 @@ export default function HotelToursInfo() {
             {/* Галерея и контент */}
             <div className="flex justify-between gap-2">
               <div className="flex flex-col gap-1 flex-[1]">
-                <div className="flex items-center gap-2 mb-2">
+                <div
+                  className={`${
+                    hotel.name.length > 30
+                      ? "flex flex-col items-start gap-1 mb-2"
+                      : "flex items-center gap-3 mb-2"
+                  }`}
+                >
                   <h1 className="text-3xl font-bold text-[#2E2E32]">
                     {hotel.name}
                   </h1>
@@ -691,7 +697,7 @@ export default function HotelToursInfo() {
                       </p>
                     </div>
                     <div className="flex flex-col gap-1">
-                      <div className="flex items-center gap-1">
+                      <div className="flex items-center justify-end gap-1">
                         <span className="text-[#FF621F] text-lg">
                           вылет из {getDepartureCity()}
                         </span>

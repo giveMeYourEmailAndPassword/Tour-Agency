@@ -48,9 +48,24 @@ export default function SimilarHotTours({
     departurecode
   );
 
-  const formatDate = (dateString: string) => {
-    const date = parse(dateString, "dd.MM.yyyy", new Date());
-    return format(date, "d MMMM", { locale: ru });
+  const formatDateRange = (startDate: string, nights: number) => {
+    const start = parse(startDate, "dd.MM.yyyy", new Date());
+    const end = addDays(start, nights);
+
+    const startMonth = format(start, "MMMM", { locale: ru });
+    const endMonth = format(end, "MMMM", { locale: ru });
+
+    if (startMonth === endMonth) {
+      const startDay = format(start, "d", { locale: ru });
+      const endDay = format(end, "d", { locale: ru });
+      return `${startDay} - ${endDay} ${startMonth}`;
+    } else {
+      return `${format(start, "d MMMM", { locale: ru })} - ${format(
+        end,
+        "d MMMM",
+        { locale: ru }
+      )}`;
+    }
   };
 
   const getMealType = (meal: string) => {
@@ -224,8 +239,7 @@ export default function SimilarHotTours({
                 </div>
                 <div className="flex flex-col items-end">
                   <span className="text-xs font-bold text-[#2E2E32]">
-                    {formatDate(tour.flydate)} -{" "}
-                    {getEndDate(tour.flydate, parseInt(tour.nights))}
+                    {formatDateRange(tour.flydate, parseInt(tour.nights))}
                   </span>
                   <span className="text-sm text-[#6B7280]">
                     кол-во ночей: {tour.nights}

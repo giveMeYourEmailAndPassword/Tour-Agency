@@ -4,11 +4,12 @@ import { Skeleton } from "@heroui/react";
 import starFilled from "../assets/star_fill.svg";
 import starOutline from "../assets/star_unfill.svg";
 import utensils from "../assets/utensils.svg";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { DataContext } from "./DataProvider";
 import { useNavigate } from "react-router-dom";
 import SwiperHotTours from "./SwiperHotTours";
 import SwiperRandomTours from "./SwiperRandomTours";
+import PriceChart from "./PriceChart";
 import React from "react";
 
 interface Tour {
@@ -24,7 +25,6 @@ interface Tour {
   hoteldescription?: string;
   tours: {
     tour: Array<{
-      tourid: string;
       meal: string;
       flydate: string;
       nights: number;
@@ -79,6 +79,27 @@ const getMealType = (meal: string) => {
 export default function SearchResults() {
   const { tours, loading, error, params } = useContext(DataContext);
   const navigate = useNavigate();
+  const [selectedDay, setSelectedDay] = useState<number | null>(null);
+
+  // Функция для фильтрации туров по дню недели
+  const filterToursByDay = (tours: Tour[], dayOfWeek: number | null) => {
+    if (!dayOfWeek) return tours;
+
+    return tours.filter((tour) => {
+      return tour.tours.tour.some((t) => {
+        try {
+          const date = parse(t.flydate, "dd.MM.yyyy", new Date());
+          const tourDayOfWeek = date.getDay();
+          const normalizedTourDay = tourDayOfWeek === 0 ? 7 : tourDayOfWeek;
+          return normalizedTourDay === dayOfWeek;
+        } catch {
+          return false;
+        }
+      });
+    });
+  };
+
+  const filteredTours = filterToursByDay(tours, selectedDay);
 
   if (loading) {
     return (
@@ -280,10 +301,62 @@ export default function SearchResults() {
       </div>
     </div>
   );
+
+  // Подготавливаем данные для диаграммы
+  const chartData = tours.flatMap((tour) =>
+    tour.tours.tour.map((t) => ({
+      flydate: t.flydate,
+      price: parseInt(tour.price),
+      currency: tour.currency,
+    }))
+  );
+
+  const handleDaySelect = (dayOfWeek: number) => {
+    setSelectedDay(selectedDay === dayOfWeek ? null : dayOfWeek);
+  };
+
   return (
-    <div className="mx-2 md:mx-0 md:ml-2 flex-grow pb-4">
+    <div className="mx-2 md:mx-0 flex-grow pb-4">
+      {/* Календарь цен в самом верху */}
+      <div className="w-full mb-2">
+        <PriceChart
+          tours={chartData}
+          onDaySelect={handleDaySelect}
+          selectedDay={selectedDay}
+        />
+      </div>
+
+      {/* Индикатор фильтрации */}
+      {selectedDay && (
+        <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-blue-800">
+              Показаны туры для:{" "}
+              {
+                [
+                  "",
+                  "Понедельник",
+                  "Вторник",
+                  "Среда",
+                  "Четверг",
+                  "Пятница",
+                  "Суббота",
+                  "Воскресенье",
+                ][selectedDay]
+              }
+            </span>
+            <button
+              onClick={() => setSelectedDay(null)}
+              className="text-blue-600 hover:text-blue-800 text-sm underline"
+            >
+              Сбросить фильтр
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-2">
-        {tours.map((tour: Tour, index: number) => {
+        {filteredTours.map((tour: Tour, index: number) => {
           const shouldShowHotTours = index === 7; // Показываем после 8-го тура
           const shouldShowRandomTours = index === 15; // Показываем после 16-го тура
 

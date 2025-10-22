@@ -326,35 +326,6 @@ export default function SearchResults() {
         />
       </div>
 
-      {/* Индикатор фильтрации */}
-      {selectedDay && (
-        <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-blue-800">
-              Показаны туры для:{" "}
-              {
-                [
-                  "",
-                  "Понедельник",
-                  "Вторник",
-                  "Среда",
-                  "Четверг",
-                  "Пятница",
-                  "Суббота",
-                  "Воскресенье",
-                ][selectedDay]
-              }
-            </span>
-            <button
-              onClick={() => setSelectedDay(null)}
-              className="text-blue-600 hover:text-blue-800 text-sm underline"
-            >
-              Сбросить фильтр
-            </button>
-          </div>
-        </div>
-      )}
-
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-2">
         {filteredTours.map((tour: Tour, index: number) => {
           const shouldShowHotTours = index === 7; // Показываем после 8-го тура

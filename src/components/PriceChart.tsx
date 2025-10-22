@@ -1,5 +1,6 @@
 import { parse } from "date-fns";
 import { useState } from "react";
+import { Tooltip } from "@heroui/react";
 
 interface TourData {
   flydate: string;
@@ -95,11 +96,13 @@ export default function PriceChart({
 
   if (prices.length === 0) {
     return (
-      <div className="w-full bg-white border border-[#DBE0E5] rounded-[10px] p-4">
-        <h3 className="text-lg font-bold text-[#2E2E32] mb-4">
+      <div className="w-full bg-white border border-[#DBE0E5] rounded-xl p-6">
+        <h3 className="text-xl font-semibold text-[#2E2E32] mb-6">
           Цены по дням вылета
         </h3>
-        <div className="text-center text-gray-500">Нет данных о ценах</div>
+        <div className="text-center text-gray-500 text-base py-8">
+          Нет данных о ценах
+        </div>
       </div>
     );
   }
@@ -109,7 +112,7 @@ export default function PriceChart({
 
   // Используем логарифмическую шкалу для более равномерного распределения высот
   const calculateHeight = (price: number) => {
-    if (maxPrice === minPrice) return 100; // Если все цены одинаковые
+    if (maxPrice === minPrice) return 120; // Если все цены одинаковые
 
     // Логарифмическая формула для более равномерного распределения
     const logMin = Math.log(minPrice);
@@ -122,71 +125,92 @@ export default function PriceChart({
     // Применяем квадратный корень для еще более равномерного распределения
     const smoothed = Math.sqrt(normalized);
 
-    // Масштабируем от 40px до 100px (минимальная высота для цен - 40px)
-    return 40 + smoothed * 60;
+    // Масштабируем от 50px до 120px (минимальная высота для цен - 50px)
+    return 50 + smoothed * 50;
   };
 
   const formatPrice = (price: number, currency: string) => {
     switch (currency) {
       case "USD":
-        return `$${price}`;
+        return `${price}$`;
       case "EUR":
-        return `€${price}`;
+        return `${price}€`;
       default:
         return `${price} ${currency}`;
     }
   };
 
   return (
-    <div className="w-full bg-white border border-[#DBE0E5] rounded-[10px] p-4">
-      <h3 className="text-lg font-bold text-[#2E2E32] mb-4">
+    <div className="w-full bg-white border border-[#DBE0E5] rounded-xl p-6">
+      <h3 className="text-xl font-semibold text-[#2E2E32] mb-6">
         Цены по дням вылета
       </h3>
 
-      <div className="flex items-end justify-between h-32 gap-1">
+      <div className="flex items-end justify-between h-40 gap-2 relative">
         {chartData.map((day, index) => (
           <div
             key={index}
-            className="flex flex-col items-center flex-1 relative"
+            className="flex flex-col items-center flex-1 relative group"
           >
-            {/* Tooltip при наведении */}
-            {hoveredDay === day.dayOfWeek && day.hasData && (
-              <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 bg-[#2E2E32] text-white text-xs px-2 py-1 rounded whitespace-nowrap z-10">
-                <div className="font-medium">{day.dayName}</div>
-                <div>от {formatPrice(day.minPrice!, day.currency)}</div>
-                <div className="text-xs opacity-75">{day.sampleDate}</div>
-                {/* Стрелка вниз */}
-                <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-2 border-r-2 border-t-2 border-transparent border-t-[#2E2E32]"></div>
-              </div>
-            )}
-
             {/* Столбец диаграммы */}
-            <div className="w-full flex flex-col items-center justify-end h-24 mb-2">
+            <div className="w-full flex flex-col items-center justify-end h-32 mb-3">
               {day.hasData ? (
-                <div
-                  className={`w-full rounded-t cursor-pointer transition-all duration-200 ${
-                    selectedDay === day.dayOfWeek
-                      ? "bg-[#FF621F] opacity-100"
-                      : hoveredDay === day.dayOfWeek
-                      ? "bg-[#FF621F] opacity-80"
-                      : "bg-[#FF621F] opacity-60"
-                  }`}
-                  style={{
-                    height: `${calculateHeight(day.minPrice!)}px`,
-                    minHeight: "4px",
+                <Tooltip
+                  content={
+                    <div className="flex flex-col items-center">
+                      <div className="font-medium text-base flex items-center gap-2">
+                        {day.dayName} от{" "}
+                        {formatPrice(day.minPrice!, day.currency)}
+                      </div>
+                      <div className="text-sm">{day.sampleDate}</div>
+                    </div>
+                  }
+                  placement={
+                    index === 0
+                      ? "top-start"
+                      : index === chartData.length - 1
+                      ? "top-end"
+                      : "top"
+                  }
+                  color="primary"
+                  classNames={{
+                    base: "before:bg-[#FF621F] before:border-none before:shadow-none border-none shadow-none",
+                    content:
+                      "bg-[#FF621F] text-white before:border-none before:shadow-none border-none shadow-none",
                   }}
-                  onMouseEnter={() => setHoveredDay(day.dayOfWeek)}
-                  onMouseLeave={() => setHoveredDay(null)}
-                  onClick={() => onDaySelect?.(day.dayOfWeek)}
-                />
+                  showArrow
+                  isDisabled={!day.hasData}
+                  onOpenChange={(isOpen) => {
+                    if (isOpen) {
+                      setHoveredDay(day.dayOfWeek);
+                    } else {
+                      setHoveredDay(null);
+                    }
+                  }}
+                >
+                  <div
+                    className={`w-full rounded-t-lg cursor-pointer transition-all duration-300 ease-out ${
+                      selectedDay === day.dayOfWeek
+                        ? "bg-[#FF621F]"
+                        : hoveredDay === day.dayOfWeek
+                        ? "bg-[#ff621fef]"
+                        : "bg-[#ff621f8f]"
+                    }`}
+                    style={{
+                      height: `${calculateHeight(day.minPrice!)}px`,
+                      minHeight: "6px",
+                    }}
+                    onClick={() => onDaySelect?.(day.dayOfWeek)}
+                  />
+                </Tooltip>
               ) : (
-                <div className="w-full bg-gray-300 rounded-t h-1" />
+                <div className="w-full bg-gray-100 rounded-t-lg h-2" />
               )}
             </div>
 
             {/* Название дня */}
             <div
-              className={`text-xs font-medium transition-colors ${
+              className={`text-sm font-medium transition-colors duration-200 ${
                 selectedDay === day.dayOfWeek
                   ? "text-[#FF621F]"
                   : "text-[#6B7280]"
@@ -198,13 +222,13 @@ export default function PriceChart({
             {/* Цена */}
             {day.hasData && (
               <div
-                className={`text-xs font-bold mt-1 transition-colors ${
+                className={`text-sm font-bold transition-colors duration-200 ${
                   selectedDay === day.dayOfWeek
                     ? "text-[#FF621F]"
                     : "text-[#2E2E32]"
                 }`}
               >
-                {formatPrice(day.minPrice!, day.currency)}
+                от {formatPrice(day.minPrice!, day.currency)}
               </div>
             )}
           </div>

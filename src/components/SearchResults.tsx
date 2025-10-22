@@ -11,6 +11,7 @@ import SwiperHotTours from "./SwiperHotTours";
 import SwiperRandomTours from "./SwiperRandomTours";
 import PriceChart from "./PriceChart";
 import React from "react";
+import { TbCrown } from "react-icons/tb";
 
 interface Tour {
   hotelcode: string;
@@ -76,10 +77,33 @@ const getMealType = (meal: string) => {
   return mealTypes[meal] || meal;
 };
 
+// Оранжевая плашка "Рекомендуем" для отелей с рейтингом > 3.7
+const RecommendBadge = () => (
+  <div
+    className="
+      absolute top-2 right-1 
+      bg-[#FF621F] text-white text-sm font-semibold
+      px-3 py-1 rounded-[20px] shadow-md z-10
+      select-none
+      "
+    style={{
+      letterSpacing: "0.04em",
+      boxShadow: "0 2px 6px 0 rgba(255,98,31,0.14)",
+      pointerEvents: "none",
+    }}
+  >
+    <div className="flex items-center gap-1">
+      <span>Рекомендуем</span>
+      <TbCrown className="w-5 h-5" />
+    </div>
+  </div>
+);
+
 export default function SearchResults() {
   const { tours, loading, error, params } = useContext(DataContext);
   const navigate = useNavigate();
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
+  const [priceFilter, setPriceFilter] = useState<string>("popular");
 
   // Функция для фильтрации туров по дню недели
   const filterToursByDay = (tours: Tour[], dayOfWeek: number | null) => {
@@ -99,7 +123,40 @@ export default function SearchResults() {
     });
   };
 
-  const filteredTours = filterToursByDay(tours, selectedDay);
+  // Функция для сортировки туров по выбранному фильтру
+  const sortTours = (tours: Tour[], filter: string) => {
+    const sortedTours = [...tours];
+
+    switch (filter) {
+      case "rating":
+        return sortedTours.sort((a, b) => {
+          const ratingA = parseFloat(a.hotelrating) || 0;
+          const ratingB = parseFloat(b.hotelrating) || 0;
+          return ratingB - ratingA; // По убыванию рейтинга
+        });
+
+      case "price-asc":
+        return sortedTours.sort((a, b) => {
+          const priceA = parseInt(a.price) || 0;
+          const priceB = parseInt(b.price) || 0;
+          return priceA - priceB; // По возрастанию цены
+        });
+
+      case "price-desc":
+        return sortedTours.sort((a, b) => {
+          const priceA = parseInt(a.price) || 0;
+          const priceB = parseInt(b.price) || 0;
+          return priceB - priceA; // По убыванию цены
+        });
+
+      case "popular":
+      default:
+        return sortedTours; // Оставляем как есть (популярные)
+    }
+  };
+
+  const sortedTours = sortTours(tours, priceFilter);
+  const filteredTours = filterToursByDay(sortedTours, selectedDay);
 
   if (loading) {
     return (
@@ -157,153 +214,166 @@ export default function SearchResults() {
   }
 
   // Функция для рендеринга тура
-  const renderTour = (tour: Tour, index: number) => (
-    <div
-      key={index}
-      onClick={() => {
-        const hotelTours = tours.filter((t) => t.hotelcode === tour.hotelcode);
+  const renderTour = (tour: Tour, index: number) => {
+    // Определяем, показывать ли плашку "Рекомендуем"
+    const showRecommendBadge =
+      typeof tour.hotelrating === "string" &&
+      parseFloat(tour.hotelrating.replace(",", ".")) > 3.7;
 
-        // Создаем URLSearchParams для передачи параметров поиска
-        const searchParams = new URLSearchParams();
+    return (
+      <div
+        key={index}
+        onClick={() => {
+          const hotelTours = tours.filter(
+            (t) => t.hotelcode === tour.hotelcode
+          );
 
-        // Добавляем параметры поиска в URL
-        if (params.param1)
-          searchParams.set("departure", params.param1.toString());
-        if (params.param2)
-          searchParams.set("country", params.param2.toString());
+          // Создаем URLSearchParams для передачи параметров поиска
+          const searchParams = new URLSearchParams();
 
-        // Добавляем параметр для регионов
-        if (params.param2Regions?.length) {
-          searchParams.set("regions", params.param2Regions.join(","));
-        }
+          // Добавляем параметры поиска в URL
+          if (params.param1)
+            searchParams.set("departure", params.param1.toString());
+          if (params.param2)
+            searchParams.set("country", params.param2.toString());
 
-        if (params.param3?.startDay)
-          searchParams.set("nightsFrom", params.param3.startDay.toString());
-        if (params.param3?.endDay)
-          searchParams.set("nightsTo", params.param3.endDay.toString());
-        if (params.param4?.startDate)
-          searchParams.set("dateFrom", params.param4.startDate);
-        if (params.param4?.endDate)
-          searchParams.set("dateTo", params.param4.endDate);
-        if (params.param5?.adults)
-          searchParams.set("adults", params.param5.adults.toString());
-        if (params.param5?.childrenList?.length) {
-          searchParams.set("children", params.param5.childrenList.join(","));
-        }
-        if (params.param6?.length)
-          searchParams.set("hotelTypes", params.param6.join(","));
-        if (params.param7?.length) searchParams.set("meal", params.param7[0]);
-        if (params.param8?.length) searchParams.set("rating", params.param8[0]);
-        if (params.param9) {
-          // Если param9 - это массив, объединяем его через запятую
-          if (Array.isArray(params.param9)) {
-            searchParams.set("stars", params.param9.join(","));
-          } else {
-            // Если это одно число, используем его как есть
-            searchParams.set("stars", params.param9.toString());
+          // Добавляем параметр для регионов
+          if (params.param2Regions?.length) {
+            searchParams.set("regions", params.param2Regions.join(","));
           }
-        }
-        if (params.param10?.length)
-          searchParams.set("services", params.param10.join(","));
 
-        // Формируем полный URL с параметрами
-        const urlWithParams = `/hotel/${
-          tour.hotelcode
-        }?${searchParams.toString()}`;
+          if (params.param3?.startDay)
+            searchParams.set("nightsFrom", params.param3.startDay.toString());
+          if (params.param3?.endDay)
+            searchParams.set("nightsTo", params.param3.endDay.toString());
+          if (params.param4?.startDate)
+            searchParams.set("dateFrom", params.param4.startDate);
+          if (params.param4?.endDate)
+            searchParams.set("dateTo", params.param4.endDate);
+          if (params.param5?.adults)
+            searchParams.set("adults", params.param5.adults.toString());
+          if (params.param5?.childrenList?.length) {
+            searchParams.set("children", params.param5.childrenList.join(","));
+          }
+          if (params.param6?.length)
+            searchParams.set("hotelTypes", params.param6.join(","));
+          if (params.param7?.length) searchParams.set("meal", params.param7[0]);
+          if (params.param8?.length)
+            searchParams.set("rating", params.param8[0]);
+          if (params.param9) {
+            // Если param9 - это массив, объединяем его через запятую
+            if (Array.isArray(params.param9)) {
+              searchParams.set("stars", params.param9.join(","));
+            } else {
+              // Если это одно число, используем его как есть
+              searchParams.set("stars", params.param9.toString());
+            }
+          }
+          if (params.param10?.length)
+            searchParams.set("services", params.param10.join(","));
 
-        navigate(urlWithParams, {
-          state: {
-            hotelTours: hotelTours,
-            hotelDescription: tour.hoteldescription,
-          },
-        });
-      }}
-      className="w-full flex items-center gap-2.5 p-4 bg-white border border-[#DBE0E5] rounded-[10px] cursor-pointer transition-all duration-300"
-    >
-      <div className="w-full flex flex-col gap-2">
-        {/* Изображение */}
-        <div className="w-full h-44 md:h-36 rounded">
-          <img
-            src={tour.picturelink}
-            alt={tour.hotelname}
-            className="w-full h-full object-cover rounded"
-          />
-        </div>
+          // Формируем полный URL с параметрами
+          const urlWithParams = `/hotel/${
+            tour.hotelcode
+          }?${searchParams.toString()}`;
 
-        {/* Информация об отеле */}
+          navigate(urlWithParams, {
+            state: {
+              hotelTours: hotelTours,
+              hotelDescription: tour.hoteldescription,
+            },
+          });
+        }}
+        className="w-full flex items-center gap-2.5 p-4 bg-white border border-[#DBE0E5] rounded-[10px] cursor-pointer transition-all duration-300"
+      >
         <div className="w-full flex flex-col gap-2">
-          <div className="w-full flex justify-between items-center gap-1">
-            <div className="flex items-center gap-0.5">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <img
-                  key={i}
-                  src={i < parseInt(tour.hotelstars) ? starFilled : starOutline}
-                  alt={
-                    i < parseInt(tour.hotelstars)
-                      ? "filled star"
-                      : "outline star"
-                  }
-                  className="w-4 h-4"
-                />
-              ))}
-              {tour.hotelrating !== "0" && (
-                <div className="bg-[#FF621F] text-white text-xs font-medium px-1 rounded-[20px] ml-0.5">
-                  {tour.hotelrating.length === 1
-                    ? `${tour.hotelrating}.0`
-                    : tour.hotelrating}
-                </div>
-              )}
+          {/* Изображение */}
+          <div className="w-full h-44 md:h-36 rounded relative">
+            {showRecommendBadge && <RecommendBadge />}
+            <img
+              src={tour.picturelink}
+              alt={tour.hotelname}
+              className="w-full h-full object-cover rounded"
+            />
+          </div>
+
+          {/* Информация об отеле */}
+          <div className="w-full flex flex-col gap-2">
+            <div className="w-full flex justify-between items-center gap-1">
+              <div className="flex items-center gap-0.5">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <img
+                    key={i}
+                    src={
+                      i < parseInt(tour.hotelstars) ? starFilled : starOutline
+                    }
+                    alt={
+                      i < parseInt(tour.hotelstars)
+                        ? "filled star"
+                        : "outline star"
+                    }
+                    className="w-4 h-4"
+                  />
+                ))}
+                {tour.hotelrating !== "0" && (
+                  <div className="bg-[#FF621F] text-white text-xs font-medium px-1 rounded-[20px] ml-0.5">
+                    {tour.hotelrating.length === 1
+                      ? `${tour.hotelrating}.0`
+                      : tour.hotelrating}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div>
+              <h3 className="text-[#2E2E32] text-lg font-bold leading-[1.22]">
+                {truncateHotelName(tour.hotelname)}
+              </h3>
+              <p className="text-[#6B7280] text-base leading-[1.29]">
+                {tour.countryname}, {tour.regionname}
+              </p>
             </div>
           </div>
 
-          <div>
-            <h3 className="text-[#2E2E32] text-lg font-bold leading-[1.22]">
-              {truncateHotelName(tour.hotelname)}
-            </h3>
-            <p className="text-[#6B7280] text-base leading-[1.29]">
-              {tour.countryname}, {tour.regionname}
-            </p>
+          {/* Теги */}
+          <div className="w-full flex items-center gap-3 pb-1 border-b border-[#DBE0E5]">
+            <div className="flex items-center gap-1">
+              <span className="text-sm text-[#2E2E32]">
+                {getMealType(tour.tours.tour[0].meal)}
+              </span>
+              <img src={utensils} alt="meal" className="w-3.5 h-3.5" />
+            </div>
           </div>
-        </div>
 
-        {/* Теги */}
-        <div className="w-full flex items-center gap-3 pb-1 border-b border-[#DBE0E5]">
-          <div className="flex items-center gap-1">
-            <span className="text-sm text-[#2E2E32]">
-              {getMealType(tour.tours.tour[0].meal)}
+          {/* Цена и даты */}
+          <div className="w-full flex justify-between items-center">
+            <span className="text-xl font-bold text-[#2E2E32]">
+              {tour.price}
+              {tour.currency === "EUR"
+                ? "€"
+                : tour.currency === "USD"
+                ? "$"
+                : tour.currency}
             </span>
-            <img src={utensils} alt="meal" className="w-3.5 h-3.5" />
-          </div>
-        </div>
-
-        {/* Цена и даты */}
-        <div className="w-full flex justify-between items-center">
-          <span className="text-xl font-bold text-[#2E2E32]">
-            {tour.price}
-            {tour.currency === "EUR"
-              ? "€"
-              : tour.currency === "USD"
-              ? "$"
-              : tour.currency}
-          </span>
-          <div className="flex flex-col items-end">
-            <span className="text-xs font-bold text-[#2E2E32]">
-              {formatDateRange(
-                tour.tours.tour[0].flydate,
-                tour.tours.tour[0].nights
-              )}
-            </span>
-            <span className="text-sm text-[#6B7280]">
-              кол-во ночей: {tour.tours.tour[0].nights}
-            </span>
+            <div className="flex flex-col items-end">
+              <span className="text-xs font-bold text-[#2E2E32]">
+                {formatDateRange(
+                  tour.tours.tour[0].flydate,
+                  tour.tours.tour[0].nights
+                )}
+              </span>
+              <span className="text-sm text-[#6B7280]">
+                кол-во ночей: {tour.tours.tour[0].nights}
+              </span>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  };
 
-  // Подготавливаем данные для диаграммы
-  const chartData = tours.flatMap((tour) =>
+  // Подготавливаем данные для диаграммы (используем отсортированные туры)
+  const chartData = sortedTours.flatMap((tour) =>
     tour.tours.tour.map((t) => ({
       flydate: t.flydate,
       price: parseInt(tour.price),
@@ -323,6 +393,8 @@ export default function SearchResults() {
           tours={chartData}
           onDaySelect={handleDaySelect}
           selectedDay={selectedDay}
+          onFilterChange={setPriceFilter}
+          currentFilter={priceFilter}
         />
       </div>
 

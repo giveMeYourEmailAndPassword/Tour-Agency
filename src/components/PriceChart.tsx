@@ -12,6 +12,8 @@ interface PriceChartProps {
   tours: TourData[];
   onDaySelect?: (dayOfWeek: number) => void;
   selectedDay?: number | null;
+  onFilterChange?: (filter: string) => void;
+  currentFilter?: string;
 }
 
 interface DayData {
@@ -28,6 +30,8 @@ export default function PriceChart({
   tours,
   onDaySelect,
   selectedDay,
+  onFilterChange,
+  currentFilter = "popular",
 }: PriceChartProps) {
   const [hoveredDay, setHoveredDay] = useState<number | null>(null);
   // Обработка данных для группировки по дням недели
@@ -112,7 +116,7 @@ export default function PriceChart({
 
   // Используем логарифмическую шкалу для более равномерного распределения высот
   const calculateHeight = (price: number) => {
-    if (maxPrice === minPrice) return 120; // Если все цены одинаковые
+    if (maxPrice === minPrice) return 70; // Если все цены одинаковые
 
     // Логарифмическая формула для более равномерного распределения
     const logMin = Math.log(minPrice);
@@ -126,7 +130,7 @@ export default function PriceChart({
     const smoothed = Math.sqrt(normalized);
 
     // Масштабируем от 50px до 120px (минимальная высота для цен - 50px)
-    return 50 + smoothed * 50;
+    return 30 + smoothed * 30;
   };
 
   const formatPrice = (price: number, currency: string) => {
@@ -140,11 +144,37 @@ export default function PriceChart({
     }
   };
 
+  const filterButtons = [
+    { key: "popular", label: "Сначала популярные" },
+    { key: "rating", label: "По рейтингу" },
+    { key: "price-asc", label: "По возрастанию цен" },
+    { key: "price-desc", label: "По убыванию цен" },
+  ];
+
   return (
     <div className="w-full bg-white border border-[#DBE0E5] rounded-xl p-6">
-      <h3 className="text-xl font-semibold text-[#2E2E32] mb-6">
-        Цены по дням вылета
-      </h3>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-4">
+        <h3 className="text-xl font-semibold text-[#2E2E32]">
+          Цены по дням вылета
+        </h3>
+
+        {/* Кнопки фильтров */}
+        <div className="flex flex-wrap gap-2">
+          {filterButtons.map((button) => (
+            <button
+              key={button.key}
+              onClick={() => onFilterChange?.(button.key)}
+              className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-all duration-200 ${
+                currentFilter === button.key
+                  ? "bg-[#FF621F] text-white"
+                  : "bg-gray-100 text-[#6B7280] hover:bg-gray-200"
+              }`}
+            >
+              {button.label}
+            </button>
+          ))}
+        </div>
+      </div>
 
       <div className="flex items-end justify-between h-40 gap-2 relative">
         {chartData.map((day, index) => (
@@ -153,7 +183,7 @@ export default function PriceChart({
             className="flex flex-col items-center flex-1 relative group"
           >
             {/* Столбец диаграммы */}
-            <div className="w-full flex flex-col items-center justify-end h-32 mb-3">
+            <div className="w-full flex flex-col items-center justify-end h-28 mb-3">
               {day.hasData ? (
                 <Tooltip
                   content={
@@ -204,7 +234,10 @@ export default function PriceChart({
                   />
                 </Tooltip>
               ) : (
-                <div className="w-full bg-gray-100 rounded-t-lg h-2" />
+                <>
+                  <div className="w-full bg-gray-100 rounded-t-lg h-2" />
+                  <div className="w-full h-5" />
+                </>
               )}
             </div>
 

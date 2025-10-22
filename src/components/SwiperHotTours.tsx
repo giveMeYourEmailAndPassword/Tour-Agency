@@ -79,6 +79,11 @@ export default function SwiperHotTours() {
     queryKey: ["hotTours", departureCity],
     queryFn: () => fetchHotTours(departureCity),
     enabled: !!departureCity,
+    staleTime: 5 * 60 * 1000, // 5 минут - данные считаются свежими
+    cacheTime: 10 * 60 * 1000, // 10 минут - данные хранятся в кэше
+    refetchOnWindowFocus: false, // Не делать запрос при фокусе на окне
+    refetchOnMount: false, // Не делать запрос при монтировании если данные есть
+    refetchOnReconnect: false, // Не делать запрос при восстановлении соединения
   });
 
   if (isLoading) {
@@ -241,7 +246,9 @@ export default function SwiperHotTours() {
                       ))}
                       {tour.hotelrating !== "0" && (
                         <div className="bg-white/30 text-white text-xs font-medium px-1.5 py-0.5 rounded-full ml-1">
-                          {tour.hotelrating}
+                          {tour.hotelrating.length === 1
+                            ? `${tour.hotelrating}.0`
+                            : tour.hotelrating}
                         </div>
                       )}
                     </div>

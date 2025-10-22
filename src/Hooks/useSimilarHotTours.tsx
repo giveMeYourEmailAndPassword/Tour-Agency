@@ -58,6 +58,9 @@ const useSimilarHotTours = (
     enabled: enabled && !!countrycode && !!departurecode,
     staleTime: 1000 * 60 * 5, // 5 минут
     gcTime: 1000 * 60 * 60, // 1 час
+    refetchOnWindowFocus: false, // Не делать запрос при фокусе на окне
+    refetchOnMount: false, // Не делать запрос при монтировании если данные есть
+    refetchOnReconnect: false, // Не делать запрос при восстановлении соединения
   });
 };
 

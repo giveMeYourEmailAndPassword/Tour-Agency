@@ -10,7 +10,6 @@ import {
   getCountryDeclension,
 } from "../PronounsOfTheCountry/PronounsOfTheCountry";
 import Header from "../../components/Header";
-
 export default function OurTours() {
   const {
     tours,

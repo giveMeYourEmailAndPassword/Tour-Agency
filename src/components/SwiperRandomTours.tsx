@@ -291,7 +291,9 @@ export default function SwiperRandomTours() {
                       ))}
                       {tour.hotelrating !== "0" && (
                         <div className="bg-white/30 text-white text-xs font-medium px-1.5 py-0.5 rounded-full ml-1">
-                          {tour.hotelrating}
+                          {tour.hotelrating.length === 1
+                            ? `${tour.hotelrating}.0`
+                            : tour.hotelrating}
                         </div>
                       )}
                     </div>

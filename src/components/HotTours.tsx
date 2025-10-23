@@ -284,16 +284,6 @@ export default function HotTours() {
     );
   }
 
-  const formatDate = (dateString: string) => {
-    const date = parse(dateString, "dd.MM.yyyy", new Date());
-    return format(date, "d MMMM", { locale: ru });
-  };
-
-  const getEndDate = (startDate: string, nights: number) => {
-    const date = parse(startDate, "dd.MM.yyyy", new Date());
-    return format(addDays(date, nights), "d MMMM", { locale: ru });
-  };
-
   // Добавить новую функцию для форматирования периода дат
   const formatDateRange = (startDate: string, nights: number) => {
     const start = parse(startDate, "dd.MM.yyyy", new Date());
@@ -487,8 +477,13 @@ export default function HotTours() {
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-2">
         {filteredTours.map((tour: any, index: number) => (
           <>
+            {index === 2 && (
+              <div className="xl:col-span-4 lg:col-span-2 col-span-1 md:hidden">
+                <GallaryCountries />
+              </div>
+            )}
             {index === 8 && (
-              <div className="xl:col-span-4 lg:col-span-2 col-span-1">
+              <div className="xl:col-span-4 lg:col-span-2 col-span-1 hidden md:block">
                 <GallaryCountries />
               </div>
             )}

@@ -26,6 +26,7 @@ import bookingIcon from "../assets/booking.svg";
 import { IoAirplane } from "react-icons/io5";
 import { Tour } from "../Types/Tour";
 import { DataContext } from "../components/DataProvider";
+import MobileSimilarHotTours from "../components/MobileSimilarHotTours";
 
 export default function HotelDetailsMobile() {
   const { hotelcode, tourId } = useParams();
@@ -144,6 +145,50 @@ export default function HotelDetailsMobile() {
                 </div>
               </div>
             </div>
+
+            {/* Skeleton для похожих туров */}
+            <div className="mt-4">
+              <div className="flex flex-col gap-2 bg-white rounded-xl px-3 py-2">
+                <div className="flex items-center gap-1">
+                  <Skeleton className="w-40 h-8 rounded" />
+                  <Skeleton className="w-6 h-6 rounded" />
+                </div>
+                <div className="relative">
+                  <div className="w-full">
+                    {Array.from({ length: 3 }).map((_, index) => (
+                      <div
+                        key={index}
+                        className="w-full p-3 bg-white border border-[#DBE0E5] rounded-[10px] mb-3"
+                      >
+                        <div className="w-full flex flex-col gap-2">
+                          <Skeleton className="w-full h-32 rounded" />
+                          <div className="w-full flex flex-col gap-2">
+                            <div className="w-full flex justify-between items-center gap-1">
+                              <div className="flex items-center gap-0.5">
+                                <Skeleton className="w-20 h-4" />
+                              </div>
+                              <Skeleton className="w-16 h-4" />
+                            </div>
+                            <Skeleton className="w-full h-5" />
+                            <Skeleton className="w-3/4 h-4" />
+                          </div>
+                          <div className="w-full flex items-center gap-3 pb-1 border-b border-[#DBE0E5]">
+                            <Skeleton className="w-16 h-4" />
+                          </div>
+                          <div className="w-full flex justify-between items-center">
+                            <Skeleton className="w-20 h-4" />
+                            <div className="flex flex-col items-end gap-1">
+                              <Skeleton className="w-24 h-3" />
+                              <Skeleton className="w-16 h-3" />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </>
@@ -163,6 +208,10 @@ export default function HotelDetailsMobile() {
 
   const hotel = data?.hotel?.data?.hotel;
   const tour = data?.tour?.data?.tour;
+
+  // Получаем координаты отеля для карты
+  const latitude = hotel?.coord1 ? Number(hotel.coord1) : null;
+  const longitude = hotel?.coord2 ? Number(hotel.coord2) : null;
 
   if (!hotel || !tour) {
     return (
@@ -625,15 +674,16 @@ export default function HotelDetailsMobile() {
               </div>
             </div>
           </div>
-          {/* SimilarHotTours */}
-          {/* <div className="mt-4">
-            <SimilarHotTours
+          {/* MobileSimilarHotTours */}
+          <div className="mt-4">
+            <MobileSimilarHotTours
               countrycode={hotel.countrycode}
               departurecode={tour.departurecode}
               currentHotelCode={hotel.hotelcode}
               currentHotelName={hotel.name}
-            /> */}
-          {/* </div> */}
+              isLoading={isLoading}
+            />
+          </div>
         </div>
 
         {/* Lightbox для галереи */}
@@ -644,6 +694,26 @@ export default function HotelDetailsMobile() {
           plugins={[Thumbnails]}
           index={currentIndex}
         />
+
+        {/* Секция с картой */}
+        {latitude && longitude && (
+          <div className="bg-white rounded-xl mt-4 px-3 py-2">
+            <h2 className="text-xl font-bold text-[#2E2E32] mb-4">
+              Местоположение
+            </h2>
+            <div className="w-full h-[300px] rounded-xl overflow-hidden border border-gray-200">
+              <iframe
+                src={`https://yandex.ru/map-widget/v1/?ll=${longitude}%2C${latitude}&z=17&pt=${longitude}%2C${latitude}%2Cpm2rdm`}
+                width="100%"
+                height="100%"
+                frameBorder="0"
+                allowFullScreen
+                title={`Карта местоположения отеля ${hotel?.name}`}
+                className="w-full h-full"
+              />
+            </div>
+          </div>
+        )}
       </div>
     </>
   );

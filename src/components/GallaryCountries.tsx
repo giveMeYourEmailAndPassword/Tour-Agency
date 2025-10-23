@@ -178,32 +178,105 @@ export default function GallaryCountries() {
   if (isLoading) {
     return (
       <div className="w-full space-y-2">
-        {/* Верхняя плоскость skeleton */}
-        <div className="grid grid-cols-12 gap-2">
-          <CountrySkeleton colSpan="col-span-7" />
-          <CountrySkeleton colSpan="col-span-5" />
+        {/* Десктопная раскладка skeleton */}
+        <div className="hidden md:block">
+          {/* Верхняя плоскость skeleton */}
+          <div className="grid grid-cols-12 gap-2 mb-2">
+            <CountrySkeleton colSpan="col-span-7" />
+            <CountrySkeleton colSpan="col-span-5" />
+          </div>
+
+          {/* Нижняя плоскость skeleton */}
+          <div className="grid grid-cols-12 gap-2">
+            <BottomRowSkeleton />
+            <BottomRowSkeleton />
+            <BottomRowSkeleton />
+          </div>
         </div>
 
-        {/* Нижняя плоскость skeleton */}
-        <div className="grid grid-cols-12 gap-2">
-          <BottomRowSkeleton />
-          <BottomRowSkeleton />
-          <BottomRowSkeleton />
+        {/* Мобильная раскладка skeleton */}
+        <div className="md:hidden space-y-2">
+          {/* Первое большое изображение skeleton */}
+          <div className="w-full">
+            <div className="relative w-full h-64 overflow-hidden rounded-xl bg-gray-200 animate-pulse">
+              <div className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300"></div>
+              <div className="absolute inset-x-0 bottom-0 px-4 py-6 bg-gradient-to-t from-gray-300/60 via-gray-300/30 to-transparent">
+                <div className="bg-gray-300 h-6 w-24 rounded-2xl"></div>
+              </div>
+            </div>
+          </div>
+
+          {/* Два маленьких изображения skeleton */}
+          <div className="grid grid-cols-2 gap-2">
+            <div className="w-full">
+              <div className="relative w-full h-40 overflow-hidden rounded-xl bg-gray-200 animate-pulse">
+                <div className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300"></div>
+                <div className="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-gray-300/60 via-gray-300/30 to-transparent">
+                  <div className="bg-gray-300 h-4 w-16 rounded-xl"></div>
+                </div>
+              </div>
+            </div>
+            <div className="w-full">
+              <div className="relative w-full h-40 overflow-hidden rounded-xl bg-gray-200 animate-pulse">
+                <div className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300"></div>
+                <div className="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-gray-300/60 via-gray-300/30 to-transparent">
+                  <div className="bg-gray-300 h-4 w-16 rounded-xl"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Последнее большое изображение skeleton */}
+          <div className="w-full">
+            <div className="relative w-full h-64 overflow-hidden rounded-xl bg-gray-200 animate-pulse">
+              <div className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300"></div>
+              <div className="absolute inset-x-0 bottom-0 px-4 py-6 bg-gradient-to-t from-gray-300/60 via-gray-300/30 to-transparent">
+                <div className="bg-gray-300 h-6 w-24 rounded-2xl"></div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="w-full space-y-2">
-      {/* Верхняя плоскость */}
-      <div className="grid grid-cols-12 gap-2">
-        {topRow.map((item, idx) => {
-          const col = idx === 0 ? "col-span-7" : "col-span-5";
-          return (
-            <div key={item.id} className={`${col}`}>
+    <div className="w-full space-y-2 mt-[-6px] md:mt-0">
+      {/* Десктопная раскладка */}
+      <div className="hidden md:block">
+        {/* Верхняя плоскость */}
+        <div className="grid grid-cols-12 gap-2 mb-2">
+          {topRow.map((item, idx) => {
+            const col = idx === 0 ? "col-span-7" : "col-span-5";
+            return (
+              <div key={item.id} className={`${col}`}>
+                <div
+                  className="relative w-full h-72 overflow-hidden rounded-xl cursor-pointer"
+                  onClick={() => handleImageClick(item.id)}
+                  style={{ contentVisibility: "auto" }}
+                >
+                  <img
+                    src={item.img}
+                    alt={item.name}
+                    className="w-full h-full object-cover transition-transform"
+                  />
+                  <div className="absolute inset-x-0 bottom-0 px-4 py-8 bg-gradient-to-t from-black/60 via-black/30 to-transparent">
+                    <span className="text-white text-2xl font-semibold drop-shadow bg-black/70 px-7 py-2 rounded-2xl">
+                      {item.name}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Нижняя плоскость */}
+        <div className="grid grid-cols-12 gap-2">
+          {bottomRow.map((item) => (
+            <div key={item.id} className="col-span-4">
               <div
-                className="relative w-full h-72 overflow-hidden rounded-xl cursor-pointer"
+                className="relative w-full h-56 overflow-hidden rounded-xl cursor-pointer"
                 onClick={() => handleImageClick(item.id)}
                 style={{ contentVisibility: "auto" }}
               >
@@ -212,39 +285,82 @@ export default function GallaryCountries() {
                   alt={item.name}
                   className="w-full h-full object-cover transition-transform"
                 />
-                <div className="absolute inset-x-0 bottom-0 px-4 py-8 bg-gradient-to-t from-black/60 via-black/30 to-transparent">
-                  <span className="text-white text-2xl font-semibold drop-shadow bg-black/70 px-7 py-2 rounded-2xl">
+                <div className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-black/60 via-black/30 to-transparent">
+                  <span className="text-white text-2xl font-semibold drop-shadow bg-black/70 px-5 py-1 rounded-2xl">
                     {item.name}
                   </span>
                 </div>
               </div>
             </div>
-          );
-        })}
+          ))}
+        </div>
       </div>
 
-      {/* Нижняя плоскость */}
-      <div className="grid grid-cols-12 gap-2">
-        {bottomRow.map((item) => (
-          <div key={item.id} className="col-span-4">
-            <div
-              className="relative w-full h-56 overflow-hidden rounded-xl cursor-pointer"
-              onClick={() => handleImageClick(item.id)}
-              style={{ contentVisibility: "auto" }}
-            >
-              <img
-                src={item.img}
-                alt={item.name}
-                className="w-full h-full object-cover transition-transform"
-              />
-              <div className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-black/60 via-black/30 to-transparent">
-                <span className="text-white text-2xl font-semibold drop-shadow bg-black/70 px-5 py-1 rounded-2xl">
-                  {item.name}
-                </span>
-              </div>
+      {/* Мобильная раскладка: 1 большое, 2 маленьких, 1 большое */}
+      <div className="md:hidden space-y-2">
+        {/* Первое большое изображение */}
+        <div className="w-full">
+          <div
+            className="relative w-full h-48 overflow-hidden rounded-xl cursor-pointer"
+            onClick={() => handleImageClick(items[0].id)}
+            style={{ contentVisibility: "auto" }}
+          >
+            <img
+              src={items[0].img}
+              alt={items[0].name}
+              className="w-full h-full object-cover transition-transform"
+            />
+            <div className="absolute inset-x-0 bottom-0 px-4 py-4 bg-gradient-to-t from-black/60 via-black/30 to-transparent items-center justify-center">
+              <span className="text-white text-base font-semibold drop-shadow bg-black/70 px-4 py-1 rounded-2xl">
+                {items[0].name}
+              </span>
             </div>
           </div>
-        ))}
+        </div>
+
+        {/* Два маленьких изображения */}
+        <div className="grid grid-cols-2 gap-2">
+          {items.slice(1, 3).map((item) => (
+            <div key={item.id} className="w-full">
+              <div
+                className="relative w-full h-40 overflow-hidden rounded-xl cursor-pointer"
+                onClick={() => handleImageClick(item.id)}
+                style={{ contentVisibility: "auto" }}
+              >
+                <img
+                  src={item.img}
+                  alt={item.name}
+                  className="w-full h-full object-cover transition-transform"
+                />
+                <div className="absolute inset-x-0 bottom-0 px-3 py-3 bg-gradient-to-t from-black/60 via-black/30 to-transparent items-center justify-center">
+                  <span className="text-white text-base font-semibold drop-shadow bg-black/70 px-4 py-1 rounded-2xl">
+                    {item.name}
+                  </span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Последнее большое изображение */}
+        <div className="w-full">
+          <div
+            className="relative w-full h-48 overflow-hidden rounded-xl cursor-pointer"
+            onClick={() => handleImageClick(items[3].id)}
+            style={{ contentVisibility: "auto" }}
+          >
+            <img
+              src={items[3].img}
+              alt={items[3].name}
+              className="w-full h-full object-cover transition-transform"
+            />
+            <div className="absolute inset-x-0 bottom-0 px-4 py-4 bg-gradient-to-t from-black/60 via-black/30 to-transparent items-center justify-center">
+              <span className="text-white text-base font-semibold drop-shadow bg-black/70 px-4 py-1 rounded-2xl">
+                {items[3].name}
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

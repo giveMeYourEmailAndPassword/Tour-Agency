@@ -142,6 +142,10 @@ export default function MobileHotelToursInfo() {
 
   const { hotel, isLoading, error } = useHotelToursInfo();
 
+  // Получаем координаты отеля для карты
+  const latitude = hotel?.coord1 ? Number(hotel.coord1) : null;
+  const longitude = hotel?.coord2 ? Number(hotel.coord2) : null;
+
   const formatDate = (dateString: string) => {
     const date = parse(dateString, "dd.MM.yyyy", new Date());
     return format(date, "d MMM", { locale: ru });
@@ -822,6 +826,26 @@ export default function MobileHotelToursInfo() {
           plugins={[Thumbnails]}
           index={currentIndex}
         />
+
+        {/* Секция с картой */}
+        {latitude && longitude && (
+          <div className="bg-white rounded-xl mt-4 px-3 py-2">
+            <h2 className="text-xl font-bold text-[#2E2E32] mb-4">
+              Местоположение
+            </h2>
+            <div className="w-full h-[300px] rounded-xl overflow-hidden border border-gray-200">
+              <iframe
+                src={`https://yandex.ru/map-widget/v1/?ll=${longitude}%2C${latitude}&z=17&pt=${longitude}%2C${latitude}%2Cpm2rdm`}
+                width="100%"
+                height="100%"
+                frameBorder="0"
+                allowFullScreen
+                title={`Карта местоположения отеля ${hotel?.name}`}
+                className="w-full h-full"
+              />
+            </div>
+          </div>
+        )}
       </div>
     </>
   );

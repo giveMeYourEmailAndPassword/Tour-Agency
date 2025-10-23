@@ -205,13 +205,25 @@ export default function Calendar({
 
   return (
     <div className="w-[680px]">
-      <div className="absolute top-16 flex justify-between w-[94%]">
+      {/* Навигация с названием месяца */}
+      <div className="flex justify-between items-center mb-4">
         <button
           onClick={() => setBaseMonth((prev) => addMonths(prev, -1))}
           className="p-2 text-[#2E2E32] hover:bg-[#EFF2F6] rounded-lg"
         >
           <img src={arrow} alt="arrow" className="w-6 h-6 rotate-180" />
         </button>
+
+        <div className="flex items-center gap-4">
+          <h3 className="text-lg font-medium text-[#2E2E32]">
+            {format(baseMonth, "MMMM yyyy", { locale: ru })}
+          </h3>
+          <span className="text-[#6B7280]">—</span>
+          <h3 className="text-lg font-medium text-[#2E2E32]">
+            {format(addMonths(baseMonth, 1), "MMMM yyyy", { locale: ru })}
+          </h3>
+        </div>
+
         <button
           onClick={() => setBaseMonth((prev) => addMonths(prev, 1))}
           className="p-2 text-[#2E2E32] hover:bg-[#EFF2F6] rounded-lg"
@@ -219,6 +231,7 @@ export default function Calendar({
           <img src={arrow} alt="arrow" className="w-6 h-6" />
         </button>
       </div>
+
       <div className="flex justify-between">
         <SingleCalendar
           currentMonth={baseMonth}

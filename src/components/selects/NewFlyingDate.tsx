@@ -1,11 +1,5 @@
-import { useContext, useState, useEffect } from "react";
-import {
-  Button,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  Switch,
-} from "@heroui/react";
+import { useContext, useState, useEffect, useRef } from "react";
+import { Switch } from "@heroui/react";
 import { DataContext } from "../DataProvider";
 import { format, addDays, addWeeks } from "date-fns";
 import { ru } from "date-fns/locale";
@@ -40,6 +34,7 @@ export default function NewFlyingDate() {
   const [isOpen, setIsOpen] = useState(false);
   const [calendarPrices, setCalendarPrices] =
     useState<CalendarPriceData | null>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Изменяем инициализацию dateRange с учетом параметров URL
   const [dateRange, setDateRange] = useState<{
@@ -85,6 +80,21 @@ export default function NewFlyingDate() {
     }
   }, [params.param4]);
 
+  // Добавляем обработчик клика вне элемента
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   // Функция для получения цен календаря
   const fetchCalendarPrices = async (months: string) => {
     if (!params.param1 || !params.param2) return; // Проверяем наличие города и страны
@@ -114,15 +124,18 @@ export default function NewFlyingDate() {
   };
 
   // Обработчик открытия календаря
-  const handleCalendarOpen = async () => {
-    setIsOpen(true);
+  const handleCalendarToggle = async () => {
+    const newIsOpen = !isOpen;
+    setIsOpen(newIsOpen);
 
-    const currentDate = new Date();
-    const currentMonth = currentDate.getMonth() + 1; // +1 так как getMonth() возвращает 0-11
-    const nextMonth = currentMonth === 12 ? 1 : currentMonth + 1;
+    if (newIsOpen) {
+      const currentDate = new Date();
+      const currentMonth = currentDate.getMonth() + 1; // +1 так как getMonth() возвращает 0-11
+      const nextMonth = currentMonth === 12 ? 1 : currentMonth + 1;
 
-    // Отправляем один запрос с двумя месяцами
-    await fetchCalendarPrices(`${currentMonth},${nextMonth}`);
+      // Отправляем один запрос с двумя месяцами
+      await fetchCalendarPrices(`${currentMonth},${nextMonth}`);
+    }
   };
 
   // Обработчик изменения диапазона
@@ -139,12 +152,6 @@ export default function NewFlyingDate() {
         flexibleDates,
       });
     }
-  };
-
-  // Форматируем даты для отображения в кнопке
-  const formatDisplayDate = (date: Date | null) => {
-    if (!date) return "";
-    return format(date, "d MMM", { locale: ru });
   };
 
   // Добавляем новую функцию для форматирования диапазона дат
@@ -171,29 +178,28 @@ export default function NewFlyingDate() {
   };
 
   return (
-    <Popover placement="bottom" open={isOpen} onOpenChange={handleCalendarOpen}>
-      <PopoverTrigger className="!z-0 !scale-100 !opacity-100">
-        <Button
-          className="p-7 bg-white hover:bg-slate-100 border border-[#DBE0E5] rounded-lg w-[260px]"
-          size="lg"
-        >
-          <img src={calendar} alt="calendar" className="w-6 h-6" />
-          <div className="flex flex-col justify-between">
-            {!dateRange.start || !dateRange.end ? (
-              <h1 className="text-base text-[#6B7280]">Даты вылета</h1>
-            ) : (
-              <>
-                <h1 className="text-sm mb-[1px] text-[#6B7280]">Даты вылета</h1>
-                <p className="text-[#2E2E32] text-lg font-medium">
-                  {formatDateRange(dateRange.start, dateRange.end)}
-                </p>
-              </>
-            )}
-          </div>
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className="p-0">
-        <div className="rounded-lg border border-[#DBE0E5] bg-white">
+    <div className="relative" ref={dropdownRef}>
+      <button
+        onClick={handleCalendarToggle}
+        className="flex items-center px-7 py-1 border border-[#DBE0E5] rounded-lg bg-white hover:bg-gray-50 duration-300 w-[240px]"
+      >
+        <img src={calendar} alt="calendar" className="w-6 h-6" />
+        <div className="flex flex-col justify-between flex-1">
+          {!dateRange.start || !dateRange.end ? (
+            <h1 className="text-base text-[#6B7280]">Даты вылета</h1>
+          ) : (
+            <>
+              <h1 className="text-sm mb-[1px] text-[#6B7280]">Даты вылета</h1>
+              <p className="text-[#2E2E32] text-lg font-medium">
+                {formatDateRange(dateRange.start, dateRange.end)}
+              </p>
+            </>
+          )}
+        </div>
+      </button>
+
+      {isOpen && (
+        <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-1 w-[720px] bg-white rounded-lg border border-[#DBE0E5] shadow-lg z-10">
           <div className="flex justify-between items-center px-5 py-2.5 bg-[#EFF2F6]">
             <div className="text-lg font-medium text-[#6B7280]">
               Дата начала тура
@@ -205,10 +211,10 @@ export default function NewFlyingDate() {
               <Switch
                 checked={flexibleDates}
                 onChange={(e) => setFlexibleDates(e.target.checked)}
-                color="warning" // попробуем этот вариант
+                color="warning"
                 classNames={{
-                  base: "inline-flex items-center", // оставляем только базовое позиционирование
-                  wrapper: "group-data-[selected=true]:!bg-[#FF621F]", // используем !important для переопределения
+                  base: "inline-flex items-center",
+                  wrapper: "group-data-[selected=true]:!bg-[#FF621F]",
                 }}
               />
             </div>
@@ -219,11 +225,11 @@ export default function NewFlyingDate() {
               selectedEndDate={dateRange.end}
               onDateSelect={handleDateChange}
               minDate={new Date()}
-              prices={calendarPrices?.data.calendar.month} // Передаем цены в календарь
+              prices={calendarPrices?.data.calendar.month}
             />
           </div>
         </div>
-      </PopoverContent>
-    </Popover>
+      )}
+    </div>
   );
 }

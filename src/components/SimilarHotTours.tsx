@@ -34,6 +34,7 @@ interface SimilarHotToursProps {
   departurecode: string;
   currentHotelCode: string;
   currentHotelName: string;
+  isLoading?: boolean; // Добавляем пропс для внешнего состояния загрузки
 }
 
 export default function SimilarHotTours({
@@ -41,12 +42,23 @@ export default function SimilarHotTours({
   departurecode,
   currentHotelCode,
   currentHotelName,
+  isLoading: externalLoading = false,
 }: SimilarHotToursProps) {
   const navigate = useNavigate();
+
+  // Проверяем, что у нас есть необходимые параметры для запроса
+  const shouldFetch = !!(countrycode && departurecode);
+
   const { data, isLoading, isError } = useSimilarHotTours(
     countrycode,
-    departurecode
+    departurecode,
+    shouldFetch
   );
+
+  // Если нет необходимых параметров и нет внешней загрузки, не рендерим компонент
+  if (!shouldFetch && !externalLoading) {
+    return null;
+  }
 
   const formatDateRange = (startDate: string, nights: number) => {
     const start = parse(startDate, "dd.MM.yyyy", new Date());
@@ -82,25 +94,41 @@ export default function SimilarHotTours({
     return mealTypes[meal] || meal;
   };
 
-  const getEndDate = (startDate: string, nights: number) => {
-    const date = parse(startDate, "dd.MM.yyyy", new Date());
-    return format(addDays(date, nights), "d MMMM", { locale: ru });
-  };
-
-  if (isLoading) {
+  if (isLoading || externalLoading) {
     return (
-      <div className="flex flex-col gap-4">
-        <h2 className="text-2xl font-semibold flex items-center gap-1">
-          Похожие туры <BsFire className="text-orange-500" />
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-          {[...Array(4)].map((_, index) => (
-            <div key={index} className="bg-white shadow-md rounded-md">
-              <Skeleton className="h-48 rounded-lg" />
-              <div className="p-4">
-                <Skeleton className="h-6 w-3/4 mb-2" />
-                <Skeleton className="h-4 w-full mb-2" />
-                <Skeleton className="h-10 w-full rounded-md" />
+      <div className="flex flex-col gap-2">
+        <div className="flex items-center gap-1">
+          <Skeleton className="w-40 h-8 rounded" />
+          <Skeleton className="w-6 h-6 rounded" />
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          {Array.from({ length: 4 }).map((_, index) => (
+            <div
+              key={index}
+              className="w-full flex items-center gap-2.5 p-4 bg-white border border-[#DBE0E5] rounded-[10px]"
+            >
+              <div className="w-full flex flex-col gap-2">
+                <Skeleton className="w-full h-44 md:h-44 rounded" />
+                <div className="w-full flex flex-col gap-2">
+                  <div className="w-full flex justify-between items-center gap-1">
+                    <div className="flex items-center gap-0.5">
+                      <Skeleton className="w-24 h-4" />
+                    </div>
+                    <Skeleton className="w-24 h-4" />
+                  </div>
+                  <Skeleton className="w-full h-7" />
+                  <Skeleton className="w-3/4 h-5" />
+                </div>
+                <div className="w-full flex items-center gap-3 pb-1 border-b border-[#DBE0E5]">
+                  <Skeleton className="w-20 h-6" />
+                </div>
+                <div className="w-full flex justify-between items-center">
+                  <Skeleton className="w-20 h-2" />
+                  <div className="flex flex-col items-end gap-1">
+                    <Skeleton className="w-32 h-2" />
+                    <Skeleton className="w-24 h-2" />
+                  </div>
+                </div>
               </div>
             </div>
           ))}

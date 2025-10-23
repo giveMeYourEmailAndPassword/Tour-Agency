@@ -78,13 +78,23 @@ export default function OurTours() {
         <HeaderFilters />
         <div className="max-w-[1440px] mx-auto mt-4">
           <div className="flex items-start">
-            <Filters />
+            <div className="w-[400px] flex-shrink-0 mb-12">
+              <Filters />
+            </div>
+            <div className="flex flex-wrap gap-4 p-12 mx-auto">
+              <div className="flex flex-col items-center justify-center">
+                <p className="text-xl text-gray-500 font-medium">
+                  К сожалению, по вашему запросу не найдено доступных туров.
+                </p>
+                <p className="text-gray-400 text-center">
+                  Попробуйте изменить параметры поиска — например, выберите
+                  другие даты,
+                  <br />
+                  город вылета или страну назначения.
+                </p>
+              </div>
+            </div>
           </div>
-        </div>
-        <div className="max-w-[1560px] min-h-[40vh] flex flex-wrap gap-4 p-12 justify-center items-center mx-auto">
-          <p className="text-xl text-gray-500 mt-[-80px]">
-            По вашему запросу ничего не найдено
-          </p>
         </div>
       </div>
     );

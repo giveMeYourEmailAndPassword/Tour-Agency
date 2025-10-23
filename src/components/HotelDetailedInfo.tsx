@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { FaChevronDown, FaChevronUp, FaCheck, FaYoutube } from "react-icons/fa";
+import { Skeleton } from "@heroui/react";
 
 interface HotelDetailedInfoProps {
   hotel: {
@@ -38,6 +39,7 @@ interface HotelDetailedInfoProps {
     };
     reviewscount?: string;
   };
+  isLoading?: boolean;
 }
 
 interface InfoSection {
@@ -46,7 +48,10 @@ interface InfoSection {
   isOpen: boolean;
 }
 
-export default function HotelDetailedInfo({ hotel }: HotelDetailedInfoProps) {
+export default function HotelDetailedInfo({
+  hotel,
+  isLoading = false,
+}: HotelDetailedInfoProps) {
   const [showAllSections, setShowAllSections] = useState(false);
   const [showAllReviews, setShowAllReviews] = useState(false);
   const [activeTab, setActiveTab] = useState<"info" | "reviews">("info");
@@ -152,7 +157,55 @@ export default function HotelDetailedInfo({ hotel }: HotelDetailedInfoProps) {
     return sections;
   };
 
-  const [sections, setSections] = useState<InfoSection[]>(createSections());
+  const [sections, setSections] = useState<InfoSection[]>(() =>
+    createSections()
+  );
+
+  if (isLoading) {
+    return (
+      <div className="bg-[#F9F9F9] rounded-xl overflow-hidden mt-1">
+        <div className="p-6 space-y-4">
+          {/* Заголовки табов */}
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-4">
+              <Skeleton className="w-48 h-6 rounded" />
+              <Skeleton className="w-20 h-6 rounded" />
+            </div>
+            <Skeleton className="w-12 h-6 rounded-full" />
+          </div>
+
+          {/* Секции информации */}
+          <div className="space-y-3">
+            {Array.from({ length: 3 }).map((_, index) => (
+              <div
+                key={index}
+                className="bg-white border border-gray-200 rounded-lg overflow-hidden"
+              >
+                <div className="bg-gray-50 p-3 flex items-center justify-between">
+                  <Skeleton className="w-32 h-5 rounded" />
+                  <Skeleton className="w-4 h-4 rounded" />
+                </div>
+                <div className="p-3 space-y-2">
+                  {Array.from({ length: 3 }).map((_, itemIndex) => (
+                    <div key={itemIndex} className="flex items-start gap-2">
+                      <Skeleton className="w-3 h-3 rounded-full mt-1" />
+                      <Skeleton className="w-full h-3 rounded" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Кнопки действий */}
+          <div className="flex justify-center gap-2">
+            <Skeleton className="w-32 h-10 rounded-lg" />
+            <Skeleton className="w-20 h-10 rounded-lg" />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const toggleSection = (index: number) => {
     setSections((prev) =>
